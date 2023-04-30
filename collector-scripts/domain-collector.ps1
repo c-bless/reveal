@@ -1,24 +1,21 @@
-﻿<#
+﻿<# 
     .SYNOPSIS
-    This PowerShell script can be used to fetch domain information.
+    This PowerShell script is to fetch domain information.
 
     .DESCRIPTION
-    This PowerShell script can be used to fetch domain information. The collector script is published as part of
-    "systemdb". https://bitbucket.org/cbless/systemdb
+    This PowerShell script is to fetch domain information. The collector script is published as part of "systemdb".
+    https://bitbucket.org/cbless/systemdb
 
     Author: Christoph Bless (bitbucket@cbless.de)
 
-    This TOOL is licensed under the GNU General Public License in version 3. See http://www.gnu.org/licenses/ for further details.
-
-
     .INPUTS
     None
-
+    
     .OUTPUTS
-    This script will create a XML-file with the collected system information.
-
+    This script will create a XML-file with the collected domain information. 
+    
     .EXAMPLE
-    .\sysinfo-collector.ps1
+    .\domain-collector.ps1  
 
 #>
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -40,8 +37,8 @@ $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
 $xmlWriter.WriteStartDocument()
 
 
-$xmlWriter.WriteStartElement("domain-collector")
-    $xmlWriter.WriteStartElement("domain")
+$xmlWriter.WriteStartElement("DomainCollector")
+    $xmlWriter.WriteStartElement("ADDomain")
         $xmlWriter.WriteElementString("Name", [string] $domain.Name);
         $xmlWriter.WriteElementString("NetBIOSName", [string] $domain.NetBIOSName);
         $xmlWriter.WriteElementString("DomainMode", [string] $domain.DomainMode);
@@ -56,18 +53,18 @@ $xmlWriter.WriteStartElement("domain-collector")
         $xmlWriter.WriteElementString("ComputersContainer", [string] $domain.ComputersContainer);
         $xmlWriter.WriteElementString("DistinguishedName", [string] $domain.DistinguishedName);
         $xmlWriter.WriteElementString("InfrastructureMaster", [string] $domain.InfrastructureMaster);
-    $xmlWriter.WriteEndElement() # Domain
+    $xmlWriter.WriteEndElement() # ADDomain
 
     
     $forest = Get-ADForest 
-    $xmlWriter.WriteStartElement("forest")
+    $xmlWriter.WriteStartElement("ADForest")
         $xmlWriter.WriteElementString("DomainNamingMaster", [string] $forest.DomainNamingMaster);
         $xmlWriter.WriteElementString("Name", [string] $forest.Name);
         $xmlWriter.WriteElementString("RootDomain", [string] $forest.RootDomain);
         $xmlWriter.WriteElementString("SchemaMaster", [string] $forest.SchemaMaster);
-        $xmlWriter.WriteStartElement("sites")
+        $xmlWriter.WriteStartElement("Sites")
             foreach ($s in $forest.Sites) {
-                $xmlWriter.WriteElementString("site", [string] $s.Name);
+                $xmlWriter.WriteElementString("Site", [string] $s.Name);
             }
         $xmlWriter.WriteEndElement()
         $xmlWriter.WriteStartElement("GlobalCatalogs")
@@ -75,12 +72,12 @@ $xmlWriter.WriteStartElement("domain-collector")
                 $xmlWriter.WriteElementString("GlobalCatalog", [string] $gc);
             }
         $xmlWriter.WriteEndElement() # GC
-    $xmlWriter.WriteEndElement() # forest
+    $xmlWriter.WriteEndElement() # ADForest
 
     $dc_list = Get-ADDomainController
-    $xmlWriter.WriteStartElement("DomainControllerList")
+    $xmlWriter.WriteStartElement("ADDomainControllerList")
         foreach ($dc in $dc_list) {
-            $xmlWriter.WriteStartElement("DomainController")
+            $xmlWriter.WriteStartElement("ADDomainController")
             $xmlWriter.WriteElementString("Name", [string] $dc.Name);
             $xmlWriter.WriteElementString("Hostname", [string] $dc.Hostname);
             $xmlWriter.WriteElementString("OperatingSystem", [string] $dc.OperatingSystem);
@@ -109,9 +106,9 @@ $xmlWriter.WriteStartElement("domain-collector")
 
 
     $computer_list = Get-ADComputer -Filter * -Properties *
-    $xmlWriter.WriteStartElement("ComputerList")
+    $xmlWriter.WriteStartElement("ADComputerList")
         foreach ($c in $computer_list) {
-            $xmlWriter.WriteStartElement("Computer")
+            $xmlWriter.WriteStartElement("ADComputer")
             $xmlWriter.WriteElementString("DistinguishedName", [string] $c.DistinguishedName);
             $xmlWriter.WriteElementString("DNSHostName", [string] $c.DNSHostName );
             $xmlWriter.WriteElementString("Enabled", [string] $c.Enabled);
@@ -140,9 +137,9 @@ $xmlWriter.WriteStartElement("domain-collector")
     $xmlWriter.WriteEndElement() # ComputerList
 
     $user_list = Get-ADUser -Filter * -Properties * 
-    $xmlWriter.WriteStartElement("UserList")
+    $xmlWriter.WriteStartElement("ADUserList")
         foreach ($u in $user_list) {
-            $xmlWriter.WriteStartElement("User");
+            $xmlWriter.WriteStartElement("ADUser");
             $xmlWriter.WriteElementString("SAMAccountName", [string] $u.SAMAccountName);
             $xmlWriter.WriteElementString("DistinguishedName", [string] $u.DistinguishedName);
             $xmlWriter.WriteElementString("SID", [string] $u.SID);
@@ -169,7 +166,7 @@ $xmlWriter.WriteStartElement("domain-collector")
             $xmlWriter.WriteElementString("Modified", [string] $u.Modified);
             $xmlWriter.WriteStartElement("MemberOf");
             foreach ($m in $u.MemberOf) {
-                $xmlWriter.WriteElementString("Group", [string] $u.MemberOf);
+                $xmlWriter.WriteElementString("Group", [string] $m);
             }
             $xmlWriter.WriteEndElement(); # MemberOf
             $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
@@ -178,7 +175,36 @@ $xmlWriter.WriteStartElement("domain-collector")
         }
     $xmlWriter.WriteEndElement() # UserList
 
-$xmlWriter.WriteEndElement() # domain-collector
+
+    $group_list = Get-ADGroup -Filter * -Properties * 
+    $xmlWriter.WriteStartElement("ADGroupList")
+        foreach ($g in $group_list) {
+            $xmlWriter.WriteStartElement("ADGroup");
+            $xmlWriter.WriteElementString("CN", [string] $g.CN);
+            $xmlWriter.WriteElementString("Description", [string] $g.Description);
+            $xmlWriter.WriteElementString("GroupCategory", [string] $g.GroupCategory);
+            $xmlWriter.WriteElementString("GroupScope", [string] $g.GroupScope);
+            $xmlWriter.WriteElementString("SamAccountName", [string] $g.SamAccountName);
+            $xmlWriter.WriteElementString("SID", [string] $g.SID);
+            $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
+            $xmlWriter.WriteStartElement("Members");
+            $members = Get-ADGroupMember -Identity $g.SamAccountName
+            foreach ($m in $members) {
+                $xmlWriter.WriteStartElement("Member");
+                $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
+                $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
+                $xmlWriter.WriteAttributeString("name", [string] $m.Name)
+                $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
+                $xmlWriter.WriteEndElement(); # Member
+            
+            }
+            $xmlWriter.WriteEndElement(); # Members
+            $xmlWriter.WriteEndElement(); # User         
+            
+        }
+    $xmlWriter.WriteEndElement() # UserList
+
+$xmlWriter.WriteEndElement() # DomainCollector
 $xmlWriter.WriteEndDocument()
 $xmlWriter.Flush()
 $xmlWriter.Close()

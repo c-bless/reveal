@@ -1,15 +1,12 @@
 ﻿<# 
     .SYNOPSIS
-    This PowerShell script can be used to fetch system information.
+    This PowerShell script is to fetch system information.
 
     .DESCRIPTION
-    This PowerShell script can be used to fetch system information. The collector script is published as part of
-    "systemdb". https://bitbucket.org/cbless/systemdb
+    This PowerShell script is to fetch system information. The collector script is published as part of "systemdb".
+    https://bitbucket.org/cbless/systemdb
 
     Author: Christoph Bless (bitbucket@cbless.de)
-
-    This TOOL is licensed under the GNU General Public License in version 3. See http://www.gnu.org/licenses/ for further details.
-
 
     .INPUTS
     None
@@ -36,12 +33,12 @@ $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
 $xmlWriter.WriteStartDocument()
 
 
-$xmlWriter.WriteStartElement("host")
+$xmlWriter.WriteStartElement("Host")
 
-    $xmlWriter.WriteElementString("type", "Windows")
+    $xmlWriter.WriteAttributeString("type", "Windows")
     
     # Adding Hostname to XML
-    $xmlWriter.WriteElementString("hostname", $hostname)
+    $xmlWriter.WriteElementString("Hostname", $hostname)
 
     # Get Systeminformation
     $compInfo = Get-ComputerInfo
@@ -68,9 +65,9 @@ $xmlWriter.WriteStartElement("host")
     #######################################################################
     $hotfixes = Get-HotFix
     
-    $xmlWriter.WriteStartElement("hotfixes")
+    $xmlWriter.WriteStartElement("Hotfixes")
     foreach ($h in $hotfixes ) {
-        $xmlWriter.WriteStartElement("hotfix")
+        $xmlWriter.WriteStartElement("Hotfix")
         $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
         $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
         $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
@@ -85,9 +82,9 @@ $xmlWriter.WriteStartElement("host")
    
     $products = Get-WmiObject  -class win32_product 
 
-    $xmlWriter.WriteStartElement("products")
+    $xmlWriter.WriteStartElement("Products")
     foreach ($p in $products ) {
-        $xmlWriter.WriteStartElement("product")
+        $xmlWriter.WriteStartElement("Product")
         $xmlWriter.WriteElementString("Caption", [string] $p.Caption);
         $xmlWriter.WriteElementString("InstallDate", [string]$p.InstallDate);
         $xmlWriter.WriteElementString("Description",[string]$p.Description);
@@ -105,9 +102,9 @@ $xmlWriter.WriteStartElement("host")
     #######################################################################
     $netadapters = Get-NetAdapter
     
-    $xmlWriter.WriteStartElement("netadapters")
+    $xmlWriter.WriteStartElement("Netadapters")
     foreach ($n in $netadapters ) {
-        $xmlWriter.WriteStartElement("netadapter")
+        $xmlWriter.WriteStartElement("Netadapter")
         $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress);
         $xmlWriter.WriteAttributeString("Status",[string] $n.Status);
         $xmlWriter.WriteAttributeString("Name",[string] $n.Name);
@@ -148,9 +145,9 @@ $xmlWriter.WriteStartElement("host")
    
     $services = Get-WmiObject  -class win32_service
 
-    $xmlWriter.WriteStartElement("services")
+    $xmlWriter.WriteStartElement("Services")
     foreach ($s in $services ) {
-        $xmlWriter.WriteStartElement("service")
+        $xmlWriter.WriteStartElement("Service")
         $xmlWriter.WriteElementString("Caption", [string] $s.Caption);
         $xmlWriter.WriteElementString("Description",[string]$s.Description);
         $xmlWriter.WriteElementString("Name",[string]$s.Name);
@@ -166,7 +163,7 @@ $xmlWriter.WriteStartElement("host")
         $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart);
         try {
             $acl = get-acl -Path $s.PathName -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("binary-permissions", [string] $acl.AccessToString)
+            $xmlWriter.WriteElementString("BinaryPermissions", [string] $acl.AccessToString)
         } catch {}
         $xmlWriter.WriteEndElement() # service
     }
@@ -178,9 +175,9 @@ $xmlWriter.WriteStartElement("host")
    
     $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True" 
 
-    $xmlWriter.WriteStartElement("users")
+    $xmlWriter.WriteStartElement("Users")
     foreach ($u in $users ) {
-        $xmlWriter.WriteStartElement("user")
+        $xmlWriter.WriteStartElement("User")
         $xmlWriter.WriteElementString("AccountType", [string] $u.AccountType);
         $xmlWriter.WriteElementString("Domain", [string]$u.Domain);
         $xmlWriter.WriteElementString("Disabled",[string]$u.Disabled);
@@ -204,9 +201,9 @@ $xmlWriter.WriteStartElement("host")
    
     $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
 
-    $xmlWriter.WriteStartElement("groups")
+    $xmlWriter.WriteStartElement("Groups")
     foreach ($g in $groups ) {
-        $xmlWriter.WriteStartElement("group")
+        $xmlWriter.WriteStartElement("Group")
             $xmlWriter.WriteElementString("Name",[string]$g.Name);
             $xmlWriter.WriteElementString("Caption", [string] $g.Caption);
             $xmlWriter.WriteElementString("Description",[string]$g.Description);
@@ -228,9 +225,9 @@ $xmlWriter.WriteStartElement("host")
     $shares = Get-WmiObject -class win32_share 
     # $shares = Get-CimInstance -ClassName Win32_Share
 
-    $xmlWriter.WriteStartElement("shares")
+    $xmlWriter.WriteStartElement("Shares")
     foreach ($s in $shares ) {
-        $xmlWriter.WriteStartElement("share")
+        $xmlWriter.WriteStartElement("Share")
         $xmlWriter.WriteElementString("Name",[string]$s.Name);
         $xmlWriter.WriteElementString("Path",[string]$s.Path);
         $xmlWriter.WriteElementString("Description",[string]$s.Description);
@@ -239,18 +236,42 @@ $xmlWriter.WriteStartElement("host")
         $path = [string] $s.Path
         try {
             $acl = get-acl -Path $path
-            $xmlWriter.WriteElementString("ntfs-permission", [string] $acl.AccessToString)
+            $xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
         } catch {}
 
         $share = "\\" + $hostname  +"\"+  [string]$s.Name
         try {
             $acl = get-acl -Path $share -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("share-permission", [string] $acl.AccessToString)
+            $xmlWriter.WriteElementString("SharePermission", [string] $acl.AccessToString)
         } catch {}
 
         $xmlWriter.WriteEndElement() # share
     }
     $xmlWriter.WriteEndElement() # shares
+
+    
+    $xmlWriter.WriteStartElement("Winlogon")
+    if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultUserName") {
+        $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultUserName -ErrorAction SilentlyContinue
+        $xmlWriter.WriteElementString("DefaultUserName", $user.DefaultUserName)    
+    } 
+    if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultPassword") {
+        $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultPassword -ErrorAction SilentlyContinue
+        $xmlWriter.WriteElementString("DefaultPassword", $user.DefaultPassword)    
+    } 
+    if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "AutoAdminLogon") {
+        $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -ErrorAction SilentlyContinue
+        $xmlWriter.WriteElementString("AutoAdminLogon", $user.AutoAdminLogon)    
+    } 
+    if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "ForceAutoLogon") {
+        $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name ForceAutoLogon -ErrorAction SilentlyContinue
+        $xmlWriter.WriteElementString("ForceAutoLogon", $user.ForceAutoLogon)    
+    } 
+    if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultDomain") {
+        $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomain -ErrorAction SilentlyContinue
+        $xmlWriter.WriteElementString("DefaultDomain", $user.DefaultDomain)   
+    }
+    $xmlWriter.WriteEndElement() # Winlogon
 
 $xmlWriter.WriteEndElement() # host
 $xmlWriter.WriteEndDocument()
