@@ -1,0 +1,38 @@
+{% macro render_field_with_errors(field, icon) %}
+
+<div class="input-group mb-3">
+    {{ field(class_='form-control', **kwargs)|safe }}
+    <div class="input-group-append">
+        <div class="input-group-text">
+          <span class="{{ icon }}"></span>
+        </div>
+      </div>
+    {% if field.errors %}
+    <ul>
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_field(field, icon) %}
+<div class="input-group mb-3">
+    {{ field(class_='form-control', **kwargs)|safe }}
+    <div class="input-group-append">
+        <div class="input-group-text">
+          <span class="{{ icon }}"></span>
+        </div>
+      </div>
+</div>
+{% endmacro %}
+
+{% macro render_checkbox_field(field) -%}
+<div class="form-group">
+    <div class="checkbox-custom checkbox-default">
+        {{ field(type='checkbox', **kwargs) }}
+        <label>{{ login_user_form.remember.label }}</label>
+    </div>
+</div>
+{%- endmacro %}

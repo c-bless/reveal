@@ -14,7 +14,7 @@ class Config(object):
 
     LANGUAGES = ['en', 'de']
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'systemdb.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Enable protection agains *Cross-site Request Forgery (CSRF)*

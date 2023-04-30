@@ -1,0 +1,68 @@
+{% macro render_field(field) %}
+  {% if field.errors %}
+    <div class="form-group has-error">
+  {% else %}
+      <div class="form-group">
+  {% endif %}
+    {{ field.label(class="col-md-3 control-label") | safe }}
+    <div class="col-md-6">
+      {{ field(class="form-control", **kwargs)|safe }}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+
+{% macro render_submit_field(field) %}
+  <div class="form-group">
+    <div class="col-md-3 col-sm-3 col-xs-12"></div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      {{ field(class="btn btn-primary", **kwargs)|safe }}
+    </div>
+  </div>
+{% endmacro %}
+
+
+
+
+{% macro render_select2_field(field) %}
+  {% if field.errors %}
+    <div class="form-group has-error">
+  {% else %}
+      <div class="form-group">
+  {% endif %}
+    {{ field.label(class="control-label col-md-3") | safe }}
+    <div class="col-md-6">
+      {{ field(**{'data-role': "select2", 'class': "form-control col-md-7 col-xs-12"})|safe }}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+
+
+{% macro render_tags_field(field, id) %}
+  {% if field.errors %}
+    <div class="form-group has-error">
+  {% else %}
+      <div class="form-group">
+  {% endif %}
+    {{ field.label(class="control-label col-md-3") | safe }}
+    <div class="col-md-6">
+      {{ field(**{'multiple':'multiple',  'data-role':"tagsinput", 'data-tag-class': "label label-primary", 'id': id})|safe }}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}

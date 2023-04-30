@@ -1,0 +1,47 @@
+{% extends "layout/base_layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field , render_checkbox_field%}
+
+{% block title %} Login {% endblock title %}
+
+{% block page_header %}{% endblock page_header %}
+
+{% block body %}
+  <body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <p><b>Network Traffic Analyzer</b></p>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Sign in to start your session</p>
+
+      <form action="{{ url_for_security('login') }}" method="post">
+        {{ login_user_form.hidden_tag() }}
+        {{ render_field_with_errors(login_user_form.email, "fas fa-envelope") }}
+        {{ render_field_with_errors(login_user_form.password, "fas fa-lock") }}
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <p class="mb-1">
+        <a href="forgot-password.html">I forgot my password</a>
+      </p>
+      <p class="mb-0">
+        <a href="register.html" class="text-center">Register a new membership</a>
+      </p>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+</body>
+
+{% endblock body %}
+

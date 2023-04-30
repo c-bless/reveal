@@ -1,0 +1,30 @@
+
+{% macro render_status(status) %}
+  {% if status.name == 'open' %}
+    <span class="btn btn-success btn-xs">{{ status.name }}</span>
+  {% elif status.name == 'closed' %}
+    <span class="btn btn-danger btn-xs">{{ status.name }}</span>
+  {% else %}
+    {{ status.name }}
+  {% endif %}
+{% endmacro %}
+
+{% macro render_isPrivate(host) %}
+  {% if host.private == True %}
+    <span class="text-info">private</span>
+  {% else %}
+    <span class="text-danger">public</span>
+  {% endif %}
+{% endmacro %}
+
+
+
+{% macro render_ip(host) %}
+  {% if host.private == True %}
+    <span class="text-info">{{ host.ip }}</span>
+  {% elif host.private == False %}
+    <span class="text-danger">{{ host.ip }}</span>
+  {% else %}
+    {{ host.ip }}
+  {% endif %}
+{% endmacro %}
