@@ -1,4 +1,5 @@
 Babel==2.12.1
+beautifulsoup4==4.12.2
 blinker==1.6.2
 click==8.1.3
 dominate==2.7.0
@@ -6,11 +7,14 @@ Flask==2.3.1
 flask-babel==3.1.0
 Flask-Bootstrap4==4.0.2
 Flask-Script==2.0.6
+Flask-SQLAlchemy==3.0.3
 greenlet==2.0.2
 itsdangerous==2.1.2
 Jinja2==3.1.2
+lxml==4.9.2
 MarkupSafe==2.1.2
 pytz==2023.3
+soupsieve==2.4.1
 SQLAlchemy==2.0.10
 typing_extensions==4.5.0
 visitor==0.1.3

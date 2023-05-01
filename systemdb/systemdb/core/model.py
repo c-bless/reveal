@@ -41,6 +41,33 @@ class ADForest(db.Model):
         return self.Name
 
 
+class ADTrust(db.Model):
+    __tablename__ = "ADTrust"
+    id = db.Column(db.Integer, primary_key=True)
+    Source = db.Column(db.String(256), unique=False, nullable=False)
+    Target = db.Column(db.String(256), unique=False, nullable=False)
+    Direction = db.Column(db.String(256), unique=False, nullable=False)
+    UplevelOnly = db.Column(db.String(256), unique=False, nullable=True)
+    UsesAESKeys = db.Column(db.String(256), unique=False, nullable=True)
+    UsesRC4Encryption = db.Column(db.String(256), unique=False, nullable=True)
+    TGTDelegation = db.Column(db.String(256), unique=False, nullable=True)
+    SIDFilteringForestAware = db.Column(db.String(256), unique=False, nullable=True)
+    SIDFilteringQuarantined = db.Column(db.String(256), unique=False, nullable=True)
+    SelectiveAuthentication = db.Column(db.String(256), unique=False, nullable=True)
+    DisallowTransivity = db.Column(db.String(256), unique=False, nullable=True)
+    DistinguishedName = db.Column(db.String(2048), unique=False, nullable=True)
+    ForestTransitive = db.Column(db.String(256), unique=False, nullable=True)
+    IntraForest = db.Column(db.String(256), unique=False, nullable=True)
+    IsTreeParent = db.Column(db.String(256), unique=False, nullable=True)
+    IsTreeRoot = db.Column(db.String(256), unique=False, nullable=True)
+
+    def __repr__(self):
+        return self.Target
+
+    def __str__(self):
+        return self.Target
+
+
 class ADForestSite(db.Model):
     __tablename__ = "ADForestSite"
     id = db.Column(db.Integer, primary_key=True)
@@ -188,7 +215,7 @@ class ADUser(db.Model):
     pwdLastSet = db.Column(db.String(50), unique=False, nullable=True)
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
-    MemberOf = db.relationship('ADUserMemberGroup', backref='dc', lazy='dynamic')
+    Members = db.relationship('ADUserMemberGroup', backref='dc', lazy='dynamic')
 
     def __repr__(self):
         return self.SAMAccountName
@@ -323,9 +350,7 @@ class NetIPAddress(db.Model):
     AddressFamily = db.Column(db.String(10), unique=False, nullable=False)
     Prefix = db.Column(db.String(4), unique=False, nullable=True)
     IP = db.Column(db.String(150), unique=False, nullable=True)
-    Interface = db.Column(db.String(256), unique=False, nullable=True)
-    Dhcp = db.Column(db.String(150), unique=False, nullable=True)
-    ConnectionState = db.Column(db.String(150), unique=False, nullable=True)
+    Type = db.Column(db.String(256), unique=False, nullable=True)
     InterfaceAlias = db.Column(db.String(256), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
 
@@ -344,6 +369,7 @@ class Service(db.Model):
     StartMode = db.Column(db.String(20), unique=False, nullable=True)
     PathName = db.Column(db.String(2048), unique=False, nullable=True)
     Started = db.Column(db.String(10), unique=False, nullable=True)
+    StartName = db.Column(db.String(256), unique=False, nullable=True)
     SystemName = db.Column(db.String(256), unique=False, nullable=True)
     DisplayName = db.Column(db.String(1024), unique=False, nullable=True)
     Running = db.Column(db.String(256), unique=False, nullable=True)

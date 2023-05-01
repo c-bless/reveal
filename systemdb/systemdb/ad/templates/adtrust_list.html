@@ -1,0 +1,42 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Trust List" %}
+{% block page_title %} Trust List {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Trust List {% endblock menu_l2 %}
+
+{% block datatable %}
+{{ super() }}
+      <table id="table1" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th width="20%"> Source </th>
+                        <th width="20%"> Direction</th>
+                        <th width="20%"> Target </th>
+                        <th width="20%"> IntraForest </th>
+                        <th with="20">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if forests %}
+                        {% for f in forests %}
+                          <tr>
+                            <td> {{ f.Source }} </td>
+                            <td> {{ f.Direction }} </td>
+                            <td> {{ f.Target }} </td>
+                            <td> {{ f.IntraForest }} </td>
+                            <td class="actions">
+                                <a href="#" class="btn btn-default btn-xs">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No domain trusts found!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+{% endblock datatable %}

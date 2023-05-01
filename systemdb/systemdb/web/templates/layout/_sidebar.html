@@ -21,20 +21,20 @@
         <a href="#" class="nav-link">
           <i class="nav-icon fas fa-tachometer-alt"></i>
           <p>
-            Inventory
+            System Reviews
             <i class="right fas fa-angle-left"></i>
           </p>
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{url_for('hosts.host_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Hosts</p>
             </a>
           </li>
         </ul>
       </li>
-      <li class="nav-header">--------------</li>
+      <li class="nav-header"></li>
       <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
           <i class="nav-icon fas fa-book"></i>
@@ -45,7 +45,7 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{url_for('ad.domain_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Domain</p>
             </a>
@@ -53,36 +53,29 @@
         </ul>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{url_for('ad.forest_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Forest</p>
             </a>
           </li>
         </ul>
-      </li>
-
-
-      <li class="nav-item has-treeview">
-        <a href="#" class="nav-link">
-          <i class="nav-icon far fa-envelope"></i>
-          <p>
-            Systems
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{url_for('home.index')}}" class="nav-link">
+            <a href="{{url_for('ad.trust_list')}}" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Trusts</p>
+            </a>
+          </li>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Domain Controller</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Computer</p>
-            </a>
-          </li>
+        </ul>
+        <ul class="nav nav-treeview">
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
@@ -90,24 +83,25 @@
             </a>
           </li>
         </ul>
-      </li>
-      <li class="nav-item has-treeview">
-        <a href="#" class="nav-link">
-          <i class="nav-icon fas fa-book"></i>
-          <p>
-            Users / Groups
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{url_for('ad.computer_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
-              <p>Users</p>
+              <p>Computer</p>
             </a>
           </li>
+        </ul>
+        <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{url_for('ad.user_list')}}" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>User</p>
+            </a>
+          </li>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{{url_for('ad.groups_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Groups</p>
             </a>
@@ -115,6 +109,23 @@
         </ul>
       </li>
 
+      <li class="nav-item has-treeview">
+        <a href="#" class="nav-link">
+          <i class="nav-icon fas fa-tachometer-alt"></i>
+          <p>
+            Reports
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Word</p>
+            </a>
+          </li>
+        </ul>
+      </li>
     </ul>
   </nav>
   <!-- /.sidebar-menu -->

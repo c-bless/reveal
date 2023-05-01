@@ -31,12 +31,12 @@ def host2db(xml_element):
         if "DeviceGuardSmartStatus" == e.tag: host.DeviceGuardSmartStatus = e.text
         if "PSVersion" == e.tag: host.PSVersion = e.text
         if "Winlogon" == e.tag:
-            for c in e.getchildren():
-                if "DefaultUserName" == e.tag: host.DefaultUserName = e.text
-                if "DefaultPassword" == e.tag: host.DefaultPassword = e.text
-                if "AutoAdminLogon" == e.tag: host.AutoAdminLogon = e.text
-                if "DefaultDomain" == e.tag: host.DefaultDomain = e.text
-                if "ForceAutoLogon" == e.tag: host.ForceAutoLogon = e.text
+            for w in e.getchildren():
+                if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
+                if "DefaultPassword" == w.tag: host.DefaultPassword = w.text
+                if "AutoAdminLogon" == w.tag: host.AutoAdminLogon = w.text
+                if "DefaultDomain" == w.tag: host.DefaultDomain = w.text
+                if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = w.text
     db.session.add(host)
     db.session.commit()
     db.session.refresh(host)
@@ -79,10 +79,9 @@ def host2db(xml_element):
                 if "NetIPAddress" == c.tag:
                     n = NetIPAddress()
                     n.AddressFamily = c.get("AddressFamily")
+                    n.IP = c.get("IP")
                     n.Prefix = c.get("Prefix")
-                    n.Interface = c.get("Interface")
-                    n.Dhcp = c.get("Dhcp")
-                    n.ConnectionState = c.get("ConnectionState")
+                    n.Type = c.get("Type")
                     n.InterfaceAlias = c.get("InterfaceAlias")
                     n.Host_id = host.id
                     db.session.add(n)
@@ -97,6 +96,7 @@ def host2db(xml_element):
                         if "StartMode" == i.tag: service.StartMode = i.text
                         if "PathName" == i.tag: service.PathName = i.text
                         if "Started" == i.tag: service.Started = i.text
+                        if "StartName" == i.tag: service.StartName = i.text
                         if "SystemName" == i.tag: service.SystemName = i.text
                         if "DisplayName" == i.tag: service.DisplayName = i.text
                         if "Running" == i.tag: service.Running = i.text

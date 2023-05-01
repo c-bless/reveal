@@ -1,0 +1,44 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Domain List" %}
+{% block page_title %} Domain List {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Domain List {% endblock menu_l2 %}
+
+{% block datatable %}
+{{ super() }}
+      <table id="table1" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th width="15%"> Name </th>
+                        <th width="15%"> NetBIOSName</th>
+                        <th width="35%"> SID </th>
+                        <th width="15%"> Forest </th>
+                        <th width="15%"> ParentDomain </th>
+                        <th width="5%"> Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if domains %}
+                        {% for d in domains %}
+                          <tr>
+                            <td> {{ d.Name }} </td>
+                            <td> {{ d.NetBIOSName }} </td>
+                            <td> {{ d.DomainSID }} </td>
+                            <td> {{ d.Forest }} </td>
+                            <td> {{ d.ParentDomain }} </td>
+                            <td class="actions">
+                                <a href="{{url_for('ad.domain_detail',id=d.id)}}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No domains found!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+{% endblock datatable %}

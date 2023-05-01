@@ -67,7 +67,7 @@ def forest2db(adforest):
     #    <GlobalCatalogs>
     #        <GlobalCatalog>DC.ot.lab</GlobalCatalog>
     #    </GlobalCatalogs>
-    #</forest>domain
+    #</forest>ad
     forest = ADForest()
     for e in adforest.getchildren():
         if "Name" == e.tag: forest.Name = e.text

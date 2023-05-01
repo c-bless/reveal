@@ -1,0 +1,358 @@
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "Host {% if host %} {{ host.Hostname}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Detail {% endblock menu_l2 %}
+
+{% block content %}
+{% if host %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">Hostname</dt>
+                      <dd class="col-sm-8">{{ host.Hostname }}</dd>
+                      <dt class="col-sm-4">Domain</dt>
+                      <dd class="col-sm-8">{{ host.Domain }}</dd>
+                      <dt class="col-sm-4">DomainRole</dt>
+                      <dd class="col-sm-8">{{ host.DomainRole }}</dd>
+                      <dt class="col-sm-4">Operating System</dt>
+                      <dd class="col-sm-8">{{ host.OSName }}</dd>
+                      <dt class="col-sm-4">OSVersion</dt>
+                      <dd class="col-sm-8">{{ host.OSVersion }}</dd>
+                      <dt class="col-sm-4">OSBuildNumber</dt>
+                      <dd class="col-sm-8">{{ host.OSBuildNumber }}</dd>
+                      <dt class="col-sm-4">OSInstallDate</dt>
+                      <dd class="col-sm-8">{{ host.OSInstallDate }}</dd>
+                      <dt class="col-sm-4">OSProductType</dt>
+                      <dd class="col-sm-8">{{ host.OSProductType }}</dd>
+                      <dt class="col-sm-4">LogonServer</dt>
+                      <dd class="col-sm-8">{{ host.LogonServer }}</dd>
+                      <dt class="col-sm-4">TimeZone</dt>
+                      <dd class="col-sm-8">{{ host.TimeZone }}</dd>
+                      <dt class="col-sm-4">KeyboardLayout</dt>
+                      <dd class="col-sm-8">{{ host.KeyboardLayout }}</dd>
+                      <dt class="col-sm-4">HyperVisorPresent</dt>
+                      <dd class="col-sm-8">{{ host.HyperVisorPresent }}</dd>
+                      <dt class="col-sm-4">DeviceGuardSmartStatus</dt>
+                      <dd class="col-sm-8">{{ host.DeviceGuardSmartStatus }}</dd>
+                      <dt class="col-sm-4">AutoAdminLogon</dt>
+                      <dd class="col-sm-8">{{ host.AutoAdminLogon }}</dd>
+                      <dt class="col-sm-4">DefaultDomain</dt>
+                      <dd class="col-sm-8">{{ host.DefaultDomain }}</dd>
+                      <dt class="col-sm-4">DefaultUserName</dt>
+                      <dd class="col-sm-8">{{ host.DefaultUserName }}</dd>
+                      <dt class="col-sm-4">DefaultPassword</dt>
+                      <dd class="col-sm-8">{{ host.DefaultPassword }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Network Adapter</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>MAC</th>
+                      <th>Status</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.NetAdapters %}
+                    {% for na in host.NetAdapters %}
+                    <tr>
+                      <td>{{ na.Name }}</td>
+                      <td>{{ na.MacAddress}}</td>
+                      <td>{{ na.Status }}</td>
+                      <td>{{ na.InterfaceDescription }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No network adapter found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">IP Adresses</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Interface</th>
+                      <th>IP</th>
+                      <th>Prefix</th>
+                      <th>Type</th>
+                      <th>AddressFamily</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.NetIPAddresses %}
+                    {% for nip in host.NetIPAddresses %}
+                    <tr>
+                      <td>{{ nip.InterfaceAlias }}</td>
+                      <td>{{ nip.IP }}</td>
+                      <td>{{ nip.Prefix }}</td>
+                      <td>{{ nip.Type }}</td>
+                      <td>{{ nip.AddressFamily }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No IP addresses found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+    </div>
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Local Users</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>AccountType</th>
+                      <th>Name</th>
+                      <th>Disabled</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.Users %}
+                    {% for u in host.Users %}
+                    <tr>
+                      <td>{{ u.AccountType }}</td>
+                      <td>{{ u.Name }}</td>
+                      <td>{{ u.Disabled }}</td>
+                      <td class="actions">
+                          <a href="#" class="btn btn-default btn-xs">
+                              <i class="fa fa-eye"></i> View
+                          </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No local Users found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- /.card -->
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Groups</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.Groups %}
+                    {% for g in host.Groups %}
+                    <tr>
+                      <td>{{ g.Name }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No groups found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+    </div>
+
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Software Products</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Version</th>
+                      <th>InstallDate</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.Products %}
+                    {% for p in host.Products %}
+                    <tr>
+                      <td>{{ p.Name }}</td>
+                      <td>{{ p.Version }}</td>
+                      <td>{{ p.InstallDate }}</td>
+                      <td class="actions">
+                          <a href="#" class="btn btn-default btn-xs">
+                              <i class="fa fa-eye"></i> View
+                          </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No additional products installed.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- /.card -->
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Installed Hotfixes</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>KB</th>
+                      <th>InstalledOn</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.Hotfixes %}
+                    {% for h in host.Hotfixes %}
+                    <tr>
+                      <td>{{ h.HotfixId }}</td>
+                      <td>{{ h.InstalledOn }}</td>
+                      <td>{{ h.Description }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No hotfixes installed.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+    </div>
+
+<div class="row m-1">
+        <div class="col-md-12">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Services</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                        <th width="10%"> Name </th>
+                        <th width="20%"> Displayname</th>
+                        <th width="10%"> Started </th>
+                        <th width="10%"> StartName </th>
+                        <th width="40%"> PathName </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if host.Services %}
+                        {% for s in host.Services %}
+                        <tr>
+                          <td>{{ s.Name }}</td>
+                          <td>{{ s.DisplayName }}</td>
+                          <td>{{ s.Started }}</td>
+                          <td>{{ s.StartName }}</td>
+                          <td>{{ s.PathName }}</td>
+                          <td class="actions">
+                          <a href="#" class="btn btn-default btn-xs">
+                              <i class="fa fa-eye"></i> View
+                          </a>
+                      </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <!-- /.card -->
+          </div>
+    </div>
+{% endif %}
+{% endblock content %}

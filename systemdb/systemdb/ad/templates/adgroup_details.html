@@ -1,0 +1,118 @@
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "Group {% if group %} {{ group.SamAccountName}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Group Detail {% endblock menu_l2 %}
+
+{% block content %}
+{% if group %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">SAMAccountName</dt>
+                      <dd class="col-sm-8">{{ group.SamAccountName }}</dd>
+                      <dt class="col-sm-4">CN</dt>
+                      <dd class="col-sm-8">{{ group.CN }}</dd>
+                      <dt class="col-sm-4">GroupCategory</dt>
+                      <dd class="col-sm-8">{{ group.GroupCategory }}</dd>
+                      <dt class="col-sm-4">GroupScope</dt>
+                      <dd class="col-sm-8">{{ group.GroupScope }}</dd>
+                      <dt class="col-sm-4">CN</dt>
+                      <dd class="col-sm-8">{{ group.CN }}</dd>
+                      <dt class="col-sm-4">SID</dt>
+                      <dd class="col-sm-8">{{ group.SID }}</dd>
+                      <dt class="col-sm-4">Description</dt>
+                      <dd class="col-sm-8">{{ group.Description }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+
+
+            </div>
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">Memberships</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">MemberOf</dt>
+                      <dd class="col-sm-8">{{ group.MemberOfStr }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+</div>
+
+
+<div class="row m-1">
+        <div class="col-md-12">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Members</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                        <th width="10%"> SAMAccountName </th>
+                        <th width="20%"> SID</th>
+                        <th width="10%">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if group.Members %}
+                        {% for m in group.Members %}
+                        <tr>
+                          <td>{{ m.SamAccountName }}</td>
+                          <td>{{ m.SID }}</td>
+                          <td class="actions">
+                          <a href="#" class="btn btn-default btn-xs">
+                              <i class="fa fa-eye"></i> View
+                          </a>
+                      </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <!-- /.card -->
+          </div>
+    </div>
+{% endif %}
+{% endblock content %}
