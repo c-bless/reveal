@@ -1,4 +1,4 @@
-from ..core.model import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, NetIPAddress
+from ..core.model import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, NetIPAddress, GroupMember
 from ..core.db import db
 
 def import_host(filename):
@@ -137,6 +137,17 @@ def host2db(xml_element):
                         if "SID" == i.tag: group.SID = i.text
                     group.Host_id = host.id
                     db.session.add(group)
+                    db.session.commit()
+                    for i in c.getchildren():
+                        if "Members" == i.tag:
+                            for m in i.getchildren():
+                                member = GroupMember()
+                                if "Name" == m.tag: member.Name = m.text
+                                if "Caption" == m.tag: member.Caption = m.text
+                                if "AccountType" == m.tag: member.AccountType = m.text
+                                if "SID" == m.tag: member.Name = m.SID
+                                member.Group_id = group.id
+                                db.session.add(member)
         if "Shares" == e.tag:
             for c in e.getchildren():
                 if "Share" == c.tag:

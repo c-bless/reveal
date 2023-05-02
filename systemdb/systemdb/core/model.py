@@ -417,6 +417,7 @@ class Group(db.Model):
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
+    Members = db.relationship('GroupMember', backref='dc', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
 
     def __repr__(self):
@@ -424,6 +425,23 @@ class Group(db.Model):
 
     def __str__(self):
         return self.Name
+
+
+class GroupMember(db.Model):
+    __tablename__ = "GroupMember"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(10), unique=False, nullable=True)
+    Caption = db.Column(db.String(2048), unique=False, nullable=True)
+    Domain = db.Column(db.String(256), unique=False, nullable=True)
+    SID = db.Column(db.String(70), unique=False, nullable=True)
+    AccountType = db.Column(db.String(50), unique=False, nullable=True)
+    Group_id = db.Column(db.Integer, db.ForeignKey('Group.id'), nullable=False)
+
+    def __repr__(self):
+        return self.Caption
+
+    def __str__(self):
+        return self.Caption
 
 class Share(db.Model):
     __tablename__ = "Share"

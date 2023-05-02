@@ -74,6 +74,27 @@ $xmlWriter.WriteStartElement("DomainCollector")
         $xmlWriter.WriteEndElement() # GC
     $xmlWriter.WriteEndElement() # ADForest
 
+    $trust = Get-ADTrust -Filter *
+    $xmlWriter.WriteStartElement("ADTrust")
+        $xmlWriter.WriteElementString("Source", [string] $trust.Source);
+        $xmlWriter.WriteElementString("Target", [string] $trust.Target);
+        $xmlWriter.WriteElementString("Direction", [string] $trust.Direction);
+        $xmlWriter.WriteElementString("TrustType", [string] $trust.TrustType);
+        $xmlWriter.WriteElementString("UplevelOnly", [string] $trust.UplevelOnly);
+        $xmlWriter.WriteElementString("UsesAESKeys", [string] $trust.UsesAESKeys);
+        $xmlWriter.WriteElementString("UsesRC4Encryption", [string] $trust.UsesRC4Encryption);
+        $xmlWriter.WriteElementString("TGTDelegation", [string] $trust.TGTDelegation);
+        $xmlWriter.WriteElementString("SIDFilteringForestAware", [string] $trust.SIDFilteringForestAware);
+        $xmlWriter.WriteElementString("SIDFilteringQuarantined", [string] $trust.SIDFilteringQuarantined);
+        $xmlWriter.WriteElementString("SelectiveAuthentication", [string] $trust.SelectiveAuthentication);
+        $xmlWriter.WriteElementString("DisallowTransivity", [string] $trust.DisallowTransivity);
+        $xmlWriter.WriteElementString("DistinguishedName", [string] $trust.DistinguishedName);
+        $xmlWriter.WriteElementString("ForestTransitive", [string] $trust.ForestTransitive);
+        $xmlWriter.WriteElementString("IntraForest", [string] $trust.IntraForest);
+        $xmlWriter.WriteElementString("IsTreeParent", [string] $trust.IsTreeParent);
+        $xmlWriter.WriteElementString("IsTreeRoot", [string] $trust.IsTreeRoot);
+    $xmlWriter.WriteEndElement() # ADTrust
+
     $dc_list = Get-ADDomainController
     $xmlWriter.WriteStartElement("ADDomainControllerList")
         foreach ($dc in $dc_list) {

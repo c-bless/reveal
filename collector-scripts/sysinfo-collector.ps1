@@ -123,16 +123,9 @@ $xmlWriter.WriteStartElement("Host")
     foreach ($n in $netips ) {
         $xmlWriter.WriteStartElement("NetIPAddress")
         $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily);
-        if ($n.AddressFamily -eq"IPv6"){
-            $xmlWriter.WriteAttributeString("IP", [string] $n.IPv6Address);
-        }
-        if ($n.AddressFamily -eq "IPv4"){
-            $xmlWriter.WriteAttributeString("IP", [string] $n.IPv4Address);
-        }
+        $xmlWriter.WriteAttributeString("Type", [string] $n.Type);
+        $xmlWriter.WriteAttributeString("IP", [string] $n.IPAddress);
         $xmlWriter.WriteAttributeString("Prefix", [string] $n.PrefixLength);
-        $xmlWriter.WriteAttributeString("Interface", [string] $n.Interface);
-        $xmlWriter.WriteAttributeString("Dhcp", [string] $n.Dhcp);
-        $xmlWriter.WriteAttributeString("ConnectionState", [string] $n.ConnectionState);
         $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias);
 
         $xmlWriter.WriteEndElement() # NetIPAddress
@@ -154,6 +147,7 @@ $xmlWriter.WriteStartElement("Host")
         $xmlWriter.WriteElementString("StartMode",[string]$s.StartMode);
         $xmlWriter.WriteElementString("PathName", [string]$s.PathName);
         $xmlWriter.WriteElementString("Started",[string]$s.Started);
+        $xmlWriter.WriteElementString("StartName",[string]$s.StartName);
         $xmlWriter.WriteElementString("SystemName",[string]$s.SystemName);
         $xmlWriter.WriteElementString("DisplayName",[string]$s.DisplayName);
         $xmlWriter.WriteElementString("Running",[string]$s.Running);
@@ -209,9 +203,20 @@ $xmlWriter.WriteStartElement("Host")
             $xmlWriter.WriteElementString("Description",[string]$g.Description);
             $xmlWriter.WriteElementString("LocalAccount",[string]$g.LocalAccount);
             $xmlWriter.WriteElementString("SID",[string]$g.SID);
-
-            # Todo enumerate members  
-          
+            $xmlWriter.WriteStartElement("Members")            
+            $groupname = [string] $g.Name
+            $query="Associators of {Win32_Group.Domain='$hostname',Name='$groupname'} where Role=GroupComponent"
+            $members = get-wmiobject -query $query -ComputerName $hostname 
+            foreach ($m in $members){
+                $xmlWriter.WriteStartElement("Member")
+                $xmlWriter.WriteElementString("AccountType", [string] $m.AccountType);
+                $xmlWriter.WriteElementString("Domain", [string] $m.Domain);
+                $xmlWriter.WriteElementString("Name", [string] $m.Name);
+                $xmlWriter.WriteElementString("SID", [string] $m.SID);
+                $xmlWriter.WriteElementString("Caption", [string] $m.Caption);
+                $xmlWriter.WriteEndElement()
+            }
+            $xmlWriter.WriteEndElement() #Members
         $xmlWriter.WriteEndElement() # group
 
     }
