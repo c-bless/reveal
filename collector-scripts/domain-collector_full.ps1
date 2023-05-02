@@ -22,6 +22,8 @@ $date = Get-Date -Format "yyyyMMdd_HHmmss"
 import-module ActiveDirectory
 
 
+
+Write-Host "[*] Collecting Domain information."
 $domain = Get-ADDomain;
 
 $path = Get-Location
@@ -55,7 +57,7 @@ $xmlWriter.WriteStartElement("DomainCollector")
         $xmlWriter.WriteElementString("InfrastructureMaster", [string] $domain.InfrastructureMaster);
     $xmlWriter.WriteEndElement() # ADDomain
 
-    
+    Write-Host "[*] Collecting forest information." 
     $forest = Get-ADForest 
     $xmlWriter.WriteStartElement("ADForest")
         $xmlWriter.WriteElementString("DomainNamingMaster", [string] $forest.DomainNamingMaster);
@@ -74,6 +76,8 @@ $xmlWriter.WriteStartElement("DomainCollector")
         $xmlWriter.WriteEndElement() # GC
     $xmlWriter.WriteEndElement() # ADForest
 
+    
+    Write-Host "[*] Collecting AD trust information." 
     $trust = Get-ADTrust -Filter *
     $xmlWriter.WriteStartElement("ADTrust")
         $xmlWriter.WriteElementString("Source", [string] $trust.Source);
@@ -95,6 +99,8 @@ $xmlWriter.WriteStartElement("DomainCollector")
         $xmlWriter.WriteElementString("IsTreeRoot", [string] $trust.IsTreeRoot);
     $xmlWriter.WriteEndElement() # ADTrust
 
+    
+    Write-Host "[*] Collecting Domain Controller list." 
     $dc_list = Get-ADDomainController
     $xmlWriter.WriteStartElement("ADDomainControllerList")
         foreach ($dc in $dc_list) {
@@ -125,7 +131,8 @@ $xmlWriter.WriteStartElement("DomainCollector")
         }
     $xmlWriter.WriteEndElement() # DomainControllerList
 
-
+    
+    Write-Host "[*] Collecting information about AD computer." 
     $computer_list = Get-ADComputer -Filter * -Properties *
     $xmlWriter.WriteStartElement("ADComputerList")
         foreach ($c in $computer_list) {
@@ -157,6 +164,8 @@ $xmlWriter.WriteStartElement("DomainCollector")
         }
     $xmlWriter.WriteEndElement() # ComputerList
 
+    
+    Write-Host "[*] Collecting information about AD users." 
     $user_list = Get-ADUser -Filter * -Properties * 
     $xmlWriter.WriteStartElement("ADUserList")
         foreach ($u in $user_list) {
@@ -197,6 +206,7 @@ $xmlWriter.WriteStartElement("DomainCollector")
     $xmlWriter.WriteEndElement() # UserList
 
 
+    Write-Host "[*] Collecting information about AD groups." 
     $group_list = Get-ADGroup -Filter * -Properties * 
     $xmlWriter.WriteStartElement("ADGroupList")
         foreach ($g in $group_list) {
@@ -209,6 +219,7 @@ $xmlWriter.WriteStartElement("DomainCollector")
             $xmlWriter.WriteElementString("SID", [string] $g.SID);
             $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
             $xmlWriter.WriteStartElement("Members");
+            Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
             $members = Get-ADGroupMember -Identity $g.SamAccountName
             foreach ($m in $members) {
                 $xmlWriter.WriteStartElement("Member");
@@ -217,8 +228,7 @@ $xmlWriter.WriteStartElement("DomainCollector")
                 $xmlWriter.WriteAttributeString("name", [string] $m.Name)
                 $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
                 $xmlWriter.WriteEndElement(); # Member
-            
-            }
+            }            
             $xmlWriter.WriteEndElement(); # Members
             $xmlWriter.WriteEndElement(); # User         
             

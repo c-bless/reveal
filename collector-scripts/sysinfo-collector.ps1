@@ -41,6 +41,7 @@ $xmlWriter.WriteStartElement("Host")
     $xmlWriter.WriteElementString("Hostname", $hostname)
 
     # Get Systeminformation
+    Write-Host "[*] Collecting general computer infos."
     $compInfo = Get-ComputerInfo
 
     #######################################################################
@@ -63,6 +64,8 @@ $xmlWriter.WriteStartElement("Host")
     #######################################################################
     # Collecting information about installed hotfixes / patches
     #######################################################################
+    
+    Write-Host "[*] Collecting installed hotfixes"
     $hotfixes = Get-HotFix
     
     $xmlWriter.WriteStartElement("Hotfixes")
@@ -80,6 +83,7 @@ $xmlWriter.WriteStartElement("Host")
     # Collecting information about installed products / applications
     #######################################################################
    
+    Write-Host "[*] Collecting installed products"
     $products = Get-WmiObject  -class win32_product 
 
     $xmlWriter.WriteStartElement("Products")
@@ -100,6 +104,8 @@ $xmlWriter.WriteStartElement("Host")
     #######################################################################
     # Collecting information about network adapters
     #######################################################################
+    
+    Write-Host "[*] Collecting available network adapters"
     $netadapters = Get-NetAdapter
     
     $xmlWriter.WriteStartElement("Netadapters")
@@ -117,6 +123,7 @@ $xmlWriter.WriteStartElement("Host")
     #######################################################################
     # Collecting information about ip addresses
     #######################################################################
+    Write-Host "[*] Collecting IP addresses"
     $netips = Get-NetIPAddress
     
     $xmlWriter.WriteStartElement("NetIPAddresses")
@@ -136,6 +143,7 @@ $xmlWriter.WriteStartElement("Host")
     # Collecting information about services
     #######################################################################
    
+    Write-Host "[*] Collecting service information"
     $services = Get-WmiObject  -class win32_service
 
     $xmlWriter.WriteStartElement("Services")
@@ -167,6 +175,7 @@ $xmlWriter.WriteStartElement("Host")
     # Collecting information about local user accounts
     #######################################################################
    
+    Write-Host "[*] Collecting local user accounts"
     $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True" 
 
     $xmlWriter.WriteStartElement("Users")
@@ -193,6 +202,7 @@ $xmlWriter.WriteStartElement("Host")
     # Collecting information about local groups
     #######################################################################
    
+    Write-Host "[*] Collecting local groups"
     $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
 
     $xmlWriter.WriteStartElement("Groups")
@@ -203,8 +213,10 @@ $xmlWriter.WriteStartElement("Host")
             $xmlWriter.WriteElementString("Description",[string]$g.Description);
             $xmlWriter.WriteElementString("LocalAccount",[string]$g.LocalAccount);
             $xmlWriter.WriteElementString("SID",[string]$g.SID);
-            $xmlWriter.WriteStartElement("Members")            
+            $xmlWriter.WriteStartElement("Members") 
+            
             $groupname = [string] $g.Name
+            Write-Host "[*] - Enumerating members of group: $groupname"           
             $query="Associators of {Win32_Group.Domain='$hostname',Name='$groupname'} where Role=GroupComponent"
             $members = get-wmiobject -query $query -ComputerName $hostname 
             foreach ($m in $members){
@@ -229,7 +241,7 @@ $xmlWriter.WriteStartElement("Host")
    
     $shares = Get-WmiObject -class win32_share 
     # $shares = Get-CimInstance -ClassName Win32_Share
-
+    Write-Host "[*] Collecting information about shares"           
     $xmlWriter.WriteStartElement("Shares")
     foreach ($s in $shares ) {
         $xmlWriter.WriteStartElement("Share")
@@ -254,7 +266,7 @@ $xmlWriter.WriteStartElement("Host")
     }
     $xmlWriter.WriteEndElement() # shares
 
-    
+    Write-Host "[*] Checking autologon configuration"           
     $xmlWriter.WriteStartElement("Winlogon")
     if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultUserName") {
         $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultUserName -ErrorAction SilentlyContinue
