@@ -1,0 +1,91 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if host %} {{ host.Hostname}} {% endif %} \ {% if group %} {{ group.Name}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Local Group {% endblock menu_l2 %}
+
+{% block content %}
+{% if host %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">Name</dt>
+                      <dd class="col-sm-8">{{ group.Name }}</dd>
+                      <dt class="col-sm-4">Caption</dt>
+                      <dd class="col-sm-8">{{ group.Caption }}</dd>
+                      <dt class="col-sm-4">Description</dt>
+                      <dd class="col-sm-8">{{ group.Description }}</dd>
+                      <dt class="col-sm-4">SID System</dt>
+                      <dd class="col-sm-8">{{ group.SID }}</dd>
+                      <dt class="col-sm-4">LocalAccount</dt>
+                      <dd class="col-sm-8">{{ group.LocalAccount }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Members</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Domain</th>
+                      <th>Caption</th>
+                      <th>SID</th>
+                      <th>AccountType</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if group.Members %}
+                    {% for m in group.Members %}
+                    <tr>
+                      <td>{{ m.Domain }}</td>
+                      <td>{{ m.Caption}}</td>
+                      <td>{{ m.SID }}</td>
+                      <td>{{ m.AccountType }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No members found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+          </div>
+    </div>
+
+{% endif %}
+{% endblock content %}

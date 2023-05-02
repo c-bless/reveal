@@ -17,7 +17,7 @@
                     <h3 class="card-title">General Information</h3>
 
                     <div class="card-tools">
-                      <a href="#" class="btn btn-tool btn-sm">
+                      <a href="{{ url_for('hosts.export_host', id=host.id) }}" class="btn btn-tool btn-sm">
                         <i class="fas fa-download"></i>
                       </a>
                       <a href="#" class="btn btn-tool btn-sm">
@@ -163,7 +163,7 @@
                       <th>AccountType</th>
                       <th>Name</th>
                       <th>Disabled</th>
-                      <th>Actions</th>
+                      <th>Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -174,7 +174,7 @@
                       <td>{{ u.Name }}</td>
                       <td>{{ u.Disabled }}</td>
                       <td class="actions">
-                          <a href="#" class="btn btn-default btn-xs">
+                          <a href="{{ url_for('hosts.user_detail', id=u.id) }}" class="btn btn-default btn-xs">
                               <i class="fa fa-eye"></i> View
                           </a>
                       </td>
@@ -204,6 +204,7 @@
                   <thead>
                     <tr>
                       <th>Name</th>
+                      <th>Details</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -211,6 +212,11 @@
                     {% for g in host.Groups %}
                     <tr>
                       <td>{{ g.Name }}</td>
+                      <td class="actions">
+                          <a href="{{ url_for('hosts.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
+                              <i class="fa fa-eye"></i> View
+                          </a>
+                      </td>
                     </tr>
                     {% endfor %}
                   {% else %}
@@ -310,6 +316,49 @@
           </div>
     </div>
 
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Shares</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Pathname</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if host.Shares %}
+                    {% for s in host.Shares %}
+                    <tr>
+                      <td>{{ s.Name }}</td>
+                      <td>{{ s.PathName }}</td>
+                      <td class="actions">
+                          <a href="{{ url_for('hosts.share_detail', id=s.id) }}" class="btn btn-default btn-xs">
+                              <i class="fa fa-eye"></i> View
+                          </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No shares found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
+
 <div class="row m-1">
         <div class="col-md-12">
             <div class="card card-olive">
@@ -338,9 +387,11 @@
                           <td>{{ s.StartName }}</td>
                           <td>{{ s.PathName }}</td>
                           <td class="actions">
-                          <a href="#" class="btn btn-default btn-xs">
+                          <td class="actions">
+                          <a href="{{ url_for('hosts.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
                               <i class="fa fa-eye"></i> View
                           </a>
+                      </td>
                       </td>
                         </tr>
                         {% endfor %}

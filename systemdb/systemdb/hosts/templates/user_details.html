@@ -1,0 +1,62 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if host %} {{ host.Hostname}} {% endif %} \ {% if user %} {{ user.Name}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Local User {% endblock menu_l2 %}
+
+{% block content %}
+{% if user %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">Domain</dt>
+                      <dd class="col-sm-8">{{ user.Domain }}</dd>
+                      <dt class="col-sm-4">Name</dt>
+                      <dd class="col-sm-8">{{ user.Name }}</dd>
+                      <dt class="col-sm-4">Disabled</dt>
+                      <dd class="col-sm-8">{{ user.Disabled }}</dd>
+                      <dt class="col-sm-4">LocalAccount</dt>
+                      <dd class="col-sm-8">{{ user.LocalAccount }}</dd>
+                      <dt class="col-sm-4">AccountType</dt>
+                      <dd class="col-sm-8">{{ user.AccountType }}</dd>
+                      <dt class="col-sm-4">SID</dt>
+                      <dd class="col-sm-8">{{ user.SID }}</dd>
+                      <dt class="col-sm-4">Lockout</dt>
+                      <dd class="col-sm-8">{{ user.Lockout }}</dd>
+                      <dt class="col-sm-4">PasswordChanged</dt>
+                      <dd class="col-sm-8">{{ user.PasswordChanged }}</dd>
+                      <dt class="col-sm-4">PasswordRequired</dt>
+                      <dd class="col-sm-8">{{ user.PasswordRequired }}</dd>
+                      <dt class="col-sm-4">Description</dt>
+                      <dd class="col-sm-8">{{ user.Description }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+
+            </div>
+        </div>
+
+    </div>
+
+{% endif %}
+{% endblock content %}

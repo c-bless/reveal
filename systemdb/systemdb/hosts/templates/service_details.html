@@ -1,0 +1,98 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if host %} {{ host.Hostname}} {% endif %} \ {% if service %} {{ service.Name}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Service {% endblock menu_l2 %}
+
+{% block content %}
+{% if service %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">Caption</dt>
+                      <dd class="col-sm-8">{{ service.Caption }}</dd>
+                      <dt class="col-sm-4">Name</dt>
+                      <dd class="col-sm-8">{{ service.Name }}</dd>
+                      <dt class="col-sm-4">DisplayName</dt>
+                      <dd class="col-sm-8">{{ service.DisplayName }}</dd>
+                      <dt class="col-sm-4">PathName</dt>
+                      <dd class="col-sm-8">{{ service.PathName }}</dd>
+                      <dt class="col-sm-4">StartMode</dt>
+                      <dd class="col-sm-8">{{ service.StartMode }}</dd>
+                      <dt class="col-sm-4">Started</dt>
+                      <dd class="col-sm-8">{{ service.Started }}</dd>
+                      <dt class="col-sm-4">Running</dt>
+                      <dd class="col-sm-8">{{ service.Running }}</dd>
+                      <dt class="col-sm-4">AcceptStop</dt>
+                      <dd class="col-sm-8">{{ service.AcceptStop }}</dd>
+                      <dt class="col-sm-4">AcceptPause</dt>
+                      <dd class="col-sm-8">{{ service.AcceptPause }}</dd>
+                      <dt class="col-sm-4">ProcessId</dt>
+                      <dd class="col-sm-8">{{ service.ProcessId }}</dd>
+                      <dt class="col-sm-4">DelayedAutoStart</dt>
+                      <dd class="col-sm-8">{{ service.DelayedAutoStart }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Binary ACL</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ACL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if binaryPermissions %}
+                    {% for p in binaryPermissions %}
+                    <tr>
+                      <td>{{ p }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td>No binary found.</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+          </div>
+    </div>
+
+{% endif %}
+{% endblock content %}
