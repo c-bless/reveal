@@ -1,17 +1,17 @@
-from flask import render_template
+from flask import render_template, abort, Response, redirect, url_for
 
 from ..core.model import Host
-
 from . import report_bp
-from flask import make_response
 
-@report_bp.route('/report/templates', methods=['GET'])
+
+@report_bp.route('/reports/templates', methods=['GET'])
 def templates_list():
-    templates = Host.query.all()
+    #templates = Host.query.all()
+    #return render_template('host_list.html', hosts=hosts)
+    pass
+
+
+@report_bp.route('/reports/WinlogonPW', methods=['GET'])
+def winlogon_list():
+    hosts = Host.query.filter(Host.DefaultPassword != "").all()
     return render_template('host_list.html', hosts=hosts)
-
-@report_bp.route('/hosts/<int:id>', methods=['GET'])
-def host_detail(id):
-    host = Host.query.get_or_404(id)
-    return render_template('host_details.html', host=host)
-

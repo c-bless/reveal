@@ -48,6 +48,9 @@ def register_blueprints(app):
     from .ad import ad_bp
     app.register_blueprint(ad_bp)
 
+    from .report import  report_bp
+    app.register_blueprint(report_bp)
+
 
 def register_errorhandlers(app):
     """Register error handlers with the Flask application."""

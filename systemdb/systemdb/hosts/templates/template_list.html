@@ -1,0 +1,29 @@
+{% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% block title_table %} Available templates {% endblock title_table %}
+
+
+{% block datatable %}
+{{ super() }}
+<table class="table table-bordered table-striped mb-none" id="datatable-editable">
+    <thead>
+        <tr>
+            <th width="80%"> Template </th>
+            <th width="20%"> Actions </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in templates %}
+          <tr>
+            <td> {{ t }} </td>
+            <td>
+                <a href="{{ url_for('hosts.export', template=t) }}" class="btn btn-default btn-xs">
+                    <i class="glyphicon glyphicon-eye-open"></i> Export</a>
+            </td>
+          </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock datatable %}

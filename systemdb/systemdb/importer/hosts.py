@@ -138,14 +138,17 @@ def host2db(xml_element):
                     group.Host_id = host.id
                     db.session.add(group)
                     db.session.commit()
+                    db.session.refresh(group)
                     for i in c.getchildren():
                         if "Members" == i.tag:
                             for m in i.getchildren():
                                 member = GroupMember()
-                                if "Name" == m.tag: member.Name = m.text
-                                if "Caption" == m.tag: member.Caption = m.text
-                                if "AccountType" == m.tag: member.AccountType = m.text
-                                if "SID" == m.tag: member.Name = m.SID
+                                for a in m.getchildren():
+                                    if "Name" == a.tag: member.Name = a.text
+                                    if "Domain" == a.tag: member.Domain = a.text
+                                    if "Caption" == a.tag: member.Caption = a.text
+                                    if "AccountType" == a.tag: member.AccountType = a.text
+                                    if "SID" == a.tag: member.SID = a.text
                                 member.Group_id = group.id
                                 db.session.add(member)
         if "Shares" == e.tag:

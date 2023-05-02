@@ -209,15 +209,17 @@ $xmlWriter.WriteStartElement("DomainCollector")
             $xmlWriter.WriteElementString("SID", [string] $g.SID);
             $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
             $xmlWriter.WriteStartElement("Members");
-            $members = Get-ADGroupMember -Identity $g.SamAccountName
-            foreach ($m in $members) {
-                $xmlWriter.WriteStartElement("Member");
-                $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
-                $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
-                $xmlWriter.WriteAttributeString("name", [string] $m.Name)
-                $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
-                $xmlWriter.WriteEndElement(); # Member
-            
+            if ($g.SamAccountName == "Domain Admins" || $g.SamAccountName == "Enterprise Admins" ) {
+                $members = Get-ADGroupMember -Identity $g.SamAccountName
+                foreach ($m in $members) {
+                    $xmlWriter.WriteStartElement("Member");
+                    $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
+                    $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
+                    $xmlWriter.WriteAttributeString("name", [string] $m.Name)
+                    $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
+                    $xmlWriter.WriteEndElement(); # Member
+                
+                }
             }
             $xmlWriter.WriteEndElement(); # Members
             $xmlWriter.WriteEndElement(); # User         
