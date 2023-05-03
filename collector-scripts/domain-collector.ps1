@@ -19,7 +19,7 @@
 
 #>
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
-import-module ActiveDirectory
+import-module ActiveDirectory -ErrorAction SilentlyContinue
 
 
 
