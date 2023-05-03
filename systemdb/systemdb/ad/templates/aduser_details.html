@@ -1,0 +1,115 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if user %} {{ user.SamAccountName}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Domain Group {% endblock menu_l2 %}
+
+{% block content %}
+{% if domain %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">SamAccountName</dt>
+                      <dd class="col-sm-8">{{ user.SamAccountName }}</dd>
+                      <dt class="col-sm-4">SID</dt>
+                      <dd class="col-sm-8">{{ user.SID }}</dd>
+                      <dt class="col-sm-4">Description</dt>
+                      <dd class="col-sm-8">{{ user.Description }}</dd>
+                      <dt class="col-sm-4">Name</dt>
+                      <dd class="col-sm-8">{{ user.Name }}</dd>
+                      <dt class="col-sm-4">GivenName</dt>
+                      <dd class="col-sm-8">{{ user.GivenName }}</dd>
+                      <dt class="col-sm-4">Surname</dt>
+                      <dd class="col-sm-8">{{ user.Surname }}</dd>
+                      <dt class="col-sm-4">SIDHistory</dt>
+                      <dd class="col-sm-8">{{ user.SIDHistory }}</dd>
+                      <dt class="col-sm-4">Enabled</dt>
+                      <dd class="col-sm-8">{{ user.Enabled }}</dd>
+                      <dt class="col-sm-4">BadLogonCount</dt>
+                      <dd class="col-sm-8">{{ user.BadLogonCount }}</dd>
+                      <dt class="col-sm-4">BadPwdCount</dt>
+                      <dd class="col-sm-8">{{ user.BadPwdCount }}</dd>
+                      <dt class="col-sm-4">Created</dt>
+                      <dd class="col-sm-8">{{ user.Created }}</dd>
+                      <dt class="col-sm-4">LastBadPasswordAttempt</dt>
+                      <dd class="col-sm-8">{{ user.LastBadPasswordAttempt }}</dd>
+                      <dt class="col-sm-4">Last Logon</dt>
+                      <dd class="col-sm-8">{{ user.lastLogon }}</dd>
+                      <dt class="col-sm-4">LockedOut</dt>
+                      <dd class="col-sm-8">{{ user.LockedOut }}</dd>
+                      <dt class="col-sm-4">PasswordExpired</dt>
+                      <dd class="col-sm-8">{{ user.PasswordExpired }}</dd>
+                      <dt class="col-sm-4">PasswordLastSet</dt>
+                      <dd class="col-sm-8">{{ user.PasswordLastSet }}</dd>
+                      <dt class="col-sm-4">PasswordNeverExpires</dt>
+                      <dd class="col-sm-8">{{ user.PasswordNeverExpires }}</dd>
+                      <dt class="col-sm-4">PasswordNotRequired</dt>
+                      <dd class="col-sm-8">{{ user.PasswordNotRequired }}</dd>
+                      <dt class="col-sm-4">PasswordExpired</dt>
+                      <dd class="col-sm-8">{{ user.PasswordExpired }}</dd>
+                      <dt class="col-sm-4">pwdLastSet</dt>
+                      <dd class="col-sm-8">{{ user.pwdLastSet }}</dd>
+                      <dt class="col-sm-4">Modified</dt>
+                      <dd class="col-sm-8">{{ user.Modified }}</dd>
+                    </dl>
+                  </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Memberships</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Group</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if user.Memberships %}
+                    {% for m in user.Memberships %}
+                    <tr>
+                      <td>{{ m.Group }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No members found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+          </div>
+    </div>
+
+{% endif %}
+{% endblock content %}

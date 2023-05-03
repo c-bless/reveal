@@ -1,4 +1,4 @@
-from ..core.model import ADDomain, ADUser, ADUserMemberGroup, ADGroup, ADGroupMember, ADDomainController, ADForest, ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole, ADSPN
+from ..core.model import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest, ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole, ADSPN
 from ..core.db import db
 
 def import_domain(filename):
@@ -96,6 +96,7 @@ def forest2db(adforest):
     return forest
 
 def dc2db(addc):
+
     dc = ADDomainController()
     for e in addc.getchildren():
         if "Name" == e.tag: dc.Name = e.text
@@ -203,7 +204,7 @@ def user2db(xml):
         if "MemberOf" == e.tag:
             for m in e.getchildren():
                 if "Group" == m.tag:
-                    group = ADUserMemberGroup()
+                    group = ADUserMembership()
                     group.Group = m.text
                     group.User_id = user.id
                     db.session.add(group)

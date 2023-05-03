@@ -215,7 +215,7 @@ class ADUser(db.Model):
     pwdLastSet = db.Column(db.String(50), unique=False, nullable=True)
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
-    Members = db.relationship('ADUserMemberGroup', backref='dc', lazy='dynamic')
+    Memberships = db.relationship('ADUserMembership', backref='dc', lazy='dynamic')
 
     def __repr__(self):
         return self.SAMAccountName
@@ -224,8 +224,8 @@ class ADUser(db.Model):
         return self.SAMAccountName
 
 
-class ADUserMemberGroup(db.Model):
-    __tablename__ = "ADUserMemberGroup"
+class ADUserMembership(db.Model):
+    __tablename__ = "ADUserMembership"
     id = db.Column(db.Integer, primary_key=True)
     Group = db.Column(db.String(2048), unique=False, nullable=False)
     User_id = db.Column(db.Integer, db.ForeignKey('ADUser.id'), nullable=False)

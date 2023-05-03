@@ -1,11 +1,12 @@
+
 {% extends "layout/base_layout.html" %}
 {% import "_tablehelper.html" as helper %}
 
-{% set title = "Domain {% if domain %} {{ domain.NetBIOSName}} {% endif %} " %}
+{% set title = "{% if domain %} {{ domain.Name}} {% endif %} " %}
 
 {% block page_title %}  {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
-{% block menu_l2 %} Domain Detail {% endblock menu_l2 %}
+{% block menu_l2 %} Domain {% endblock menu_l2 %}
 
 {% block content %}
 {% if domain %}
@@ -25,42 +26,82 @@
                       </a>
                     </div>
                   </div>
-
                   <!-- /.card-header -->
                   <div class="card-body">
                     <dl class="row">
                       <dt class="col-sm-4">Name</dt>
                       <dd class="col-sm-8">{{ domain.Name }}</dd>
-                      <dt class="col-sm-4">NetBIOSName</dt>
-                      <dd class="col-sm-8">{{ domain.NetBIOSName }}</dd>
-                      <dt class="col-sm-4">DNSRoot</dt>
-                      <dd class="col-sm-8">{{ domain.DNSRoot }}</dd>
                       <dt class="col-sm-4">SID</dt>
                       <dd class="col-sm-8">{{ domain.DomainSID }}</dd>
+                      <dt class="col-sm-4">NetBIOSName</dt>
+                      <dd class="col-sm-8">{{ domain.NetBIOSName }}</dd>
+                      <dt class="col-sm-4">DistinguishedName</dt>
+                      <dd class="col-sm-8">{{ domain.DistinguishedName }}</dd>
+                      <dt class="col-sm-4">DNSRoot</dt>
+                      <dd class="col-sm-8">{{ domain.DNSRoot }}</dd>
+                      <dt class="col-sm-4">ParentDomain</dt>
+                      <dd class="col-sm-8">{{ domain.ParentDomain }}</dd>
+                      <dt class="col-sm-4">Forest</dt>
+                      <dd class="col-sm-8">{{ domain.Forest }}</dd>
                       <dt class="col-sm-4">RIDMaster</dt>
                       <dd class="col-sm-8">{{ domain.RIDMaster }}</dd>
                       <dt class="col-sm-4">PDCEmulator</dt>
                       <dd class="col-sm-8">{{ domain.PDCEmulator }}</dd>
-                      <dt class="col-sm-4">Parent Domain</dt>
-                      <dd class="col-sm-8">{{ domain.ParentDomain }}</dd>
-                      <dt class="col-sm-4">Forest</dt>
-                      <dd class="col-sm-8">{{ domain.Forest }}</dd>
-                      <dt class="col-sm-4">Users Container</dt>
-                      <dd class="col-sm-8">{{ domain.UsersContainer }}</dd>
-                      <dt class="col-sm-4">Systems Container</dt>
-                      <dd class="col-sm-8">{{ domain.SystemsContainer }}</dd>
-                      <dt class="col-sm-4">Computer Container</dt>
-                      <dd class="col-sm-8">{{ domain.ComputerContainer }}</dd>
-                      <dt class="col-sm-4">DistinguishedName</dt>
-                      <dd class="col-sm-8">{{ domain.DistinguishedName }}</dd>
-                      <dt class="col-sm-4">Infrastructure Master</dt>
+                      <dt class="col-sm-4">InfrastructureMaster</dt>
                       <dd class="col-sm-8">{{ domain.InfrastructureMaster }}</dd>
+                      <dt class="col-sm-4">UsersContainer</dt>
+                      <dd class="col-sm-8">{{ domain.UsersContainer }}</dd>
+                      <dt class="col-sm-4">SystemContainer</dt>
+                      <dd class="col-sm-8">{{ domain.SystemContainer }}</dd>
+                      <dt class="col-sm-4">ComputerContainer</dt>
+                      <dd class="col-sm-8">{{ domain.ComputerContainer }}</dd>
                     </dl>
                   </div>
                   <!-- /.card-body -->
 
             </div>
         </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Domain Controller</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Hostname</th>
+                      <th>IPv4Address</th>
+                      <th>IsGlobalCatalog</th>
+                      <th>IsReadOnly</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if dc_list %}
+                    {% for dc in dc_list %}
+                    <tr>
+                      <td>{{ dc.Hostname }}</td>
+                      <td>{{ dc.IPv4Address}}</td>
+                      <td>{{ dc.IsGlobalCatalog }}</td>
+                      <td>{{ dc.IsReadOnly }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No DCs found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+          </div>
     </div>
+
 {% endif %}
 {% endblock content %}

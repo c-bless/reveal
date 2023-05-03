@@ -72,7 +72,7 @@ def generate_hosts_docx(template, hosts=[]):
     return f
 
 
-def generate_host_docx(template, host=None):
+def generate_single_host_docx(template, host=None):
     doc = DocxTemplate(template)
     context = {'host': host}
     doc.render(context)
@@ -105,10 +105,10 @@ def export_host(id):
     if template not in os.listdir(template_detail_dir):
         abort(403, "Unknown template.")
 
-    template_file = "{0}{1}".format(template_dir, template)
+    template_file = "{0}{1}".format(template_detail_dir, template)
 
     if template_file[-5:] == ".docx":
-        output = generate_host_docx(template_file, host=host)
+        output = generate_single_host_docx(template_file, host=host)
         return Response(output, mimetype="text/docx",
                         headers={"Content-disposition": "attachment; filename=host-{0}.docx".format(host.Hostname)})
 

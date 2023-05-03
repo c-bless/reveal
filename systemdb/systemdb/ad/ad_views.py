@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.model import ADDomain, ADForest, ADTrust, ADUser, ADGroup, ADComputer
+from ..core.model import ADDomain, ADForest, ADTrust, ADUser, ADGroup, ADComputer, ADDomainController
 
 from . import ad_bp
 from flask import make_response
@@ -13,7 +13,8 @@ def domain_list():
 @ad_bp.route('/ad/domain/<int:id>', methods=['GET'])
 def domain_detail(id):
     domain = ADDomain.query.get_or_404(id)
-    return render_template('addomain_details.html', domain=domain)
+    dc_list = ADDomainController.query.filter(ADDomainController.Domain == domain.DNSRoot).all()
+    return render_template('addomain_details.html', domain=domain, dc_list=dc_list)
 
 
 @ad_bp.route('/ad/forests', methods=['GET'])
@@ -32,6 +33,12 @@ def trust_list():
 def user_list():
     users = ADUser.query.all()
     return render_template('aduser_list.html', users=users)
+
+
+@ad_bp.route('/ad/user/<int:id>', methods=['GET'])
+def user_detail(id):
+    user = ADUser.query.get_or_404(id)
+    return render_template('aduser_details.html', user=user)
 
 
 
