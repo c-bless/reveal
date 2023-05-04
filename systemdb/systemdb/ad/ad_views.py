@@ -22,6 +22,11 @@ def forest_list():
     forests = ADForest.query.all()
     return render_template('adforest_list.html', forests=forests)
 
+@ad_bp.route('/ad/dclist', methods=['GET'])
+def dc_list():
+    dc_list = ADDomainController.query.all()
+    return render_template('addc_list.html', dc_list=dc_list)
+
 
 @ad_bp.route('/ad/trusts', methods=['GET'])
 def trust_list():
