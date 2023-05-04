@@ -23,7 +23,7 @@ def forest_list():
     return render_template('adforest_list.html', forests=forests)
 
 
-@ad_bp.route('/ad/forests', methods=['GET'])
+@ad_bp.route('/ad/trusts', methods=['GET'])
 def trust_list():
     trusts = ADTrust.query.all()
     return render_template('adtrust_list.html', trusts=trusts)

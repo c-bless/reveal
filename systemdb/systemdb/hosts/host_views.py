@@ -43,7 +43,7 @@ def user_detail(id):
 def service_detail(id):
     service = Service.query.get_or_404(id)
     host = Host.query.get_or_404(service.Host_id)
-    permissions = service.BinaryPermissions.split("\n")
+    permissions = service.BinaryPermissions.split("\n")if service.BinaryPermissions is not None else ""
     return render_template("service_details.html", service=service, host=host, binaryPermissions=permissions)
 
 
@@ -51,8 +51,8 @@ def service_detail(id):
 def share_detail(id):
     share = Share.query.get_or_404(id)
     host = Host.query.get_or_404(share.Host_id)
-    ntfs_permissions = share.NTFSPermission.split("\n")
-    share_permissions = share.SharePermission.split("\n")
+    ntfs_permissions = share.NTFSPermission.split("\n") if share.NTFSPermission is not None else ""
+    share_permissions = share.SharePermission.split("\n") if share.SharePermission is not None else ""
     return render_template("share_details.html", share=share, host=host, ntfs_permissions=ntfs_permissions, share_permissions=share_permissions)
 
 @host_bp.route('/hosts/export/templates', methods=['GET'])

@@ -107,6 +107,7 @@ class ADDCServerRole(db.Model):
     def __str__(self):
         return self.Role
 
+
 class ADOperationMasterRole(db.Model):
     __tablename__ = "ADOperationMasterRole"
     id = db.Column(db.Integer, primary_key=True)
@@ -174,7 +175,6 @@ class ADComputer(db.Model):
         return self.SamAccountName
 
 
-
 class ADSPN(db.Model):
     __tablename__ = "ADSPN"
     id = db.Column(db.Integer, primary_key=True)
@@ -186,7 +186,6 @@ class ADSPN(db.Model):
 
     def __str__(self):
         return self.Name
-
 
 
 class ADUser(db.Model):
