@@ -252,7 +252,7 @@ $xmlWriter.WriteStartElement("Host")
         ## Get ACLs (NTFS)
         $path = [string] $s.Path
         try {
-            $acl = get-acl -Path $path
+            $acl = get-acl -Path $path -ErrorAction SilentlyContinue
             $xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
         } catch {}
 
