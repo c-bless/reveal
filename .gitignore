@@ -66,3 +66,4 @@ target/
 *.db
 *.sqlite
 
+/systemdb/systemdb.sqlite-journal

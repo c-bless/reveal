@@ -1,0 +1,122 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if domain %} {{ domain.Name}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Forest {% endblock menu_l2 %}
+
+{% block content %}
+{% if forest %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">DomainNamingMaster</dt>
+                      <dd class="col-sm-8">{{ forest.DomainNamingMaster }}</dd>
+                      <dt class="col-sm-4">Name</dt>
+                      <dd class="col-sm-8">{{ forest.Name }}</dd>
+                      <dt class="col-sm-4">RootDomain</dt>
+                      <dd class="col-sm-8">{{ forest.RootDomain }}</dd>
+                      <dt class="col-sm-4">SchemaMaster</dt>
+                      <dd class="col-sm-8">{{ forest.SchemaMaster }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Global Catalogs</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if gc_list %}
+                    {% for gc in gc_list %}
+                    <tr>
+                      <td>{{ gc.GlobalCatalog }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No global catalogs found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+          </div>
+    </div>
+
+
+
+<div class="row m-1">
+  <div class="col-md-6">
+      <div class="card card-olive">
+        <div class="card-header">
+          <h3 class="card-title">Sites</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% if forest.Sites %}
+              {% for s in forest.Sites %}
+              <tr>
+                <td>{{ s.Site }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td>No sites found.</td>
+              </tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+
+      <!-- /.card -->
+    </div>
+</div>
+
+
+{% endif %}
+{% endblock content %}

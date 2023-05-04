@@ -128,14 +128,14 @@ class ADDomainController(db.Model):
     Hostname = db.Column(db.String(255), unique=False, nullable=False)
     OperatingSystem = db.Column(db.String(1024), unique=True)
     IPv4Address = db.Column(db.String(16), unique=False, nullable=True)
-    IPv6Address = db.Column(db.String(128), unique=True)
-    Enabled = db.Column(db.String(10), unique=True)
-    Domain = db.Column(db.String(1024), unique=True)
-    Forest = db.Column(db.String(1024), unique=True)
-    IsGlobalCatalog = db.Column(db.String(10), unique=True)
-    IsReadOnly = db.Column(db.String(10), unique=True)
-    LdapPort = db.Column(db.String(10), unique=True)
-    SslPort = db.Column(db.String(10), unique=True)
+    IPv6Address = db.Column(db.String(128), unique=False)
+    Enabled = db.Column(db.String(10), unique=False)
+    Domain = db.Column(db.String(1024), unique=False)
+    Forest = db.Column(db.String(1024), unique=False)
+    IsGlobalCatalog = db.Column(db.String(10), unique=False)
+    IsReadOnly = db.Column(db.String(10), unique=False)
+    LdapPort = db.Column(db.String(10), unique=False)
+    SslPort = db.Column(db.String(10), unique=False)
     ServerRoles = db.relationship('ADDCServerRole', backref='dc', lazy='dynamic')
     OperationMasterRoleRoles = db.relationship('ADOperationMasterRole', backref='dc', lazy='dynamic')
 
@@ -167,6 +167,7 @@ class ADComputer(db.Model):
     OperatingSystemVersion = db.Column(db.String(100), unique=False)
     Description = db.Column(db.String(2048), unique=False)
     SPNs = db.relationship('ADSPN', backref='dc', lazy='dynamic')
+    Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
         return self.SamAccountName

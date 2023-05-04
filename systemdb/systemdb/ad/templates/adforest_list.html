@@ -13,7 +13,9 @@
                         <th width="25%"> Name </th>
                         <th width="25%"> DomainNamingMaster</th>
                         <th width="25%"> RootDomain </th>
-                        <th width="25%"> SchemaMaster </th>
+                        <th width="20%"> SchemaMaster </th>
+                        <th width="5%"> Details</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -24,6 +26,11 @@
                             <td> {{ f.DomainNamingMaster }} </td>
                             <td> {{ f.RootDomain }} </td>
                             <td> {{ f.SchemaMaster }} </td>
+                            <td class="actions">
+                                <a href="{{url_for('ad.forest_detail',id=f.id)}}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+                            </td>
                           </tr>
                         {% endfor %}
                     {% else %}

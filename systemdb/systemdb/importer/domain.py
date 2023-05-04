@@ -15,11 +15,11 @@ def import_domain(filename):
         if c.tag == "ADDomainControllerList":
             for dc in c.getchildren():
                 if dc.tag == "ADDomainController":
-                    dc2db(dc)
+                    dc2db(dc, domain)
         if c.tag == "ADComputerList":
             for comp in c.getchildren():
                 if comp.tag == "ADComputer":
-                    computer2db(comp)
+                    computer2db(comp, domain)
         if c.tag == "ADGroupList":
             for group in c.getchildren():
                 if group.tag == "ADGroup":
@@ -95,7 +95,7 @@ def forest2db(adforest):
     db.session.commit()
     return forest
 
-def dc2db(addc):
+def dc2db(addc, domain):
 
     dc = ADDomainController()
     for e in addc.getchildren():
@@ -133,7 +133,7 @@ def dc2db(addc):
     db.session.commit()
 
 
-def computer2db(computer):
+def computer2db(computer, domain):
     c = ADComputer()
     for e in computer.getchildren():
         if "DistinguishedName" == e.tag: c.DistinguishedName = e.text
@@ -154,6 +154,7 @@ def computer2db(computer):
         if "OperatingSystem" == e.tag: c.OperatingSystem = e.text
         if "OperatingSystemVersion" == e.tag: c.OperatingSystemVersion = e.text
         if "Description" == e.tag: c.Description = e.text
+    c.Domain_id = domain.id
     db.session.add(c)
     db.session.commit()
     db.session.refresh(c)
