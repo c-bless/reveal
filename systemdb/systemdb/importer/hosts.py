@@ -4,10 +4,10 @@ from ..core.db import db
 def import_host(filename):
     from lxml import etree
 
-    with open(filename, 'r') as f:
+    with open(filename, 'rb') as f:
         xml = f.read()
 
-    root = etree.fromstring(xml)
+    root = etree.XML(xml)
     if root.tag == "Host":
         host = host2db(root)
 

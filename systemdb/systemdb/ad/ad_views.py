@@ -59,7 +59,6 @@ def user_detail(id):
     return render_template('aduser_details.html', user=user)
 
 
-
 @ad_bp.route('/ad/groups', methods=['GET'])
 def groups_list():
     groups = ADGroup.query.all()
