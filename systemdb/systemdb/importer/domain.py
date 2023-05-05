@@ -1,14 +1,10 @@
 from ..core.model import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest, ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole, ADSPN
 from ..core.db import db
 
-def import_domain(filename):
-    from lxml import etree
 
-    with open(filename, 'rb') as f:
-        xml = f.read()
-
-    root = etree.XML(xml)
-
+def import_domain_collector(root):
+    if root.tag != "DomainCollector":
+        return
     for c in root.getchildren():
         if c.tag == "ADDomain": domain = domain2db(c)
         if c.tag == "ADForest": forest = forest2db(c)
@@ -28,8 +24,6 @@ def import_domain(filename):
             for user in c.getchildren():
                 if user.tag == "ADUser":
                     user2db(user)
-        #forest_element = c.getElementsByTagName("forest")
-        #forest = forest2db(forest_element=forest_element)
 
 
 def domain2db(addomain):
@@ -95,8 +89,8 @@ def forest2db(adforest):
     db.session.commit()
     return forest
 
-def dc2db(addc, domain):
 
+def dc2db(addc, domain):
     dc = ADDomainController()
     for e in addc.getchildren():
         if "Name" == e.tag: dc.Name = e.text
@@ -170,7 +164,6 @@ def computer2db(computer, domain):
     db.session.commit()
 
 
-
 def user2db(xml):
     user = ADUser()
     for e in xml.getchildren():
@@ -210,7 +203,6 @@ def user2db(xml):
                     group.User_id = user.id
                     db.session.add(group)
     db.session.commit()
-
 
 
 def group2db(xml):

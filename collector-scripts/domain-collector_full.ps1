@@ -41,6 +41,7 @@ try{
 
 
         $xmlWriter.WriteStartElement("DomainCollector")
+            $xmlWriter.WriteAttributeString("version", "0.1")
             $xmlWriter.WriteStartElement("ADDomain")
                 $xmlWriter.WriteElementString("Name", [string] $domain.Name);
                 $xmlWriter.WriteElementString("NetBIOSName", [string] $domain.NetBIOSName);

@@ -126,7 +126,7 @@ class ADDomainController(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(255), unique=False, nullable=True)
     Hostname = db.Column(db.String(255), unique=False, nullable=False)
-    OperatingSystem = db.Column(db.String(1024), unique=True)
+    OperatingSystem = db.Column(db.String(1024), unique=False)
     IPv4Address = db.Column(db.String(16), unique=False, nullable=True)
     IPv6Address = db.Column(db.String(128), unique=False)
     Enabled = db.Column(db.String(10), unique=False)

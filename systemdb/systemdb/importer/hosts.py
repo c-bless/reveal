@@ -1,13 +1,13 @@
 from ..core.model import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, NetIPAddress, GroupMember
 from ..core.db import db
 
-def import_host(filename):
-    from lxml import etree
+def import_sysinfo_collector(root):
+    if root.tag == "SystemInfoCollector":
+        for h in root.getchildren():
+            host = host2db(h)
 
-    with open(filename, 'rb') as f:
-        xml = f.read()
 
-    root = etree.XML(xml)
+def import_host(root):
     if root.tag == "Host":
         host = host2db(root)
 
