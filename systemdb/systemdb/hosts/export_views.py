@@ -2,7 +2,7 @@ from flask import render_template, abort, Response, redirect, url_for
 
 from . import host_bp
 
-from ..core.model import Host
+from ..core.sysinfo_models import Host
 
 import os
 from .export_func import template_detail_dir, template_dir

@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.model import ADDomain, ADForest, ADTrust, ADUser, ADGroup, ADComputer, ADDomainController, ADForestGlobalCatalog, ADForestSite
+from ..core.ad_models import ADForest, ADForestGlobalCatalog, ADForestSite
 
 from . import ad_bp
 from flask import make_response

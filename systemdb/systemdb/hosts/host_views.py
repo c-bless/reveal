@@ -2,7 +2,7 @@ from flask import render_template
 
 from . import host_bp
 
-from ..core.model import Host, Group, User, Service, Product, Share
+from ..core.sysinfo_models import Host, Group, User, Service, Share
 
 @host_bp.route('/hosts/', methods=['GET'])
 def host_list():

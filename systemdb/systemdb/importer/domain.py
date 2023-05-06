@@ -1,6 +1,6 @@
-from ..core.model import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest
-from ..core.model import ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole
-from ..core.model import ADSPN, ADPasswordPolicy
+from ..core.ad_models import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest
+from ..core.ad_models import ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole
+from ..core.ad_models import ADSPN, ADPasswordPolicy
 from ..core.db import db
 
 

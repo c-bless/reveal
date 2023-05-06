@@ -1,6 +1,6 @@
 from flask import render_template, abort, Response, redirect, url_for
 
-from ..core.model import Host
+from ..core.sysinfo_models import Host
 from . import report_bp
 
 

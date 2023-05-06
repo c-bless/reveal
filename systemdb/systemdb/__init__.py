@@ -3,7 +3,6 @@ from flask_bootstrap import Bootstrap
 from flask_babel import Babel
 
 from .core.db import db
-from .core.model import *
 
 import os
 

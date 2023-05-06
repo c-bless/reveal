@@ -20,7 +20,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="v0.1"
+$version="0.1"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 $hostname = $env:COMPUTERNAME

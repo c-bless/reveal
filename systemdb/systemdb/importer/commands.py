@@ -16,7 +16,13 @@ def import_host_command(filename):
         xml = f.read()
     root = etree.XML(xml)
     if etree.iselement(root):
-        import_host(root=root)
+        if root.tag == "SystemInfoCollector":
+            print("[*] Importing SystemInfoCollector output")
+            import_sysinfo_collector(root=root)
+        elif root.tag == "Host":
+            # initial version of SystemCollector
+            print("[*] Importing SystemInfoCollector output")
+            import_host(root=root)
 
 
 @import_cli.command('domain')
