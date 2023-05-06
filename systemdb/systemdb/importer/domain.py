@@ -1,4 +1,6 @@
-from ..core.model import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest, ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole, ADSPN
+from ..core.model import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest
+from ..core.model import ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole
+from ..core.model import ADSPN, ADPasswordPolicy
 from ..core.db import db
 
 
@@ -11,19 +13,25 @@ def import_domain_collector(root):
         if c.tag == "ADDomainControllerList":
             for dc in c.getchildren():
                 if dc.tag == "ADDomainController":
-                    dc2db(dc, domain)
+                    dc2db(xml=dc, domain=domain, forest=forest)
         if c.tag == "ADComputerList":
             for comp in c.getchildren():
                 if comp.tag == "ADComputer":
-                    computer2db(comp, domain)
+                    computer2db(xml=comp, domain=domain)
         if c.tag == "ADGroupList":
             for group in c.getchildren():
                 if group.tag == "ADGroup":
-                    group2db(group)
+                    group2db(xml=group, domain=domain)
         if c.tag == "ADUserList":
             for user in c.getchildren():
                 if user.tag == "ADUser":
-                    user2db(user)
+                    user2db(xml=user, domain=domain)
+        if c.tag == "ADDefaultDomainPasswordPolicy":
+            passwordPolicy2db(xml=c, domain=domain)
+        if c.tag == "ADFineGrainedPasswordPolicies":
+            for policy in c.getchildren():
+                if policy.tag == "ADFineGrainedPasswordPolicy":
+                    passwordPolicy2db(xml=policy, domain=domain, type="ADFineGrainedPasswordPolicy")
 
 
 def domain2db(addomain):
@@ -48,6 +56,7 @@ def domain2db(addomain):
     db.session.commit()
     db.session.refresh(dom)
     return dom
+
 
 def forest2db(adforest):
     #<forest>
@@ -90,9 +99,35 @@ def forest2db(adforest):
     return forest
 
 
-def dc2db(addc, domain):
+def passwordPolicy2db(xml, domain, type="ADDefaultDomainPasswordPolicy"):
+    policy = ADPasswordPolicy()
+    policy.Domain_id = domain.id
+    policy.Type = type
+    for e in xml.getchildren():
+        if "ComplexityEnabled" == e.tag: policy.ComplexityEnabled = e.text
+        if "DistinguishedName" == e.tag: policy.DistinguishedName = e.text
+        if "LockoutDuration" == e.tag: policy.LockoutDuration = e.text
+        if "LockoutObservationWindow" == e.tag: policy.LockoutObservationWindow = e.text
+        if "LockoutThreshold" == e.tag: policy.LockoutThreshold = e.text
+        if "MaxPasswordAge" == e.tag: policy.MaxPasswordAge = e.text
+        if "MinPasswordAge" == e.tag: policy.MinPasswordAge = e.text
+        if "MinPasswordLength" == e.tag: policy.MinPasswordLength = e.text
+        if "PasswordHistoryCount" == e.tag: policy.PasswordHistoryCount = e.text
+        if "ReversibleEncryptionEnabled" == e.tag: policy.ReversibleEncryptionEnabled = e.text
+        if "Name" == e.tag:
+            if type == "ADDefaultDomainPasswordPolicy":
+                policy.Name = type
+            else:
+                policy.Name = e.text
+    db.session.add(policy)
+    db.session.commit()
+
+
+def dc2db(xml, domain, forest):
     dc = ADDomainController()
-    for e in addc.getchildren():
+    dc.Domain_id = domain.id
+    dc.Forest_id = forest.id
+    for e in xml.getchildren():
         if "Name" == e.tag: dc.Name = e.text
         if "Hostname" == e.tag: dc.Hostname = e.text
         if "OperatingSystem" == e.tag: dc.OperatingSystem = e.text
@@ -108,7 +143,7 @@ def dc2db(addc, domain):
     db.session.add(dc)
     db.session.commit()
     db.session.refresh(dc)
-    for e in addc.getchildren():
+    for e in xml.getchildren():
         if "ServerRoles" == e.tag:
             for s in e.getchildren():
                 if "Role" == s.tag:
@@ -127,9 +162,10 @@ def dc2db(addc, domain):
     db.session.commit()
 
 
-def computer2db(computer, domain):
+def computer2db(xml, domain):
     c = ADComputer()
-    for e in computer.getchildren():
+    c.Domain_id = domain.id
+    for e in xml.getchildren():
         if "DistinguishedName" == e.tag: c.DistinguishedName = e.text
         if "DNSHostName" == e.tag: c.DNSHostName = e.text
         if "Enabled" == e.tag: c.Enabled = e.text
@@ -152,7 +188,7 @@ def computer2db(computer, domain):
     db.session.add(c)
     db.session.commit()
     db.session.refresh(c)
-    for e in computer.getchildren():
+    for e in xml.getchildren():
         if "servicePrincipalNames" == e.tag:
             for s in e.getchildren():
                 if "SPN" == s.tag:
@@ -164,8 +200,9 @@ def computer2db(computer, domain):
     db.session.commit()
 
 
-def user2db(xml):
+def user2db(xml, domain):
     user = ADUser()
+    user.Domain_id = domain.id
     for e in xml.getchildren():
         if "SAMAccountName" == e.tag: user.SAMAccountName = e.text
         if "DistinguishedName" == e.tag: user.DistinguishedName = e.text
@@ -205,8 +242,9 @@ def user2db(xml):
     db.session.commit()
 
 
-def group2db(xml):
+def group2db(xml, domain):
     group = ADGroup()
+    group.Domain_id = domain.id
     for e in xml.getchildren():
         if "CN" == e.tag: group.CN = e.text
         if "Description" == e.tag: group.Description = e.text

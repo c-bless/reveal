@@ -103,5 +103,50 @@
           </div>
     </div>
 
+
+<div class="row m-1">
+        <div class="col-md-12">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Password Policies</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                        <th width="20%"> Type </th>
+                        <th width="20%"> Name </th>
+                        <th width="10%"> Complexity</th>
+                        <th width="10%"> Lockout Duration </th>
+                        <th width="5%"> Lockout Threshold </th>
+                        <th width="5%"> Max Age </th>
+                        <th width="5%"> Min Age </th>
+                        <th width="5%"> History Count </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for p in domain.PasswordPolices %}
+                        <tr>
+                          <td>{{ p.Type }}</td>
+                          <td>{{ p.Name }}</td>
+                          <td>{{ p.ComplexityEnabled }}</td>
+                          <td>{{ p.LockoutDuration }}</td>
+                          <td>{{ p.LockoutThreshold }}</td>
+                          <td>{{ p.MaxPasswordAge }}</td>
+                          <td>{{ p.MinPasswordAge }}</td>
+                          <td>{{ p.PasswordHistoryCount }}</td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <!-- /.card -->
+          </div>
+    </div>
+
 {% endif %}
 {% endblock content %}

@@ -387,12 +387,10 @@
                           <td>{{ s.StartName }}</td>
                           <td>{{ s.PathName }}</td>
                           <td class="actions">
-                          <td class="actions">
-                          <a href="{{ url_for('hosts.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
-                              <i class="fa fa-eye"></i> View
-                          </a>
-                      </td>
-                      </td>
+                            <a href="{{ url_for('hosts.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                          </td>
                         </tr>
                         {% endfor %}
                     {% endif %}

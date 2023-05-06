@@ -3,7 +3,7 @@ from flask.cli import AppGroup
 from lxml import etree
 import os
 
-from .hosts import import_host
+from .hosts import import_host, import_sysinfo_collector
 from .domain import import_domain_collector
 
 import_cli = AppGroup('import')
@@ -44,7 +44,7 @@ def import_dir_command(name):
                     import_domain_collector(root=root)
                 elif root.tag == "SystemInfoCollector":
                     print("[*] Importing SystemInfoCollector output")
-                    import_host(root=root)
+                    import_sysinfo_collector(root=root)
                 elif root.tag == "Host":
                     # initial version of SystemCollector
                     print("[*] Importing SystemInfoCollector output")

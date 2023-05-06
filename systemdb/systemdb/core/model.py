@@ -16,6 +16,7 @@ class ADDomain(db.Model):
     ComputerContainer = db.Column(db.String(1024), unique=False)
     DistinguishedName = db.Column(db.String(1024), unique=False)
     InfrastructureMaster = db.Column(db.String(1024), unique=False)
+    PasswordPolicies = db.relationship('ADPasswordPolicy', backref='domain', lazy='dynamic')
 
     def __repr__(self):
         return self.Name
@@ -31,8 +32,8 @@ class ADForest(db.Model):
     Name = db.Column(db.String(1024), unique=False)
     RootDomain = db.Column(db.String(1024), unique=False, nullable=False)
     SchemaMaster = db.Column(db.String(1024), unique=False)
-    Sites = db.relationship('ADForestSite', backref='dc', lazy='dynamic')
-    GlobalCatalogs = db.relationship('ADForestGlobalCatalog', backref='dc', lazy='dynamic')
+    Sites = db.relationship('ADForestSite', backref='forest', lazy='dynamic')
+    GlobalCatalogs = db.relationship('ADForestGlobalCatalog', backref='forest', lazy='dynamic')
 
     def __repr__(self):
         return self.Name
@@ -79,6 +80,30 @@ class ADForestSite(db.Model):
 
     def __str__(self):
         return self.Site
+
+
+class ADPasswordPolicy(db.Model):
+    __tablename__ = "ADPasswordPolicy"
+    id = db.Column(db.Integer, primary_key=True)
+    Type = db.Column(db.String(50), unique=False, nullable=False)
+    ComplexityEnabled = db.Column(db.String(10), unique=False)
+    DistinguishedName = db.Column(db.String(1024), unique=False)
+    Name = db.Column(db.String(1024), unique=False)
+    LockoutDuration = db.Column(db.String(10), unique=False)
+    LockoutObservationWindow = db.Column(db.String(10), unique=False)
+    LockoutThreshold = db.Column(db.String(10), unique=False)
+    MaxPasswordAge = db.Column(db.String(10), unique=False)
+    MinPasswordAge = db.Column(db.String(10), unique=False)
+    MinPasswordLength = db.Column(db.String(10), unique=False)
+    PasswordHistoryCount = db.Column(db.String(10), unique=False)
+    ReversibleEncryptionEnabled = db.Column(db.String(10), unique=False)
+    Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
 
 
 class ADForestGlobalCatalog(db.Model):
@@ -137,6 +162,8 @@ class ADDomainController(db.Model):
     LdapPort = db.Column(db.String(10), unique=False)
     SslPort = db.Column(db.String(10), unique=False)
     ServerRoles = db.relationship('ADDCServerRole', backref='dc', lazy='dynamic')
+    Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
+    Forest_id = db.Column(db.Integer, db.ForeignKey('ADForest.id'), nullable=False)
     OperationMasterRoleRoles = db.relationship('ADOperationMasterRole', backref='dc', lazy='dynamic')
 
     def __repr__(self):
@@ -215,7 +242,8 @@ class ADUser(db.Model):
     pwdLastSet = db.Column(db.String(50), unique=False, nullable=True)
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
-    Memberships = db.relationship('ADUserMembership', backref='dc', lazy='dynamic')
+    Memberships = db.relationship('ADUserMembership', backref='member', lazy='dynamic')
+    Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
         return self.SAMAccountName
@@ -249,6 +277,7 @@ class ADGroup(db.Model):
     SID = db.Column(db.String(70), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
     Members = db.relationship('ADGroupMember', backref='dc', lazy='dynamic')
+    Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
         return self.SamAccountName
