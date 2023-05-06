@@ -20,6 +20,10 @@
     .\domain-collector.ps1  
 
 #>
+
+# version number of this script used as attribute in XML root tag 
+$version="v0.1"
+
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 import-module ActiveDirectory -ErrorAction SilentlyContinue
 
@@ -35,7 +39,9 @@ try{
         $domain = Get-ADDomain;
         $path = Get-Location
 
-        $xmlfile = $path.Path + "\" + $date + "_" + [string] $domain.NetBIOSName + ".xml"
+        
+        $name = [string] $domain.NetBIOSName
+        $xmlfile = $path.Path + "\" + $date + "_DomainCollector_"+$version+"_" + $name + ".xml"
 
 
         $settings =  New-Object System.Xml.XmlWriterSettings
@@ -52,7 +58,7 @@ try{
         #    to systemdb, therefore a global try catch is wrapped around all commands
         #############################################################################################################
         $xmlWriter.WriteStartElement("DomainCollector")
-            $xmlWriter.WriteAttributeString("version", "0.1")
+            $xmlWriter.WriteAttributeString("version", "$version")
             $xmlWriter.WriteStartElement("ADDomain")
                 $xmlWriter.WriteElementString("Name", [string] $domain.Name);
                 $xmlWriter.WriteElementString("NetBIOSName", [string] $domain.NetBIOSName);
@@ -69,6 +75,7 @@ try{
                 $xmlWriter.WriteElementString("DistinguishedName", [string] $domain.DistinguishedName);
                 $xmlWriter.WriteElementString("InfrastructureMaster", [string] $domain.InfrastructureMaster);
             $xmlWriter.WriteEndElement() # ADDomain
+
 
             #############################################################################################################
             #    Collecting Basic information about the current Forest
@@ -103,9 +110,9 @@ try{
                 $xmlWriter.WriteStartElement("ADTrusts")
                 try {
                     if ($trust = Get-ADTrust -Filter * -ErrorAction SilentlyContinue){
-                        $xmlWriter.WriteStartElement("ADTrust")
-                            foreach ($t in $trust){
-                                try {
+                        foreach ($t in $trust){
+                            try {
+                                $xmlWriter.WriteStartElement("ADTrust")
                                     $xmlWriter.WriteElementString("Source", [string] $t.Source);
                                     $xmlWriter.WriteElementString("Target", [string] $t.Target);
                                     $xmlWriter.WriteElementString("Direction", [string] $t.Direction);
@@ -123,11 +130,11 @@ try{
                                     $xmlWriter.WriteElementString("IntraForest", [string] $t.IntraForest);
                                     $xmlWriter.WriteElementString("IsTreeParent", [string] $t.IsTreeParent);
                                     $xmlWriter.WriteElementString("IsTreeRotrustot", [string] $t.IsTreeRoot);
-                                } catch{
-                                    # Igrnore this ADTrust object and try to parse the next. No Tag will be added for this one. 
-                                }
+                                $xmlWriter.WriteEndElement() # ADTrust
+                            } catch{
+                                # Ignore this ADTrust object and try to parse the next. No Tag will be added for this one. 
                             }
-                        $xmlWriter.WriteEndElement() # ADTrust
+                        }
                     }
                 } catch {
                     # Failed executions will be ignored and no ADTrust tags will be added under ADTrusts
@@ -145,7 +152,7 @@ try{
                 
                 $xmlWriter.WriteStartElement("ADDomainControllerList")
                 try{
-                    $dc_list = Get-ADDomainController -ErrorAction SilentlyContinue
+                    $dc_list = Get-ADDomainController -Filter * -ErrorAction SilentlyContinue
                     foreach ($dc in $dc_list) {
                         try {
                             $xmlWriter.WriteStartElement("ADDomainController")
@@ -173,7 +180,7 @@ try{
                                 $xmlWriter.WriteEndElement() # servicePrincipalNames
                             $xmlWriter.WriteEndElement() #ADDomainController
                         } catch {
-                            # Igrnore this ADDomainController object and try to parse the next. No Tag will be added for this one. 
+                            # Ignore this ADDomainController object and try to parse the next. No Tag will be added for this one. 
                         }
                     }
                 } catch {
@@ -234,7 +241,7 @@ try{
                             $xmlWriter.WriteElementString("ReversibleEncryptionEnabled", [string] $pw_policy.ReversibleEncryptionEnabled);
                             $xmlWriter.WriteEndElement() # Policy
                         }catch {
-                            # Igrnore this Policy object and try to parse the next. No Tag will be added for this one. 
+                            # Ignore this Policy object and try to parse the next. No Tag will be added for this one. 
                         }
                     }
                 }catch {
@@ -277,7 +284,7 @@ try{
                                     $xmlWriter.WriteEndElement() # servicePrincipalNames
                                 $xmlWriter.WriteEndElement() # ADComputer
                             } catch{
-                                # Igrnore this ADComputer object and try to parse the next. No Tag will be added for this one. 
+                                # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
                             }
                         }
                 } catch {
@@ -320,7 +327,7 @@ try{
                                 $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
                                 $xmlWriter.WriteEndElement(); # ADUser         
                             } catch {
-                                # Igrnore this ADUser object and try to parse the next. No Tag will be added for this one. 
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
                             }
                         }
                 } catch {
@@ -350,22 +357,28 @@ try{
                                 $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
                                 $xmlWriter.WriteStartElement("Members");
                                 if ($groups_to_enum -contains $g.SamAccountName ) {
-                                    Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
-                                    $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
-                                    foreach ($m in $members) {
-                                        $xmlWriter.WriteStartElement("Member");
-                                        $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
-                                        $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
-                                        $xmlWriter.WriteAttributeString("name", [string] $m.Name)
-                                        $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
-                                        $xmlWriter.WriteEndElement(); # Member
-                            
+                                    try{
+                                        $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
+                                        foreach ($m in $members) {
+                                            try{
+                                                $xmlWriter.WriteStartElement("Member");
+                                                $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
+                                                $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
+                                                $xmlWriter.WriteAttributeString("name", [string] $m.Name)
+                                                $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
+                                                $xmlWriter.WriteEndElement(); # Member
+                                            }catch{
+                                                # Ignore this Member object and try to parse the next. No Tag will be added for this one. 
+                                            }
+                                        }
+                                    }catch{
+                                        # Failed executions will be ignored and no Member tags will be added to Members
                                     }
                                 }
                                 $xmlWriter.WriteEndElement(); # Members
                                 $xmlWriter.WriteEndElement(); # ADGroup         
                             } catch {
-                                # Igrnore this ADGroup object and try to parse the next. No Tag will be added for this one. 
+                                # Ignore this ADGroup object and try to parse the next. No Tag will be added for this one. 
                             }
                         }
                 }catch {

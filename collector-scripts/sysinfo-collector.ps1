@@ -18,12 +18,16 @@
     .\sysinfo-collector.ps1  
 
 #>
+
+# version number of this script used as attribute in XML root tag 
+$version="v0.1"
+
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 $hostname = $env:COMPUTERNAME
 
 $path = Get-Location
 
-$xmlfile = $path.Path + "\" + $date + "_" + $hostname + ".xml"
+$xmlfile = $path.Path + "\" + $date + "_SystemInfoCollector_"+$version+"_" + $hostname + ".xml"
 
 $settings =  New-Object System.Xml.XmlWriterSettings
 $settings.Indent = $true
@@ -34,7 +38,7 @@ $xmlWriter.WriteStartDocument()
 
 
 $xmlWriter.WriteStartElement("SystemInfoCollector")
-    $xmlWriter.WriteAttributeString("version", "0.1")
+    $xmlWriter.WriteAttributeString("version", "$script_version")
     
     $xmlWriter.WriteStartElement("Host")
 
@@ -256,18 +260,83 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $path = [string] $s.Path
             try {
                 $acl = get-acl -Path $path -ErrorAction SilentlyContinue
-                $xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
+                #$xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
+                $xmlWriter.WriteStartElement("NTFSPermissions")
+                foreach ($a in $acl.Access) {
+                    $xmlWriter.WriteStartElement("Permission")
+                    $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
+                    $xmlWriter.WriteAttributeString("ScopeName", "");
+                    $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference);
+                    $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                    $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights);
+                    $xmlWriter.WriteEndElement() # Permission
+                }
+                $xmlWriter.WriteEndElement() # NTFSPermissions   
             } catch {}
-
-            $share = "\\" + $hostname  +"\"+  [string]$s.Name
-            try {
-                $acl = get-acl -Path $share -ErrorAction SilentlyContinue
-                $xmlWriter.WriteElementString("SharePermission", [string] $acl.AccessToString)
-            } catch {}
+            $xmlWriter.WriteStartElement("SharePermissions")
+            if (Get-Command Get-SmbShareAccess -ErrorAction SilentlyContinue) {
+                try {
+                    $acl = Get-SmbShareAccess -Name $s.Name -ErrorAction SilentlyContinue
+                    foreach ($a in $acl) {
+                        $xmlWriter.WriteStartElement("Permission")
+                        $xmlWriter.WriteAttributeString("Name", [string] $a.Name);
+                        $xmlWriter.WriteAttributeString("ScopeName", [string] $a.ScopeName);
+                        $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
+                        $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                        $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
+                        $xmlWriter.WriteEndElement() # Permission
+                    }                        
+                } catch {}
+            }else{
+                try {
+                    $share = "\\" + $hostname  +"\"+  [string]$s.Name
+                    $acl = get-acl -Path $share -ErrorAction SilentlyContinue
+                    foreach ($a in $acl.Access) {
+                        $xmlWriter.WriteStartElement("Permission")
+                        $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
+                        $xmlWriter.WriteAttributeString("ScopeName", "");
+                        $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference);
+                        $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                        $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights);
+                        $xmlWriter.WriteEndElement() # Permission
+                    }
+                } catch {}
+            }
+            $xmlWriter.WriteEndElement() # SharePermissions           
 
             $xmlWriter.WriteEndElement() # share
         }
         $xmlWriter.WriteEndElement() # shares
+
+        
+        #######################################################################
+        # Collecting firewall status
+        #######################################################################
+        if (Get-Command Get-NetFirewallProfile -ea SilentlyContinue) {
+            Write-Host "[*] Collecting local firewall state" 
+            $xmlWriter.WriteStartElement("NetFirewallProfiles");
+            try{
+                $profiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
+                foreach ($p in $profiles) {
+                    try{
+                        $xmlWriter.WriteStartElement("FwProfile");
+                        $xmlWriter.WriteAttributeString("Name", [string] $p.Name)
+                        $xmlWriter.WriteAttributeString("Enabled", [string] $p.Enabled)
+                        $xmlWriter.WriteEndElement(); # FwProfile
+                    }catch{
+                        # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
+                    }
+                }
+            }catch{
+                # Failed executions will be ignored and no ADComputer tags will be added under ADComputerList
+            }
+            $xmlWriter.WriteEndElement(); # NetFirewallProfiles
+        }
+
+        
+        #######################################################################
+        # Collecting WinLogon Settings
+        #######################################################################
 
         Write-Host "[*] Checking autologon configuration"           
         $xmlWriter.WriteStartElement("Winlogon")
