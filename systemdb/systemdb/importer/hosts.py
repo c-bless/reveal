@@ -188,7 +188,6 @@ def groups2db(xml, host):
 
 def shares2db(xml, host):
     for c in xml.getchildren():
-        print(c.tag)
         if "Share" == c.tag:
             share = Share()
             for i in c.getchildren():
