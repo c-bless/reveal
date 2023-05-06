@@ -83,7 +83,7 @@ try{
             Write-Host "[*] Collecting AD trust information." 
             if ($trust = Get-ADTrust -Filter * ){
                 $xmlWriter.WriteStartElement("ADTrust")
-                    for ($t in $trust){
+                    foreach ($t in $trust){
                         $xmlWriter.WriteElementString("Source", [string] $t.Source);
                         $xmlWriter.WriteElementString("Target", [string] $t.Target);
                         $xmlWriter.WriteElementString("Direction", [string] $t.Direction);
