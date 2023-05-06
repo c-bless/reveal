@@ -6,7 +6,9 @@
     This PowerShell script is to fetch domain information. The collector script is published as part of "systemdb".
     https://bitbucket.org/cbless/systemdb
 
-    Author: Christoph Bless (bitbucket@cbless.de)
+    Author:     Christoph Bless (bitbucket@cbless.de)
+    Version:    0.1
+    License:    GPL
 
     .INPUTS
     None
@@ -21,6 +23,9 @@
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 import-module ActiveDirectory -ErrorAction SilentlyContinue
 
+#############################################################################################################
+# Definition for which domain groups an enumeration of memberships will be done
+#############################################################################################################
 $groups_to_enum = @("Domain Admins", "Enterprise Admins", "Schema Admins", "DNSAdmins")
 
 try{
@@ -41,6 +46,11 @@ try{
         $xmlWriter.WriteStartDocument()
 
 
+        #############################################################################################################
+        #    Collecting Basic information about the current domain
+        #    Note: successful execution of ADDomain and ADForest is requrired sine these are referenced when imported 
+        #    to systemdb, therefore a global try catch is wrapped around all commands
+        #############################################################################################################
         $xmlWriter.WriteStartElement("DomainCollector")
             $xmlWriter.WriteAttributeString("version", "0.1")
             $xmlWriter.WriteStartElement("ADDomain")
@@ -60,6 +70,11 @@ try{
                 $xmlWriter.WriteElementString("InfrastructureMaster", [string] $domain.InfrastructureMaster);
             $xmlWriter.WriteEndElement() # ADDomain
 
+            #############################################################################################################
+            #    Collecting Basic information about the current Forest
+            #    Note: successful execution of ADDomain and ADForest is requrired sine these are referenced when imported 
+            #    to systemdb, therefore a global try catch is wrapped around all commands
+            #############################################################################################################
             Write-Host "[*] Collecting forest information." 
             $forest = Get-ADForest 
             $xmlWriter.WriteStartElement("ADForest")
@@ -79,170 +94,286 @@ try{
                 $xmlWriter.WriteEndElement() # GC
             $xmlWriter.WriteEndElement() # ADForest
 
-    
-            Write-Host "[*] Collecting AD trust information." 
-            if ($trust = Get-ADTrust -Filter * ){
-                $xmlWriter.WriteStartElement("ADTrust")
-                    foreach ($t in $trust){
-                        $xmlWriter.WriteElementString("Source", [string] $t.Source);
-                        $xmlWriter.WriteElementString("Target", [string] $t.Target);
-                        $xmlWriter.WriteElementString("Direction", [string] $t.Direction);
-                        $xmlWriter.WriteElementString("TrustType", [string] $t.TrustType);
-                        $xmlWriter.WriteElementString("UplevelOnly", [string] $t.UplevelOnly);
-                        $xmlWriter.WriteElementString("UsesAESKeys", [string] $t.UsesAESKeys);
-                        $xmlWriter.WriteElementString("UsesRC4Encryption", [string] $t.UsesRC4Encryption);
-                        $xmlWriter.WriteElementString("TGTDelegation", [string] $t.TGTDelegation);
-                        $xmlWriter.WriteElementString("SIDFilteringForestAware", [string] $t.SIDFilteringForestAware);
-                        $xmlWriter.WriteElementString("SIDFilteringQuarantined", [string] $t.SIDFilteringQuarantined);
-                        $xmlWriter.WriteElementString("SelectiveAuthentication", [string] $t.SelectiveAuthentication);
-                        $xmlWriter.WriteElementString("DisallowTransivity", [string] $t.DisallowTransivity);
-                        $xmlWriter.WriteElementString("DistinguishedName", [string] $t.DistinguishedName);
-                        $xmlWriter.WriteElementString("ForestTransitive", [string] $t.ForestTransitive);
-                        $xmlWriter.WriteElementString("IntraForest", [string] $t.IntraForest);
-                        $xmlWriter.WriteElementString("IsTreeParent", [string] $t.IsTreeParent);
-                        $xmlWriter.WriteElementString("IsTreeRotrustot", [string] $t.IsTreeRoot);
+            #############################################################################################################
+            #    Collecting information about domain trusts
+            #    Note: Failed executions will be ignored and no ADTrust tags will be added to ADTrusts
+            #############################################################################################################
+            if (Get-Command Get-ADTrust -ErrorAction SilentlyContinue) {
+                Write-Host "[*] Collecting AD trust information." 
+                $xmlWriter.WriteStartElement("ADTrusts")
+                try {
+                    if ($trust = Get-ADTrust -Filter * -ErrorAction SilentlyContinue){
+                        $xmlWriter.WriteStartElement("ADTrust")
+                            foreach ($t in $trust){
+                                try {
+                                    $xmlWriter.WriteElementString("Source", [string] $t.Source);
+                                    $xmlWriter.WriteElementString("Target", [string] $t.Target);
+                                    $xmlWriter.WriteElementString("Direction", [string] $t.Direction);
+                                    $xmlWriter.WriteElementString("TrustType", [string] $t.TrustType);
+                                    $xmlWriter.WriteElementString("UplevelOnly", [string] $t.UplevelOnly);
+                                    $xmlWriter.WriteElementString("UsesAESKeys", [string] $t.UsesAESKeys);
+                                    $xmlWriter.WriteElementString("UsesRC4Encryption", [string] $t.UsesRC4Encryption);
+                                    $xmlWriter.WriteElementString("TGTDelegation", [string] $t.TGTDelegation);
+                                    $xmlWriter.WriteElementString("SIDFilteringForestAware", [string] $t.SIDFilteringForestAware);
+                                    $xmlWriter.WriteElementString("SIDFilteringQuarantined", [string] $t.SIDFilteringQuarantined);
+                                    $xmlWriter.WriteElementString("SelectiveAuthentication", [string] $t.SelectiveAuthentication);
+                                    $xmlWriter.WriteElementString("DisallowTransivity", [string] $t.DisallowTransivity);
+                                    $xmlWriter.WriteElementString("DistinguishedName", [string] $t.DistinguishedName);
+                                    $xmlWriter.WriteElementString("ForestTransitive", [string] $t.ForestTransitive);
+                                    $xmlWriter.WriteElementString("IntraForest", [string] $t.IntraForest);
+                                    $xmlWriter.WriteElementString("IsTreeParent", [string] $t.IsTreeParent);
+                                    $xmlWriter.WriteElementString("IsTreeRotrustot", [string] $t.IsTreeRoot);
+                                } catch{
+                                    # Igrnore this ADTrust object and try to parse the next. No Tag will be added for this one. 
+                                }
+                            }
+                        $xmlWriter.WriteEndElement() # ADTrust
                     }
-                $xmlWriter.WriteEndElement() # ADTrust
-            }
-    
-            Write-Host "[*] Collecting Domain Controller list." 
-            $dc_list = Get-ADDomainController
-            $xmlWriter.WriteStartElement("ADDomainControllerList")
-                foreach ($dc in $dc_list) {
-                    $xmlWriter.WriteStartElement("ADDomainController")
-                    $xmlWriter.WriteElementString("Name", [string] $dc.Name);
-                    $xmlWriter.WriteElementString("Hostname", [string] $dc.Hostname);
-                    $xmlWriter.WriteElementString("OperatingSystem", [string] $dc.OperatingSystem);
-                    $xmlWriter.WriteElementString("IPv4Address", [string] $dc.IPv4Address);
-                    $xmlWriter.WriteElementString("IPv6Address", [string] $dc.IPv6Address);
-                    $xmlWriter.WriteElementString("Enabled", [string] $dc.Enabled);
-                    $xmlWriter.WriteElementString("Domain", [string] $dc.Domain);
-                    $xmlWriter.WriteElementString("Forest", [string] $dc.Forest);
-                    $xmlWriter.WriteElementString("IsGlobalCatalog", [string] $dc.IsGlobalCatalog);
-                    $xmlWriter.WriteElementString("IsReadOnly", [string] $dc.IsReadOnly);
-                    $xmlWriter.WriteElementString("LdapPort", [string] $dc.LdapPort);
-                    $xmlWriter.WriteElementString("SslPort", [string] $dc.SslPort);
-                    $xmlWriter.WriteStartElement("ServerRoles")
-                    foreach ($s in $dc.ServerRoles) {
-                        $xmlWriter.WriteElementString("Role", [string] $s);
-                    }
-                    $xmlWriter.WriteEndElement() # ServerRoles
-                    $xmlWriter.WriteStartElement("OperationMasterRoles")
-                    foreach ($s in $dc.OperationMasterRoles) {
-                        $xmlWriter.WriteElementString("Role", [string] $s);
-                    }
-                    $xmlWriter.WriteEndElement() # servicePrincipalNames
-                    $xmlWriter.WriteEndElement()
+                } catch {
+                    # Failed executions will be ignored and no ADTrust tags will be added under ADTrusts
                 }
-            $xmlWriter.WriteEndElement() # DomainControllerList
-
+                $xmlWriter.WriteEndElement() # ADTrusts
+            } 
     
-            Write-Host "[*] Collecting information about AD computer." 
-            $computer_list = Get-ADComputer -Filter * -Properties *
-            $xmlWriter.WriteStartElement("ADComputerList")
-                foreach ($c in $computer_list) {
-                    $xmlWriter.WriteStartElement("ADComputer")
-                    $xmlWriter.WriteElementString("DistinguishedName", [string] $c.DistinguishedName);
-                    $xmlWriter.WriteElementString("DNSHostName", [string] $c.DNSHostName );
-                    $xmlWriter.WriteElementString("Enabled", [string] $c.Enabled);
-                    $xmlWriter.WriteElementString("IPv4Address", [string] $c.IPv4Address);
-                    $xmlWriter.WriteElementString("IPv6Address", [string] $c.IPv6Address);
-                    $xmlWriter.WriteElementString("SID", [string] $c.SID);
-                    $xmlWriter.WriteElementString("SamAccountName", [string] $c.SamAccountName);
-                    $xmlWriter.WriteElementString("ServiceAccount", [string] $c.ServiceAccount);
-                    $xmlWriter.WriteElementString("servicePrincipalNamesStr", [string] $c.servicePrincipalNames);
-                    $xmlWriter.WriteStartElement("servicePrincipalNames")
-                    foreach ($s in $c.ServicePrincipalNames) {
-                        $xmlWriter.WriteElementString("SPN", [string] $s);
-                    }
-                    $xmlWriter.WriteEndElement() # servicePrincipalNames
-                    $xmlWriter.WriteElementString("TrustedForDelegation", [string] $c.TrustedForDelegation);
-                    $xmlWriter.WriteElementString("TrustedToAuthForDelegation", [string] $c.TrustedToAuthForDelegation);
-                    $xmlWriter.WriteElementString("PrimaryGroup", [string] $c.PrimaryGroup);
-                    $xmlWriter.WriteElementString("primaryGroupID", [string] $c.primaryGroupID);
-                    $xmlWriter.WriteElementString("pwdLastSet", [string] $c.pwdLastSet);
-                    $xmlWriter.WriteElementString("ProtectedFromAccidentalDeletion", [string] $c.ProtectedFromAccidentalDeletion);
-                    $xmlWriter.WriteElementString("OperatingSystem", [string] $c.OperatingSystem);
-                    $xmlWriter.WriteElementString("OperatingSystemVersion", [string] $c.OperatingSystemVersion);
-                    $xmlWriter.WriteElementString("Description", [string] $c.Description);
-                    $xmlWriter.WriteEndElement()
-                }
-            $xmlWriter.WriteEndElement() # ComputerList
-
-    
-            Write-Host "[*] Collecting information about AD users." 
-            $user_list = Get-ADUser -Filter * -Properties * 
-            $xmlWriter.WriteStartElement("ADUserList")
-                foreach ($u in $user_list) {
-                    $xmlWriter.WriteStartElement("ADUser");
-                    $xmlWriter.WriteElementString("SAMAccountName", [string] $u.SAMAccountName);
-                    $xmlWriter.WriteElementString("DistinguishedName", [string] $u.DistinguishedName);
-                    $xmlWriter.WriteElementString("SID", [string] $u.SID);
-                    $xmlWriter.WriteElementString("GivenName", [string] $u.GivenName);
-                    $xmlWriter.WriteElementString("Surname", [string] $u.Surname);
-                    $xmlWriter.WriteElementString("Name", [string] $u.Name);
-                    $xmlWriter.WriteElementString("SIDHistory", [string] $u.SIDHistory);
-                    $xmlWriter.WriteElementString("Enabled", [string] $u.Enabled);
-                    $xmlWriter.WriteElementString("Description", [string] $u.Description);
-                    $xmlWriter.WriteElementString("DistinguishedName", [string] $u.DistinguishedName);
-                    $xmlWriter.WriteElementString("BadLogonCount", [string] $u.BadLogonCount);
-                    $xmlWriter.WriteElementString("BadPwdCount", [string] $u.BadPwdCount);
-                    $xmlWriter.WriteElementString("Created", [string] $u.Created);
-                    $xmlWriter.WriteElementString("LastBadPasswordAttempt", [string] $u.LastBadPasswordAttempt);
-                    $xmlWriter.WriteElementString("lastLogon", [string] $u.lastLogon);
-                    $xmlWriter.WriteElementString("LastLogonDate", [string] $u.LastLogonDate);
-                    $xmlWriter.WriteElementString("logonCount", [string] $u.logonCount);
-                    $xmlWriter.WriteElementString("LockedOut", [string] $u.LockedOut);
-                    $xmlWriter.WriteElementString("PasswordExpired", [string] $u.PasswordExpired);
-                    $xmlWriter.WriteElementString("PasswordLastSet", [string] $u.PasswordLastSet);
-                    $xmlWriter.WriteElementString("PasswordNeverExpires", [string] $u.PasswordNeverExpires);
-                    $xmlWriter.WriteElementString("PasswordNotRequired", [string] $u.PasswordNotRequired);
-                    $xmlWriter.WriteElementString("pwdLastSet", [string] $u.pwdLastSet);
-                    $xmlWriter.WriteElementString("Modified", [string] $u.Modified);
-                    $xmlWriter.WriteStartElement("MemberOf");
-                    foreach ($m in $u.MemberOf) {
-                        $xmlWriter.WriteElementString("Group", [string] $m);
-                    }
-                    $xmlWriter.WriteEndElement(); # MemberOf
-                    $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
-                    $xmlWriter.WriteEndElement(); # User         
-            
-                }
-            $xmlWriter.WriteEndElement() # UserList
-
-
-            Write-Host "[*] Collecting information about AD groups." 
-            $group_list = Get-ADGroup -Filter * -Properties * 
-            $xmlWriter.WriteStartElement("ADGroupList")
-                foreach ($g in $group_list) {
-                    $xmlWriter.WriteStartElement("ADGroup");
-                    $xmlWriter.WriteElementString("CN", [string] $g.CN);
-                    $xmlWriter.WriteElementString("Description", [string] $g.Description);
-                    $xmlWriter.WriteElementString("GroupCategory", [string] $g.GroupCategory);
-                    $xmlWriter.WriteElementString("GroupScope", [string] $g.GroupScope);
-                    $xmlWriter.WriteElementString("SamAccountName", [string] $g.SamAccountName);
-                    $xmlWriter.WriteElementString("SID", [string] $g.SID);
-                    $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
-                    $xmlWriter.WriteStartElement("Members");
-                    if ($groups_to_enum -contains $g.SamAccountName ) {
-                        Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
-                        $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
-                        foreach ($m in $members) {
-                            $xmlWriter.WriteStartElement("Member");
-                            $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
-                            $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
-                            $xmlWriter.WriteAttributeString("name", [string] $m.Name)
-                            $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
-                            $xmlWriter.WriteEndElement(); # Member
+            #############################################################################################################
+            #    Collecting information about domain controllers
+            #    Note: Failed executions will be ignored and no ADDomainController tags will be added to 
+            #    ADDomainControllerList
+            #############################################################################################################
+            if (Get-Command Get-ADDomainController -ErrorAction SilentlyContinue) {
+                Write-Host "[*] Collecting Domain Controller list." 
                 
+                $xmlWriter.WriteStartElement("ADDomainControllerList")
+                try{
+                    $dc_list = Get-ADDomainController -ErrorAction SilentlyContinue
+                    foreach ($dc in $dc_list) {
+                        try {
+                            $xmlWriter.WriteStartElement("ADDomainController")
+                                $xmlWriter.WriteElementString("Name", [string] $dc.Name);
+                                $xmlWriter.WriteElementString("Hostname", [string] $dc.Hostname);
+                                $xmlWriter.WriteElementString("OperatingSystem", [string] $dc.OperatingSystem);
+                                $xmlWriter.WriteElementString("IPv4Address", [string] $dc.IPv4Address);
+                                $xmlWriter.WriteElementString("IPv6Address", [string] $dc.IPv6Address);
+                                $xmlWriter.WriteElementString("Enabled", [string] $dc.Enabled);
+                                $xmlWriter.WriteElementString("Domain", [string] $dc.Domain);
+                                $xmlWriter.WriteElementString("Forest", [string] $dc.Forest);
+                                $xmlWriter.WriteElementString("IsGlobalCatalog", [string] $dc.IsGlobalCatalog);
+                                $xmlWriter.WriteElementString("IsReadOnly", [string] $dc.IsReadOnly);
+                                $xmlWriter.WriteElementString("LdapPort", [string] $dc.LdapPort);
+                                $xmlWriter.WriteElementString("SslPort", [string] $dc.SslPort);
+                                $xmlWriter.WriteStartElement("ServerRoles")
+                                    foreach ($s in $dc.ServerRoles) {
+                                        $xmlWriter.WriteElementString("Role", [string] $s);
+                                    }
+                                $xmlWriter.WriteEndElement() # ServerRoles
+                                $xmlWriter.WriteStartElement("OperationMasterRoles")
+                                    foreach ($s in $dc.OperationMasterRoles) {
+                                        $xmlWriter.WriteElementString("Role", [string] $s);
+                                    }
+                                $xmlWriter.WriteEndElement() # servicePrincipalNames
+                            $xmlWriter.WriteEndElement() #ADDomainController
+                        } catch {
+                            # Igrnore this ADDomainController object and try to parse the next. No Tag will be added for this one. 
                         }
                     }
-                    $xmlWriter.WriteEndElement(); # Members
-                    $xmlWriter.WriteEndElement(); # User         
-            
+                } catch {
+                    # Failed executions will be ignored and no ADDomainController tags will be added under ADDomainControllerList
                 }
-            $xmlWriter.WriteEndElement() # UserList
+                $xmlWriter.WriteEndElement() # DomainControllerList
+            }
 
+            
+            #############################################################################################################
+            #    Collecting information about the default domain password policy
+            #    Note: Failed executions will be ignored and no ADDefaultDomainPasswordPolicy will be added
+            #############################################################################################################
+            if (Get-Command Get-ADDefaultDomainPasswordPolicy -ea SilentlyContinue) {
+                Write-Host "[*] Collecting Default Domain Password Policy." 
+                try {
+                    $pw_policy = Get-ADDefaultDomainPasswordPolicy -ea SilentlyContinue 
+                    $xmlWriter.WriteStartElement("ADDefaultDomainPasswordPolicy");
+                    $xmlWriter.WriteElementString("ComplexityEnabled", [string] $pw_policy.ComplexityEnabled);
+                    $xmlWriter.WriteElementString("DistinguishedName", [string] $pw_policy.DistinguishedName);
+                    $xmlWriter.WriteElementString("LockoutDuration", [string] $pw_policy.LockoutDuration);
+                    $xmlWriter.WriteElementString("LockoutObservationWindow", [string] $pw_policy.LockoutObservationWindow);
+                    $xmlWriter.WriteElementString("LockoutThreshold", [string] $pw_policy.LockoutThreshold);
+                    $xmlWriter.WriteElementString("MaxPasswordAge", [string] $pw_policy.MaxPasswordAge);
+                    $xmlWriter.WriteElementString("MinPasswordAge", [string] $pw_policy.MinPasswordAge);
+                    $xmlWriter.WriteElementString("MinPasswordLength", [string] $pw_policy.MinPasswordLength);
+                    $xmlWriter.WriteElementString("PasswordHistoryCount", [string] $pw_policy.PasswordHistoryCount);
+                    $xmlWriter.WriteElementString("ReversibleEncryptionEnabled", [string] $pw_policy.ReversibleEncryptionEnabled);
+                    $xmlWriter.WriteEndElement() # ADDefaultDomainPasswordPolicy
+                }catch {
+                    # Failed executions will be ignored and no ADDefaultDomainPasswordPolicy will be added
+                }
+            }
+            
+            
+            #############################################################################################################
+            #    Collecting information about all fine grained password policies in the current domain
+            #    Note: Failed executions will be ignored and no Policy will be added to ADFineGrainedPasswordPolicies
+            #############################################################################################################
+            if (Get-Command Get-ADFineGrainedPasswordPolicy -ea SilentlyContinue){
+                Write-Host "[*] Collecting Fine Grained Password Policy." 
+                $xmlWriter.WriteStartElement("ADFineGrainedPasswordPolicies");
+                try {
+                    $pw_policy = Get-ADFineGrainedPasswordPolicy -Filter * -ea SilentlyContinue                     
+                    foreach ($p in $pw_policy) {
+                        try{
+                            $xmlWriter.WriteStartElement("Policy");
+                            $xmlWriter.WriteElementString("Name", [string] $pw_policy.Name);
+                            $xmlWriter.WriteElementString("ComplexityEnabled", [string] $pw_policy.ComplexityEnabled);
+                            $xmlWriter.WriteElementString("DistinguishedName", [string] $pw_policy.DistinguishedName);
+                            $xmlWriter.WriteElementString("LockoutDuration", [string] $pw_policy.LockoutDuration);
+                            $xmlWriter.WriteElementString("LockoutObservationWindow", [string] $pw_policy.LockoutObservationWindow);
+                            $xmlWriter.WriteElementString("LockoutThreshold", [string] $pw_policy.LockoutThreshold);
+                            $xmlWriter.WriteElementString("MaxPasswordAge", [string] $pw_policy.MaxPasswordAge);
+                            $xmlWriter.WriteElementString("MinPasswordAge", [string] $pw_policy.MinPasswordAge);
+                            $xmlWriter.WriteElementString("MinPasswordLength", [string] $pw_policy.MinPasswordLength);
+                            $xmlWriter.WriteElementString("PasswordHistoryCount", [string] $pw_policy.PasswordHistoryCount);
+                            $xmlWriter.WriteElementString("ReversibleEncryptionEnabled", [string] $pw_policy.ReversibleEncryptionEnabled);
+                            $xmlWriter.WriteEndElement() # Policy
+                        }catch {
+                            # Igrnore this Policy object and try to parse the next. No Tag will be added for this one. 
+                        }
+                    }
+                }catch {
+                    # Failed executions will be ignored and no policies tags will be added under ADFineGrainedPasswordPolicies
+                }
+                $xmlWriter.WriteEndElement() # ADFineGrainedPasswordPolicies
+                
+            }
+    
+            #############################################################################################################
+            #    Collecting information about domain computers
+            #    Note: Failed executions will be ignored and no ADComputer tags will be added to ADComputerList
+            #############################################################################################################
+            if (Get-Command Get-ADComputer -ErrorAction SilentlyContinue) {
+                Write-Host "[*] Collecting information about AD computer." 
+                $xmlWriter.WriteStartElement("ADComputerList")
+                try {
+                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
+                    # new XML Element
+                    $basic_properties = @(
+                        'DistinguishedName', 'DNSHostName', 'Enabled', 'SID', 'SamAccountName', 'IPv4Address', 'IPv6Address',
+                        'ServiceAccount', 'TrustedForDelegation','TrustedToAuthForDelegation', 'PrimaryGroup','primaryGroupID',
+                        'ProtectedFromAccidentalDeletion', 'OperatingSystem','OperatingSystemVersion', 'Description'
+                    )
+                    # servicePrincipalNames will contain subelements. Thus, it will not be iterated to create new XML elements. 
+                    $properties = $basic_properties + "servicePrincipalNames"
+                    $computer_list = Get-ADComputer -Filter * -Properties $properties
+                        foreach ($c in $computer_list) {
+                            try {
+                                $xmlWriter.WriteStartElement("ADComputer")
+                                    # add all basic properties directly as new XML elements
+                                    foreach ($p in $basic_properties) {
+                                        $xmlWriter.WriteElementString($p, [string] $c."$p");
+                                    }
+                                    # add new sub Tags for all SPNs
+                                    $xmlWriter.WriteStartElement("servicePrincipalNames")
+                                    foreach ($s in $c.ServicePrincipalNames) {
+                                        $xmlWriter.WriteElementString("SPN", [string] $s);
+                                    }
+                                    $xmlWriter.WriteEndElement() # servicePrincipalNames
+                                $xmlWriter.WriteEndElement() # ADComputer
+                            } catch{
+                                # Igrnore this ADComputer object and try to parse the next. No Tag will be added for this one. 
+                            }
+                        }
+                } catch {
+                    # Failed executions will be ignored and no ADComputer tags will be added under ADComputerList
+                }
+                $xmlWriter.WriteEndElement() # ADComputerList
+            }
+
+    
+            #############################################################################################################
+            #    Collecting information about domain Users
+            #    Note: Failed executions will be ignored and no ADUser tags will be added to ADUserList
+            #############################################################################################################
+            if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
+                Write-Host "[*] Collecting information about AD users." 
+                $xmlWriter.WriteStartElement("ADUserList")
+                try{
+                        # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
+                        # new XML Element
+                        $basic_properties = @(
+                            'DistinguishedName', 'SID', 'SamAccountName', 'Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
+                            'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate', 
+                            'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
+                        )
+                        # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
+                        $properties = $basic_properties + "MemberOf"
+                        $user_list = Get-ADUser -Filter * -Properties $properties
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                # add all basic properties directly as new XML elements
+                                foreach ($p in $basic_properties) {
+                                    $xmlWriter.WriteElementString($p, [string] $u."$p");
+                                }
+                                $xmlWriter.WriteStartElement("MemberOf");
+                                foreach ($m in $u.MemberOf) {
+                                    $xmlWriter.WriteElementString("Group", [string] $m);
+                                }
+                                $xmlWriter.WriteEndElement(); # MemberOf
+                                $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
+                                $xmlWriter.WriteEndElement(); # ADUser         
+                            } catch {
+                                # Igrnore this ADUser object and try to parse the next. No Tag will be added for this one. 
+                            }
+                        }
+                } catch {
+                    # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                }
+                $xmlWriter.WriteEndElement() # ADUserList                                                                                 
+            }
+
+            #############################################################################################################
+            #    Collecting information about domain groups
+            #    Note: Failed executions will be ignored and no ADGroup tags will be added to ADGroupList
+            #############################################################################################################
+            if (Get-Command Get-ADGroup  -ErrorAction SilentlyContinue) {
+                Write-Host "[*] Collecting information about AD groups." 
+                $xmlWriter.WriteStartElement("ADGroupList")
+                try{
+                    $group_list = Get-ADGroup -Filter * -Properties * 
+                        foreach ($g in $group_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADGroup");
+                                $xmlWriter.WriteElementString("CN", [string] $g.CN);
+                                $xmlWriter.WriteElementString("Description", [string] $g.Description);
+                                $xmlWriter.WriteElementString("GroupCategory", [string] $g.GroupCategory);
+                                $xmlWriter.WriteElementString("GroupScope", [string] $g.GroupScope);
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $g.SamAccountName);
+                                $xmlWriter.WriteElementString("SID", [string] $g.SID);
+                                $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
+                                $xmlWriter.WriteStartElement("Members");
+                                if ($groups_to_enum -contains $g.SamAccountName ) {
+                                    Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
+                                    $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
+                                    foreach ($m in $members) {
+                                        $xmlWriter.WriteStartElement("Member");
+                                        $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
+                                        $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
+                                        $xmlWriter.WriteAttributeString("name", [string] $m.Name)
+                                        $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
+                                        $xmlWriter.WriteEndElement(); # Member
+                            
+                                    }
+                                }
+                                $xmlWriter.WriteEndElement(); # Members
+                                $xmlWriter.WriteEndElement(); # ADGroup         
+                            } catch {
+                                # Igrnore this ADGroup object and try to parse the next. No Tag will be added for this one. 
+                            }
+                        }
+                }catch {
+                    # Failed executions will be ignored and no ADGroup tags will be added under ADGroupList
+                }
+                $xmlWriter.WriteEndElement() # ADGroupList
+            }
+            
         $xmlWriter.WriteEndElement() # DomainCollector
         $xmlWriter.WriteEndDocument()
         $xmlWriter.Flush()
