@@ -204,6 +204,7 @@ def user2db(xml, domain):
     user = ADUser()
     user.Domain_id = domain.id
     for e in xml.getchildren():
+        if "SamAccountName" == e.tag: user.SAMAccountName = e.text
         if "SAMAccountName" == e.tag: user.SAMAccountName = e.text
         if "DistinguishedName" == e.tag: user.DistinguishedName = e.text
         if "SID" == e.tag: user.SID = e.text

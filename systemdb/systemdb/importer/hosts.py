@@ -6,7 +6,6 @@ from ..core.db import db
 def import_sysinfo_collector(root):
     if root.tag == "SystemInfoCollector":
         for h in root.getchildren():
-            print ("import host {0}".format(h.tag))
             host = import_host(h)
 
 

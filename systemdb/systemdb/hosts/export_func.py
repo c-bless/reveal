@@ -37,12 +37,7 @@ def generate_hosts_excel(hosts=[]):
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})
     worksheet = workbook.add_worksheet()
 
-    rows = [
-        ["Hostname", "Domain", "DomainRole", "IPs", "Users", "OSVersion", "OSBuildNumber", "OSName", "OSInstallDate",
-         "OSProductType", "Products", "LogonServer", "TimeZone", "KeyboardLayout", "HyperVisorPresent",
-         "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon", "ForceAutoLogon", "DefaultPassword",
-         "DefaultUserName"]
-    ]
+    rows = []
 
     for h in hosts:
         ips = []
@@ -50,6 +45,7 @@ def generate_hosts_excel(hosts=[]):
         users = []
         admins = []
         rdp = []
+        groups = []
         cell_format = workbook.add_format({'text_wrap': True})
         for i in h.NetIPAddresses:
             ips.append("{0}/{1} ({2})".format(i.IP, i.Prefix, i.InterfaceAlias))
@@ -58,20 +54,42 @@ def generate_hosts_excel(hosts=[]):
         for u in h.Users:
             users.append("{0}\\{1} (Disabled: {2}, PW required: {3})".format(u.Domain, u.Name, u.Disabled, u.PasswordRequired))
         for g in h.Groups:
-            pass
-        tmp = [h.Hostname, h.Domain, h.DomainRole, "\n".join(ips), "\n".join(users), h.OSVersion, h.OSBuildNumber, h.OSName, h.OSInstallDate,
-               h.OSProductType, "\n".join(products),
-               h.LogonServer, h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
+            name = g.Name
+            members =[]
+            for m in g.Members:
+                members.append(m.Caption)
+            if len(members) >0:
+                outstr = "{0}: ({1})".format(name, ", ".join(members))
+                groups.append(outstr)
+            if g.SID == "S-1-5-32-544":
+                admins.append("\n".join(members))
+            if g.SID == "S-1-5-32-555":
+                rdp.append("\n".join(members))
+        tmp = [h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber, "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp), "\n".join(products),
+               h.OSInstallDate, h.OSProductType, h.LogonServer, h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
                h.AutoAdminLogon, h.ForceAutoLogon, h.DefaultPassword, h.DefaultUserName]
         rows.append(tmp)
 
+
+    header_data = ["Hostname", "Domain", "DomainRole", "OSName", "OSVersion", "OSBuildNumber", "IPs", "Users",
+                   "Groups with members", "Admins", "RDP Users", "Products", "OSInstallDate", "OSProductType", "LogonServer", "TimeZone", "KeyboardLayout",
+                   "HyperVisorPresent", "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon", "ForceAutoLogon",
+                   "DefaultPassword", "DefaultUserName"]
+
+    header_format = workbook.add_format({'bold': True,
+                                         'bottom': 2,
+                                         'bg_color': '#CCCCCC'})
+
+    for col_num, data in enumerate(header_data):
+        worksheet.write(0, col_num, data, header_format)
+
     # Start from the first cell. Rows and columns are zero indexed.
-    row = 0
+    row = 1
     col = 0
     # Iterate over the data and write it out row by row.
     for host in (rows):
         for c in host:
-            if ( col == 3) or (col == 4) or (col == 10):
+            if ( col > 5) and (col <= 10):
                 worksheet.write(row, col, str(c), cell_format)
             else:
                 worksheet.write(row, col, str(c))
@@ -79,6 +97,7 @@ def generate_hosts_excel(hosts=[]):
         col = 0
         row += 1
 
+    worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
 
