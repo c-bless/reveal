@@ -61,6 +61,7 @@ class ADTrust(db.Model):
     IntraForest = db.Column(db.String(256), unique=False, nullable=True)
     IsTreeParent = db.Column(db.String(256), unique=False, nullable=True)
     IsTreeRoot = db.Column(db.String(256), unique=False, nullable=True)
+    Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
         return self.Target

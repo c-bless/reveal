@@ -1,6 +1,6 @@
 from ..core.ad_models import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest
 from ..core.ad_models import ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole
-from ..core.ad_models import ADSPN, ADPasswordPolicy
+from ..core.ad_models import ADSPN, ADPasswordPolicy, ADTrust
 from ..core.db import db
 
 
@@ -32,6 +32,9 @@ def import_domain_collector(root):
             for policy in c.getchildren():
                 if policy.tag == "ADFineGrainedPasswordPolicy":
                     passwordPolicy2db(xml=policy, domain=domain, type="ADFineGrainedPasswordPolicy")
+        if c.tag == "ADTrusts":
+            trusts2db(xml=c, domain=domain)
+
 
 
 def domain2db(addomain):
@@ -82,7 +85,7 @@ def forest2db(adforest):
     db.session.refresh(forest)
     if "Sites" == e.tag:
         for s in e.getchildren():
-            if "Site" == e.tag:
+            if "Site" == s.tag:
                 if (len(s.text) > 0):
                     site = ADForestSite()
                     site.Site = s.text
@@ -268,4 +271,31 @@ def group2db(xml, domain):
                     member.distinguishedName = m.get("distinguishedName")
                     member.Group_id = group.id
                     db.session.add(member)
+    db.session.commit()
+
+
+def trusts2db(xml, domain):
+    for t in xml.getchildren():
+        if t.tag == "ADTrust":
+            trust = ADTrust()
+            trust.Domain_id = domain.id
+            for e in t.getchildren():
+                if "Source" == e.tag: trust.Source = e.text
+                if "Target" == e.tag: trust.Target = e.text
+                if "Direction" == e.tag: trust.Direction = e.text
+                if "TrustType" == e.tag: trust.TrustType = e.text
+                if "UplevelOnly" == e.tag: trust.UplevelOnly = e.text
+                if "UsesAESKeys" == e.tag: trust.UsesAESKeys = e.text
+                if "UsesRC4Encryption" == e.tag: trust.UsesRC4Encryption = e.text
+                if "TGTDelegation" == e.tag: trust.TGTDelegation = e.text
+                if "SIDFilteringForestAware" == e.tag: trust.SIDFilteringForestAware = e.text
+                if "SIDFilteringQuarantined" == e.tag: trust.SIDFilteringQuarantined = e.text
+                if "SelectiveAuthentication" == e.tag: trust.SelectiveAuthentication = e.text
+                if "DisallowTransivity" == e.tag: trust.DisallowTransivity = e.text
+                if "DistinguishedName" == e.tag: trust.DistinguishedName = e.text
+                if "ForestTransitive" == e.tag: trust.ForestTransitive = e.text
+                if "IntraForest" == e.tag: trust.IntraForest = e.text
+                if "IsTreeParent" == e.tag: trust.IsTreeParent = e.text
+                if "IsTreeRoot" == e.tag: trust.IsTreeRoot = e.text
+            db.session.add(trust)
     db.session.commit()
