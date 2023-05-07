@@ -172,7 +172,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart);
             try {
                 $acl = get-acl -Path $s.PathName -ErrorAction SilentlyContinue
-                $xmlWriter.WriteElementString("BinaryPermissions", [string] $acl.AccessToString)
+                #$xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
+                $xmlWriter.WriteStartElement("BinaryPermissions")
+                foreach ($a in $acl.Access) {
+                    try{
+                        $xmlWriter.WriteStartElement("Permission")
+                        $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
+                        $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference);
+                        $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                        $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights);
+                        $xmlWriter.WriteEndElement() # Permission
+                    }catch{}
+                }
+                $xmlWriter.WriteEndElement() # NTFSPermissions   
             } catch {}
             $xmlWriter.WriteEndElement() # service
         }
@@ -265,7 +277,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 foreach ($a in $acl.Access) {
                     $xmlWriter.WriteStartElement("Permission")
                     $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
-                    $xmlWriter.WriteAttributeString("ScopeName", "");
                     $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference);
                     $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
                     $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights);
