@@ -11,6 +11,51 @@
 {% block content %}
 {% if domain %}
 
+
+
+<div class="row m-1">
+        <div class="col-md-12">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Amount of ..</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                  <div class="row">
+                    <div class="col-12 col-sm-4">
+                          <div class="info-box bg-light">
+                            <div class="info-box-content">
+                              <span class="info-box-text text-center text-muted">Users</span>
+                              <span class="info-box-number text-center text-muted mb-0">{{ num_users }}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                          <div class="info-box bg-light">
+                            <div class="info-box-content">
+                              <span class="info-box-text text-center text-muted">Computers</span>
+                              <span class="info-box-number text-center text-muted mb-0">{{ num_comp }}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                          <div class="info-box bg-light">
+                            <div class="info-box-content">
+                              <span class="info-box-text text-center text-muted">Groups</span>
+                              <span class="info-box-number text-center text-muted mb-0">{{ num_groups }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <!-- /.card -->
+          </div>
+    </div>
+
+
 <div class="row m-1">
         <div class="col-md-6">
             <div class="card card-olive">
@@ -95,6 +140,8 @@
                   {% endif %}
                   </tbody>
                 </table>
+
+
               </div>
               <!-- /.card-body -->
             </div>
@@ -126,7 +173,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for p in domain.PasswordPolices %}
+                    {% for p in policy_list %}
                         <tr>
                           <td>{{ p.Type }}</td>
                           <td>{{ p.Name }}</td>

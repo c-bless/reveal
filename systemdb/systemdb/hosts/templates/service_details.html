@@ -67,24 +67,37 @@
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>ACL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% if binaryPermissions %}
-                    {% for p in binaryPermissions %}
-                    <tr>
-                      <td>{{ p }}</td>
-                    </tr>
+                    {% if service.binaryPermissions %}
+                    <thead>
+                        <tr>
+                          <th>ACL</th>
+                          <th>AccountName</th>
+                          <th>AccessControlType</th>
+                          <th>AccessRight</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                    {% for p in service.binaryPermissions %}
+                      <tr>
+                        <td>{{ p.Name }}</td>
+                        <td>{{ p.AccountName }}</td>
+                        <td>{{ p.AccessControlType }}</td>
+                        <td>{{ p.AccessRight }}</td>
+                      </tr>
                     {% endfor %}
+                      </tbody>
                     {% else %}
-                    <tr>
-                      <td>No binary found.</td>
-                    </tr>
+                      <thead>
+                        <tr>
+                          <th>ACL</th>
+                        </tr>
+                        </thead>
+                      <tbody>
+                        <tr>
+                          <td colspan="4">{{ service.binaryPermissionsStr }}</td>
+                        </tr>
+                      </tbody>
                     {% endif %}
-                  </tbody>
                 </table>
               </div>
               <!-- /.card-body -->

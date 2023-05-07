@@ -32,8 +32,8 @@ def user_detail(id):
 def service_detail(id):
     service = Service.query.get_or_404(id)
     host = Host.query.get_or_404(service.Host_id)
-    permissions = service.BinaryPermissions.split("\n")if service.BinaryPermissions is not None else ""
-    return render_template("service_details.html", service=service, host=host, binaryPermissions=permissions)
+    permissionStr = service.BinaryPermissionsStr.split("\n")if service.BinaryPermissions is not None else ""
+    return render_template("service_details.html", service=service, host=host, binaryPermissionStr=permissionStr)
 
 
 @host_bp.route('/shares/<int:id>', methods=['GET'])

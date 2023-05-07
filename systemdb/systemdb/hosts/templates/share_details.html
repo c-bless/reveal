@@ -53,24 +53,40 @@
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>ACL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% if share_permissions %}
-                    {% for n in share_permissions  %}
-                    <tr>
-                      <td>{{ n }}</td>
-                    </tr>
-                    {% endfor %}
+                  {% if share.SharePermissions %}
+                    <thead>
+                        <tr>
+                          <th>ACL</th>
+                          <th>AccountName</th>
+                          <th>ScopeName</th>
+                          <th>AccessControlType</th>
+                          <th>AccessRight</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in share.SharePermissions %}
+
+                            <tr>
+                              <td>{{ p.Name }}</td>
+                              <td>{{ p.AccountName }}</td>
+                              <td>{{ p.ScopeName }}</td>
+                              <td>{{ p.AccessControlType }}</td>
+                              <td>{{ p.AccessRight }}</td>
+                            </tr>
+                        {% endfor %}
+                      </tbody>
                     {% else %}
-                    <tr>
-                      <td>No acls found.</td>
-                    </tr>
+                      <thead>
+                        <tr>
+                          <th>ACL</th>
+                        </tr>
+                        </thead>
+                      <tbody>
+                        <tr>
+                          <td colspan="4">{{ share.SharePermission }}</td>
+                        </tr>
+                      </tbody>
                     {% endif %}
-                  </tbody>
                 </table>
               </div>
               <!-- /.card-body -->
@@ -86,24 +102,37 @@
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>ACL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% if ntfs_permissions %}
-                    {% for n in ntfs_permissions %}
-                    <tr>
-                      <td>{{ n }}</td>
-                    </tr>
+                    {% if share.NTFSPermissions %}
+                    <thead>
+                        <tr>
+                          <th>ACL</th>
+                          <th>AccountName</th>
+                          <th>AccessControlType</th>
+                          <th>AccessRight</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                    {% for p in share.NTFSPermissions %}
+                      <tr>
+                        <td>{{ p.Name }}</td>
+                        <td>{{ p.AccountName }}</td>
+                        <td>{{ p.AccessControlType }}</td>
+                        <td>{{ p.AccessRight }}</td>
+                      </tr>
                     {% endfor %}
+                      </tbody>
                     {% else %}
-                    <tr>
-                      <td>No acls found.</td>
-                    </tr>
+                      <thead>
+                        <tr>
+                          <th>ACL</th>
+                        </tr>
+                        </thead>
+                      <tbody>
+                        <tr>
+                          <td colspan="4">{{ share.NTFSPermission }}</td>
+                        </tr>
+                      </tbody>
                     {% endif %}
-                  </tbody>
                 </table>
               </div>
               <!-- /.card-body -->

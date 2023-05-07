@@ -120,9 +120,27 @@ def services2db(xml, host):
                 if "AcceptPause" == i.tag: service.AcceptPause = i.text
                 if "ProcessId" == i.tag: service.ProcessId = i.text
                 if "DelayedAutoStart" == i.tag: service.DelayedAutoStart = i.text
-                if "BinaryPermissions" == i.tag: service.BinaryPermissions = i.text
             service.Host_id = host.id
             db.session.add(service)
+            db.session.commit()
+            db.session.refresh(service)
+            for i in c.getchildren():
+                if "BinaryPermissions" == i.tag:
+                    childs = i.getchildren()
+                    if len(childs) > 0:
+                        for c in childs:
+                            if "Permission" == c.tag:
+                                ntfs = ShareACLNTFS()
+                                ntfs.Name = c.get("Name")
+                                ntfs.AccountName = c.get("AccountName")
+                                ntfs.AccessControlType = c.get("AccessControlType")
+                                ntfs.AccessRight = c.get("AccessRight")
+                                ntfs.Service_id = service.id
+                                db.session.add(ntfs)
+                                o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType, ntfs.AccessRight)
+                                service.BinaryPermissionsStr = o
+                    else:
+                        service.BinaryPermissionsStr = i.text
 
 
 def netipaddresses2db(xml, host):

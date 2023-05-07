@@ -103,8 +103,25 @@ class Service(db.Model):
     AcceptPause = db.Column(db.String(10), unique=False, nullable=True)
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
     DelayedAutoStart = db.Column(db.String(10), unique=False, nullable=True)
-    BinaryPermissions = db.Column(db.String(4096), unique=False, nullable=True)
+    BinaryPermissionsStr = db.Column(db.String(4096), unique=False, nullable=True)
+    BinaryPermissions = db.relationship('ServiceACL', backref='nftsshare', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
+
+
+class ServiceACL(db.Model):
+    __tablename__ = "ServiceACL"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(150), unique=False, nullable=True)
+    AccountName = db.Column(db.String(1024), unique=False, nullable=True)
+    AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
+    AccessRight = db.Column(db.String(150), unique=False, nullable=True)
+    Share_id = db.Column(db.Integer, db.ForeignKey('Service.id'), nullable=False)
 
     def __repr__(self):
         return self.Name

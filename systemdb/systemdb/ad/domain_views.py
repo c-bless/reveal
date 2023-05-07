@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.ad_models import ADDomain, ADTrust, ADDomainController
+from ..core.ad_models import ADDomain, ADTrust, ADDomainController, ADPasswordPolicy, ADUser, ADGroup, ADComputer
 
 from . import ad_bp
 
@@ -13,8 +13,13 @@ def domain_list():
 @ad_bp.route('/ad/domain/<int:id>', methods=['GET'])
 def domain_detail(id):
     domain = ADDomain.query.get_or_404(id)
-    dc_list = ADDomainController.query.filter(ADDomainController.Domain == domain.DNSRoot).all()
-    return render_template('addomain_details.html', domain=domain, dc_list=dc_list)
+    dc_list = ADDomainController.query.filter(ADDomainController.Domain_id == domain.id).all()
+    policy_list = ADPasswordPolicy.query.filter(ADPasswordPolicy.Domain_id == domain.id).all()
+    num_comp = ADComputer.query.filter(ADComputer.Domain_id == domain.id).count()
+    num_users = ADUser.query.filter(ADUser.Domain_id == domain.id).count()
+    num_groups = ADGroup.query.filter(ADGroup.Domain_id == domain.id).count()
+    return render_template('addomain_details.html', domain=domain, dc_list=dc_list, policy_list=policy_list,
+                           num_comp=num_comp, num_groups=num_groups, num_users=num_users)
 
 @ad_bp.route('/ad/trusts', methods=['GET'])
 def trust_list():
