@@ -23,6 +23,7 @@
 
 # version number of this script used as attribute in XML root tag 
 $version="0.1"
+$script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 import-module ActiveDirectory -ErrorAction SilentlyContinue
@@ -59,6 +60,7 @@ try{
         #############################################################################################################
         $xmlWriter.WriteStartElement("DomainCollector")
             $xmlWriter.WriteAttributeString("version", "$version")
+            $xmlWriter.WriteAttributeString("type", "$script_type")
             $xmlWriter.WriteStartElement("ADDomain")
                 $xmlWriter.WriteElementString("Name", [string] $domain.Name);
                 $xmlWriter.WriteElementString("NetBIOSName", [string] $domain.NetBIOSName);
@@ -357,6 +359,7 @@ try{
                                 $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
                                 $xmlWriter.WriteStartElement("Members");
                                 if ($groups_to_enum -contains $g.SamAccountName ) {
+                                    Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
                                     try{
                                         $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
                                         foreach ($m in $members) {

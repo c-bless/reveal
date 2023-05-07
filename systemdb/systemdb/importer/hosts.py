@@ -128,6 +128,7 @@ def services2db(xml, host):
                 if "BinaryPermissions" == i.tag:
                     childs = i.getchildren()
                     if len(childs) > 0:
+                        perm_str =[]
                         for c in childs:
                             if "Permission" == c.tag:
                                 ntfs = ShareACLNTFS()
@@ -138,9 +139,11 @@ def services2db(xml, host):
                                 ntfs.Service_id = service.id
                                 db.session.add(ntfs)
                                 o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType, ntfs.AccessRight)
-                                service.BinaryPermissionsStr = o
+                                perm_str.append(o)
+                        service.BinaryPermissionsStr = o
                     else:
                         service.BinaryPermissionsStr = i.text
+                    db.session.add(service)
 
 
 def netipaddresses2db(xml, host):
@@ -203,39 +206,61 @@ def groups2db(xml, host):
                         member.Group_id = group.id
                         db.session.add(member)
 
+
 def shares2db(xml, host):
     for c in xml.getchildren():
         if "Share" == c.tag:
-            share = Share()
-            for i in c.getchildren():
-                if "Name" == i.tag: share.Name = i.text
-                if "Path" == i.tag: share.Path = i.text
-                if "Description" == i.tag: share.Description = i.text
-                if "NTFSPermission" == i.tag: share.NTFSPermission = i.text
-                if "SharePermission" == i.tag: share.SharePermission = i.text
-            share.Host_id = host.id
-            db.session.add(share)
-            db.session.commit()
-            db.session.refresh(share)
-            for i in c.getchildren():
-                if "NTFSPermissions" == i.tag:
-                    for n in i.getchildren():
-                        if "Permission" == n.tag:
-                            ntfs = ShareACLNTFS()
-                            ntfs.Name = n.get("Name")
-                            ntfs.AccountName = n.get("AccountName")
-                            ntfs.AccessControlType = n.get("AccessControlType")
-                            ntfs.AccessRight = n.get("AccessRight")
-                            ntfs.Share_id = share.id
-                            db.session.add(ntfs)
-                if "SharePermissions" == i.tag:
-                    for n in i.getchildren():
-                        if "Permission" == n.tag:
-                            perm = ShareACL()
-                            perm.Name = n.get("Name")
-                            perm.ScopeName = n.get("ScopeName")
-                            perm.AccountName = n.get("AccountName")
-                            perm.AccessControlType = n.get("AccessControlType")
-                            perm.AccessRight = n.get("AccessRight")
-                            perm.Share_id = share.id
-                            db.session.add(perm)
+            try:
+                share = Share()
+                for i in c.getchildren():
+                    if "Name" == i.tag: share.Name = i.text
+                    if "Path" == i.tag: share.Path = i.text
+                    if "Description" == i.tag: share.Description = i.text
+                    if "NTFSPermission" == i.tag: share.NTFSPermission = i.text
+                    if "SharePermission" == i.tag: share.SharePermission = i.text
+                share.Host_id = host.id
+                db.session.add(share)
+                db.session.commit()
+                db.session.refresh(share)
+
+                perm_str_ntfs = []
+                perm_str_share = []
+                for i in c.getchildren():
+                    if "NTFSPermissions" == i.tag:
+                        for n in i.getchildren():
+                            if "Permission" == n.tag:
+                                try:
+                                    ntfs = ShareACLNTFS()
+                                    ntfs.Name = n.get("Name")
+                                    ntfs.AccountName = n.get("AccountName")
+                                    ntfs.AccessControlType = n.get("AccessControlType")
+                                    ntfs.AccessRight = n.get("AccessRight")
+                                    ntfs.Share_id = share.id
+                                    o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
+                                                              ntfs.AccessRight)
+                                    perm_str_ntfs.append(o)
+                                    db.session.add(ntfs)
+                                except:
+                                    pass
+                    if "SharePermissions" == i.tag:
+                        for n in i.getchildren():
+                            if "Permission" == n.tag:
+                                try:
+                                    perm = ShareACL()
+                                    perm.Name = n.get("Name")
+                                    perm.ScopeName = n.get("ScopeName")
+                                    perm.AccountName = n.get("AccountName")
+                                    perm.AccessControlType = n.get("AccessControlType")
+                                    perm.AccessRight = n.get("AccessRight")
+                                    perm.Share_id = share.id
+                                    o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
+                                                              ntfs.AccessRight)
+                                    perm_str_share.append(o)
+                                    db.session.add(perm)
+                                except:
+                                    pass
+                share.NTFSPermission("\n".join(perm_str_ntfs))
+                share.SharePermission("\n".join(perm_str_share))
+                db.session.commit()
+            except:
+                pass

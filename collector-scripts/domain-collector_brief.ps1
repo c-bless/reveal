@@ -23,7 +23,7 @@
 
 # version number of this script used as attribute in XML root tag 
 $version="0.1"
-$script_type ="full"
+$script_type ="brief"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 import-module ActiveDirectory -ErrorAction SilentlyContinue
@@ -40,8 +40,9 @@ try{
         $domain = Get-ADDomain;
         $path = Get-Location
 
+        
         $name = [string] $domain.NetBIOSName
-        $xmlfile = $path.Path + "\" + $date + "_DomainCollector_full_"+$version+"_" + $name + ".xml"
+        $xmlfile = $path.Path + "\" + $date + "_DomainCollector_brief_"+$version+"_" + $name + ".xml"
 
 
         $settings =  New-Object System.Xml.XmlWriterSettings
@@ -76,6 +77,7 @@ try{
                 $xmlWriter.WriteElementString("DistinguishedName", [string] $domain.DistinguishedName);
                 $xmlWriter.WriteElementString("InfrastructureMaster", [string] $domain.InfrastructureMaster);
             $xmlWriter.WriteEndElement() # ADDomain
+
 
             #############################################################################################################
             #    Collecting Basic information about the current Forest
@@ -262,31 +264,29 @@ try{
                     # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
                     # new XML Element
                     $basic_properties = @(
-                        'DistinguishedName', 'DNSHostName', 'Enabled', 'SID', 'SamAccountName', 'IPv4Address', 'IPv6Address',
-                        'ServiceAccount', 'TrustedForDelegation','TrustedToAuthForDelegation', 'PrimaryGroup','primaryGroupID',
-                        'ProtectedFromAccidentalDeletion', 'OperatingSystem','OperatingSystemVersion', 'Description'
+                        'DistinguishedName', 'DNSHostName', 'Enabled', 'SID', 'SamAccountName', 'IPv4Address', 'OperatingSystem','OperatingSystemVersion'
                     )
                     # servicePrincipalNames will contain subelements. Thus, it will not be iterated to create new XML elements. 
                     $properties = $basic_properties + "servicePrincipalNames"
                     $computer_list = Get-ADComputer -Filter * -Properties $properties
-                    foreach ($c in $computer_list) {
-                        try {
-                            $xmlWriter.WriteStartElement("ADComputer")
-                                # add all basic properties directly as new XML elements
-                                foreach ($p in $basic_properties) {
-                                    $xmlWriter.WriteElementString($p, [string] $c."$p");
-                                }
-                                # add new sub Tags for all SPNs
-                                $xmlWriter.WriteStartElement("servicePrincipalNames")
-                                foreach ($s in $c.ServicePrincipalNames) {
-                                    $xmlWriter.WriteElementString("SPN", [string] $s);
-                                }
-                                $xmlWriter.WriteEndElement() # servicePrincipalNames
-                            $xmlWriter.WriteEndElement() # ADComputer
-                        } catch{
-                            # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
+                        foreach ($c in $computer_list) {
+                            try {
+                                $xmlWriter.WriteStartElement("ADComputer")
+                                    # add all basic properties directly as new XML elements
+                                    foreach ($p in $basic_properties) {
+                                        $xmlWriter.WriteElementString($p, [string] $c."$p");
+                                    }
+                                    # add new sub Tags for all SPNs
+                                    $xmlWriter.WriteStartElement("servicePrincipalNames")
+                                    foreach ($s in $c.ServicePrincipalNames) {
+                                        $xmlWriter.WriteElementString("SPN", [string] $s);
+                                    }
+                                    $xmlWriter.WriteEndElement() # servicePrincipalNames
+                                $xmlWriter.WriteEndElement() # ADComputer
+                            } catch{
+                                # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
+                            }
                         }
-                    }
                 } catch {
                     # Failed executions will be ignored and no ADComputer tags will be added under ADComputerList
                 }
@@ -302,34 +302,33 @@ try{
                 Write-Host "[*] Collecting information about AD users." 
                 $xmlWriter.WriteStartElement("ADUserList")
                 try{
-                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
-                    # new XML Element
-                    $basic_properties = @(
-                        'DistinguishedName', 'SID', 'SamAccountName', 'Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
-                        'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate', 
-                        'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
-                    )
-                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
-                    $properties = $basic_properties + "MemberOf"
-                    $user_list = Get-ADUser -Filter * -Properties $properties
-                    foreach ($u in $user_list) {
-                        try{
-                            $xmlWriter.WriteStartElement("ADUser");
-                            # add all basic properties directly as new XML elements
-                            foreach ($p in $basic_properties) {
-                                $xmlWriter.WriteElementString($p, [string] $u."$p");
+                        # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
+                        # new XML Element
+                        $basic_properties = @(
+                            'DistinguishedName', 'SID', 'SAMAccountName', 'Description', 'GivenName', 'Surname', 'Name',
+                            'Enabled', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired'
+                        )
+                        # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
+                        $properties = $basic_properties + "MemberOf"
+                        $user_list = Get-ADUser -Filter * -Properties $properties
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                # add all basic properties directly as new XML elements
+                                foreach ($p in $basic_properties) {
+                                    $xmlWriter.WriteElementString($p, [string] $u."$p");
+                                }
+                                $xmlWriter.WriteStartElement("MemberOf");
+                                foreach ($m in $u.MemberOf) {
+                                    $xmlWriter.WriteElementString("Group", [string] $m);
+                                }
+                                $xmlWriter.WriteEndElement(); # MemberOf
+                                $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
+                                $xmlWriter.WriteEndElement(); # ADUser         
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
                             }
-                            $xmlWriter.WriteStartElement("MemberOf");
-                            foreach ($m in $u.MemberOf) {
-                                $xmlWriter.WriteElementString("Group", [string] $m);
-                            }
-                            $xmlWriter.WriteEndElement(); # MemberOf
-                            $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
-                            $xmlWriter.WriteEndElement(); # ADUser         
-                        } catch {
-                            # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
                         }
-                    }
                 } catch {
                     # Failed executions will be ignored and no ADUser tags will be added under ADUserList
                 }
@@ -344,42 +343,44 @@ try{
                 Write-Host "[*] Collecting information about AD groups." 
                 $xmlWriter.WriteStartElement("ADGroupList")
                 try{
-                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
-                    # new XML Element
-                    $properties = @('CN', 'Description', 'GroupCategory', 'GroupScope', 'SamAccountName', 'SID')
-                    $group_list = Get-ADGroup -Filter * -Properties $properties
-                    foreach ($g in $group_list) {
-                        try{
-                            $xmlWriter.WriteStartElement("ADGroup");
-                            # add all properties directly as new XML elements
-                            foreach ($p in $Properties) {
-                                $xmlWriter.WriteElementString($p, [string] $g."$p");
-                            }
-                            $xmlWriter.WriteStartElement("Members");
-                            Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
+                    $group_list = Get-ADGroup -Filter * -Properties * 
+                        foreach ($g in $group_list) {
                             try{
-                                $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
-                                foreach ($m in $members) {
+                                $xmlWriter.WriteStartElement("ADGroup");
+                                $xmlWriter.WriteElementString("CN", [string] $g.CN);
+                                $xmlWriter.WriteElementString("Description", [string] $g.Description);
+                                $xmlWriter.WriteElementString("GroupCategory", [string] $g.GroupCategory);
+                                $xmlWriter.WriteElementString("GroupScope", [string] $g.GroupScope);
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $g.SamAccountName);
+                                $xmlWriter.WriteElementString("SID", [string] $g.SID);
+                                $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
+                                $xmlWriter.WriteStartElement("Members");
+                                if ($groups_to_enum -contains $g.SamAccountName ) {
+                                    Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
                                     try{
-                                        $xmlWriter.WriteStartElement("Member");
-                                        $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
-                                        $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
-                                        $xmlWriter.WriteAttributeString("name", [string] $m.Name)
-                                        $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
-                                        $xmlWriter.WriteEndElement(); # Member
+                                        $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
+                                        foreach ($m in $members) {
+                                            try{
+                                                $xmlWriter.WriteStartElement("Member");
+                                                $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
+                                                $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
+                                                $xmlWriter.WriteAttributeString("name", [string] $m.Name)
+                                                $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
+                                                $xmlWriter.WriteEndElement(); # Member
+                                            }catch{
+                                                # Ignore this Member object and try to parse the next. No Tag will be added for this one. 
+                                            }
+                                        }
                                     }catch{
-                                        # Ignore this Member object and try to parse the next. No Tag will be added for this one. 
+                                        # Failed executions will be ignored and no Member tags will be added to Members
                                     }
                                 }
-                            }catch{
-                                # Failed executions will be ignored and no Member tags will be added to Members
+                                $xmlWriter.WriteEndElement(); # Members
+                                $xmlWriter.WriteEndElement(); # ADGroup         
+                            } catch {
+                                # Ignore this ADGroup object and try to parse the next. No Tag will be added for this one. 
                             }
-                            $xmlWriter.WriteEndElement(); # Members
-                            $xmlWriter.WriteEndElement(); # ADGroup         
-                        } catch {
-                            # Ignore this ADGroup object and try to parse the next. No Tag will be added for this one. 
                         }
-                    }
                 }catch {
                     # Failed executions will be ignored and no ADGroup tags will be added under ADGroupList
                 }
