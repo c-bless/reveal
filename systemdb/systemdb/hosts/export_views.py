@@ -2,11 +2,11 @@ from flask import render_template, abort, Response, redirect, url_for
 
 from . import host_bp
 
-from ..core.sysinfo_models import Host
+from ..core.sysinfo_models import Host, Service
 
 import os
 from .export_func import template_detail_dir, template_dir
-from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel
+from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, generate_services_excel
 
 @host_bp.route('/hosts/export/templates', methods=['GET'])
 def template_list():
@@ -59,3 +59,17 @@ def export_host(id):
 
     return redirect(url_for('hosts.host_detail',id=id))
 
+
+
+
+@host_bp.route('/services/export/excel', methods=['GET'])
+def service_export_excel():
+    services = Service.query.all()
+
+    output = generate_services_excel(services)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=services.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return redirect(url_for('hosts.host_list'))

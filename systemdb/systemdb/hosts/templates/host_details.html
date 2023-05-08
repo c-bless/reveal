@@ -118,7 +118,7 @@
     <div class="card-body">
       <div class="tab-content" id="custom-tabs-one-tabContent">
         <div class="tab-pane fade show active" id="tabs-network" role="tabpanel" aria-labelledby="tabs-network-tab">
-                <div class="row">
+                <div class="row m-1">
                       <div class="col-md-6">
                         <div class="card card-olive card-outline">
                           <div class="card-header">
@@ -222,6 +222,7 @@
               </div>
             </div>
           </div>
+        </div>
         </div>
         <div class="tab-pane fade" id="tabs-software" role="tabpanel" aria-labelledby="tabs-software-tab">
           <div class="row m-1">
@@ -455,7 +456,7 @@
                     {% for s in host.Shares %}
                     <tr>
                       <td>{{ s.Name }}</td>
-                      <td>{{ s.PathName }}</td>
+                      <td>{{ s.Path }}</td>
                       <td class="actions">
                         <a href="{{ url_for('hosts.share_detail', id=s.id) }}" class="btn btn-default btn-xs">
                           <i class="fa fa-eye"></i> View

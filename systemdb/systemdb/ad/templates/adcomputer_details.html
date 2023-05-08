@@ -1,0 +1,105 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if computer %} {{ computer.SamAccountName}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Domain Computer {% endblock menu_l2 %}
+
+{% block content %}
+{% if computer %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">DNSHostName</dt>
+                      <dd class="col-sm-8">{{ computer.DNSHostName }}</dd>
+                      <dt class="col-sm-4">SamAccountName</dt>
+                      <dd class="col-sm-8">{{ computer.SamAccountName }}</dd>
+                      <dt class="col-sm-4">Enabled</dt>
+                      <dd class="col-sm-8">{{ computer.Enabled }}</dd>
+                      <dt class="col-sm-4">IPv4Address</dt>
+                      <dd class="col-sm-8">{{ computer.IPv4Address }}</dd>
+                      <dt class="col-sm-4">IPv6Address</dt>
+                      <dd class="col-sm-8">{{ computer.IPv6Address }}</dd>
+                      <dt class="col-sm-4">OperatingSystem</dt>
+                      <dd class="col-sm-8">{{ computer.OperatingSystem }}</dd>
+                      <dt class="col-sm-4">OperatingSystemVersion</dt>
+                      <dd class="col-sm-8">{{ computer.OperatingSystemVersion }}</dd>
+                      <dt class="col-sm-4">SID</dt>
+                      <dd class="col-sm-8">{{ computer.SID }}</dd>
+                      <dt class="col-sm-4">DistinguishedName</dt>
+                      <dd class="col-sm-8">{{ computer.DistinguishedName }}</dd>
+                      <dt class="col-sm-4">TrustedForDelegation</dt>
+                      <dd class="col-sm-8">{{ computer.TrustedForDelegation }}</dd>
+                      <dt class="col-sm-4">TrustedToAuthForDelegation</dt>
+                      <dd class="col-sm-8">{{ computer.TrustedToAuthForDelegation }}</dd>
+                      <dt class="col-sm-4">PrimaryGroup</dt>
+                      <dd class="col-sm-8">{{ computer.PrimaryGroup }}</dd>
+                      <dt class="col-sm-4">primaryGroupID</dt>
+                      <dd class="col-sm-8">{{ computer.primaryGroupID }}</dd>
+                      <dt class="col-sm-4">pwdLastSet</dt>
+                      <dd class="col-sm-8">{{ computer.pwdLastSet }}</dd>
+                      <dt class="col-sm-4">ProtectedFromAccidentalDeletion</dt>
+                      <dd class="col-sm-8">{{ computer.ProtectedFromAccidentalDeletion }}</dd>
+                      <dt class="col-sm-4">Description</dt>
+                      <dd class="col-sm-8">{{ computer.Description }}</dd>
+                    </dl>
+                  </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Service Principle Names</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>SPN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% if computer.SPNs %}
+                    {% for c in computer.SPNs %}
+                    <tr>
+                      <td>{{ c.Name }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td>No SPNs found.</td>
+                    </tr>
+                  {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+            <!-- /.card -->
+          </div>
+    </div>
+
+{% endif %}
+{% endblock content %}

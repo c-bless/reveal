@@ -32,7 +32,7 @@
                             <td> {{ c.OperatingSystem }} </td>
                             <td> {{ c.OperatingSystemVersion }} </td>
                             <td class="actions">
-                                <a href="#" class="btn btn-default btn-xs">
+                                <a href="{{url_for('ad.computer_detail',id=c.id)}}" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View
                                 </a>
                             </td>

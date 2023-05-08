@@ -15,6 +15,20 @@ def host_detail(id):
     host = Host.query.get_or_404(id)
     return render_template('host_details.html', host=host)
 
+
+@host_bp.route('/services/', methods=['GET'])
+def service_list():
+    services = Service.query.all()
+    return render_template('service_list.html', services=services)
+
+
+@host_bp.route('/hosts/<int:id>/services/', methods=['GET'])
+def host_service_list(id):
+    services = Service.query.filter(Service.Host_id == id).all()
+    return render_template('service_list.html', services=services)
+
+
+
 @host_bp.route('/groups/<int:id>', methods=['GET'])
 def group_detail(id):
     group = Group.query.get_or_404(id)
