@@ -94,6 +94,7 @@ def generate_hosts_excel(hosts=[]):
             else:
                 worksheet.write(row, col, str(c))
             col += 1
+        worksheet.autofilter("A1:X1")
         col = 0
         row += 1
 
