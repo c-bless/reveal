@@ -2,5 +2,5 @@
 """This module exists to avoid circular imports when importing db object"""
 
 from flask_sqlalchemy import SQLAlchemy
-#db = SQLAlchemy()
-db = SQLAlchemy(session_options={"autoflush": False})
+db = SQLAlchemy()
+#db = SQLAlchemy(session_options={"autoflush": False})

@@ -9,22 +9,10 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_isPrivate(host) %}
-  {% if host.private == True %}
-    <span class="text-info">private</span>
+{% macro render_isEnabled(enabled) %}
+  {% if enabled== "True" %}
+    <span class="text-success">Enabled</span>
   {% else %}
-    <span class="text-danger">public</span>
-  {% endif %}
-{% endmacro %}
-
-
-
-{% macro render_ip(host) %}
-  {% if host.private == True %}
-    <span class="text-info">{{ host.ip }}</span>
-  {% elif host.private == False %}
-    <span class="text-danger">{{ host.ip }}</span>
-  {% else %}
-    {{ host.ip }}
+    <span class="text-danger">Disabled</span>
   {% endif %}
 {% endmacro %}

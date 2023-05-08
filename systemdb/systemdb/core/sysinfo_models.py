@@ -18,6 +18,17 @@ class Host(db.Model):
     HyperVisorPresent = db.Column(db.String(150), unique=False, nullable=True)
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
+    # Autologon via Registry
+    AutoAdminLogon = db.Column(db.String(4), unique=False, nullable=True)
+    ForceAutoLogon = db.Column(db.String(4), unique=False, nullable=True)
+    DefaultPassword = db.Column(db.String(256), unique=False, nullable=True)
+    DefaultUserName = db.Column(db.String(256), unique=False, nullable=True)
+    DefaultDomain = db.Column(db.String(256), unique=False, nullable=True)
+    # Firewall Profiles
+    FwProfileDomain = db.Column(db.String(5),  unique=False, nullable=True)
+    FwProfilePrivate = db.Column(db.String(5),  unique=False, nullable=True)
+    FwProfilePublic = db.Column(db.String(5),  unique=False, nullable=True)
+    # references
     Hotfixes = db.relationship('Hotfix', backref='dc', lazy='dynamic')
     NetAdapters = db.relationship('NetAdapter', backref='dc', lazy='dynamic')
     NetIPAddresses = db.relationship('NetIPAddress', backref='dc', lazy='dynamic')
@@ -26,12 +37,6 @@ class Host(db.Model):
     Groups = db.relationship('Group', backref='dc', lazy='dynamic')
     Shares = db.relationship('Share', backref='dc', lazy='dynamic')
     Products = db.relationship('Product', backref='dc', lazy='dynamic')
-    # Autologon via Registry
-    AutoAdminLogon = db.Column(db.String(4), unique=False, nullable=True)
-    ForceAutoLogon = db.Column(db.String(4), unique=False, nullable=True)
-    DefaultPassword = db.Column(db.String(256), unique=False, nullable=True)
-    DefaultUserName = db.Column(db.String(256), unique=False, nullable=True)
-    DefaultDomain = db.Column(db.String(256), unique=False, nullable=True)
 
     def __repr__(self):
         return self.Hostname
@@ -104,7 +109,7 @@ class Service(db.Model):
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
     DelayedAutoStart = db.Column(db.String(10), unique=False, nullable=True)
     BinaryPermissionsStr = db.Column(db.String(4096), unique=False, nullable=True)
-    BinaryPermissions = db.relationship('ServiceACL', backref='nftsshare', lazy='dynamic')
+    BinaryPermissions = db.relationship('ServiceACL', backref='service_nfts_acl', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
 
     def __repr__(self):
@@ -121,7 +126,7 @@ class ServiceACL(db.Model):
     AccountName = db.Column(db.String(1024), unique=False, nullable=True)
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
     AccessRight = db.Column(db.String(150), unique=False, nullable=True)
-    Share_id = db.Column(db.Integer, db.ForeignKey('Service.id'), nullable=False)
+    Service_id = db.Column(db.Integer, db.ForeignKey('Service.id'), nullable=False)
 
     def __repr__(self):
         return self.Name
@@ -214,8 +219,8 @@ class Share(db.Model):
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     NTFSPermission = db.Column(db.String(4096), unique=False, nullable=True)
     SharePermission = db.Column(db.String(4096), unique=False, nullable=True)
-    NTFSPermissions = db.relationship('ShareACLNTFS', backref='nftsshare', lazy='dynamic')
-    SharePermissions = db.relationship('ShareACL', backref='share', lazy='dynamic')
+    NTFSPermissions = db.relationship('ShareACLNTFS', backref='share_ntfs_acl', lazy='dynamic')
+    SharePermissions = db.relationship('ShareACL', backref='share_acl', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
 
     def __repr__(self):

@@ -1,5 +1,5 @@
 from ..core.sysinfo_models import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter
-from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS
+from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL
 from ..core.db import db
 
 
@@ -29,6 +29,8 @@ def import_host(root):
                 groups2db(e, host)
             if "Shares" == e.tag:
                 shares2db(e, host)
+            if "NetFirewallProfiles" == e.tag:
+                fwprofile2db(e, host)
         return host
 
 
@@ -131,7 +133,7 @@ def services2db(xml, host):
                         perm_str =[]
                         for c in childs:
                             if "Permission" == c.tag:
-                                ntfs = ShareACLNTFS()
+                                ntfs = ServiceACL()
                                 ntfs.Name = c.get("Name")
                                 ntfs.AccountName = c.get("AccountName")
                                 ntfs.AccessControlType = c.get("AccessControlType")
@@ -140,11 +142,11 @@ def services2db(xml, host):
                                 db.session.add(ntfs)
                                 o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType, ntfs.AccessRight)
                                 perm_str.append(o)
-                        service.BinaryPermissionsStr = o
+                        service.BinaryPermissionsStr = "\n".join(perm_str)
                     else:
                         service.BinaryPermissionsStr = i.text
                     db.session.add(service)
-
+    db.session.commit()
 
 def netipaddresses2db(xml, host):
     for c in xml.getchildren():
@@ -264,3 +266,16 @@ def shares2db(xml, host):
                 db.session.commit()
             except:
                 pass
+
+def fwprofile2db(xml, host):
+    for c in xml.getchildren():
+        if "FwProfile" == c.tag:
+            name = c.get("Name")
+            enabled = c.get("Enabled")
+            if name == "Domain":
+                host.FwProfileDomain = enabled
+            if name == "Private":
+                host.FwProfilePrivate = enabled
+            if name == "Public":
+                host.FwProfilePublic = enabled
+            db.session.commit()

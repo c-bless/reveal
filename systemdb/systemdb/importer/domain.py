@@ -34,6 +34,7 @@ def import_domain_collector(root):
                     passwordPolicy2db(xml=policy, domain=domain, type="ADFineGrainedPasswordPolicy")
         if c.tag == "ADTrusts":
             trusts2db(xml=c, domain=domain)
+        db.session.commit()
 
 
 
@@ -139,7 +140,7 @@ def passwordPolicy2db(xml, domain, type="ADDefaultDomainPasswordPolicy"):
             else:
                 policy.Name = e.text
     db.session.add(policy)
-    db.session.commit()
+    #db.session.commit()
 
 
 def dc2db(xml, domain, forest):
@@ -178,7 +179,7 @@ def dc2db(xml, domain, forest):
                     role.DC_id = dc.id
                     db.session.add(role)
 
-    db.session.commit()
+    #db.session.commit()
 
 
 def computer2db(xml, domain):
@@ -216,7 +217,7 @@ def computer2db(xml, domain):
                     spn.Computer_id = c.id
                     db.session.add(spn)
 
-    db.session.commit()
+    #db.session.commit()
 
 
 def user2db(xml, domain):
@@ -259,7 +260,7 @@ def user2db(xml, domain):
                     group.Group = m.text
                     group.User_id = user.id
                     db.session.add(group)
-    db.session.commit()
+    #db.session.commit()
 
 
 def group2db(xml, domain):
@@ -287,7 +288,7 @@ def group2db(xml, domain):
                     member.distinguishedName = m.get("distinguishedName")
                     member.Group_id = group.id
                     db.session.add(member)
-    db.session.commit()
+    #db.session.commit()
 
 
 def trusts2db(xml, domain):
@@ -314,4 +315,4 @@ def trusts2db(xml, domain):
                 if "IsTreeParent" == e.tag: trust.IsTreeParent = e.text
                 if "IsTreeRoot" == e.tag: trust.IsTreeRoot = e.text
             db.session.add(trust)
-    db.session.commit()
+    #db.session.commit()

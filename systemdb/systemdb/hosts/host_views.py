@@ -1,4 +1,5 @@
 from flask import render_template
+from sqlalchemy import desc
 
 from . import host_bp
 
@@ -32,7 +33,7 @@ def user_detail(id):
 def service_detail(id):
     service = Service.query.get_or_404(id)
     host = Host.query.get_or_404(service.Host_id)
-    permissionStr = service.BinaryPermissionsStr.split("\n")if service.BinaryPermissions is not None else ""
+    permissionStr = service.BinaryPermissionsStr.split("\n")if service.BinaryPermissionsStr is not None else ""
     return render_template("service_details.html", service=service, host=host, binaryPermissionStr=permissionStr)
 
 
