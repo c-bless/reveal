@@ -18,8 +18,9 @@ def domain_detail(id):
     num_comp = ADComputer.query.filter(ADComputer.Domain_id == domain.id).count()
     num_users = ADUser.query.filter(ADUser.Domain_id == domain.id).count()
     num_groups = ADGroup.query.filter(ADGroup.Domain_id == domain.id).count()
+    trusts = ADTrust.query.filter(ADTrust.Domain_id == domain.id).all()
     return render_template('addomain_details.html', domain=domain, dc_list=dc_list, policy_list=policy_list,
-                           num_comp=num_comp, num_groups=num_groups, num_users=num_users)
+                           num_comp=num_comp, num_groups=num_groups, num_users=num_users, trusts=trusts)
 
 @ad_bp.route('/ad/trusts', methods=['GET'])
 def trust_list():

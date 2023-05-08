@@ -18,13 +18,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if forests %}
-                        {% for f in forests %}
+                    {% if trusts %}
+                        {% for t in trusts %}
                           <tr>
-                            <td> {{ f.Source }} </td>
-                            <td> {{ f.Direction }} </td>
-                            <td> {{ f.Target }} </td>
-                            <td> {{ f.IntraForest }} </td>
+                            <td> {{ t.Source }} </td>
+                            <td> {{ t.Direction }} </td>
+                            <td> {{ t.Target }} </td>
+                            <td> {{ t.IntraForest }} </td>
                             <td class="actions">
                                 <a href="#" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View

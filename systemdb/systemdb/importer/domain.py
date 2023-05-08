@@ -38,6 +38,22 @@ def import_domain_collector(root):
 
 
 def domain2db(addomain):
+    # <ADDomain>
+    #         <Name>ot</Name>
+    #         <NetBIOSName>OTL</NetBIOSName>
+    #         <DomainMode>Windows2016Domain</DomainMode>
+    #         <DNSRoot>ot.lab</DNSRoot>
+    #         <DomainSID>S-1-5-21-2979221235-2529638109-2329603834</DomainSID>
+    #         <RIDMaster>DC.ot.lab</RIDMaster>
+    #         <PDCEmulator>DC.ot.lab</PDCEmulator>
+    #         <ParentDomain />
+    #         <Forest>ot.lab</Forest>
+    #         <UsersContainer>CN=Users,DC=ot,DC=lab</UsersContainer>
+    #         <SystemsContainer>CN=System,DC=ot,DC=lab</SystemsContainer>
+    #         <ComputersContainer>CN=Computers,DC=ot,DC=lab</ComputersContainer>
+    #         <DistinguishedName>DC=ot,DC=lab</DistinguishedName>
+    #         <InfrastructureMaster>DC.ot.lab</InfrastructureMaster>
+    #     </ADDomain>
     dom = ADDomain()
     for e in addomain.getchildren():
         if "Name" == e.tag: dom.Name = e.text
