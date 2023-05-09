@@ -46,19 +46,27 @@ def generate_hosts_excel(hosts=[]):
         admins = []
         rdp = []
         groups = []
-        cell_format = workbook.add_format({'text_wrap': True})
+        hotfixes = []
         for i in h.NetIPAddresses:
             ips.append("{0}/{1} ({2})".format(i.IP, i.Prefix, i.InterfaceAlias))
+        if len(ips) == 0: ips.append("")
         for p in h.Products:
             products.append("{0} ({1})".format(p.Name, p.Version))
+        if len(products) == 0: products.append("")
         for u in h.Users:
             users.append("{0}\\{1} (Disabled: {2}, PW required: {3})".format(u.Domain, u.Name, u.Disabled, u.PasswordRequired))
+        if len(users) == 0: users.append("")
+        for hf in h.Hotfixes:
+            hotfixes.append("{0} ({1})".format(hf.HotfixId, hf.InstalledOn))
+        if len(hotfixes) == 0: hotfixes.append("")
         for g in h.Groups:
             name = g.Name
             members =[]
             for m in g.Members:
                 members.append(m.Caption)
-            if len(members) >0:
+            if len(members) == 0:
+                members.append("")
+            else:
                 outstr = "{0}: ({1})".format(name, ", ".join(members))
                 groups.append(outstr)
             if g.SID == "S-1-5-32-544":
@@ -66,16 +74,17 @@ def generate_hosts_excel(hosts=[]):
             if g.SID == "S-1-5-32-555":
                 rdp.append("\n".join(members))
         tmp = [h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber, "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp), "\n".join(products),
-               h.OSInstallDate, h.OSProductType, h.LogonServer, h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
+               "\n".join(hotfixes), h.OSInstallDate, h.OSProductType, h.LogonServer, h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
                h.AutoAdminLogon, h.ForceAutoLogon, h.DefaultPassword, h.DefaultUserName]
         rows.append(tmp)
 
 
     header_data = ["Hostname", "Domain", "DomainRole", "OSName", "OSVersion", "OSBuildNumber", "IPs", "Users",
-                   "Groups with members", "Admins", "RDP Users", "Products", "OSInstallDate", "OSProductType", "LogonServer", "TimeZone", "KeyboardLayout",
+                   "Groups with members", "Admins", "RDP Users", "Products", "hotfixes", "OSInstallDate", "OSProductType", "LogonServer", "TimeZone", "KeyboardLayout",
                    "HyperVisorPresent", "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon", "ForceAutoLogon",
                    "DefaultPassword", "DefaultUserName"]
 
+    cell_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
                                          'bottom': 2,
                                          'bg_color': '#CCCCCC'})
@@ -89,7 +98,7 @@ def generate_hosts_excel(hosts=[]):
     # Iterate over the data and write it out row by row.
     for host in (rows):
         for c in host:
-            if ( col > 5) and (col <= 10):
+            if ( col > 5) and (col <= 11):
                 worksheet.write(row, col, str(c), cell_format)
             else:
                 worksheet.write(row, col, str(c))
@@ -105,8 +114,6 @@ def generate_hosts_excel(hosts=[]):
     # Rewind the buffer.
     output.seek(0)
     return output
-
-
 
 
 def generate_services_excel(services=[]):
