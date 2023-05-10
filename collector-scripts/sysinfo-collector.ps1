@@ -49,39 +49,77 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         # Get Systeminformation
         Write-Host "[*] Collecting general computer infos."
-        $compInfo = Get-ComputerInfo
+        
+        if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
+            $compInfo = Get-ComputerInfo
 
-        #######################################################################
-        # writing basic system information
-        #######################################################################
-        $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
-        $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
-        $xmlWriter.WriteElementString("OSVersion",[string] $compInfo.OSVersion);
-        $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.OSBuildNumber);
-        $xmlWriter.WriteElementString("OSName", [string] $compInfo.OSName);
-        $xmlWriter.WriteElementString("OSInstallDate",[string] $compInfo.OSInstallDate);
-        $xmlWriter.WriteElementString("OSProductType",[string] $compInfo.OSProductType);
-        $xmlWriter.WriteElementString("LogonServer", [string] $compInfo.LogonServer);
-        $xmlWriter.WriteElementString("TimeZone",[string]$compInfo.TimeZone);
-        $xmlWriter.WriteElementString("KeyboardLayout",[string]$compInfo.KeyboardLayout);
-        $xmlWriter.WriteElementString("HyperVisorPresent",[string]$compInfo.HyperVisorPresent);
-        $xmlWriter.WriteElementString("DeviceGuardSmartStatus",[string]$compInfo.DeviceGuardSmartStatus);
+            #######################################################################
+            # writing basic system information
+            #######################################################################
+            $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
+            $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
+            $xmlWriter.WriteElementString("OSVersion",[string] $compInfo.OSVersion);
+            $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.OSBuildNumber);
+            $xmlWriter.WriteElementString("OSName", [string] $compInfo.OSName);
+            $xmlWriter.WriteElementString("OSInstallDate",[string] $compInfo.OSInstallDate);
+            $xmlWriter.WriteElementString("OSProductType",[string] $compInfo.OSProductType);
+            $xmlWriter.WriteElementString("LogonServer", [string] $compInfo.LogonServer);
+            $xmlWriter.WriteElementString("TimeZone",[string]$compInfo.TimeZone);
+            $xmlWriter.WriteElementString("KeyboardLayout",[string]$compInfo.KeyboardLayout);
+            $xmlWriter.WriteElementString("HyperVisorPresent",[string]$compInfo.HyperVisorPresent);
+            $xmlWriter.WriteElementString("DeviceGuardSmartStatus",[string]$compInfo.DeviceGuardSmartStatus);
+
+        }else{
+            $xmlWriter.WriteElementString("Domain",[string] [System.Environment]::UserDomainName);
+            $xmlWriter.WriteElementString("OSVersion",[string] [System.Environment]::OSVersion.Version);
+            $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
+            $xmlWriter.WriteElementString("OSName", [string] [System.Environment]::OSVersion.VersionString);
+            try {
+                $timezone = Get-WmiObject -Class win32_timezone
+                $xmlWriter.WriteElementString("TimeZone", $timezone.Caption);
+            }catch{}
+
+        }
+
+        $xmlWriter.WriteElementString("Whoami", [string] [System.Environment]::UserName);
         $xmlWriter.WriteElementString("PSVersion",[string]$PSVersionTable.PSVersion);
+        try{
+            $xmlWriter.WriteStartElement("BIOS")
+            $bios = Get-WmiObject -Class win32_bios
+            $xmlWriter.WriteAttributeString("Manufacturer", [string] $bios.Manufacturer);
+            $xmlWriter.WriteAttributeString("Name", [string] $bios.Name);
+            $xmlWriter.WriteAttributeString("Version", [string] $bios.Version);
+            $xmlWriter.WriteAttributeString("SerialNumber", [string] $bios.SerialNumber);
+            $xmlWriter.WriteEndElement() # BIOS
+        }catch{}
 
         #######################################################################
         # Collecting information about installed hotfixes / patches
         #######################################################################
         
         Write-Host "[*] Collecting installed hotfixes"
-        $hotfixes = Get-HotFix
-        
         $xmlWriter.WriteStartElement("Hotfixes")
-        foreach ($h in $hotfixes ) {
-            $xmlWriter.WriteStartElement("Hotfix")
-            $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
-            $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
-            $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
-            $xmlWriter.WriteEndElement() # hotfix
+            
+        if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
+            $hotfixes = Get-HotFix
+        
+            foreach ($h in $hotfixes ) {
+                $xmlWriter.WriteStartElement("Hotfix")
+                $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
+                $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
+                $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
+                $xmlWriter.WriteEndElement() # hotfix
+            }
+        } else {
+            $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering
+        
+            foreach ($h in $hotfixes ) {
+                $xmlWriter.WriteStartElement("Hotfix")
+                $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
+                $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
+                $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
+                $xmlWriter.WriteEndElement() # hotfix
+            }
         }
         $xmlWriter.WriteEndElement() # hotfixes
 
@@ -112,39 +150,42 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Collecting information about network adapters
         #######################################################################
         
-        Write-Host "[*] Collecting available network adapters"
-        $netadapters = Get-NetAdapter
+        if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
+            Write-Host "[*] Collecting available network adapters"
+            $netadapters = Get-NetAdapter
         
-        $xmlWriter.WriteStartElement("Netadapters")
-        foreach ($n in $netadapters ) {
-            $xmlWriter.WriteStartElement("Netadapter")
-            $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress);
-            $xmlWriter.WriteAttributeString("Status",[string] $n.Status);
-            $xmlWriter.WriteAttributeString("Name",[string] $n.Name);
-            $xmlWriter.WriteAttributeString("InterfaceDescription",[string] $n.InterfaceDescription);
-            $xmlWriter.WriteEndElement() # netadapter
+            $xmlWriter.WriteStartElement("Netadapters")
+            foreach ($n in $netadapters ) {
+                $xmlWriter.WriteStartElement("Netadapter")
+                $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress);
+                $xmlWriter.WriteAttributeString("Status",[string] $n.Status);
+                $xmlWriter.WriteAttributeString("Name",[string] $n.Name);
+                $xmlWriter.WriteAttributeString("InterfaceDescription",[string] $n.InterfaceDescription);
+                $xmlWriter.WriteEndElement() # netadapter
+            }
+            $xmlWriter.WriteEndElement() # netadapters
         }
-        $xmlWriter.WriteEndElement() # netadapters
-
         
         #######################################################################
         # Collecting information about ip addresses
         #######################################################################
-        Write-Host "[*] Collecting IP addresses"
-        $netips = Get-NetIPAddress
+        if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
+            Write-Host "[*] Collecting IP addresses"
+            $netips = Get-NetIPAddress
         
-        $xmlWriter.WriteStartElement("NetIPAddresses")
-        foreach ($n in $netips ) {
-            $xmlWriter.WriteStartElement("NetIPAddress")
-            $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily);
-            $xmlWriter.WriteAttributeString("Type", [string] $n.Type);
-            $xmlWriter.WriteAttributeString("IP", [string] $n.IPAddress);
-            $xmlWriter.WriteAttributeString("Prefix", [string] $n.PrefixLength);
-            $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias);
+            $xmlWriter.WriteStartElement("NetIPAddresses")
+            foreach ($n in $netips ) {
+                $xmlWriter.WriteStartElement("NetIPAddress")
+                $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily);
+                $xmlWriter.WriteAttributeString("Type", [string] $n.Type);
+                $xmlWriter.WriteAttributeString("IP", [string] $n.IPAddress);
+                $xmlWriter.WriteAttributeString("Prefix", [string] $n.PrefixLength);
+                $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias);
 
+                $xmlWriter.WriteEndElement() # NetIPAddress
+            }
             $xmlWriter.WriteEndElement() # NetIPAddress
         }
-        $xmlWriter.WriteEndElement() # NetIPAddress
 
         #######################################################################
         # Collecting information about services
@@ -171,7 +212,17 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("ProcessId",[string]$s.ProcessId);
             $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart);
             try {
-                $acl = get-acl -Path $s.PathName -ErrorAction SilentlyContinue
+                $folder = Split-Path -Path $s.PathName
+                $leaf = Split-Path -Path $s.PathName -Leaf
+                $space = $leaf.IndexOf(" ")
+                if ($space -eq -1) { 
+                    $bin = $s.PathName
+                }else{
+                    $bin = $folder+"\"+$leaf.Substring(0,$space)
+                }
+                $xmlWriter.WriteElementString("Executable",[string]$bin);
+                
+                $acl = get-acl -Path $bin -ErrorAction SilentlyContinue
                 #$xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
                 $xmlWriter.WriteStartElement("BinaryPermissions")
                 foreach ($a in $acl.Access) {
@@ -184,7 +235,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                         $xmlWriter.WriteEndElement() # Permission
                     }catch{}
                 }
-                $xmlWriter.WriteEndElement() # NTFSPermissions   
+                $xmlWriter.WriteEndElement() # BinaryPermissions 
+                  
             } catch {}
             $xmlWriter.WriteEndElement() # service
         }
