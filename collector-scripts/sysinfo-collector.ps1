@@ -7,6 +7,8 @@
     https://bitbucket.org/cbless/systemdb
 
     Author: Christoph Bless (bitbucket@cbless.de)
+    License: GPL
+    Version: 0.1
 
     .INPUTS
     None
