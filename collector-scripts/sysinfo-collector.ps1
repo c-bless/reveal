@@ -68,12 +68,29 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("KeyboardLayout",[string]$compInfo.KeyboardLayout);
             $xmlWriter.WriteElementString("HyperVisorPresent",[string]$compInfo.HyperVisorPresent);
             $xmlWriter.WriteElementString("DeviceGuardSmartStatus",[string]$compInfo.DeviceGuardSmartStatus);
+            $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $compInfo.CSPrimaryOwnerName);
 
         }else{
             $xmlWriter.WriteElementString("Domain",[string] [System.Environment]::UserDomainName);
-            $xmlWriter.WriteElementString("OSVersion",[string] [System.Environment]::OSVersion.Version);
-            $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
-            $xmlWriter.WriteElementString("OSName", [string] [System.Environment]::OSVersion.VersionString);
+            try{
+                $cs = Get-WmiObject -Class win32_ComputerSystem -Property * 
+                $xmlWriter.WriteElementString("DomainRole",[string] $cs.DomainRole);
+                $xmlWriter.WriteElementString("HyperVisorPresent",[string]$cs.HypervisorPresent);
+                $xmlWriter.WriteElementString("OSInstallDate",[string] $cs.InstallDate);
+                $xmlWriter.WriteElementString("Manufacturer",[string] $cs.CsManufacturer);
+                $xmlWriter.WriteElementString("Model",[string] $cs.CsModel);
+                $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $cs.PrimaryOwnerName);
+            } catch{}
+            try{
+                $os = Get-WmiObject Win32_OperatingSystem
+                $xmlWriter.WriteElementString("OSVersion",[string] $os.Version);
+                $xmlWriter.WriteElementString("OSBuildNumber",[string] $os.BuildNumber);
+                $xmlWriter.WriteElementString("OSName", [string] $os.Caption);
+            } catch {
+                $xmlWriter.WriteElementString("OSVersion",[string] [System.Environment]::OSVersion.Version);
+                $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
+                $xmlWriter.WriteElementString("OSName", [string] [System.Environment]::OSVersion.VersionString);
+            }
             try {
                 $timezone = Get-WmiObject -Class win32_timezone
                 $xmlWriter.WriteElementString("TimeZone", $timezone.Caption);
@@ -164,6 +181,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteEndElement() # netadapter
             }
             $xmlWriter.WriteEndElement() # netadapters
+        }else{
+            try{
+                $netadapters = get-wmiobject -Class win32_networkadapter
+                 foreach ($n in $netadapters ) {
+                    $xmlWriter.WriteStartElement("Netadapter")
+                    $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress);
+                    $xmlWriter.WriteAttributeString("Status",[string] $n.Status);
+                    $xmlWriter.WriteAttributeString("Name",[string] $n.Name);
+                    $xmlWriter.WriteAttributeString("Type",[string] $n.AdapterType);
+                    $xmlWriter.WriteAttributeString("InterfaceDescription",[string] $n.Description);
+                    $xmlWriter.WriteEndElement() # netadapter
+                }
+            }catch{}
         }
         
         #######################################################################
@@ -185,6 +215,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteEndElement() # NetIPAddress
             }
             $xmlWriter.WriteEndElement() # NetIPAddress
+        } else {
+            try{
+                # TODO: get IPAddresses
+                $netadapters = get-wmiobject -Class win32_networkadapter
+                $xmlWriter.WriteStartElement("NetIPAddresses")
+                 foreach ($n in $netadapters ) {
+                    $xmlWriter.WriteStartElement("NetIPAddress")
+                    $xmlWriter.WriteAttributeString("IP",[string] $n.NetworkAddresses);
+                    $xmlWriter.WriteAttributeString("InterfaceAlias",[string] $n.Name);
+                    $xmlWriter.WriteEndElement() # netadapter
+                }
+                $xmlWriter.WriteEndElement() # NetIPAddress
+            }catch{}
         }
 
         #######################################################################
