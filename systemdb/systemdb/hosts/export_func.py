@@ -63,7 +63,7 @@ def generate_hosts_excel(hosts=[]):
             name = g.Name
             members =[]
             for m in g.Members:
-                members.append(m.Caption)
+                members.append(str(m.Caption))
             if len(members) == 0:
                 members.append("")
             else:
@@ -73,14 +73,17 @@ def generate_hosts_excel(hosts=[]):
                 admins.append("\n".join(members))
             if g.SID == "S-1-5-32-555":
                 rdp.append("\n".join(members))
-        tmp = [h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber, "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp), "\n".join(products),
-               "\n".join(hotfixes), h.OSInstallDate, h.OSProductType, h.LogonServer, h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
+        tmp = [h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber, "\n".join(ips),
+               "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp), "\n".join(products),
+               "\n".join(hotfixes), h.OSInstallDate, h.OSProductType, h.LogonServer, h.TimeZone, h.KeyboardLayout,
+               h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
                h.AutoAdminLogon, h.ForceAutoLogon, h.DefaultPassword, h.DefaultUserName]
         rows.append(tmp)
 
 
     header_data = ["Hostname", "Domain", "DomainRole", "OSName", "OSVersion", "OSBuildNumber", "IPs", "Users",
-                   "Groups with members", "Admins", "RDP Users", "Products", "hotfixes", "OSInstallDate", "OSProductType", "LogonServer", "TimeZone", "KeyboardLayout",
+                   "Groups with members", "Admins", "RDP Users", "Products", "hotfixes", "OSInstallDate",
+                   "OSProductType", "LogonServer", "TimeZone", "KeyboardLayout",
                    "HyperVisorPresent", "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon", "ForceAutoLogon",
                    "DefaultPassword", "DefaultUserName"]
 

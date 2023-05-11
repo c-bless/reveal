@@ -6,3 +6,4 @@ from .domain_views import *
 from .forest_views import *
 from .computer_views import *
 from .user_group_views import *
+from .export_views import *
