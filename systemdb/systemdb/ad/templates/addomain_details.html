@@ -73,28 +73,68 @@
                     <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
-                              <span class="info-box-text text-center text-muted">Users</span>
-                              <span class="info-box-number text-center text-muted mb-0">{{ num_users }}</span>
+                                <a href="{{url_for('ad.user_by_domain_list', id=domain.id)}}" >
+                                    <span class="info-box-text text-center text-muted">Users</span>
+                                    <span class="info-box-number text-center text-muted mb-0">{{ num_users }}</span>
+                                </a>
                             </div>
                           </div>
                         </div>
                         <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
-                              <span class="info-box-text text-center text-muted">Computers</span>
-                              <span class="info-box-number text-center text-muted mb-0">{{ num_comp }}</span>
+                                <a href="{{url_for('ad.computer_by_domain_list', id=domain.id)}}" >
+                                  <span class="info-box-text text-center text-muted">Computers</span>
+                                  <span class="info-box-number text-center text-muted mb-0">{{ num_comp }}</span>
+                                </a>
                             </div>
                           </div>
                         </div>
                         <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
-                              <span class="info-box-text text-center text-muted">Groups</span>
-                              <span class="info-box-number text-center text-muted mb-0">{{ num_groups }}</span>
+                                <a href="{{url_for('ad.groups_by_domain_list', id=domain.id)}}" >
+                                  <span class="info-box-text text-center text-muted">Groups</span>
+                                  <span class="info-box-number text-center text-muted mb-0">{{ num_groups }}</span>
+                                </a>
                             </div>
                           </div>
                         </div>
                   </div>
+
+                  <div class="row m-1">
+                    <div class="col-12 col-sm-4">
+                          <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <a href="{{url_for('ad.group_detail',id=domadmin_id)}}" >
+                                    <span class="info-box-text text-center text-muted">Domain Admins</span>
+                                    <span class="info-box-number text-center text-muted mb-0">{{ num_domadmins }}</span>
+                                </a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                          <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <a href="{{url_for('ad.group_detail',id=entadmin_id)}}" >
+                                  <span class="info-box-text text-center text-muted">Enterprise Admins</span>
+                                  <span class="info-box-number text-center text-muted mb-0">{{ num_entadmins }}</span>
+                                </a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                          <div class="info-box bg-light">
+                            <div class="info-box-content">
+                                <a href="{{url_for('ad.group_detail',id=schemaadmin_id)}}" >
+                                  <span class="info-box-text text-center text-muted">Schema Admins</span>
+                                  <span class="info-box-number text-center text-muted mb-0">{{ num_schemaadmins }}</span>
+                                </a>
+                            </div>
+                          </div>
+                        </div>
+                  </div>
+
               </div>
               <!-- /.card-body -->
             </div>

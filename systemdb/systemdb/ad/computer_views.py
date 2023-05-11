@@ -21,6 +21,11 @@ def computer_list():
     return render_template('adcomputer_list.html', computer_list=computer_list)
 
 
+@ad_bp.route('/ad/domain/<int:id>/computer', methods=['GET'])
+def computer_by_domain_list(id):
+    computer_list = ADComputer.query.filter(ADComputer.Domain_id==id)
+    return render_template('adcomputer_list.html', computer_list=computer_list)
+
 @ad_bp.route('/ad/computer/<int:id>', methods=['GET'])
 def computer_detail(id):
     computer = ADComputer.query.get_or_404(id)

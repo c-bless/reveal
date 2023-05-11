@@ -71,9 +71,10 @@ def generate_user_excel(user_list=[]):
 
     for u in user_list:
         memberships = [ "{0}".format(g.Group) for g in u.Memberships]
+        membershipStr = "\n".join(memberships)
         tmp = [u.SAMAccountName, u.Name, u.GivenName, u.Surname, u.SID, u.Enabled, u.BadLogonCount, u.BadPwdCount,
                u.Created, u.LastBadPasswordAttempt, u.lastLogon, u.logonCount, u.PasswordExpired,  u.PasswordLastSet,
-               u.Modified, u.MemberOfStr, "\n".join(memberships), u.Domain_id]
+               u.Modified, u.MemberOfStr, membershipStr, u.Domain_id]
         rows.append(tmp)
 
 
