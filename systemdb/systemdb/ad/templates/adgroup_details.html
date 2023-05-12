@@ -29,6 +29,10 @@
                   <!-- /.card-header -->
                   <div class="card-body">
                     <dl class="row">
+                      {% if domain %}
+                      <dt class="col-sm-4">Domain</dt>
+                      <dd class="col-sm-8">{{ domain.NetBIOSName }}</dd>
+                      {% endif %}
                       <dt class="col-sm-4">SamAccountName</dt>
                       <dd class="col-sm-8">{{ group.SamAccountName }}</dd>
                       <dt class="col-sm-4">SID</dt>
@@ -39,12 +43,23 @@
                       <dd class="col-sm-8">{{ group.GroupCategory }}</dd>
                       <dt class="col-sm-4">GroupScope</dt>
                       <dd class="col-sm-8">{{ group.GroupScope }}</dd>
-                      <dt class="col-sm-4">MemberOf</dt>
-                      <dd class="col-sm-8"><pre>{{ group.MemberOfStr }}</pre></dd>
                     </dl>
                   </div>
                   <!-- /.card-body -->
+            </div>
 
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">MemberOf</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">Groups</dt>
+                      <dd class="col-sm-8">{{ group.MemberOfStr }}</dd>
+                    </dl>
+                  </div>
+              <!-- /.card-body -->
             </div>
         </div>
 

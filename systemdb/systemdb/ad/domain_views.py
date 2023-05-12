@@ -24,7 +24,6 @@ def domain_detail(id):
     num_entadmins = len([m for m in entadmins.Members if entadmins is not None])
     schemaadmins = ADGroup.query.filter(and_(ADGroup.Domain_id == domain.id, ADGroup.SamAccountName == "Schema Admins")).first()
     num_schemaadmins = len([m for m in schemaadmins.Members if schemaadmins is not None])
-    dnsadmins = ADGroup.query.filter(and_(ADGroup.Domain_id == domain.id, ADGroup.SamAccountName == "DNSAdmins")).first()
     trusts = ADTrust.query.filter(ADTrust.Domain_id == domain.id).all()
     return render_template('addomain_details.html', domain=domain, dc_list=dc_list, policy_list=policy_list,
                            num_comp=num_comp, num_groups=num_groups, num_users=num_users, trusts=trusts,

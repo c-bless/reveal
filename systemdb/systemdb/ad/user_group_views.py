@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.ad_models import ADUser, ADGroup
+from ..core.ad_models import ADUser, ADGroup, ADDomain
 
 from . import ad_bp
 
@@ -30,11 +30,12 @@ def groups_list():
 
 @ad_bp.route('/ad/domain/<int:id>/groups', methods=['GET'])
 def groups_by_domain_list(id):
-    groups = ADGroup.query.filter(ADGroup.Domain_id==id)
+    groups = ADGroup.query.filter(ADGroup.Domain_id==id).all()
     return render_template('adgroup_list.html', groups=groups)
 
 
 @ad_bp.route('/ad/group/<int:id>', methods=['GET'])
 def group_detail(id):
     group = ADGroup.query.get_or_404(id)
-    return render_template('adgroup_details.html', group=group)
+    domain = ADDomain.query.filter(ADDomain.id == group.Domain_id).first()
+    return render_template('adgroup_details.html', group=group, domain=domain)

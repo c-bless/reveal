@@ -103,6 +103,7 @@
                   </div>
 
                   <div class="row m-1">
+                    {% if num_domadmins %}
                     <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
@@ -113,6 +114,8 @@
                             </div>
                           </div>
                         </div>
+                      {% endif %}
+                    {% if num_entadmins %}
                         <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
@@ -123,6 +126,8 @@
                             </div>
                           </div>
                         </div>
+                      {% endif %}
+                    {% if num_schemaadmins %}
                         <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
@@ -133,6 +138,7 @@
                             </div>
                           </div>
                         </div>
+                      {% endif %}
                   </div>
 
               </div>
