@@ -29,14 +29,14 @@ class Host(db.Model):
     FwProfilePrivate = db.Column(db.String(5),  unique=False, nullable=True)
     FwProfilePublic = db.Column(db.String(5),  unique=False, nullable=True)
     # references
-    Hotfixes = db.relationship('Hotfix', backref='dc', lazy='dynamic')
-    NetAdapters = db.relationship('NetAdapter', backref='dc', lazy='dynamic')
-    NetIPAddresses = db.relationship('NetIPAddress', backref='dc', lazy='dynamic')
-    Services = db.relationship('Service', backref='dc', lazy='dynamic')
-    Users = db.relationship('User', backref='dc', lazy='dynamic')
-    Groups = db.relationship('Group', backref='dc', lazy='dynamic')
-    Shares = db.relationship('Share', backref='dc', lazy='dynamic')
-    Products = db.relationship('Product', backref='dc', lazy='dynamic')
+    Hotfixes = db.relationship('Hotfix', backref='host', lazy='dynamic')
+    NetAdapters = db.relationship('NetAdapter', backref='host', lazy='dynamic')
+    NetIPAddresses = db.relationship('NetIPAddress', backref='host', lazy='dynamic')
+    Services = db.relationship('Service', backref='host', lazy='dynamic')
+    Users = db.relationship('User', backref='host', lazy='dynamic')
+    Groups = db.relationship('Group', backref='host', lazy='dynamic')
+    Shares = db.relationship('Share', backref='host', lazy='dynamic')
+    Products = db.relationship('Product', backref='host', lazy='dynamic')
 
     def __repr__(self):
         return self.Hostname
@@ -109,7 +109,7 @@ class Service(db.Model):
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
     DelayedAutoStart = db.Column(db.String(10), unique=False, nullable=True)
     BinaryPermissionsStr = db.Column(db.String(4096), unique=False, nullable=True)
-    BinaryPermissions = db.relationship('ServiceACL', backref='service_nfts_acl', lazy='dynamic')
+    BinaryPermissions = db.relationship('ServiceACL', backref='service', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
 
     def __repr__(self):
@@ -219,8 +219,8 @@ class Share(db.Model):
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     NTFSPermission = db.Column(db.String(4096), unique=False, nullable=True)
     SharePermission = db.Column(db.String(4096), unique=False, nullable=True)
-    NTFSPermissions = db.relationship('ShareACLNTFS', backref='share_ntfs_acl', lazy='dynamic')
-    SharePermissions = db.relationship('ShareACL', backref='share_acl', lazy='dynamic')
+    NTFSPermissions = db.relationship('ShareACLNTFS', backref='share', lazy='dynamic')
+    SharePermissions = db.relationship('ShareACL', backref='share', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
 
     def __repr__(self):
@@ -261,4 +261,3 @@ class ShareACLNTFS(db.Model):
 
     def __str__(self):
         return self.Name
-

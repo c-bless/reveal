@@ -3,7 +3,7 @@ from sqlalchemy import desc
 
 from . import host_bp
 
-from ..core.sysinfo_models import Host, Group, User, Service, Share
+from ..core.sysinfo_models import Host, Group, User, Service, Share, Product
 
 @host_bp.route('/hosts/', methods=['GET'])
 def host_list():
@@ -20,6 +20,12 @@ def host_detail(id):
 def service_list():
     services = Service.query.all()
     return render_template('service_list.html', services=services)
+
+
+@host_bp.route('/products/', methods=['GET'])
+def product_list():
+    products = Product.query.all()
+    return render_template('product_list.html', products=products)
 
 
 @host_bp.route('/hosts/<int:id>/services/', methods=['GET'])

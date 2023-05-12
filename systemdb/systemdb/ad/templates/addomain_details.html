@@ -115,30 +115,6 @@
                           </div>
                         </div>
                       {% endif %}
-                    {% if num_entadmins %}
-                        <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
-                            <div class="info-box-content">
-                                <a href="{{url_for('ad.group_detail',id=entadmin_id)}}" >
-                                  <span class="info-box-text text-center text-muted">Enterprise Admins</span>
-                                  <span class="info-box-number text-center text-muted mb-0">{{ num_entadmins }}</span>
-                                </a>
-                            </div>
-                          </div>
-                        </div>
-                      {% endif %}
-                    {% if num_schemaadmins %}
-                        <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
-                            <div class="info-box-content">
-                                <a href="{{url_for('ad.group_detail',id=schemaadmin_id)}}" >
-                                  <span class="info-box-text text-center text-muted">Schema Admins</span>
-                                  <span class="info-box-number text-center text-muted mb-0">{{ num_schemaadmins }}</span>
-                                </a>
-                            </div>
-                          </div>
-                        </div>
-                      {% endif %}
                   </div>
 
               </div>

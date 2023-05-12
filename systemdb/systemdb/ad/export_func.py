@@ -111,3 +111,5 @@ def generate_user_excel(user_list=[]):
     # Rewind the buffer.
     output.seek(0)
     return output
+
+

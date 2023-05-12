@@ -194,7 +194,7 @@ class ADComputer(db.Model):
     OperatingSystem = db.Column(db.String(1024), unique=False)
     OperatingSystemVersion = db.Column(db.String(100), unique=False)
     Description = db.Column(db.String(2048), unique=False)
-    SPNs = db.relationship('ADSPN', backref='dc', lazy='dynamic')
+    SPNs = db.relationship('ADSPN', backref='computer', lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
@@ -243,7 +243,7 @@ class ADUser(db.Model):
     pwdLastSet = db.Column(db.String(50), unique=False, nullable=True)
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
-    Memberships = db.relationship('ADUserMembership', backref='member', lazy='dynamic')
+    Memberships = db.relationship('ADUserMembership', backref='user', lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
@@ -277,7 +277,7 @@ class ADGroup(db.Model):
     SamAccountName = db.Column(db.String(256), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
-    Members = db.relationship('ADGroupMember', backref='dc', lazy='dynamic')
+    Members = db.relationship('ADGroupMember', backref='group', lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):

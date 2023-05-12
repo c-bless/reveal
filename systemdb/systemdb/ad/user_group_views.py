@@ -28,6 +28,7 @@ def groups_list():
     groups = ADGroup.query.all()
     return render_template('adgroup_list.html', groups=groups)
 
+
 @ad_bp.route('/ad/domain/<int:id>/groups', methods=['GET'])
 def groups_by_domain_list(id):
     groups = ADGroup.query.filter(ADGroup.Domain_id==id).all()
