@@ -10,6 +10,28 @@
     Version:    0.1
     License:    GPL
 
+    In general the following data is collected: General information about the domain and the forest, domain trusts, list of
+    domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer and
+    user accounts and domain groups are collected.
+
+    The amount of data collected by the script differs depending on the version of the domain-collector script.
+
+    domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
+                                amount of attributes about computer accounts. It should be used for smaller domains.
+
+    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins", "Enterprise Admins".
+                            "Schema Admins", "DNS Admins". It also collects a larger amount of attributes about computer
+                            accounts.
+
+    domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
+                                 "Enterprise Admins", "Schema Admins", "DNS Admins". It also collects a smaller amount
+                                 of attributes about computer accounts. It could be used for larger domains.
+
+
+    Author:     Christoph Bless (bitbucket@cbless.de)
+    Version:    0.1
+    License:    GPL
+
     .INPUTS
     None
     

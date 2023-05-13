@@ -257,6 +257,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("ProcessId",[string]$s.ProcessId);
             $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart);
             try {
+                # Strip parameters from binary path that is used as -Path for get-acl
                 $folder = Split-Path -Path $s.PathName
                 $leaf = Split-Path -Path $s.PathName -Leaf
                 $space = $leaf.IndexOf(" ")
