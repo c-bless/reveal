@@ -213,6 +213,8 @@ def shares2db(xml, host):
     for c in xml.getchildren():
         if "Share" == c.tag:
             try:
+                # create a share object, add it to the database and refresh it to ensure an id is set that can be used
+                # for reference in the permission objects
                 share = Share()
                 for i in c.getchildren():
                     if "Name" == i.tag: share.Name = i.text
@@ -241,6 +243,7 @@ def shares2db(xml, host):
                                     o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
                                                               ntfs.AccessRight)
                                     perm_str_ntfs.append(o)
+                                    # add the object to the transaction. commit is done later
                                     db.session.add(ntfs)
                                 except:
                                     pass
@@ -258,16 +261,35 @@ def shares2db(xml, host):
                                     o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
                                                               ntfs.AccessRight)
                                     perm_str_share.append(o)
+                                    # add the object to the transaction. commit is done later
                                     db.session.add(perm)
                                 except:
                                     pass
                 share.NTFSPermission("\n".join(perm_str_ntfs))
                 share.SharePermission("\n".join(perm_str_share))
+                # commit all permission objects for the share
                 db.session.commit()
             except:
                 pass
 
+
 def fwprofile2db(xml, host):
+    """
+    This function parses the NetFirewallProfiles-Tag and adds the FwProfileDomain, FwProfilePrivate and FwProfilePublic
+    attributes on the host object which is that updated in the database.
+
+
+        <NetFirewallProfiles>
+            <FwProfile Name="Domain" Enabled="True" />
+            <FwProfile Name="Private" Enabled="True" />
+            <FwProfile Name="Public" Enabled="True" />
+        </NetFirewallProfiles>
+    
+
+    :param xml: XML-Tag "NetFirewallProfiles"
+    :param host: host database object
+    :return:
+    """
     for c in xml.getchildren():
         if "FwProfile" == c.tag:
             name = c.get("Name")
