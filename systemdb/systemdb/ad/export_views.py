@@ -4,8 +4,11 @@ from sqlalchemy import and_
 from . import ad_bp
 
 from ..core.ad_models import ADComputer, ADUser,ADDomain, ADPasswordPolicy, ADDomainController, ADTrust, ADGroup, ADGroupMember
-from .export_func import generate_computer_excel, generate_user_excel, generate_domain_excel
+from .export_func import generate_computer_excel, generate_user_excel
+from .export_func import create_user_worksheet, create_computer_worksheet,create_trust_worksheet, create_dc_worksheet,create_domain_worksheet
 
+import xlsxwriter
+from io import StringIO, BytesIO
 
 @ad_bp.route('/ad/computer/export/excel/', methods=['GET'])
 def export_computer_excel():
@@ -37,22 +40,31 @@ def export_user_excel():
 @ad_bp.route('/ad/domain/<int:id>/export', methods=['GET'])
 def domain_export_excel(id):
     domain = ADDomain.query.get_or_404(id)
-    user_list = ADUser.query.filter(ADUser.Domain_id == domain.id).all()
-    computer_list= ADComputer.query.filter(ADComputer.Domain_id == domain.id).all()
-    dc_list = ADDomainController.query.filter(ADDomainController.Domain_id == domain.id).all()
+
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+
+    print("domain/pw policies")
     policy_list = ADPasswordPolicy.query.filter(ADPasswordPolicy.Domain_id == domain.id).all()
+    domain_worksheet = create_domain_worksheet(workbook=workbook, domain=domain, policy_list=policy_list)
+    print ("user")
+    user_list = ADUser.query.filter(ADUser.Domain_id == domain.id).all()
+    user_worksheet = create_user_worksheet(workbook=workbook, user_list=user_list)
+    print("computer")
+    computer_list= ADComputer.query.filter(ADComputer.Domain_id == domain.id).all()
+    computer_worksheet = create_computer_worksheet(workbook=workbook, computer_list=computer_list)
+    print("dc")
+    dc_list = ADDomainController.query.filter(ADDomainController.Domain_id == domain.id).all()
+    dc_worksheet = create_dc_worksheet(workbook=workbook, dc_list=dc_list)
+    print("trust")
     trust_list = ADTrust.query.filter(ADTrust.Domain_id == domain.id).all()
+    trust_worksheet = create_trust_worksheet(workbook=workbook, trust_list=trust_list)
 
-    num_groups = ADGroup.query.filter(ADGroup.Domain_id == domain.id).count()
-    domadmins = ADGroup.query.filter(
-        and_(ADGroup.Domain_id == domain.id, ADGroup.SamAccountName == "Domain Admins")).first()
-    if domadmins is not None:
-        num_domadmins = ADGroupMember.query.filter(ADGroupMember.Group_id == domadmins.id).count()
-    else:
-        num_domadmins = 0
+    # Close the workbook before streaming the data.
+    workbook.close()
 
-    output = generate_domain_excel(domain=domain, user_list=user_list, computer_list=computer_list, dc_list=dc_list,
-                                   trust_list=trust_list, policy_list=policy_list)
+    # Rewind the buffer.
+    output.seek(0)
 
     return Response(output, mimetype="text/xlsx",
                     headers={"Content-disposition": "attachment; filename=ad-domain.xlsx",

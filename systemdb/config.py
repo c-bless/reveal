@@ -16,6 +16,7 @@ class Config(object):
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'systemdb.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_RECORD_QUERIES = True
 
     # Enable protection agains *Cross-site Request Forgery (CSRF)*
     CSRF_ENABLED = True

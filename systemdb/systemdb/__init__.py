@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel
+from flask_debugtoolbar import DebugToolbarExtension
 
 from .core.db import db
 
@@ -8,6 +9,7 @@ import os
 
 bootstrap = Bootstrap()
 babel = Babel()
+toolbar = DebugToolbarExtension()
 
 
 def create_app(config_class):
@@ -23,8 +25,8 @@ def create_app(config_class):
     # initialize extensions
     bootstrap.init_app(app)
     babel.init_app(app)
-    #if config_class.DEBUG:
-    #    toolbar.init_app(systemdb)
+    if config_class.DEBUG:
+        toolbar.init_app(app)
 
     register_commands(app)
 

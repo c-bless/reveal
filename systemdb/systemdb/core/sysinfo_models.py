@@ -78,7 +78,7 @@ class NetAdapter(db.Model):
 class NetIPAddress(db.Model):
     __tablename__ = "NetIPAddress"
     id = db.Column(db.Integer, primary_key=True)
-    AddressFamily = db.Column(db.String(10), unique=False, nullable=False)
+    AddressFamily = db.Column(db.String(10), unique=False, nullable=True)
     Prefix = db.Column(db.String(4), unique=False, nullable=True)
     IP = db.Column(db.String(150), unique=False, nullable=True)
     Type = db.Column(db.String(256), unique=False, nullable=True)
