@@ -7,8 +7,6 @@
     https://bitbucket.org/cbless/systemdb
 
     Author: Christoph Bless (bitbucket@cbless.de)
-    License: GPL
-    Version: 0.1
 
     .INPUTS
     None
@@ -24,6 +22,7 @@
 # version number of this script used as attribute in XML root tag 
 $version="0.1"
 
+
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 $hostname = $env:COMPUTERNAME
 
@@ -37,6 +36,7 @@ $settings.IndentChars = $(" "*4)
 
 $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
 $xmlWriter.WriteStartDocument()
+
 
 
 $xmlWriter.WriteStartElement("SystemInfoCollector")
@@ -219,7 +219,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement() # NetIPAddress
         } else {
             try{
-                # TODO: get IPAddresses
                 $netadapters = get-wmiobject -Class win32_networkadapter
                 $xmlWriter.WriteStartElement("NetIPAddresses")
                  foreach ($n in $netadapters ) {
@@ -257,7 +256,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("ProcessId",[string]$s.ProcessId);
             $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart);
             try {
-                # Strip parameters from binary path that is used as -Path for get-acl
                 $folder = Split-Path -Path $s.PathName
                 $leaf = Split-Path -Path $s.PathName -Leaf
                 $space = $leaf.IndexOf(" ")
@@ -470,6 +468,158 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("DefaultDomain", $user.DefaultDomain)   
         }
         $xmlWriter.WriteEndElement() # Winlogon
+
+        
+        #######################################################################
+        # Installed PS Versions / Check if Version 2 is enabled 
+        #######################################################################
+        Write-Host "[*] Checking installed PS versions"
+        $xmlWriter.WriteStartElement("PSVersions")
+        $v2installed = $false
+
+        $ids = (1..5) 
+        foreach ( $id in $ids) {
+            $entry =  Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\PowerShell\$id\PowerShellEngine -ErrorAction SilentlyContinue
+            if ($entry) {
+                $xmlWriter.WriteStartElement("PSVersion")
+                $xmlWriter.WriteAttributeString("Version", $entry.PowerShellVersion)
+                $xmlWriter.WriteAttributeString("PSCompatibleVersion",  $entry.PSCompatibleVersion)   
+                $xmlWriter.WriteAttributeString("PSPath", $entry.PSPath)  
+                $xmlWriter.WriteAttributeString("RuntimeVersion", $entry.RuntimeVersion)
+                $xmlWriter.WriteAttributeString("ConsoleHostModuleName", $entry.ConsoleHostModuleName)
+                $xmlWriter.WriteEndElement()
+                if ($entry.PowerShellVersion -eq "2.0"){
+                    $v2installed = $true
+                }
+            }
+        }
+        $xmlWriter.WriteEndElement() # PSVersions
+        
+        $xmlWriter.WriteElementString("PSVersion2Installed", $v2installed) 
+        
+        #######################################################################
+        # Windows Scripting Host 
+        #######################################################################
+        Write-Host "[*] Checking settings for Windows Scripting Host"
+        
+        $xmlWriter.WriteStartElement("WSH")
+        
+        if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "TrustPolicy") {
+            $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name TrustPolicy -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("TrustPolicy", $wsh.TrustPolicy)    
+        }else{
+            $xmlWriter.WriteElementString("TrustPolicy", "N/A")
+        }
+        
+        
+        if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Enabled") {
+            $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Enabled -ErrorAction SilentlyContinue
+            if ($wsh.Enabled == 0){
+                $xmlWriter.WriteElementString("Status", "Disabled")    
+            }else{ 
+                $xmlWriter.WriteElementString("Status", "Enabled")    
+            }
+        }else{
+            $xmlWriter.WriteElementString("Status", "Enabled")
+        }
+
+        if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Remote") {
+            $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Remote -ErrorAction SilentlyContinue
+            if ($wsh.Enabled == 0){
+                $xmlWriter.WriteElementString("Remote", "Disabled")    
+            }else{ 
+                $xmlWriter.WriteElementString("Remote", "Enabled")    
+            }
+        }else{
+            $xmlWriter.WriteElementString("Remote", "Enabled")
+        }
+        
+        $xmlWriter.WriteEndElement() # WSH
+
+        #######################################################################
+        # PS Logging enabled ? 
+        #######################################################################
+
+        
+        #######################################################################
+        # Check if SMBv1 is enabled  
+        #######################################################################
+
+        
+        
+        #######################################################################
+        # Defender Status / Settings
+        #######################################################################
+        # Get-MpPreference
+        # Get-MpComputerStatus
+
+        if (Get-Command Get-MpPreference -ea SilentlyContinue) {
+            $xmlWriter.WriteStartElement("Defender")
+            $preferences = Get-MpPreference 
+            $xmlWriter.WriteElementString("DisableArchiveScanning", [string] $preferences.DisableArchiveScanning) 
+            $xmlWriter.WriteElementString("DisableAutoExclusions",  [string] $preferences.DisableAutoExclusions)
+            $xmlWriter.WriteElementString("DisableBehaviorMonitoring",  [string] $preferences.DisableBehaviorMonitoring)   
+            $xmlWriter.WriteElementString("DisableBlockAtFirstSeen",  [string] $preferences.DisableBlockAtFirstSeen)   
+            $xmlWriter.WriteElementString("DisableCatchupFullScan",  [string] $preferences.DisableCatchupFullScan)   
+            $xmlWriter.WriteElementString("DisableCatchupQuickScan",  [string] $preferences.DisableCatchupQuickScan)   
+            $xmlWriter.WriteElementString("DisableEmailScanning",  [string] $preferences.DisableEmailScanning)   
+            $xmlWriter.WriteElementString("DisableIntrusionPreventionSystem",  [string] $preferences.DisableIntrusionPreventionSystem)   
+            $xmlWriter.WriteElementString("DisableIOAVProtection",  [string] $preferences.DisableIOAVProtection)   
+            $xmlWriter.WriteElementString("DisableRealtimeMonitoring",  [string] $preferences.DisableRealtimeMonitoring)   
+            $xmlWriter.WriteElementString("DisableRemovableDriveScanning",  [string] $preferences.DisableRemovableDriveScanning)   
+            $xmlWriter.WriteElementString("DisableRestorePoint",  [string] $preferences.DisableRestorePoint)   
+            $xmlWriter.WriteElementString("DisableScanningMappedNetworkDrivesForFullScan",  [string] $preferences.DisableScanningMappedNetworkDrivesForFullScan)   
+            $xmlWriter.WriteElementString("DisableScanningNetworkFiles",  [string] $preferences.DisableScanningNetworkFiles)   
+            $xmlWriter.WriteElementString("DisableScriptScanning",  [string] $preferences.DisableScriptScanning)        
+            $xmlWriter.WriteElementString("EnableNetworkProtection",  [string] $preferences.EnableNetworkProtection)   
+            $xmlWriter.WriteElementString("ExclusionPath",  [string] $preferences.ExclusionPath)   
+            $xmlWriter.WriteElementString("ExclusionProcess",  [string] $preferences.ExclusionProcess)  
+            $xmlWriter.WriteEndElement() # Defender
+        }
+
+
+        #######################################################################
+        # WSUS Settings in Registry
+        #######################################################################
+        # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
+        
+        Write-Host "[*] Checking WSUS configuration"           
+        $xmlWriter.WriteStartElement("WSUS")
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "AcceptTrustedPublisherCerts") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name AcceptTrustedPublisherCerts -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("AcceptTrustedPublisherCerts", $wsus.AcceptTrustedPublisherCerts)    
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "DisableWindowsUpdateAccess") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name DisableWindowsUpdateAccess -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("DisableWindowsUpdateAccess", $wsus.DisableWindowsUpdateAccess)    
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "ElevateNonAdmins") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name ElevateNonAdmins -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("ElevateNonAdmins", $wsus.ElevateNonAdmins)    
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("TargetGroup", $wsus.TargetGroup)    
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroupEnabled") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroupEnabled -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("TargetGroupEnabled", $wsus.TargetGroupEnabled)    
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUServer") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUServer -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("WUServer", $wsus.WUServer)    
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUStatusServer") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUStatusServer -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("WUStatusServer", $wsus.WUStatusServer)    
+        }
+        $xmlWriter.WriteEndElement() # WSUS
+
+        #######################################################################
+        # Proxy
+        #######################################################################
+        # [System.Net.WebProxy]::GetDefaultProxy()
+
 
     $xmlWriter.WriteEndElement() # host
 $xmlWriter.WriteEndElement() # SystemInfoCollector
