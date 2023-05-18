@@ -169,7 +169,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Collecting information about network adapters
         #######################################################################
         
-        if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
+        if (Get-Command Get-NetAdaptera -ErrorAction SilentlyContinue) {
             Write-Host "[*] Collecting available network adapters"
             $netadapters = Get-NetAdapter
         
@@ -188,7 +188,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $netadapters = get-wmiobject -Class win32_networkadapter
                  foreach ($n in $netadapters ) {
                     $xmlWriter.WriteStartElement("Netadapter")
-                    $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress);
+                    $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MACAddress);
                     $xmlWriter.WriteAttributeString("Status",[string] $n.Status);
                     $xmlWriter.WriteAttributeString("Name",[string] $n.Name);
                     $xmlWriter.WriteAttributeString("Type",[string] $n.AdapterType);
@@ -201,7 +201,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #######################################################################
         # Collecting information about ip addresses
         #######################################################################
-        if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
+        if (Get-Command Get-NetIPAddressZZZ -ErrorAction SilentlyContinue ) {
             Write-Host "[*] Collecting IP addresses"
             $netips = Get-NetIPAddress
         
@@ -219,17 +219,23 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement() # NetIPAddress
         } else {
             try{
-                $netadapters = get-wmiobject -Class win32_networkadapter
+                $netadapters = get-wmiobject -Class win32_networkadapterconfiguration -Filter "IPEnabled = 'True'"
                 $xmlWriter.WriteStartElement("NetIPAddresses")
                  foreach ($n in $netadapters ) {
-                    $xmlWriter.WriteStartElement("NetIPAddress")
-                    $xmlWriter.WriteAttributeString("IP",[string] $n.NetworkAddresses);
-                    $xmlWriter.WriteAttributeString("InterfaceAlias",[string] $n.Name);
-                    $xmlWriter.WriteEndElement() # netadapter
+                    foreach ($i in $n.IPAddress){
+                        $xmlWriter.WriteStartElement("NetIPAddress")
+                        $xmlWriter.WriteAttributeString("IP",[string] $i);
+                        $xmlWriter.WriteAttributeString("InterfaceAlias",[string] $n.Caption);
+                        $xmlWriter.WriteAttributeString("DHCP",[string] $n.DHCPEnabled);
+                        $xmlWriter.WriteEndElement() # netadapter
+                    }
                 }
                 $xmlWriter.WriteEndElement() # NetIPAddress
             }catch{}
         }
+
+
+
 
         #######################################################################
         # Collecting information about services
@@ -539,13 +545,75 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #######################################################################
         # PS Logging enabled ? 
         #######################################################################
-
+        # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging?view=powershell-5.1
+        Write-Host "[*] Checking PS Logging is enabled"
+        
+        if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"  -ea SilentlyContinue).Property -contains "EnableScriptBlockLogging") {
+            $logging =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -ErrorAction SilentlyContinue
+            if ($logging == 1){
+                $xmlWriter.WriteElementString("ScriptBlockLogging", "Enabled")
+            }else{
+                $xmlWriter.WriteElementString("ScriptBlockLogging", "Disabled")
+            }
+        }
         
         #######################################################################
         # Check if SMBv1 is enabled  
         #######################################################################
-
+        # https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3?tabs=server
+        Write-Host "[*] Checking if SMBv1 is enabled"
         
+        $xmlWriter.WriteStartElement("SMBSettings")
+        
+        if (Get-Command Get-SmbServerConfiguration -ea SilentlyContinue) {
+            # Cmdlet has been introduced in Windows 8, Windows Server 2012
+            $smb = Get-SmbServerConfiguration 
+            $xmlWriter.WriteElementString("SMB1Enabled", [string] $smb.EnableSMB1Protocol)
+            $xmlWriter.WriteElementString("SMB2Enabled", [string] $smb.EnableSMB2Protocol)
+            $xmlWriter.WriteElementString("EncryptData", [string] $smb.EncryptData)
+            $xmlWriter.WriteElementString("EnableSecuritySignature", [string] $smb.EnableSecuritySignature)
+            $xmlWriter.WriteElementString("RequireSecuritySignature", [string] $smb.RequireSecuritySignature)
+            
+        } else {
+            # older Windows versions can check the registry.
+            if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB1") {
+                $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB1 -ErrorAction SilentlyContinue
+                if ($smb1 == 0){ 
+                    $xmlWriter.WriteElementString("SMB1Enabled", "False")
+                } else{
+                    $xmlWriter.WriteElementString("SMB1Enabled", "True")   
+                    
+                }
+            } else {
+                # Enabled by default. Since the entry does not exist it is enabled
+                $xmlWriter.WriteElementString("SMB1Enabled", "True")  
+            }
+
+            if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB2") {
+                $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB2 -ErrorAction SilentlyContinue
+                if ($smb1 == 0){
+                    $xmlWriter.WriteElementString("SMB2Enabled", "False")  
+                } else{
+                    $xmlWriter.WriteElementString("SMB2Enabled", "True")  
+                    
+                }
+            } else {
+                # Enabled by default. Since the entry does not exist it is enabled
+                $xmlWriter.WriteElementString("SMB2Enabled", "True")  
+            }
+
+            if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "EnableSecuritySignature") {
+                $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name EnableSecuritySignature -ErrorAction SilentlyContinue
+                $xmlWriter.WriteElementString("EnableSecuritySignature", [string] $smb.EnableSecuritySignature)
+            }
+             
+            if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "RequireSecuritySignature") {
+                $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name RequireSecuritySignature -ErrorAction SilentlyContinue
+                $xmlWriter.WriteElementString("RequireSecuritySignature", [string] $smb.RequireSecuritySignature)
+            }
+        }
+
+        $xmlWriter.WriteEndElement() 
         
         #######################################################################
         # Defender Status / Settings

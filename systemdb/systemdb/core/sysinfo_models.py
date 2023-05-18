@@ -18,6 +18,7 @@ class Host(db.Model):
     HyperVisorPresent = db.Column(db.String(150), unique=False, nullable=True)
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
+    PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
     # Autologon via Registry
     AutoAdminLogon = db.Column(db.String(4), unique=False, nullable=True)
     ForceAutoLogon = db.Column(db.String(4), unique=False, nullable=True)
@@ -66,6 +67,18 @@ class Hotfix(db.Model):
     def __str__(self):
         return self.HotfixId
 
+
+class NetAdapter(db.Model):
+    __tablename__ = "NetAdapter"
+    id = db.Column(db.Integer, primary_key=True)
+    MacAddress = db.Column(db.String(50), unique=False, nullable=True)
+    Status = db.Column(db.String(10), unique=False, nullable=True)
+    Name = db.Column(db.String(256), unique=False, nullable=True)
+    InterfaceDescription = db.Column(db.String(2048), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+
+    def __repr__(self):
+        return self.Name
 
 
 class NetAdapter(db.Model):
