@@ -28,6 +28,14 @@ class Host(db.Model):
     FwProfileDomain = db.Column(db.String(5),  unique=False, nullable=True)
     FwProfilePrivate = db.Column(db.String(5),  unique=False, nullable=True)
     FwProfilePublic = db.Column(db.String(5),  unique=False, nullable=True)
+    # WSUS
+    AcceptTrustedPublisherCerts = db.Column(db.String(5), unique=False, nullable=True)
+    DisableWindowsUpdateAccess = db.Column(db.String(5), unique=False, nullable=True)
+    ElevateNonAdmins = db.Column(db.String(5), unique=False, nullable=True)
+    TargetGroup = db.Column(db.String(256), unique=False, nullable=True)
+    TargetGroupEnabled = db.Column(db.String(5), unique=False, nullable=True)
+    WUServer = db.Column(db.String(1024), unique=False, nullable=True)
+    WUStatusServer = db.Column(db.String(1024), unique=False, nullable=True)
     # references
     Hotfixes = db.relationship('Hotfix', backref='host', lazy='dynamic')
     NetAdapters = db.relationship('NetAdapter', backref='host', lazy='dynamic')

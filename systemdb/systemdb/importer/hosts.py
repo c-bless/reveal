@@ -31,6 +31,8 @@ def import_host(root):
                 shares2db(e, host)
             if "NetFirewallProfiles" == e.tag:
                 fwprofile2db(e, host)
+            if "WSUS" == e.tag:
+                wsus2db(e, host)
         return host
 
 
@@ -301,3 +303,15 @@ def fwprofile2db(xml, host):
             if name == "Public":
                 host.FwProfilePublic = enabled
             db.session.commit()
+
+def wsus2db(xml, host):
+    # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
+    for e in xml.getchildren():
+        if "AcceptTrustedPublisherCerts" == e.tag: host.AcceptTrustedPublisherCerts = e.text
+        if "DisableWindowsUpdateAccess" == e.tag: host.DisableWindowsUpdateAccess = e.text
+        if "ElevateNonAdmins" == e.tag: host.ElevateNonAdmins = e.text
+        if "TargetGroup" == e.tag: host.TargetGroup = e.text
+        if "TargetGroupEnabled" == e.tag: host.TargetGroupEnabled = e.text
+        if "WUServer" == e.tag: host.WUServer = e.text
+        if "WUStatusServer" == e.tag: host.WUStatusServer = e.text
+        db.session.commit()
