@@ -33,6 +33,9 @@ def import_host(root):
                 fwprofile2db(e, host)
             if "WSUS" == e.tag:
                 wsus2db(e, host)
+            if "SMBSettings" == e.tag:
+                smb2db(e, host)
+            # TODO: WSH, PSLogging
         return host
 
 
@@ -54,6 +57,8 @@ def host2db(xml_element):
         if "HyperVisorPresent" == e.tag: host.HyperVisorPresent = e.text
         if "DeviceGuardSmartStatus" == e.tag: host.DeviceGuardSmartStatus = e.text
         if "PSVersion" == e.tag: host.PSVersion = e.text
+        if "PSVersion2Installed" == e.tag: host.PS2Installed = e.text
+        if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
         if "Winlogon" == e.tag:
             for w in e.getchildren():
                 if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
@@ -314,4 +319,25 @@ def wsus2db(xml, host):
         if "TargetGroupEnabled" == e.tag: host.TargetGroupEnabled = e.text
         if "WUServer" == e.tag: host.WUServer = e.text
         if "WUStatusServer" == e.tag: host.WUStatusServer = e.text
+        db.session.commit()
+
+
+def smb2db(xml, host):
+    for e in xml.getchildren():
+        if "SMB1Enabled" == e.tag: host.SMBv1Enabled = e.text
+        if "SMB2Enabled" == e.tag: host.SMBv2Enabled = e.text
+        if "EncryptData" == e.tag: host.SMBEncryptData = e.text
+        if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = e.text
+        if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = e.text
+        db.session.commit()
+
+
+
+def wsh2db(xml, host):
+    for e in xml.getchildren():
+        if "SMB1Enabled" == e.tag: host.SMBv1Enabled = e.text
+        if "SMB2Enabled" == e.tag: host.SMBv2Enabled = e.text
+        if "EncryptData" == e.tag: host.SMBEncryptData = e.text
+        if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = e.text
+        if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = e.text
         db.session.commit()

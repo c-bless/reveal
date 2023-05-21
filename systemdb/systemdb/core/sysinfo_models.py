@@ -17,8 +17,10 @@ class Host(db.Model):
     KeyboardLayout = db.Column(db.String(150), unique=False, nullable=True)
     HyperVisorPresent = db.Column(db.String(150), unique=False, nullable=True)
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
+    #active PS version
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
     PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
+    PSScriptBlockLogging = db.Column(db.String(256), unique=False, nullable=True)
     # Autologon via Registry
     AutoAdminLogon = db.Column(db.String(4), unique=False, nullable=True)
     ForceAutoLogon = db.Column(db.String(4), unique=False, nullable=True)
@@ -37,7 +39,18 @@ class Host(db.Model):
     TargetGroupEnabled = db.Column(db.String(5), unique=False, nullable=True)
     WUServer = db.Column(db.String(1024), unique=False, nullable=True)
     WUStatusServer = db.Column(db.String(1024), unique=False, nullable=True)
+    # SMB Settings
+    SMBv1Enabled = db.Column(db.String(5), unique=False, nullable=True)
+    SMBv2Enabled = db.Column(db.String(5), unique=False, nullable=True)
+    SMBEncryptData = db.Column(db.String(5), unique=False, nullable=True)
+    SMBEnableSecuritySignature = db.Column(db.String(5), unique=False, nullable=True)
+    SMBRequireSecuritySignature = db.Column(db.String(5), unique=False, nullable=True)
+    # WSH
+    WSHTrustPolicy = db.Column(db.String(256), unique=False, nullable=True)
+    WSHEnabled = db.Column(db.String(10), unique=False, nullable=True)
+    WSHRemote = db.Column(db.String(10), unique=False, nullable=True)
     # references
+    PSInstalledVersions = db.relationship("PSInstalledVersions", backref='host', lazy='dynamic')
     Hotfixes = db.relationship('Hotfix', backref='host', lazy='dynamic')
     NetAdapters = db.relationship('NetAdapter', backref='host', lazy='dynamic')
     NetIPAddresses = db.relationship('NetIPAddress', backref='host', lazy='dynamic')
@@ -52,6 +65,23 @@ class Host(db.Model):
 
     def __str__(self):
         return self.Hostname
+
+class PSInstalledVersions(db.Model):
+    __tablename__ = "PSInstalledVersions"
+    id = db.Column(db.Integer, primary_key=True)
+    PSVersion = db.Column(db.String(150), unique=False, nullable=True)
+    PSCompatibleVersion = db.Column(db.String(256), unique=False, nullable=True)
+    PSPath = db.Column(db.String(2048), unique=False, nullable=True)
+    RuntimeVersion = db.Column(db.String(256), unique=False, nullable=True)
+    ConsoleHostModuleName = db.Column(db.String(256), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+
+    def __repr__(self):
+        return self.PSVersion
+
+    def __str__(self):
+        return self.PSVersion
+
 
 class Hotfix(db.Model):
     __tablename__ = "Hotfix"

@@ -421,7 +421,44 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
         $xmlWriter.WriteEndElement() # shares
 
-        
+
+        #######################################################################
+        # WSUS Settings in Registry
+        #######################################################################
+        # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
+
+        Write-Host "[*] Checking WSUS configuration"
+        $xmlWriter.WriteStartElement("WSUS")
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "AcceptTrustedPublisherCerts") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name AcceptTrustedPublisherCerts -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("AcceptTrustedPublisherCerts", $wsus.AcceptTrustedPublisherCerts)
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "DisableWindowsUpdateAccess") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name DisableWindowsUpdateAccess -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("DisableWindowsUpdateAccess", $wsus.DisableWindowsUpdateAccess)
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "ElevateNonAdmins") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name ElevateNonAdmins -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("ElevateNonAdmins", $wsus.ElevateNonAdmins)
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("TargetGroup", $wsus.TargetGroup)
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroupEnabled") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroupEnabled -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("TargetGroupEnabled", $wsus.TargetGroupEnabled)
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUServer") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUServer -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("WUServer", $wsus.WUServer)
+        }
+        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUStatusServer") {
+            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUStatusServer -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("WUStatusServer", $wsus.WUStatusServer)
+        }
+        $xmlWriter.WriteEndElement() # WSUS
+
         #######################################################################
         # Collecting firewall status
         #######################################################################
@@ -446,7 +483,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement(); # NetFirewallProfiles
         }
 
-        
         #######################################################################
         # Collecting WinLogon Settings
         #######################################################################
@@ -531,7 +567,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Remote") {
             $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Remote -ErrorAction SilentlyContinue
-            if ($wsh.Enabled == 0){
+            if ($wsh.Remote == 0){
                 $xmlWriter.WriteElementString("Remote", "Disabled")    
             }else{ 
                 $xmlWriter.WriteElementString("Remote", "Enabled")    
@@ -551,9 +587,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"  -ea SilentlyContinue).Property -contains "EnableScriptBlockLogging") {
             $logging =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -ErrorAction SilentlyContinue
             if ($logging == 1){
-                $xmlWriter.WriteElementString("ScriptBlockLogging", "Enabled")
+                $xmlWriter.WriteElementString("PSScriptBlockLogging", "Enabled")
             }else{
-                $xmlWriter.WriteElementString("ScriptBlockLogging", "Disabled")
+                $xmlWriter.WriteElementString("PSScriptBlockLogging", "Disabled")
             }
         }
         
@@ -646,42 +682,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
 
 
-        #######################################################################
-        # WSUS Settings in Registry
-        #######################################################################
-        # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
-        
-        Write-Host "[*] Checking WSUS configuration"           
-        $xmlWriter.WriteStartElement("WSUS")
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "AcceptTrustedPublisherCerts") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name AcceptTrustedPublisherCerts -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("AcceptTrustedPublisherCerts", $wsus.AcceptTrustedPublisherCerts)    
-        }
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "DisableWindowsUpdateAccess") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name DisableWindowsUpdateAccess -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("DisableWindowsUpdateAccess", $wsus.DisableWindowsUpdateAccess)    
-        }
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "ElevateNonAdmins") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name ElevateNonAdmins -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("ElevateNonAdmins", $wsus.ElevateNonAdmins)    
-        }
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("TargetGroup", $wsus.TargetGroup)    
-        }
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroupEnabled") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroupEnabled -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("TargetGroupEnabled", $wsus.TargetGroupEnabled)    
-        }
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUServer") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUServer -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("WUServer", $wsus.WUServer)    
-        }
-        if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUStatusServer") {
-            $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUStatusServer -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("WUStatusServer", $wsus.WUStatusServer)    
-        }
-        $xmlWriter.WriteEndElement() # WSUS
 
         #######################################################################
         # Proxy
