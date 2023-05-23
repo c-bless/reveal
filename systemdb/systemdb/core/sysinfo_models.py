@@ -98,18 +98,6 @@ class Hotfix(db.Model):
         return self.HotfixId
 
 
-class NetAdapter(db.Model):
-    __tablename__ = "NetAdapter"
-    id = db.Column(db.Integer, primary_key=True)
-    MacAddress = db.Column(db.String(50), unique=False, nullable=True)
-    Status = db.Column(db.String(10), unique=False, nullable=True)
-    Name = db.Column(db.String(256), unique=False, nullable=True)
-    InterfaceDescription = db.Column(db.String(2048), unique=False, nullable=True)
-    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-
-    def __repr__(self):
-        return self.Name
-
 
 class NetAdapter(db.Model):
     __tablename__ = "NetAdapter"
