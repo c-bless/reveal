@@ -652,7 +652,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $wsh_enabled_result="Enabled (Default)"
             $wsh_enabled = "N/A"
         }
-        $xmlWriter.WriteElementString("Status", $wsh_enabled_status)
+        $xmlWriter.WriteElementString("EnabledStatus", $wsh_enabled_status)
         $result = [PSCustomObject]@{
             Component = 'WSH'
             Name = 'WSHEnable'
@@ -683,7 +683,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $wsh_remote="N/A"
         }
         
-        $xmlWriter.WriteElementString("Status", $wsh_remote_status)
+        $xmlWriter.WriteElementString("RemoteStatus", $wsh_remote_status)
         
         $result = [PSCustomObject]@{
             Component = 'WSH'
@@ -696,6 +696,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
         [void]$config_checks.Add($result)
         
+        $xmlWriter.WriteEndElement()
         #######################################################################
         # PS Logging enabled ? 
         #######################################################################

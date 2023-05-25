@@ -68,6 +68,7 @@ class Host(db.Model):
     def __str__(self):
         return self.Hostname
 
+
 class PSInstalledVersions(db.Model):
     __tablename__ = "PSInstalledVersions"
     id = db.Column(db.Integer, primary_key=True)
@@ -128,6 +129,7 @@ class NetIPAddress(db.Model):
 
     def __str__(self):
         return self.Interface
+
 
 class Service(db.Model):
     __tablename__ = "Service"
@@ -194,6 +196,7 @@ class User(db.Model):
 
     def __str__(self):
         return self.Name
+
 
 class Group(db.Model):
     __tablename__ = "Group"

@@ -78,6 +78,7 @@
 </div>
 
 <div class="row m-1">
+  <div calss="col-md-12">
   <div class="card card-olive card-tabs">
     <div class="card-header p-0 pt-1">
       <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
@@ -112,6 +113,14 @@
         <li class="nav-item">
           <a class="nav-link" id="tabs-winlogon-tab" data-toggle="pill" href="#tabs-winlogon"
              role="tab" aria-controls="tabs-winlogon" aria-selected="false">Winlogon</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-smb-tab" data-toggle="pill" href="#tabs-smb"
+             role="tab" aria-controls="tabs-smb" aria-selected="false">SMB Settings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-wsh-tab" data-toggle="pill" href="#tabs-wsh"
+             role="tab" aria-controls="tabs-wsh" aria-selected="false">WSH Settings</a>
         </li>
       </ul>
     </div>
@@ -158,50 +167,52 @@
                     </div>
 
                     <!-- /.card -->
-                  <div class="card card-olive card-outline">
-                    <div class="card-header">
-                      <h3 class="card-title">IP Adresses</h3>
+                  <div class="col-md-6">
+                    <div class="card card-olive card-outline">
+                      <div class="card-header">
+                        <h3 class="card-title">IP Adresses</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <div class="card-body p-0">
+                        <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th>Interface</th>
+                              <th>IP</th>
+                              <th>Prefix</th>
+                              <th>Type</th>
+                              <th>AddressFamily</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {% if host.NetIPAddresses %}
+                            {% for nip in host.NetIPAddresses %}
+                            <tr>
+                              <td>{{ nip.InterfaceAlias }}</td>
+                              <td>{{ nip.IP }}</td>
+                              <td>{{ nip.Prefix }}</td>
+                              <td>{{ nip.Type }}</td>
+                              <td>{{ nip.AddressFamily }}</td>
+                            </tr>
+                            {% endfor %}
+                          {% else %}
+                            <tr>
+                              <td colspan="5">No IP addresses found.</td>
+                            </tr>
+                          {% endif %}
+                          </tbody>
+                        </table>
+                      </div>
+                      <!-- /.card-body -->
                     </div>
-                    <!-- /.card-header -->
-                    <div class="card-body p-0">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>Interface</th>
-                            <th>IP</th>
-                            <th>Prefix</th>
-                            <th>Type</th>
-                            <th>AddressFamily</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        {% if host.NetIPAddresses %}
-                          {% for nip in host.NetIPAddresses %}
-                          <tr>
-                            <td>{{ nip.InterfaceAlias }}</td>
-                            <td>{{ nip.IP }}</td>
-                            <td>{{ nip.Prefix }}</td>
-                            <td>{{ nip.Type }}</td>
-                            <td>{{ nip.AddressFamily }}</td>
-                          </tr>
-                          {% endfor %}
-                        {% else %}
-                          <tr>
-                            <td colspan="5">No IP addresses found.</td>
-                          </tr>
-                        {% endif %}
-                        </tbody>
-                      </table>
-                    </div>
-                    <!-- /.card-body -->
-                  </div>
                   <!-- /.card -->
-
+                </div>
                 </div>
         </div>
+
         <div class="tab-pane fade" id="tabs-firewall" role="tabpanel" aria-labelledby="tabs-firewall-tab">
           <div class="row m-1">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="card card-olive card-outline">
                 <div class="card card-olive card-outline">
                 <div class="card-header">
@@ -511,10 +522,80 @@
             </div>
           </div>
         </div>
+
+        <div class="tab-pane fade" id="tabs-smb" role="tabpanel" aria-labelledby="tabs-smb-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">SMB Settings</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>SMBv1</th>
+                      <th>SMBv2</th>
+                      <th>EncryptData</th>
+                      <th>EnableSecuritySignature</th>
+                      <th>RequireSecuritySignature</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>{{ host.SMBv1Enabled }}</td>
+                      <td>{{ host.SMBv2Enabled }}</td>
+                      <td>{{ host.SMBEncryptData }}</td>
+                      <td>{{ host.SMBEnableSecuritySignature }}</td>
+                      <td>{{ host.SMBRequireSecuritySignature }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-wsh" role="tabpanel" aria-labelledby="tabs-wsh-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">WSH Settings</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Trust Policy</th>
+                      <th>Enabled Status</th>
+                      <th>Remote Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>{{ host.WSHTrustPolicy }}</td>
+                      <td>{{ host.WSHEnabled }}</td>
+                      <td>{{ host.WSHRemote }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
   </div>
+    </div>
 </div>
 
 

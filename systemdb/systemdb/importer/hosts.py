@@ -334,12 +334,9 @@ def smb2db(xml, host):
         db.session.commit()
 
 
-
 def wsh2db(xml, host):
     for e in xml.getchildren():
-        if "SMB1Enabled" == e.tag: host.SMBv1Enabled = e.text
-        if "SMB2Enabled" == e.tag: host.SMBv2Enabled = e.text
-        if "EncryptData" == e.tag: host.SMBEncryptData = e.text
-        if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = e.text
-        if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = e.text
+        if "TrustPolicy" == e.tag: host.WSHTrustPolicy = e.text
+        if "EnabledStatus" == e.tag: host.WSHEnabled = e.text
+        if "RemoteStatus" == e.tag: host.WSHRemote = e.text
         db.session.commit()
