@@ -17,6 +17,8 @@ class Host(db.Model):
     KeyboardLayout = db.Column(db.String(150), unique=False, nullable=True)
     HyperVisorPresent = db.Column(db.String(150), unique=False, nullable=True)
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
+    SystemGroup = db.Column(db.String(256), unique=False, nullable=True)
+    Location = db.Column(db.String(256), unique=False, nullable=True)
     #active PS version
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
     PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
@@ -110,21 +112,6 @@ class NetAdapter(db.Model):
     def __repr__(self):
         return self.Name
 
-
-class NetAdapter(db.Model):
-    __tablename__ = "NetAdapter"
-    id = db.Column(db.Integer, primary_key=True)
-    MacAddress = db.Column(db.String(50), unique=False, nullable=True)
-    Status = db.Column(db.String(10), unique=False, nullable=True)
-    Name = db.Column(db.String(256), unique=False, nullable=True)
-    InterfaceDescription = db.Column(db.String(2048), unique=False, nullable=True)
-    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-
-    def __repr__(self):
-        return self.Name
-
-    def __str__(self):
-        return self.Name
 
 class NetIPAddress(db.Model):
     __tablename__ = "NetIPAddress"
