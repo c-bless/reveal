@@ -35,7 +35,7 @@ def import_host(root):
                 wsus2db(e, host)
             if "SMBSettings" == e.tag:
                 smb2db(e, host)
-            # TODO: WSH, PSLogging
+            # TODO: WSH, PSLogging, ConfigCheck
         return host
 
 
@@ -59,6 +59,8 @@ def host2db(xml_element):
         if "PSVersion" == e.tag: host.PSVersion = e.text
         if "PSVersion2Installed" == e.tag: host.PS2Installed = e.text
         if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
+        if "SystemGroup" == e.tag: host.SystemGroup = e.text
+        if "Location" == e.tag: host.Location = e.text
         if "Winlogon" == e.tag:
             for w in e.getchildren():
                 if "DefaultUserName" == w.tag: host.DefaultUserName = w.text

@@ -6,7 +6,9 @@
     This PowerShell script is to fetch system information. The collector script is published as part of "systemdb".
     https://bitbucket.org/cbless/systemdb
 
-    Author: Christoph Bless (bitbucket@cbless.de)
+    Author:     Christoph Bless (bitbucket@cbless.de)
+    Version:    0.2
+    License:    GPL
 
     .INPUTS
     None
@@ -17,10 +19,22 @@
     .EXAMPLE
     .\sysinfo-collector.ps1  
 
+    .Example 
+    .\sysinfo-collector.ps1 -systemgroup PCS7 -systemlocation "Control room"
 #>
+param (
+    # optional parameter to specify the systemgroup the host belongs to
+    [Parameter(Mandatory=$false)]
+    [string]$systemgroup = "N/A",
+    
+    # name of the location
+    [Parameter(Mandatory=$false)]
+    [string]$systemlocation = "N/A"
+)
+
 
 # version number of this script used as attribute in XML root tag 
-$version="0.1"
+$version="0.2"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -37,6 +51,19 @@ $settings.IndentChars = $(" "*4)
 $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
 $xmlWriter.WriteStartDocument()
 
+# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags add the end of the
+# XML file between a ConfigChecks-Tag. All Custom objects that are added should follow the following structure
+# $result = [PSCustomObject]@{
+#     Component = 'AFFECT COMPONENT'
+#     Name = 'NAME'
+#     Method       = 'Registry'
+#     Key   = 'KEY'
+#     Value      = 'VALUE'
+#     Result = 'RESULT'
+#     Message = 'MESSAGE'
+# }
+$config_checks = New-Object System.Collections.ArrayList            
+
 
 
 $xmlWriter.WriteStartElement("SystemInfoCollector")
@@ -44,14 +71,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
     
     $xmlWriter.WriteStartElement("Host")
 
-        $xmlWriter.WriteAttributeString("type", "Windows")
+        $xmlWriter.WriteAttributeString("Type", "Windows")
+        
+        $xmlWriter.WriteElementString("SystemGroup", $systemgroup)
+        $xmlWriter.WriteElementString("Location", $systemlocation)
+        
         
         # Adding Hostname to XML
         $xmlWriter.WriteElementString("Hostname", $hostname)
 
         # Get Systeminformation
         Write-Host "[*] Collecting general computer infos."
-        
+
+        # if Get-ComputerInfo is available this command will be used to collect basic computer information
         if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
             $compInfo = Get-ComputerInfo
 
@@ -73,6 +105,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $compInfo.CSPrimaryOwnerName);
 
         }else{
+            # No Get-ComputerInfo command. Thus, info must be collected with multiple technics
             $xmlWriter.WriteElementString("Domain",[string] [System.Environment]::UserDomainName);
             try{
                 $cs = Get-WmiObject -Class win32_ComputerSystem -Property * 
@@ -99,8 +132,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }catch{}
 
         }
-
+        # user used to collect information
         $xmlWriter.WriteElementString("Whoami", [string] [System.Environment]::UserName);
+        # active PowerShell version
         $xmlWriter.WriteElementString("PSVersion",[string]$PSVersionTable.PSVersion);
         try{
             $xmlWriter.WriteStartElement("BIOS")
@@ -169,7 +203,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Collecting information about network adapters
         #######################################################################
         
-        if (Get-Command Get-NetAdaptera -ErrorAction SilentlyContinue) {
+        if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
             Write-Host "[*] Collecting available network adapters"
             $netadapters = Get-NetAdapter
         
@@ -201,7 +235,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #######################################################################
         # Collecting information about ip addresses
         #######################################################################
-        if (Get-Command Get-NetIPAddressZZZ -ErrorAction SilentlyContinue ) {
+        if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
             Write-Host "[*] Collecting IP addresses"
             $netips = Get-NetIPAddress
         
@@ -262,6 +296,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("ProcessId",[string]$s.ProcessId);
             $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart);
             try {
+                # check permissions of binary. Therefore parameters needed to be stripped from path, otherwise
+                # Get-ACL will not work.
                 $folder = Split-Path -Path $s.PathName
                 $leaf = Split-Path -Path $s.PathName -Leaf
                 $space = $leaf.IndexOf(" ")
@@ -473,6 +509,17 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                         $xmlWriter.WriteAttributeString("Name", [string] $p.Name)
                         $xmlWriter.WriteAttributeString("Enabled", [string] $p.Enabled)
                         $xmlWriter.WriteEndElement(); # FwProfile
+                        if (!$p.Enabled){
+                            $result = [PSCustomObject]@{
+                                Component = 'Firewall'
+                                Name = 'FirewallEnabled'
+                                Method       = 'Get-NetFirewallProfile'
+                                Key   = $p.Name
+                                Value      = $p.Enabled
+                                Result = 'Cleartext password in Registry'
+                            }
+                            $config_checks.Add($result)
+                        }
                     }catch{
                         # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
                     }
@@ -495,7 +542,18 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultPassword") {
             $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultPassword -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("DefaultPassword", $user.DefaultPassword)    
+            $xmlWriter.WriteElementString("DefaultPassword", $user.DefaultPassword)
+            # add additional entry to config_checks
+            $result = [PSCustomObject]@{
+                Component = 'Winlogon'
+                Name = 'WinlogonDefaultPassword'
+                Method       = 'Registry'
+                Key   = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\DefaultPassword'
+                Value      = $user
+                Result = 'DefaultPassword set'
+                Message = 'Password for autologon user stored in Registry'
+            }
+            [void]$config_checks.Add($result)
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "AutoAdminLogon") {
             $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -ErrorAction SilentlyContinue
@@ -530,8 +588,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteAttributeString("RuntimeVersion", $entry.RuntimeVersion)
                 $xmlWriter.WriteAttributeString("ConsoleHostModuleName", $entry.ConsoleHostModuleName)
                 $xmlWriter.WriteEndElement()
+                # if version is = 2.0 add an additional entry to $config_checks
                 if ($entry.PowerShellVersion -eq "2.0"){
                     $v2installed = $true
+                    $result = [PSCustomObject]@{
+                        Component = 'PS'
+                        Name = 'PSv2Installed'
+                        Method       = 'Registry'
+                        Key   = 'HKLM:\SOFTWARE\Microsoft\PowerShell\'+$id+'\PowerShellEngine\PowerShellVersion'
+                        Value      = $entry.PowerShellVersion
+                        Result = 'Installed'
+                        Message = 'PS Version 2.0 installed'
+                    }
+                    [void]$config_checks.Add($result)
                 }
             }
         }
@@ -546,38 +615,87 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         
         $xmlWriter.WriteStartElement("WSH")
         
+        #######################################################################
+        $wsh_trust_policy =""
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "TrustPolicy") {
             $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name TrustPolicy -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("TrustPolicy", $wsh.TrustPolicy)    
+            $wsh_trust_policy = [string] $wsh.TrustPolicy   
         }else{
-            $xmlWriter.WriteElementString("TrustPolicy", "N/A")
+            $wsh_trust_policy = "N/A"
         }
+        $xmlWriter.WriteElementString("TrustPolicy", $wsh_trust_policy)
+        $result = [PSCustomObject]@{
+            Component = 'WSH'
+            Name = 'WSHTrustPolicy'
+            Method       = 'Registry'
+            Key   = 'HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\TrustPolicy'
+            Value      = $wsh_trust_policy
+            Result = $wsh_trust_policy
+            Message = "No trust policy defined"
+        }
+        [void]$config_checks.Add($result)
+        #######################################################################
         
-        
+        $wsh_enabled=1
+        $wsh_enabled_status="Enabled"
+        $wsh_enabled_result=""
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Enabled") {
             $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Enabled -ErrorAction SilentlyContinue
+            $wsh_enabled = $wsh.Enabled
             if ($wsh.Enabled == 0){
-                $xmlWriter.WriteElementString("Status", "Disabled")    
+                $wsh_enabled_result="Disabled (Explicit)"
+                $wsh_enabled_status =  "Disabled"    
             }else{ 
-                $xmlWriter.WriteElementString("Status", "Enabled")    
+                $wsh_enabled_result="Enabled (Explicit)"
             }
         }else{
-            $xmlWriter.WriteElementString("Status", "Enabled")
+            $wsh_enabled_result="Enabled (Default)"
+            $wsh_enabled = "N/A"
         }
+        $xmlWriter.WriteElementString("Status", $wsh_enabled_status)
+        $result = [PSCustomObject]@{
+            Component = 'WSH'
+            Name = 'WSHEnable'
+            Method       = 'Registry'
+            Key   = 'HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\Enabled'
+            Value      = [string] $wsh_enabled
+            Result = $wsh_enabled_status
+            Message = $wsh_enabled_result
+        }
+        [void]$config_checks.Add($result)
+        #######################################################################
+        
+        $wsh_remote=1
+        $wsh_remote_status="Enabled"
+        $wsh_remote_result=""
 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Remote") {
             $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Remote -ErrorAction SilentlyContinue
+            $wsh_remote = $wsh.Remote
             if ($wsh.Remote == 0){
-                $xmlWriter.WriteElementString("Remote", "Disabled")    
+                $wsh_remote_result="Disabled (Explicit)"
+                $wsh_remote_status =  "Disabled"    
             }else{ 
-                $xmlWriter.WriteElementString("Remote", "Enabled")    
+                $wsh_remote_result="Enabled (Explicit)"
             }
         }else{
-            $xmlWriter.WriteElementString("Remote", "Enabled")
+            $wsh_remote_result="Enabled (Default)"
+            $wsh_remote="N/A"
         }
         
-        $xmlWriter.WriteEndElement() # WSH
-
+        $xmlWriter.WriteElementString("Status", $wsh_remote_status)
+        
+        $result = [PSCustomObject]@{
+            Component = 'WSH'
+            Name = 'WSHRemote'
+            Method       = 'Registry'
+            Key   = 'HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\Remote'
+            Value      = $wsh_remote
+            Result = $wsh_remote_status
+            Message = $wsh_remote_result
+        }
+        [void]$config_checks.Add($result)
+        
         #######################################################################
         # PS Logging enabled ? 
         #######################################################################
@@ -601,8 +719,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         
         $xmlWriter.WriteStartElement("SMBSettings")
         
+        $smb_method=""
+        
         if (Get-Command Get-SmbServerConfiguration -ea SilentlyContinue) {
             # Cmdlet has been introduced in Windows 8, Windows Server 2012
+            $smb_method= "Get-SmbServerConfiguration"
             $smb = Get-SmbServerConfiguration 
             $xmlWriter.WriteElementString("SMB1Enabled", [string] $smb.EnableSMB1Protocol)
             $xmlWriter.WriteElementString("SMB2Enabled", [string] $smb.EnableSMB2Protocol)
@@ -611,6 +732,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("RequireSecuritySignature", [string] $smb.RequireSecuritySignature)
             
         } else {
+            $smb_method= "Registry"
             # older Windows versions can check the registry.
             if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB1") {
                 $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB1 -ErrorAction SilentlyContinue
@@ -648,6 +770,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteElementString("RequireSecuritySignature", [string] $smb.RequireSecuritySignature)
             }
         }
+        
 
         $xmlWriter.WriteEndElement() 
         
@@ -687,6 +810,23 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Proxy
         #######################################################################
         # [System.Net.WebProxy]::GetDefaultProxy()
+
+        #######################################################################
+        # Adding ConfigChecks 
+        #######################################################################
+        $xmlWriter.WriteStartElement("ConfigChecks")
+        foreach ($c in $config_checks){
+            $xmlWriter.WriteStartElement("ConfigCheck")
+            $xmlWriter.WriteAttributeString("Component",[string] $c.Component)
+            $xmlWriter.WriteAttributeString("Name", [string] $c.Name)
+            $xmlWriter.WriteAttributeString("Method", [string] $c.Method)
+            $xmlWriter.WriteAttributeString("Key", [string] $c.Key)
+            $xmlWriter.WriteAttributeString("Value", [string] $c.Value)
+            $xmlWriter.WriteAttributeString("Result", [string] $c.Result)
+            $xmlWriter.WriteAttributeString("Message", [string] $c.Message)
+            $xmlWriter.WriteEndElement()
+        }
+        $xmlWriter.WriteEndElement() # ConfigChecks
 
 
     $xmlWriter.WriteEndElement() # host
