@@ -40,10 +40,10 @@
                             aria-label="DeviceGuardSmartStatus">DeviceGuard SmartStatus
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                            aria-label="PSVersion">PSVersion
+                            aria-label="SystemGroup">SystemGroup
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                            aria-label="AutoAdminLogon">AutoAdminLogon
+                            aria-label="Location">Location
                         </th>
                         <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                             aria-label="Details">Details
@@ -61,8 +61,8 @@
                             <td> {{ h.OSBuildNumber }} </td>
                             <td> {{ h.HyperVisorPresent }} </td>
                             <td> {{ h.DeviceGuardSmartStatus }} </td>
-                            <td> {{ h.PSVersion }} </td>
-                            <td> {{ h.AutoAdminLogon }} </td>
+                            <td> {{ h.SystemGroup }} </td>
+                            <td> {{ h.Location }} </td>
                             <td class="actions">
                                 <a href="{{url_for('hosts.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View
