@@ -31,7 +31,7 @@ X
                     aria-label="StartName" width="5%">Version
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Started" width="5%">Host_id
+                    aria-label="Started" width="5%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="PathName" width="25%">InstallLocation
@@ -49,7 +49,7 @@ X
                     <td> {{ p.InstallDate }} </td>
                     <td> {{ p.Name }} </td>
                     <td> {{ p.Version }} </td>
-                    <td> {{ p.Host_id }} </td>
+                    <td> {{ p.Host }} </td>
                     <td> {{ p.InstallLocation }} </td>
                     <td class="actions">
                         <a href="{{url_for('hosts.host_detail',id=p.Host_id)}}" class="btn btn-default btn-xs">

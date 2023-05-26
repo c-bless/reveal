@@ -44,6 +44,10 @@
                       <dd class="col-sm-8">{{ host.HyperVisorPresent }}</dd>
                       <dt class="col-sm-4">DeviceGuardSmartStatus</dt>
                       <dd class="col-sm-8">{{ host.DeviceGuardSmartStatus }}</dd>
+                      <dt class="col-sm-4">PowerShell (active Version)</dt>
+                      <dd class="col-sm-8">{{ host.PSVersion }}</dd>
+                      <dt class="col-sm-4">PowerShell 2 Installed</dt>
+                      <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
                     </dl>
                   </div>
                   <!-- /.card-body -->
@@ -121,6 +125,18 @@
         <li class="nav-item">
           <a class="nav-link" id="tabs-wsh-tab" data-toggle="pill" href="#tabs-wsh"
              role="tab" aria-controls="tabs-wsh" aria-selected="false">WSH Settings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-bios-tab" data-toggle="pill" href="#tabs-bios"
+             role="tab" aria-controls="tabs-bios" aria-selected="false">BIOS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-wsus-tab" data-toggle="pill" href="#tabs-wsus"
+             role="tab" aria-controls="tabs-wsus" aria-selected="false">WSUS Settings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-ps-tab" data-toggle="pill" href="#tabs-ps"
+             role="tab" aria-controls="tabs-ps" aria-selected="false">PS Versions</a>
         </li>
       </ul>
     </div>
@@ -581,6 +597,127 @@
                       <td>{{ host.WSHTrustPolicy }}</td>
                       <td>{{ host.WSHEnabled }}</td>
                       <td>{{ host.WSHRemote }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-wsus" role="tabpanel" aria-labelledby="tabs-wsus-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">WSUS Settings</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>AcceptTrustedPublisherCerts</th>
+                      <th>DisableWindowsUpdateAccess</th>
+                      <th>ElevateNonAdmins</th>
+                      <th>TargetGroup</th>
+                      <th>TargetGroupEnabled</th>
+                      <th>WUServer</th>
+                      <th>WUStatusServer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>{{ host.AcceptTrustedPublisherCerts }}</td>
+                      <td>{{ host.DisableWindowsUpdateAccess }}</td>
+                      <td>{{ host.ElevateNonAdmins }}</td>
+                      <td>{{ host.TargetGroup }}</td>
+                      <td>{{ host.TargetGroupEnabled }}</td>
+                      <td>{{ host.WUServer }}</td>
+                      <td>{{ host.WUStatusServer }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-ps" role="tabpanel" aria-labelledby="tabs-ps-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">PS Versions</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>PSCompatibleVersion</th>
+                      <th>Version</th>
+                      <th>RuntimeVersion</th>
+                      <th>PSPath</th>
+                      <th>ConsoleHostModuleName</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% if host.PSInstalledVersions %}
+                    {% for ps in host.PSInstalledVersions %}
+                    <tr>
+                      <td>{{ ps.PSCompatibleVersion }}</td>
+                      <td>{{ ps.Version }}</td>
+                      <td>{{ ps.RuntimeVersion }}</td>
+                      <td>{{ ps.PSPath }}</td>
+                      <td>{{ ps.ConsoleHostModuleName }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td>No PS Versions found.</td>
+                    </tr>
+                    {% endif %}
+
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="tab-pane fade" id="tabs-bios" role="tabpanel" aria-labelledby="tabs-bios-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">BIOS</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Manufacturer</th>
+                      <th>Name</th>
+                      <th>Version</th>
+                      <th>Serial</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>{{ host.BiosManufacturer }}</td>
+                      <td>{{ host.BiosName }}</td>
+                      <td>{{ host.BiosVersion }}</td>
+                      <td>{{ host.BiosSerial }}</td>
                     </tr>
                     </tbody>
                   </table>

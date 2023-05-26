@@ -1,5 +1,5 @@
 from ..core.sysinfo_models import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter
-from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL
+from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL, PSInstalledVersions
 from ..core.db import db
 
 
@@ -35,7 +35,13 @@ def import_host(root):
                 wsus2db(e, host)
             if "SMBSettings" == e.tag:
                 smb2db(e, host)
-            # TODO: WSH, PSLogging, ConfigCheck
+            if "BIOS" == e.tag:
+                bios2db(e, host)
+            if "WSH" == e.tag:
+                wsh2db(e, host)
+            if "PSVersions" == e.tag:
+                psversions2db(e, host)
+            # TODO: PSLogging, ConfigCheck, Defender
         return host
 
 
@@ -72,7 +78,6 @@ def host2db(xml_element):
     db.session.commit()
     db.session.refresh(host)
     return host
-
 
 def hotfix2db(xml, host):
     for c in xml.getchildren():
@@ -321,7 +326,7 @@ def wsus2db(xml, host):
         if "TargetGroupEnabled" == e.tag: host.TargetGroupEnabled = e.text
         if "WUServer" == e.tag: host.WUServer = e.text
         if "WUStatusServer" == e.tag: host.WUStatusServer = e.text
-        db.session.commit()
+        #db.session.commit()
 
 
 def smb2db(xml, host):
@@ -331,7 +336,7 @@ def smb2db(xml, host):
         if "EncryptData" == e.tag: host.SMBEncryptData = e.text
         if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = e.text
         if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = e.text
-        db.session.commit()
+        #db.session.commit()
 
 
 def wsh2db(xml, host):
@@ -339,4 +344,26 @@ def wsh2db(xml, host):
         if "TrustPolicy" == e.tag: host.WSHTrustPolicy = e.text
         if "EnabledStatus" == e.tag: host.WSHEnabled = e.text
         if "RemoteStatus" == e.tag: host.WSHRemote = e.text
-        db.session.commit()
+        #db.session.commit()
+
+
+def bios2db(xml, host):
+    host.BiosManufacturer = xml.get("Manufacturer")
+    host.BiosName = xml.get("Name")
+    host.BiosVersion = xml.get("Version")
+    host.BiosSerial = xml.get("Serial")
+        #db.session.commit()
+
+
+def psversions2db(xml, host):
+    for e in xml.getchildren():
+        if "PSVersion" == e.tag:
+            v = PSInstalledVersions()
+            v.PSVersion = e.get("PSVersion")
+            v.PSPath  = e.get("PSPath")
+            v.ConsoleHostModuleName = e.get("ConsoleHostModuleName")
+            v.PSCompatibleVersion = e.get("PSCompatibleVersion")
+            v.RuntimeVersion = e.get("RuntimeVersion")
+            v.Host_id = host.id
+            db.session.add(v)
+        #db.session.commit()

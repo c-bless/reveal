@@ -45,6 +45,46 @@ def export_hosts_excel():
 
     return redirect(url_for('hosts.host_list'))
 
+
+@host_bp.route('/hosts/export/excel/winlogon', methods=['GET'])
+def export_hosts_excel_winlogon():
+    hosts = Host.query.filter(Host.DefaultPassword != "").all()
+
+    output = generate_hosts_excel(hosts)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-winlogon.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+    return redirect(url_for('hosts.host_list'))
+
+
+@host_bp.route('/hosts/export/excel/ps2', methods=['GET'])
+def export_hosts_excel_ps2():
+    hosts = Host.query.filter(Host.PS2Installed == "True").all()
+
+    output = generate_hosts_excel(hosts)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-ps2.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+    return redirect(url_for('hosts.host_list'))
+
+
+@host_bp.route('/hosts/export/excel/smbv1', methods=['GET'])
+def export_hosts_excel_smbv1():
+    hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
+
+    output = generate_hosts_excel(hosts)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+    return redirect(url_for('hosts.host_list'))
+
+
 @host_bp.route('/hosts/<int:id>/export/', methods=['GET'])
 def export_host(id):
     host = Host.query.get_or_404(id)
@@ -62,8 +102,6 @@ def export_host(id):
     return redirect(url_for('hosts.host_detail',id=id))
 
 
-
-
 @host_bp.route('/services/export/excel', methods=['GET'])
 def service_export_excel():
     services = Service.query.all()
@@ -75,7 +113,6 @@ def service_export_excel():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
     return redirect(url_for('hosts.host_list'))
-
 
 
 @host_bp.route('/products/export/excel', methods=['GET'])

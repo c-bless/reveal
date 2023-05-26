@@ -23,6 +23,11 @@ class Host(db.Model):
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
     PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
     PSScriptBlockLogging = db.Column(db.String(256), unique=False, nullable=True)
+    # BIOS
+    BiosManufacturer = db.Column(db.String(256), unique=False, nullable=True)
+    BiosName = db.Column(db.String(256), unique=False, nullable=True)
+    BiosVersion = db.Column(db.String(256), unique=False, nullable=True)
+    BiosSerial = db.Column(db.String(256), unique=False, nullable=True)
     # Autologon via Registry
     AutoAdminLogon = db.Column(db.String(4), unique=False, nullable=True)
     ForceAutoLogon = db.Column(db.String(4), unique=False, nullable=True)
@@ -52,21 +57,23 @@ class Host(db.Model):
     WSHEnabled = db.Column(db.String(10), unique=False, nullable=True)
     WSHRemote = db.Column(db.String(10), unique=False, nullable=True)
     # references
-    PSInstalledVersions = db.relationship("PSInstalledVersions", backref='host', lazy='dynamic')
-    Hotfixes = db.relationship('Hotfix', backref='host', lazy='dynamic')
-    NetAdapters = db.relationship('NetAdapter', backref='host', lazy='dynamic')
-    NetIPAddresses = db.relationship('NetIPAddress', backref='host', lazy='dynamic')
-    Services = db.relationship('Service', backref='host', lazy='dynamic')
-    Users = db.relationship('User', backref='host', lazy='dynamic')
-    Groups = db.relationship('Group', backref='host', lazy='dynamic')
-    Shares = db.relationship('Share', backref='host', lazy='dynamic')
-    Products = db.relationship('Product', backref='host', lazy='dynamic')
+    PSInstalledVersions = db.relationship("PSInstalledVersions", back_populates='Host', lazy='dynamic')
+    Hotfixes = db.relationship('Hotfix', back_populates='Host', lazy='dynamic')
+    NetAdapters = db.relationship('NetAdapter', back_populates='Host', lazy='dynamic')
+    NetIPAddresses = db.relationship('NetIPAddress', back_populates='Host', lazy='dynamic')
+    Services = db.relationship('Service', back_populates='Host', lazy='dynamic')
+    Users = db.relationship('User', back_populates='Host', lazy='dynamic')
+    Groups = db.relationship('Group', back_populates='Host', lazy='dynamic')
+    Shares = db.relationship('Share', back_populates='Host', lazy='dynamic')
+    Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
 
     def __repr__(self):
         return self.Hostname
 
     def __str__(self):
         return self.Hostname
+
+
 
 
 class PSInstalledVersions(db.Model):
@@ -78,6 +85,7 @@ class PSInstalledVersions(db.Model):
     RuntimeVersion = db.Column(db.String(256), unique=False, nullable=True)
     ConsoleHostModuleName = db.Column(db.String(256), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="PSInstalledVersions")
 
     def __repr__(self):
         return self.PSVersion
@@ -93,6 +101,7 @@ class Hotfix(db.Model):
     InstalledOn = db.Column(db.String(150), unique=False, nullable=True)
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Hotfixes")
 
     def __repr__(self):
         return self.HotfixId
@@ -100,6 +109,22 @@ class Hotfix(db.Model):
     def __str__(self):
         return self.HotfixId
 
+
+class NetAdapter(db.Model):
+    __tablename__ = "NetAdapter"
+    id = db.Column(db.Integer, primary_key=True)
+    MacAddress = db.Column(db.String(50), unique=False, nullable=True)
+    Status = db.Column(db.String(10), unique=False, nullable=True)
+    Name = db.Column(db.String(256), unique=False, nullable=True)
+    InterfaceDescription = db.Column(db.String(2048), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="NetAdapters")
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
 
 
 class NetIPAddress(db.Model):
@@ -111,6 +136,7 @@ class NetIPAddress(db.Model):
     Type = db.Column(db.String(256), unique=False, nullable=True)
     InterfaceAlias = db.Column(db.String(256), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="NetIPAddresses")
 
     def __repr__(self):
         return self.Interface
@@ -139,6 +165,7 @@ class Service(db.Model):
     BinaryPermissionsStr = db.Column(db.String(4096), unique=False, nullable=True)
     BinaryPermissions = db.relationship('ServiceACL', backref='service', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Services")
 
     def __repr__(self):
         return self.Name
@@ -178,6 +205,7 @@ class User(db.Model):
     PasswordChanged = db.Column(db.String(10), unique=False, nullable=True)
     PasswordRequired = db.Column(db.String(10), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Users")
 
     def __repr__(self):
         return self.Name
@@ -196,6 +224,7 @@ class Group(db.Model):
     LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
     Members = db.relationship('GroupMember', backref='dc', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Groups")
 
     def __repr__(self):
         return self.Name
@@ -232,6 +261,7 @@ class Product(db.Model):
     Version = db.Column(db.String(150), unique=False, nullable=True)
     InstallLocation = db.Column(db.String(2048), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Products")
 
     def __repr__(self):
         return self.Name
@@ -251,6 +281,7 @@ class Share(db.Model):
     NTFSPermissions = db.relationship('ShareACLNTFS', backref='share', lazy='dynamic')
     SharePermissions = db.relationship('ShareACL', backref='share', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Shares")
 
     def __repr__(self):
         return self.Name

@@ -1,14 +1,7 @@
 <!-- Sidebar -->
 <div class="sidebar">
   <!-- Sidebar user (optional) -->
-  <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-    <div class="image">
-      <img src="{{ url_for('static', filename='dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
-    </div>
-    <div class="info">
-      <a href="#" class="d-block"></a>
-    </div>
-  </div>
+
 
 
   <!-- Sidebar Menu -->
@@ -16,6 +9,8 @@
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       <!-- Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library -->
+
+
       <li class="nav-item menu-open">
         <a href="#" class="nav-link">
           <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -48,7 +43,75 @@
             </a>
           </li>
         </ul>
+        <ul class="nav nav-treeview" style="display: block;">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="far fa-dot-circle nav-icon"></i>
+              <p>
+                Reports (Word)
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="{{url_for('hosts.template_list')}}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Export Hosts</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="nav nav-treeview" style="display: block;">
+          <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="far fa-dot-circle nav-icon"></i>
+                <p>
+                  Reports (Excel)
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{{url_for('hosts.export_hosts_excel')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>All Hosts</p>
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{{url_for('hosts.export_hosts_excel_winlogon')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Hosts with Winlogon</p>
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{{url_for('hosts.export_hosts_excel_ps2')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Hosts with PS2</p>
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav nav-treeview" style="display: none;">
+                  <li class="nav-item">
+                    <a href="{{url_for('hosts.export_hosts_excel_smbv1')}}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Hosts with SMBv1</p>
+                    </a>
+                  </li>
+              </ul>
+          </li>
+        </ul>
+
       </li>
+
+
+
+
       <li class="nav-header"></li>
       <li class="nav-item menu-open">
         <a href="#" class="nav-link">
@@ -124,31 +187,6 @@
         </ul>
       </li>
 
-      <li class="nav-item has-treeview">
-        <a href="#" class="nav-link">
-          <i class="nav-icon fas fa-tachometer-alt"></i>
-          <p>
-            Reports
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('hosts.template_list')}}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Export Hosts</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('reports.winlogon_list')}}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Hosts with Winlogon</p>
-            </a>
-          </li>
-        </ul>
-      </li>
     </ul>
   </nav>
   <!-- /.sidebar-menu -->
