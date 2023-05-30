@@ -19,6 +19,7 @@ class Host(db.Model):
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
     SystemGroup = db.Column(db.String(256), unique=False, nullable=True)
     Location = db.Column(db.String(256), unique=False, nullable=True)
+    LastUpdate = db.Column(db.DateTime, unique=False, nullable=True)
     #active PS version
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
     PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
@@ -98,7 +99,8 @@ class Hotfix(db.Model):
     __tablename__ = "Hotfix"
     id = db.Column(db.Integer, primary_key=True)
     HotfixId = db.Column(db.String(150), unique=False, nullable=True)
-    InstalledOn = db.Column(db.String(150), unique=False, nullable=True)
+    InstalledOn = db.Column(db.DateTime, unique=False, nullable=True)
+    InstalledOnStr = db.Column(db.String(150), unique=False, nullable=True)
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Hotfixes")

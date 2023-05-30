@@ -1,6 +1,7 @@
 from ..core.sysinfo_models import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter
 from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL, PSInstalledVersions
 from ..core.db import db
+import datetime
 
 
 def import_sysinfo_collector(root):
@@ -80,11 +81,21 @@ def host2db(xml_element):
     return host
 
 def hotfix2db(xml, host):
+    if "Hotfixes" == xml.tag:
+        try:
+            lastupdate = xml.get("LastUpdate")
+            host.LastUpdate = datetime.datetime.strptime(lastupdate, "%m/%d/%Y %H:%M:%S").date()
+        except:
+            pass
     for c in xml.getchildren():
         if "Hotfix" == c.tag:
             hf = Hotfix()
             hf.HotfixId = c.get("id")
-            hf.InstalledOn = c.get("InstalledOn")
+            try:
+                d = c.get("InstalledOn")
+                hf.InstalledOn = datetime.datetime.strptime(d, "%m/%d/%Y %H:%M:%S").date()
+            except:
+                pass
             hf.Description = c.get("Description")
             hf.Host_id = host.id
             db.session.add(hf)

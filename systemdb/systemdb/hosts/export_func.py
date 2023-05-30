@@ -87,7 +87,7 @@ def generate_hosts_excel(hosts=[]):
                    "HyperVisorPresent", "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon", "ForceAutoLogon",
                    "DefaultPassword", "DefaultUserName","PS2Installed"]
 
-    cell_format = workbook.add_format({'text_wrap': True})
+    wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
                                          'bottom': 2,
                                          'bg_color': '#CCCCCC'})
@@ -101,8 +101,8 @@ def generate_hosts_excel(hosts=[]):
     # Iterate over the data and write it out row by row.
     for host in (rows):
         for c in host:
-            if ( col > 5) and (col <= 11):
-                worksheet.write(row, col, str(c), cell_format)
+            if ( col > 7) and (col <= 14):
+                worksheet.write(row, col, str(c), wrap_format)
             else:
                 worksheet.write(row, col, str(c))
             col += 1

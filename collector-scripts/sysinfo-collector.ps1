@@ -154,8 +154,15 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteStartElement("Hotfixes")
             
         if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
-            $hotfixes = Get-HotFix
-        
+            $hotfixes = Get-HotFix | Sort-Object -Property InstalledOn -Descending
+               
+            if ( $hotfixes.Length -gt 0 ){
+                $lastUpdate = $hotfixes[0]
+                $xmlWriter.WriteAttributeString("LastUpdate",  [string] $lastUpdate.InstalledOn);
+            }else{
+                $xmlWriter.WriteAttributeString("LastUpdate",  [string] "N/A");
+            }  
+               
             foreach ($h in $hotfixes ) {
                 $xmlWriter.WriteStartElement("Hotfix")
                 $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
@@ -164,8 +171,15 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteEndElement() # hotfix
             }
         } else {
-            $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering
+            $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering | Sort-Object -Property InstalledOn -Descending
         
+            if ( $hotfixes.Length -gt 0 ){
+                $lastUpdate = $hotfixes[0]
+                $xmlWriter.WriteAttributeString("LastUpdate",  [string] $lastUpdate.InstalledOn);
+            }else{
+                $xmlWriter.WriteAttributeString("LastUpdate",  [string] "N/A");
+            }  
+            
             foreach ($h in $hotfixes ) {
                 $xmlWriter.WriteStartElement("Hotfix")
                 $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
