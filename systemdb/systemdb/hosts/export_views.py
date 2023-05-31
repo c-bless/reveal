@@ -1,4 +1,5 @@
 from flask import render_template, abort, Response, redirect, url_for
+import datetime
 
 from . import host_bp
 
@@ -43,7 +44,6 @@ def export_hosts_excel():
                     headers={"Content-disposition": "attachment; filename=hosts.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
-    return redirect(url_for('hosts.host_list'))
 
 
 @host_bp.route('/hosts/export/excel/winlogon', methods=['GET'])
@@ -56,7 +56,18 @@ def export_hosts_excel_winlogon():
                     headers={"Content-disposition": "attachment; filename=hosts-with-winlogon.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
-    return redirect(url_for('hosts.host_list'))
+
+@host_bp.route('/hosts/export/excel/lastupdate/<int:days>', methods=['GET'])
+def export_hosts_excel_lastupdate(days):
+    now = datetime.datetime.now()
+    delta = now - datetime.timedelta(days=days)
+    hosts = Host.query.filter(Host.LastUpdate <= delta ).all()
+
+    output = generate_hosts_excel(hosts)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-winlogon.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
 @host_bp.route('/hosts/export/excel/ps2', methods=['GET'])
@@ -69,7 +80,29 @@ def export_hosts_excel_ps2():
                     headers={"Content-disposition": "attachment; filename=hosts-with-ps2.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
-    return redirect(url_for('hosts.host_list'))
+
+
+@host_bp.route('/hosts/export/excel/wsh', methods=['GET'])
+def export_hosts_excel_wsh():
+    hosts = Host.query.filter(Host.WSHEnabled == "Enabled").all()
+
+    output = generate_hosts_excel(hosts)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-ps2.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+@host_bp.route('/hosts/export/excel/wshremote', methods=['GET'])
+def export_hosts_excel_wshremote():
+    hosts = Host.query.filter(Host.WSHRemote == "Enabled").all()
+
+    output = generate_hosts_excel(hosts)
+
+    return Response(output, mimetype="text/docx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-ps2.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
 
 
 @host_bp.route('/hosts/export/excel/smbv1', methods=['GET'])
@@ -81,8 +114,6 @@ def export_hosts_excel_smbv1():
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-    return redirect(url_for('hosts.host_list'))
 
 
 @host_bp.route('/hosts/<int:id>/export/', methods=['GET'])
@@ -112,7 +143,6 @@ def service_export_excel():
                     headers={"Content-disposition": "attachment; filename=services.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-    return redirect(url_for('hosts.host_list'))
 
 
 @host_bp.route('/products/export/excel', methods=['GET'])
@@ -125,4 +155,3 @@ def product_export_excel():
                     headers={"Content-disposition": "attachment; filename=products.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-    return redirect(url_for('hosts.product_list'))

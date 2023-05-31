@@ -48,15 +48,23 @@
             <a href="#" class="nav-link">
               <i class="far fa-dot-circle nav-icon"></i>
               <p>
-                Reports (Word)
+                Export Hosts
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview" style="display: none;">
               <li class="nav-item">
                 <a href="{{url_for('hosts.template_list')}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Export Hosts</p>
+                  <i class="far fa-file-word nav-icon"></i>
+                  <p>Export all Hosts (Word)</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="{{url_for('hosts.export_hosts_excel')}}" class="nav-link">
+                  <i class="far fa-file-excel nav-icon"></i>
+                  <p>Export all Hosts (Excel)</p>
                 </a>
               </li>
             </ul>
@@ -74,9 +82,9 @@
               </a>
               <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                  <a href="{{url_for('hosts.export_hosts_excel')}}" class="nav-link">
+                  <a href="{{ url_for('hosts.export_hosts_excel_lastupdate', days=180) }}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>All Hosts</p>
+                    <p>Last update &gt 180 days</p>
                   </a>
                 </li>
               </ul>
@@ -84,7 +92,7 @@
                 <li class="nav-item">
                   <a href="{{url_for('hosts.export_hosts_excel_winlogon')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Hosts with Winlogon</p>
+                    <p>Password in Winlogon</p>
                   </a>
                 </li>
               </ul>
@@ -92,7 +100,7 @@
                 <li class="nav-item">
                   <a href="{{url_for('hosts.export_hosts_excel_ps2')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Hosts with PS2</p>
+                    <p>PowerShell 2.0 enabled</p>
                   </a>
                 </li>
               </ul>
@@ -104,6 +112,22 @@
                     </a>
                   </li>
               </ul>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{{url_for('hosts.export_hosts_excel_wsh')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>WSH Enabled</p>
+                  </a>
+                </li>
+              </ul>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{{url_for('hosts.export_hosts_excel_wshremote')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>WSH Remote Enabled</p>
+                  </a>
+                </li>
+              </ul>
           </li>
         </ul>
 
@@ -113,7 +137,7 @@
 
 
       <li class="nav-header"></li>
-      <li class="nav-item menu-open">
+      <li class="nav-item menu">
         <a href="#" class="nav-link">
           <i class="nav-icon fas fa-book"></i>
           <p>

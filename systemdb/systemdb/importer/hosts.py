@@ -1,5 +1,6 @@
-from ..core.sysinfo_models import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter
+from ..core.sysinfo_models import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, Printer
 from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL, PSInstalledVersions
+from ..core.sysinfo_models import DefenderSettings
 from ..core.db import db
 import datetime
 
@@ -14,35 +15,23 @@ def import_host(root):
     if root.tag == "Host":
         host = host2db(root)
         for e in root.getchildren():
-            if "Hotfixes" == e.tag:
-                hotfix2db(e, host)
-            if "Products" == e.tag:
-                products2db(e, host)
-            if "Netadapters" == e.tag:
-                netadapter2db(e, host)
-            if "NetIPAddresses" == e.tag:
-                netipaddresses2db(e, host)
-            if "Services" == e.tag:
-                services2db(e, host)
-            if "Users" == e.tag:
-                users2db(e, host)
-            if "Groups" == e.tag:
-                groups2db(e, host)
-            if "Shares" == e.tag:
-                shares2db(e, host)
-            if "NetFirewallProfiles" == e.tag:
-                fwprofile2db(e, host)
-            if "WSUS" == e.tag:
-                wsus2db(e, host)
-            if "SMBSettings" == e.tag:
-                smb2db(e, host)
-            if "BIOS" == e.tag:
-                bios2db(e, host)
-            if "WSH" == e.tag:
-                wsh2db(e, host)
-            if "PSVersions" == e.tag:
-                psversions2db(e, host)
-            # TODO: PSLogging, ConfigCheck, Defender
+            if "Hotfixes" == e.tag: hotfix2db(e, host)
+            if "Products" == e.tag: products2db(e, host)
+            if "Netadapters" == e.tag: netadapter2db(e, host)
+            if "NetIPAddresses" == e.tag: netipaddresses2db(e, host)
+            if "Services" == e.tag: services2db(e, host)
+            if "Users" == e.tag: users2db(e, host)
+            if "Groups" == e.tag: groups2db(e, host)
+            if "Shares" == e.tag: shares2db(e, host)
+            if "NetFirewallProfiles" == e.tag: fwprofile2db(e, host)
+            if "WSUS" == e.tag: wsus2db(e, host)
+            if "SMBSettings" == e.tag: smb2db(e, host)
+            if "BIOS" == e.tag: bios2db(e, host)
+            if "WSH" == e.tag: wsh2db(e, host)
+            if "PSVersions" == e.tag: psversions2db(e, host)
+            if "Printers" == e.tag: printers2db(e, host)
+            if "DefenderSettings" == e.tag: defenderSettings2db(e, host)
+            # TODO: ConfigCheck
         return host
 
 
@@ -100,6 +89,7 @@ def hotfix2db(xml, host):
             hf.Host_id = host.id
             db.session.add(hf)
 
+
 def products2db(xml, host):
     for c in xml.getchildren():
         if "Product" == c.tag:
@@ -114,6 +104,31 @@ def products2db(xml, host):
                 if "InstallLocation" == i.tag: prod.InstallLocation = i.text
             prod.Host_id = host.id
             db.session.add(prod)
+
+
+def printers2db(xml, host):
+    for c in xml.getchildren():
+        if "Printer" == c.tag:
+            printer = Printer()
+            for i in c.getchildren():
+                if "Name" == i.tag: printer.Name = i.text
+                if "ShareName" == i.tag: printer.ShareName = i.text
+                if "Type" == i.tag: printer.Type = i.text
+                if "DriverName" == i.tag: printer.DriverName = i.text
+                if "PortName" == i.tag: printer.PortName = i.text
+                if "Shared" == i.tag: printer.Shared = i.text
+                if "Published" == i.tag: printer.Published = i.text
+            printer.Host_id = host.id
+            db.session.add(printer)
+
+
+def defenderSettings2db(xml, host):
+    for i in xml.getchildren():
+        setting = DefenderSettings()
+        setting.Name == i.tag
+        setting.Value = i.text
+        setting.Host_id = host.id
+        db.session.add(setting)
 
 
 def netadapter2db(xml, host):

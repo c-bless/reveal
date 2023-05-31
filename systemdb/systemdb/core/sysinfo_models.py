@@ -60,6 +60,8 @@ class Host(db.Model):
     # references
     PSInstalledVersions = db.relationship("PSInstalledVersions", back_populates='Host', lazy='dynamic')
     Hotfixes = db.relationship('Hotfix', back_populates='Host', lazy='dynamic')
+    DefenderSettings = db.relationship('DefenderSettings', back_populates='Host', lazy='dynamic')
+    Printers = db.relationship('Printer', back_populates='Host', lazy='dynamic')
     NetAdapters = db.relationship('NetAdapter', back_populates='Host', lazy='dynamic')
     NetIPAddresses = db.relationship('NetIPAddress', back_populates='Host', lazy='dynamic')
     Services = db.relationship('Service', back_populates='Host', lazy='dynamic')
@@ -73,8 +75,6 @@ class Host(db.Model):
 
     def __str__(self):
         return self.Hostname
-
-
 
 
 class PSInstalledVersions(db.Model):
@@ -110,6 +110,41 @@ class Hotfix(db.Model):
 
     def __str__(self):
         return self.HotfixId
+
+
+class DefenderSettings(db.Model):
+    __tablename__ = "DefenderSettings"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(256), unique=False, nullable=True)
+    Value = db.Column(db.String(256), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="DefenderSettings")
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
+
+
+class Printer(db.Model):
+    __tablename__ = "Printer"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(256), unique=False, nullable=True)
+    Type = db.Column(db.String(100), unique=False, nullable=True)
+    DriverName = db.Column(db.String(256), unique=False, nullable=True)
+    ShareName = db.Column(db.String(256), unique=False, nullable=True)
+    PortName = db.Column(db.String(256), unique=False, nullable=True)
+    Shared = db.Column(db.String(10), unique=False, nullable=True)
+    Published = db.Column(db.String(10), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Printers")
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
 
 
 class NetAdapter(db.Model):
@@ -165,7 +200,7 @@ class Service(db.Model):
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
     DelayedAutoStart = db.Column(db.String(10), unique=False, nullable=True)
     BinaryPermissionsStr = db.Column(db.String(4096), unique=False, nullable=True)
-    BinaryPermissions = db.relationship('ServiceACL', backref='service', lazy='dynamic')
+    BinaryPermissions = db.relationship('ServiceACL', backref='Service', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Services")
 
