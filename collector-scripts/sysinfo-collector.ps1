@@ -796,7 +796,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Get-MpComputerStatus
 
         if (Get-Command Get-MpPreference -ea SilentlyContinue) {
-            $xmlWriter.WriteStartElement("Defender")
+            $xmlWriter.WriteStartElement("DefenderSettings")
             $preferences = Get-MpPreference 
             $xmlWriter.WriteElementString("DisableArchiveScanning", [string] $preferences.DisableArchiveScanning) 
             $xmlWriter.WriteElementString("DisableAutoExclusions",  [string] $preferences.DisableAutoExclusions)
