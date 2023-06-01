@@ -109,6 +109,14 @@ def hosts_report_wshremote_excel():
 def hosts_report_smbv1_excel():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel(hosts)
-    return Response(output, mimetype="text/docx",
+    return Response(output, mimetype="text/xlsx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+@sysinfo_bp.route('/hosts/report/smbv1', methods=['GET'])
+def hosts_report_smbv1():
+    hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
+    output = generate_hosts_excel(hosts)
+    return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_smbv1_excel"))
+
