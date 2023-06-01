@@ -21,7 +21,7 @@
         </a>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{url_for('hosts.host_list')}}" class="nav-link">
+            <a href="{{url_for('sysinfo.host_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Hosts</p>
             </a>
@@ -29,7 +29,7 @@
         </ul>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{url_for('hosts.service_list')}}" class="nav-link">
+            <a href="{{url_for('sysinfo.service_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Services</p>
             </a>
@@ -37,7 +37,7 @@
         </ul>
         <ul class="nav nav-treeview">
           <li class="nav-item">
-            <a href="{{url_for('hosts.product_list')}}" class="nav-link">
+            <a href="{{url_for('sysinfo.product_list')}}" class="nav-link">
               <i class="far fa-circle nav-icon"></i>
               <p>Products</p>
             </a>
@@ -54,7 +54,7 @@
             </a>
             <ul class="nav nav-treeview" style="display: none;">
               <li class="nav-item">
-                <a href="{{url_for('hosts.template_list')}}" class="nav-link">
+                <a href="{{url_for('sysinfo.template_list')}}" class="nav-link">
                   <i class="far fa-file-word nav-icon"></i>
                   <p>Export all Hosts (Word)</p>
                 </a>
@@ -62,7 +62,7 @@
             </ul>
             <ul class="nav nav-treeview" style="display: none;">
               <li class="nav-item">
-                <a href="{{url_for('hosts.export_hosts_excel')}}" class="nav-link">
+                <a href="{{url_for('sysinfo.hosts_export_excel')}}" class="nav-link">
                   <i class="far fa-file-excel nav-icon"></i>
                   <p>Export all Hosts (Excel)</p>
                 </a>
@@ -82,7 +82,7 @@
               </a>
               <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                  <a href="{{ url_for('hosts.export_hosts_excel_lastupdate', days=180) }}" class="nav-link">
+                  <a href="{{ url_for('sysinfo.hosts_report_lastupdate', days=180) }}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Last update &gt 180 days</p>
                   </a>
@@ -90,7 +90,7 @@
               </ul>
               <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                  <a href="{{url_for('hosts.export_hosts_excel_winlogon')}}" class="nav-link">
+                  <a href="{{url_for('sysinfo.hosts_report_winlogon')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Password in Winlogon</p>
                   </a>
@@ -98,7 +98,7 @@
               </ul>
               <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                  <a href="{{url_for('hosts.export_hosts_excel_ps2')}}" class="nav-link">
+                  <a href="{{url_for('sysinfo.hosts_report_ps2')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>PowerShell 2.0 enabled</p>
                   </a>
@@ -106,7 +106,7 @@
               </ul>
               <ul class="nav nav-treeview" style="display: none;">
                   <li class="nav-item">
-                    <a href="{{url_for('hosts.export_hosts_excel_smbv1')}}" class="nav-link">
+                    <a href="{{url_for('sysinfo.hosts_report_smbv1_excel')}}" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Hosts with SMBv1</p>
                     </a>
@@ -114,7 +114,7 @@
               </ul>
               <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                  <a href="{{url_for('hosts.export_hosts_excel_wsh')}}" class="nav-link">
+                  <a href="{{url_for('sysinfo.hosts_report_wsh')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>WSH Enabled</p>
                   </a>
@@ -122,7 +122,7 @@
               </ul>
               <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                  <a href="{{url_for('hosts.export_hosts_excel_wshremote')}}" class="nav-link">
+                  <a href="{{url_for('sysinfo.hosts_report_wshremote')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>WSH Remote Enabled</p>
                   </a>

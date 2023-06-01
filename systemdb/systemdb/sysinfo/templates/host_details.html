@@ -16,7 +16,7 @@
                     <h3 class="card-title">General Information</h3>
 
                     <div class="card-tools">
-                      <a href="{{ url_for('hosts.export_host', id=host.id) }}" class="btn btn-tool btn-sm">
+                      <a href="{{ url_for('sysinfo.host_export_word', id=host.id) }}" class="btn btn-tool btn-sm">
                         <i class="fas fa-download"></i>
                       </a>
                       <a href="#" class="btn btn-tool btn-sm">
@@ -360,7 +360,7 @@
                       <td>{{ u.Name }}</td>
                       <td>{{ u.Disabled }}</td>
                       <td class="actions">
-                        <a href="{{ url_for('hosts.user_detail', id=u.id) }}" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.user_detail', id=u.id) }}" class="btn btn-default btn-xs">
                           <i class="fa fa-eye"></i> View
                         </a>
                       </td>
@@ -387,6 +387,8 @@
               <div class="card-body p-0">
                 <table class="table table-striped">
                   <thead>
+                    <td colspan="2">No groups found.</td>
+
                   <tr>
                     <th>Name</th>
                     <th>Details</th>
@@ -398,7 +400,7 @@
                   <tr>
                     <td>{{ g.Name }}</td>
                     <td class="actions">
-                      <a href="{{ url_for('hosts.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
+                      <a href="{{ url_for('sysinfo.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
                         <i class="fa fa-eye"></i> View
                       </a>
                     </td>
@@ -445,7 +447,7 @@
                       <td>{{ s.Started }}</td>
                       <td>{{ s.StartName }}</td>
                       <td class="actions">
-                        <a href="{{ url_for('hosts.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
                           <i class="fa fa-eye"></i> View
                         </a>
                       </td>
@@ -485,7 +487,7 @@
                       <td>{{ s.Name }}</td>
                       <td>{{ s.Path }}</td>
                       <td class="actions">
-                        <a href="{{ url_for('hosts.share_detail', id=s.id) }}" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.share_detail', id=s.id) }}" class="btn btn-default btn-xs">
                           <i class="fa fa-eye"></i> View
                         </a>
                       </td>
@@ -511,7 +513,7 @@
                 <h3 class="card-title">Winlogon</h3>
 
                 <div class="card-tools">
-                  <a href="{{ url_for('hosts.export_host', id=host.id) }}" class="btn btn-tool btn-sm">
+                  <a href="{{ url_for('sysinfo.host_export_word', id=host.id) }}" class="btn btn-tool btn-sm">
                     <i class="fas fa-download"></i>
                   </a>
                   <a href="#" class="btn btn-tool btn-sm">

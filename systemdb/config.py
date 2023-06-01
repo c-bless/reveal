@@ -21,3 +21,5 @@ class Config(object):
     # Enable protection agains *Cross-site Request Forgery (CSRF)*
     CSRF_ENABLED = True
     CSRF_SESSION_KEY = "secret"
+
+    TEMPLATES_AUTO_RELOAD = True

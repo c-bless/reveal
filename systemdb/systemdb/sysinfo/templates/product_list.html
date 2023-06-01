@@ -1,14 +1,14 @@
 {% extends "layout/list_layout.html" %}
 
-{% set title = "Services" %}
-{% block page_title %} Services {% endblock page_title %}
+{% set title = "Products" %}
+{% block page_title %} Products {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} Service List {% endblock menu_l2 %}
+{% block menu_l2 %} Product List {% endblock menu_l2 %}
 
 {% block download_links %}
     {{ super() }}
-      <a href="{{ url_for('hosts.service_export_excel') }}" class="btn btn-block btn-secondary">
-        <i class="fas fa-download"></i>
+      <a href="{{ url_for('sysinfo.product_export_excel') }}" class="btn btn-block btn-secondary">
+        <i class="fas fa-download"> Download (Excel)</i>
       </a>
 {% endblock download_links %}
 X
@@ -19,25 +19,22 @@ X
             <thead>
             <tr>
                 <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                    aria-sort="ascending" aria-label="Name" width="15%">Caption
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">DisplayName
+                    aria-label="DisplayName" width="15%">InstallDate
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartMode" width="20%">StartMode
+                    aria-label="StartMode" width="20%">Name
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartName" width="5%">StartName
+                    aria-label="StartName" width="5%">Version
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Started" width="5%">Started
+                    aria-label="Started" width="5%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="PathName" width="25%">PathName
-                </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="SystemName"width="10%">SystemName
+                    aria-label="PathName" width="25%">InstallLocation
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Details" width="5%">Details
@@ -45,18 +42,18 @@ X
             </tr>
             </thead>
             <tbody>
-            {% if services %}
-                {% for s in services %}
+            {% if products %}
+                {% for p in products %}
                   <tr>
-                    <td> {{ s.Name }} </td>
-                    <td> {{ s.DisplayName }} </td>
-                    <td> {{ s.StartMode }} </td>
-                    <td> {{ s.StartName }} </td>
-                    <td> {{ s.Started }} </td>
-                    <td> {{ s.PathName }} </td><td> {{ s.SystemName }}</td>
+                    <td> {{ p.Caption }} </td>
+                    <td> {{ p.InstallDate }} </td>
+                    <td> {{ p.Name }} </td>
+                    <td> {{ p.Version }} </td>
+                    <td> {{ p.Host }} </td>
+                    <td> {{ p.InstallLocation }} </td>
                     <td class="actions">
-                        <a href="{{url_for('hosts.service_detail',id=s.id)}}" class="btn btn-default btn-xs">
-                            <i class="fa fa-eye"></i> View
+                        <a href="{{url_for('sysinfo.host_detail',id=p.Host_id)}}" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye"></i> View Host
                         </a>
                     </td>
                   </tr>

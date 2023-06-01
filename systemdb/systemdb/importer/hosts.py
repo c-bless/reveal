@@ -352,7 +352,7 @@ def wsus2db(xml, host):
         if "TargetGroupEnabled" == e.tag: host.TargetGroupEnabled = e.text
         if "WUServer" == e.tag: host.WUServer = e.text
         if "WUStatusServer" == e.tag: host.WUStatusServer = e.text
-        #db.session.commit()
+    db.session.commit()
 
 
 def smb2db(xml, host):
@@ -362,7 +362,7 @@ def smb2db(xml, host):
         if "EncryptData" == e.tag: host.SMBEncryptData = e.text
         if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = e.text
         if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = e.text
-        #db.session.commit()
+    db.session.commit()
 
 
 def wsh2db(xml, host):
@@ -370,7 +370,7 @@ def wsh2db(xml, host):
         if "TrustPolicy" == e.tag: host.WSHTrustPolicy = e.text
         if "EnabledStatus" == e.tag: host.WSHEnabled = e.text
         if "RemoteStatus" == e.tag: host.WSHRemote = e.text
-        #db.session.commit()
+    db.session.commit()
 
 
 def bios2db(xml, host):
@@ -378,7 +378,7 @@ def bios2db(xml, host):
     host.BiosName = xml.get("Name")
     host.BiosVersion = xml.get("Version")
     host.BiosSerial = xml.get("Serial")
-        #db.session.commit()
+    db.session.commit()
 
 
 def psversions2db(xml, host):

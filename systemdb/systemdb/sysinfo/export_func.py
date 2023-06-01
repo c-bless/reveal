@@ -73,6 +73,7 @@ def generate_hosts_excel(hosts=[]):
                 admins.append("\n".join(members))
             if g.SID == "S-1-5-32-555":
                 rdp.append("\n".join(members))
+
         tmp = [h.SystemGroup, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber,
                "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp),
                "\n".join(products), "\n".join(hotfixes), h.LastUpdate, h.OSInstallDate, h.OSProductType, h.LogonServer,

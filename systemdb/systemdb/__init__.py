@@ -43,14 +43,12 @@ def register_blueprints(app):
     from .home import home as home_bp
     app.register_blueprint(home_bp)
 
-    from .hosts import host_bp
-    app.register_blueprint(host_bp)
+    from .sysinfo import sysinfo_bp
+    app.register_blueprint(sysinfo_bp)
 
     from .ad import ad_bp
     app.register_blueprint(ad_bp)
 
-    from .report import  report_bp
-    app.register_blueprint(report_bp)
 
 
 def register_errorhandlers(app):
