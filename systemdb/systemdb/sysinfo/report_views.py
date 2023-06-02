@@ -3,9 +3,14 @@ import datetime
 
 from . import sysinfo_bp
 
-from ..core.sysinfo_models import Host
+from ..core.sysinfo_models import Host, Group
 
 from .export_func import generate_hosts_excel
+
+
+@sysinfo_bp.route('/hosts/reports/', methods=['GET'])
+def hosts_reports():
+    return render_template('report_list.html')
 
 
 ####################################################################
@@ -119,4 +124,37 @@ def hosts_report_smbv1():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel(hosts)
     return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_smbv1_excel"))
+
+
+####################################################################
+# Hosts with Domain Admins in local admin group
+####################################################################
+@sysinfo_bp.route('/hosts/report/domainadmin/excel', methods=['GET'])
+def hosts_report_domainadmin_excel():
+    groups = Group.query.filter(Group.SID == "S-1-5-32-544").all()
+    host_ids = []
+    for g in groups:
+        for m in g.Members:
+            if m.SID.endswith("-512"):
+                host_ids.append(g.Host_id)
+    hosts = Host.query.filter(Host.id.in_(host_ids)).all()
+
+    output = generate_hosts_excel(hosts)
+    return Response(output, mimetype="text/xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+@sysinfo_bp.route('/hosts/report/domainadmin', methods=['GET'])
+def hosts_report_domainadmin():
+    groups = Group.query.filter(Group.SID == "S-1-5-32-544").all()
+    host_ids = []
+    for g in groups:
+        for m in g.Members:
+            if m.SID.endswith("-512"):
+                host_ids.append(g.Host_id)
+    hosts = Host.query.filter(Host.id.in_(host_ids)).all()
+
+    output = generate_hosts_excel(hosts)
+    return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_domainadmin_excel"))
 

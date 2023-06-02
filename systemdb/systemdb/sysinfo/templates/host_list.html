@@ -8,9 +8,9 @@
 {% block download_links %}
     {{ super() }}
     {% if download_url %}
-    <a href="{{ download_url }}" class="btn btn-block btn-secondary">
+    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
     {% else %}
-    <a href="{{url_for('sysinfo.hosts_export_excel')}}" class="btn btn-block btn-secondary">
+    <a href="{{url_for('sysinfo.hosts_export_excel')}}" class="btn btn-block btn-secondary btn-sm">
     {% endif %}
         <i class="fas fa-download"> Download (Excel)</i>
     </a>
@@ -77,7 +77,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="3">No hosts found!</td>
+                        <td colspan="10">No hosts found!</td>
                     </tr>
                 {% endif %}
             </tbody>

@@ -1,0 +1,115 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Reports" %}
+{% block page_title %} Reports {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Report List {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+
+{% endblock download_links %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+        <thead>
+        <tr>
+            <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                aria-sort="ascending" aria-label="Name" width="15%">Name
+            </th>
+            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                aria-label="Description">Description
+            </th>
+            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                aria-label="Details" width="15%">Details
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td> Last update </td>
+                <td> Report all hosts where the last update was installed more that "n" days ago.</td>
+                <td class="actions">
+                    <a href="{{ url_for('sysinfo.hosts_report_lastupdate', days=180) }}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> 180 days
+                    </a>
+                    <a href="{{ url_for('sysinfo.hosts_report_lastupdate', days=365) }}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> 365 days
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> Password in Winlogon</td>
+                <td> Report all hosts where a password is stored in clear text in Windows Registry</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_winlogon')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> Password in Winlogon</td>
+                <td> Report all hosts where a password is stored in clear text in Windows Registry</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_winlogon')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> PowerShell 2.0 Enabled</td>
+                <td> Report all hosts where PowerShell Version 2.0 is installed / enabled.</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_ps2')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> SMBv1 Enabled</td>
+                <td> Report all hosts where SMBv1 is installed / enabled.</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_smbv1')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> WSH Enabled</td>
+                <td> Report all hosts where WSH is enabled.</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_wsh')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> WSH Remote Enabled</td>
+                <td> Report all hosts where WSH remote access is enabled.</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_wshremote')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> Domain Admins is Administrators group</td>
+                <td> Report all hosts where "Domain Admins" are members of the local administrators group</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_domainadmin')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock datatable %}

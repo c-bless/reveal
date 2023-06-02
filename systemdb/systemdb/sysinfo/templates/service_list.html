@@ -7,7 +7,7 @@
 
 {% block download_links %}
     {{ super() }}
-      <a href="{{ url_for('sysinfo.service_export_excel') }}" class="btn btn-block btn-secondary">
+      <a href="{{ url_for('sysinfo.service_export_excel') }}" class="btn btn-block btn-secondary btn-sm">
         <i class="fas fa-download"> Download (Excel)</i>
       </a>
 {% endblock download_links %}

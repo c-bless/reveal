@@ -13,7 +13,7 @@
 
       <li class="nav-item menu-open">
         <a href="#" class="nav-link">
-          <i class="fas fa-tachometer-alt nav-icon"></i>
+          <i class="fas fa-computer nav-icon"></i>
           <p>
             System Reviews
             <i class="right fas fa-angle-left"></i>
@@ -68,9 +68,17 @@
                 </a>
               </li>
             </ul>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="{{url_for('sysinfo.hosts_reports')}}" class="nav-link">
+                  <i class="fas fa-book nav-icon"></i>
+                  <p>Report List</p>
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
-
+      <!--
         <ul class="nav nav-treeview" style="display: block;">
           <li class="nav-item">
               <a href="#" class="nav-link">
@@ -128,8 +136,16 @@
                   </a>
                 </li>
               </ul>
+              <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{{url_for('sysinfo.hosts_report_domainadmin')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Administrators Grp(Domain Admins)</p>
+                  </a>
+                </li>
+              </ul>
           </li>
-        </ul>
+        </ul>-->
 
       </li>
 
@@ -139,7 +155,7 @@
       <li class="nav-header"></li>
       <li class="nav-item menu">
         <a href="#" class="nav-link">
-          <i class="nav-item fa-solid fa-house-laptop"></i>
+          <i class="fas fa-solid fa-house-laptop nav-item"></i>
           <p>
             Domain Infos
             <i class="fas fa-angle-left right"></i>
