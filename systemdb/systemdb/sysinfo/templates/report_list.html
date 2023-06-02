@@ -52,16 +52,6 @@
             </tr>
 
             <tr>
-                <td> Password in Winlogon</td>
-                <td> Report all hosts where a password is stored in clear text in Windows Registry</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_winlogon')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
                 <td> PowerShell 2.0 Enabled</td>
                 <td> Report all hosts where PowerShell Version 2.0 is installed / enabled.</td>
                 <td class="actions">
@@ -106,6 +96,36 @@
                 <td> Report all hosts where "Domain Admins" are members of the local administrators group</td>
                 <td class="actions">
                     <a href="{{url_for('sysinfo.hosts_report_domainadmin')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> TODO: EoL</td>
+                <td> Report all hosts which reached the End-of-Life / End-of-Support</td>
+                <td class="actions">
+                    <a href="#" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> TODO: Autologon as admin</td>
+                <td> Report all hosts where the autologon user is member of the local administrator group</td>
+                <td class="actions">
+                    <a href="#" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> TODO: WSUS via http</td>
+                <td> Report all hosts where the WSUS server is configured to be reached via http</td>
+                <td class="actions">
+                    <a href="#" class="btn btn-default btn-xs">
                         <i class="fa fa-eye"></i> View
                     </a>
                 </td>
