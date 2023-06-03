@@ -1,7 +1,7 @@
-from ..core.sysinfo_models import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, Printer
-from ..core.sysinfo_models import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL, PSInstalledVersions
-from ..core.sysinfo_models import DefenderSettings
-from ..core.db import db
+from ..models.sysinfo import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, Printer
+from ..models.sysinfo import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL, PSInstalledVersions
+from ..models.sysinfo import DefenderSettings
+from ..models.db import db
 import datetime
 
 

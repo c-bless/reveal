@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.ad_models import ADDomain, ADTrust, ADDomainController, ADPasswordPolicy, ADUser, ADGroup, ADComputer, ADGroupMember
+from ..models.activedirectory import ADDomain, ADTrust, ADDomainController, ADPasswordPolicy, ADUser, ADGroup, ADComputer, ADGroupMember
 from sqlalchemy import and_
 from . import ad_bp
 

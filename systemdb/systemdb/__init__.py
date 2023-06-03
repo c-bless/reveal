@@ -2,14 +2,17 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_marshmallow import Marshmallow
 
-from .core.db import db
+from .models.db import db
+from .api import api
 
 import os
 
 bootstrap = Bootstrap()
 babel = Babel()
 toolbar = DebugToolbarExtension()
+ma = Marshmallow()
 
 
 def create_app(config_class):
@@ -27,6 +30,8 @@ def create_app(config_class):
     babel.init_app(app)
     if config_class.DEBUG:
         toolbar.init_app(app)
+    ma.init_app(app)
+    api.init_app(app)
 
     register_commands(app)
 
@@ -48,7 +53,6 @@ def register_blueprints(app):
 
     from .ad import ad_bp
     app.register_blueprint(ad_bp)
-
 
 
 def register_errorhandlers(app):

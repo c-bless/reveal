@@ -3,7 +3,7 @@ import datetime
 
 from . import sysinfo_bp
 
-from ..core.sysinfo_models import Host, Group
+from ..models.sysinfo import Host, Group
 
 from .export_func import generate_hosts_excel
 

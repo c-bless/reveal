@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.ad_models import ADComputer, ADDomainController, ADForestGlobalCatalog
+from ..models.activedirectory import ADComputer, ADDomainController, ADForestGlobalCatalog
 from . import ad_bp
 
 @ad_bp.route('/ad/dclist', methods=['GET'])

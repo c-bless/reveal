@@ -3,7 +3,7 @@ from sqlalchemy import desc
 
 from . import sysinfo_bp
 
-from ..core.sysinfo_models import Host, Group, User, Service, Share, Product
+from ..models.sysinfo import Host, Group, User, Service, Share, Product
 
 
 @sysinfo_bp.route('/hosts/', methods=['GET'])

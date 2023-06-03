@@ -118,7 +118,7 @@ def create_computer_worksheet(workbook, computer_list=[]):
             else:
                 worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:P1")
+        worksheet.autofilter("A1:Q1")
         col = 0
         row += 1
 

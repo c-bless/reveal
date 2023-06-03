@@ -1,7 +1,7 @@
-from ..core.ad_models import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest
-from ..core.ad_models import ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole
-from ..core.ad_models import ADSPN, ADPasswordPolicy, ADTrust
-from ..core.db import db
+from ..models.activedirectory import ADDomain, ADUser, ADUserMembership, ADGroup, ADGroupMember, ADDomainController, ADForest
+from ..models.activedirectory import ADForestSite, ADForestGlobalCatalog, ADComputer, ADDCServerRole, ADOperationMasterRole
+from ..models.activedirectory import ADSPN, ADPasswordPolicy, ADTrust
+from ..models.db import db
 
 
 def import_domain_collector(root):

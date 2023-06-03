@@ -3,7 +3,7 @@ import datetime
 
 from . import sysinfo_bp
 
-from ..core.sysinfo_models import Host, Service, Product
+from ..models.sysinfo import Host, Service, Product
 
 import os
 from .export_func import template_detail_dir, template_dir

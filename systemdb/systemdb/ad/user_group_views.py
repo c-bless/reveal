@@ -1,6 +1,6 @@
 from flask import render_template
 
-from ..core.ad_models import ADUser, ADGroup, ADDomain
+from ..models.activedirectory import ADUser, ADGroup, ADDomain
 
 from . import ad_bp
 
