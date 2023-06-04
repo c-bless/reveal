@@ -119,7 +119,7 @@ def hosts_report_smbv1_excel():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/smbv1', methods=['GET'])
+@sysinfo_bp.route('/hosts/repAnd just instantiate the flask-apispec with the Flask app.ort/smbv1', methods=['GET'])
 def hosts_report_smbv1():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel(hosts)

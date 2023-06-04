@@ -2,17 +2,16 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel
 from flask_debugtoolbar import DebugToolbarExtension
-from flask_marshmallow import Marshmallow
 
 from .models.db import db
-from .api import api
+from .api.ma import ma
+from .api import api, add_apispec
 
 import os
 
 bootstrap = Bootstrap()
 babel = Babel()
 toolbar = DebugToolbarExtension()
-ma = Marshmallow()
 
 
 def create_app(config_class):
@@ -31,18 +30,18 @@ def create_app(config_class):
     if config_class.DEBUG:
         toolbar.init_app(app)
     ma.init_app(app)
-    api.init_app(app)
 
     register_commands(app)
 
     # import blueprints
     register_blueprints(app)
 
+    add_apispec(app)
+
     with app.app_context():
         db.metadata.create_all(bind=db.engine)
 
     return app
-
 
 def register_blueprints(app):
     from .home import home as home_bp
@@ -53,6 +52,10 @@ def register_blueprints(app):
 
     from .ad import ad_bp
     app.register_blueprint(ad_bp)
+
+    from .api import api_bp
+    app.register_blueprint(api_bp)
+
 
 
 def register_errorhandlers(app):
