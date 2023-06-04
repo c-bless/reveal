@@ -8,6 +8,9 @@ api = Api(api_bp)
 from .resources.sysinfo.product import ProductListAllResource, ProductResource, ProductListByHostResource
 from .resources.sysinfo.service import ServiceListAllResource, ServiceResource, ServiceListByHostResource
 from .resources.sysinfo.hosts import HostResource, HostListAllResource
+from .resources.sysinfo.reports import HostListWinlogonReportResource, HostListLastUpdateReportResource, \
+    HostListPS2ReportResource, HostListSMBv1ReportResource, HostListDomainAdminsReportResource, \
+    HostListWSHRemoteReportResource, HostListWSHReportResource
 
 def add_apispec(app):
     template = {

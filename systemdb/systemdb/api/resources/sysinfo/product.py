@@ -72,7 +72,7 @@ class ProductListByHostResource(Resource):
                "schema": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/definitions/products"
+                      "$ref": "#/definitions/Product"
                     }
                   }
 

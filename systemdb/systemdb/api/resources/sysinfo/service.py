@@ -21,7 +21,7 @@ class ServiceResource(Resource):
               required: true
            responses:
              404:
-                description: No service with found under the specified id
+                description: A service with the specified ID was not found.
              200:
                description: A single service
 
@@ -65,8 +65,13 @@ class ServiceListByHostResource(Resource):
                type: integer
                required: true
             responses:
+             404:
+                description: No services where found for a host with the specified ID.
              200:
                description: list of services
+               content:
+                application/json
+
         """
         services = Service.query.filter(Service.Host_id == id).all()
         return services_schema.dump(services)
@@ -75,57 +80,3 @@ class ServiceListByHostResource(Resource):
 api.add_resource(ServiceResource, '/sysinfo/services/<int:id>', endpoint='service_by_id')
 api.add_resource(ServiceListAllResource, '/sysinfo/services/', endpoint='service_list')
 api.add_resource(ServiceListByHostResource, '/sysinfo/hosts/<int:id>/services/', endpoint='service_by_host')
-
-
-
-class ServiceAclResource(Resource):
-
-    def get(self, id):
-        """
-           Returns a specific ACL.
-
-           ---
-           tags:
-            - services
-           parameters:
-            - in: path
-              name: id
-              type: integer
-              required: true
-           responses:
-             404:
-                description: No acl with found under the specified id
-             200:
-               description: A single ServiceACL
-
-
-           """
-        acl = ServiceACL.query.get_or_404(id)
-        return serviceACL_schema.dump(acl)
-
-class ServiceAclListByServiceResource(Resource):
-
-    def get(self, id):
-        """
-        Returns a list ACLs for the specified service
-
-            ---
-            tags:
-             - services
-             - hosts
-            parameters:
-             - in: path
-               name: id
-               type: integer
-               required: true
-            responses:
-             200:
-               description: list of services
-        """
-        acls = ServiceACL.query.filter(ServiceACL.Service_id == id).all()
-        return serviceACLs_schema.dump(acls)
-
-
-
-api.add_resource(ServiceAclResource, '/sysinfo/serviceACLs/<int:id>', endpoint='service_acl_id')
-api.add_resource(ServiceListAllResource, '/sysinfo/services/<int:id>/acls/', endpoint='service_acl_list')
