@@ -1,10 +1,17 @@
 from ....ma import ma
 from .....models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions
 
+
 class NetIPAddressNestedSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = NetIPAddress
         include_fk = False
+
+
+class HotixSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Hotfix
+        include_fk = True
 
 
 class HotfixNestedSchema(ma.SQLAlchemyAutoSchema):
