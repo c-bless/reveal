@@ -1,6 +1,5 @@
-
-from ...ma import ma
-from ....models.sysinfo import Product
+from ....ma import ma
+from .....models.sysinfo import Product
 
 
 class ProductSchema(ma.SQLAlchemyAutoSchema):
@@ -11,6 +10,3 @@ class ProductSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Product
         include_fk = True
-
-product_schema = ProductSchema()
-products_schema = ProductSchema(many=True)

@@ -1,5 +1,5 @@
-from ...ma import ma
-from ....models.sysinfo import Service, ServiceACL
+from ....ma import ma
+from .....models.sysinfo import Service, ServiceACL
 
 
 class ServiceACLSchema(ma.SQLAlchemyAutoSchema):
@@ -11,10 +11,6 @@ class ServiceACLSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         include_fk = True
 
-serviceACL_schema = ServiceACLSchema()
-serviceACLs_schema = ServiceACLSchema(many=True)
-
-
 class ServiceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Service
@@ -24,7 +20,3 @@ class ServiceSchema(ma.SQLAlchemyAutoSchema):
         exclude = ("BinaryPermissionsStr",)
 
     BinaryPermissions = ma.Nested(ServiceACLSchema, many=True, allow_none=True)
-
-service_schema = ServiceSchema()
-services_schema = ServiceSchema(many=True)
-

@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from .models.db import db
 from .api.ma import ma
-from .api import api, add_apispec
+from .api import register_api
 
 import os
 
@@ -36,7 +36,7 @@ def create_app(config_class):
     # import blueprints
     register_blueprints(app)
 
-    add_apispec(app)
+    register_api(app)
 
     with app.app_context():
         db.metadata.create_all(bind=db.engine)
@@ -52,9 +52,6 @@ def register_blueprints(app):
 
     from .ad import ad_bp
     app.register_blueprint(ad_bp)
-
-    from .api import api_bp
-    app.register_blueprint(api_bp)
 
 
 

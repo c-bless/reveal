@@ -1,84 +1,21 @@
-from flask import Blueprint
-from flask_restful import Api
-from flasgger import Swagger
+from flask_smorest import Api
 
-api_bp = Blueprint('api', __name__, url_prefix='/api')
-api = Api(api_bp)
+api = Api()
 
-from .resources.sysinfo.product import ProductListAllResource, ProductResource, ProductListByHostResource
-from .resources.sysinfo.service import ServiceListAllResource, ServiceResource, ServiceListByHostResource
-from .resources.sysinfo.hosts import HostResource, HostListAllResource
-from .resources.sysinfo.reports import HostListWinlogonReportResource, HostListLastUpdateReportResource, \
-    HostListPS2ReportResource, HostListSMBv1ReportResource, HostListDomainAdminsReportResource, \
-    HostListWSHRemoteReportResource, HostListWSHReportResource
+def register_api(app):
+    api.init_app(app)
 
-def add_apispec(app):
-    template = {
-        "swagger": "2.0",
-        "info": {
-            "title": "systemdb API",
-            "description": "API for retrieving data collected by system-collector and domain-collector scripts.",
-            "contact": {
-                "responsibleDeveloper": "Christoph Bless",
-                "email": "bitbucket@cbless.de",
-                "url": "https://bitbucket.org/cbless/systemdb",
-            },
-            #"termsOfService": "https://bitbucket.org/cbless/systemdb/terms",
-            "version": "0.2"
-        },
-        "host": "localhost:5000",  # overrides localhost:500
-        "basePath": "/api",  # base bash for blueprint registration
-        "schemes": [
-            "http",
-            "https"
-        ],
-        #"operationId": "getmyData",
-        "components": {
-            "schemas": {
-                "Product": {
-                    "type": "object",
-                    "properties": {
-                        "id": {
-                            "type": "integer",
-                            "description": "primary key"
-                        },
-                        "Caption": {
-                            "type": "string",
-                            "description": "Caption"
-                        },
-                        "InstallDate": {
-                            "type": "string",
-                            "description": "InstallDate"
-                        },
-                        "Description": {
-                            "type": "string",
-                            "description": "Description of the product"
-                        },
-                        "Vendor": {
-                            "type": "string",
-                            "description": "Vendor"
-                        },
-                        "Name": {
-                            "type": "string",
-                            "description": "Name"
-                        },
-                        "Version": {
-                            "type": "string",
-                            "description": "Version"
-                        },
-                        "InstallLocation": {
-                            "type": "string",
-                            "description": "InstallLocation"
-                        },
-                        "Host_id": {
-                            "type": "integer",
-                            "description": "foreign key (Host)"
-                        }
-                    }
-                }
-            },
-        }
-    }
+    from .sysinfo.resources.software import blp as software_bp
+    api.register_blueprint(software_bp)
 
-    swagger = Swagger(app, template=template)
+    from .sysinfo.resources.hosts import blp as hosts_bp
+    api.register_blueprint(hosts_bp)
+
+    from .sysinfo.resources.reports import blp as reports_bp
+    api.register_blueprint(reports_bp)
+
+
+
+
+
 
