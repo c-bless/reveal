@@ -53,5 +53,3 @@ class ADComputerSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ADComputer
         include_fk = True
-
-    SPNs
