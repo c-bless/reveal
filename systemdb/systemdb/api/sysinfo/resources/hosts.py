@@ -3,8 +3,10 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 
 
-from ....models.sysinfo import Host, Service, Product, User, Group, NetIPAddress
-from ..schemas.responses.hosts import HostSchema, UserSchema, GroupSchema
+from ....models.sysinfo import Host, Service, Product, User, Group, NetIPAddress, Hotfix, NetAdapter, Printer, \
+    ConfigCheck, PSInstalledVersions
+from ..schemas.responses.hosts import HostSchema, UserSchema, GroupSchema, HotfixSchema, NetAdapterSchema, \
+    PrinterSchema, PSInstalledVersionsSchema, ConfigCheckSchema, NetIPAddressSchema
 from ..schemas.responses.service import ServiceSchema
 from ..schemas.responses.product import ProductSchema
 
@@ -102,3 +104,69 @@ class HostListProductsView(MethodView):
     @blp.response(HTTPStatus.OK.value, ProductSchema(many=True))
     def get(self, host_id):
         return Product.query.filter(Product.Host_id == id).all()
+
+
+@blp.route("/hosts/<int:host_id>/hotfixes/")
+class HostListHotfixesView(MethodView):
+
+    @blp.doc(description="Return a list of installed hotfixes from a specific host.",
+             summary="Find all hotfixes installed on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, HotfixSchema(many=True))
+    def get(self, host_id):
+        return Hotfix.query.filter(Hotfix.Host_id == host_id).all()
+
+
+@blp.route("/hosts/<int:host_id>/netadapters/")
+class HostListNetAdaptersView(MethodView):
+
+    @blp.doc(description="Return a list of network adapters from a specific host.",
+             summary="Find all network adapters on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, NetAdapterSchema(many=True))
+    def get(self, host_id):
+        return NetAdapter.query.filter(NetAdapter.Host_id == host_id).all()
+
+@blp.route("/hosts/<int:host_id>/netipaddresses/")
+class HostListNetIPAddressesView(MethodView):
+
+    @blp.doc(description="Return a list of IP addresses from a specific host.",
+             summary="Find all IP addresses on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, NetIPAddressSchema(many=True))
+    def get(self, host_id):
+        return NetIPAddress.query.filter(NetIPAddress.Host_id == host_id).all()
+
+
+@blp.route("/hosts/<int:host_id>/configchecks/")
+class HostListConfigChecksView(MethodView):
+
+    @blp.doc(description="Return a list of performed config checks of a specific host.",
+             summary="Find all performed config checks on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, ConfigCheckSchema(many=True))
+    def get(self, host_id):
+        return ConfigCheck.query.filter(ConfigCheck.Host_id == host_id).all()
+
+
+@blp.route("/hosts/<int:host_id>/psversions/")
+class HostListPSVersionsView(MethodView):
+
+    @blp.doc(description="Return a list of PowerShell versions from a specific host.",
+             summary="Find all PowerShell versions on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, PSInstalledVersionsSchema(many=True))
+    def get(self, host_id):
+        return PSInstalledVersions.query.filter(PSInstalledVersions.Host_id == host_id).all()
+
+
+
+@blp.route("/hosts/<int:host_id>/printers/")
+class HostListPrintersView(MethodView):
+
+    @blp.doc(description="Return a list of installed printers from a specific host.",
+             summary="Find all installed printers on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, PrinterSchema(many=True))
+    def get(self, host_id):
+        return Printer.query.filter(Printer.Host_id == host_id).all()

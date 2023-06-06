@@ -20,16 +20,16 @@
     .\sysinfo-collector.ps1  
 
     .Example 
-    .\sysinfo-collector.ps1 -systemgroup PCS7 -systemlocation "Control room"
+    .\sysinfo-collector.ps1 -Systemgroup PCS7 -Location "Control room"
 #>
 param (
     # optional parameter to specify the systemgroup the host belongs to
     [Parameter(Mandatory=$false)]
-    [string]$systemgroup = "N/A",
+    [string]$Systemgroup = "N/A",
     
     # name of the location
     [Parameter(Mandatory=$false)]
-    [string]$systemlocation = "N/A"
+    [string]$Location = "N/A"
 )
 
 
@@ -73,8 +73,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         $xmlWriter.WriteAttributeString("Type", "Windows")
         
-        $xmlWriter.WriteElementString("SystemGroup", $systemgroup)
-        $xmlWriter.WriteElementString("Location", $systemlocation)
+        $xmlWriter.WriteElementString("SystemGroup", $Systemgroup)
+        $xmlWriter.WriteElementString("Location", $Location)
         
         
         # Adding Hostname to XML
@@ -322,6 +322,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 }
                 $xmlWriter.WriteElementString("Executable",[string]$bin);
                 
+                $space2 = $bin.IndexOf(" ")
+                if ($space2 -ne -1){
+                    $bin = '$bin'
+                }
+
                 $acl = get-acl -Path $bin -ErrorAction SilentlyContinue
                 #$xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
                 $xmlWriter.WriteStartElement("BinaryPermissions")
@@ -796,7 +801,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Get-MpComputerStatus
 
         if (Get-Command Get-MpPreference -ea SilentlyContinue) {
-            $xmlWriter.WriteStartElement("DefenderSettings")
+            $xmlWriter.WriteStartElement("Defender")
             $preferences = Get-MpPreference 
             $xmlWriter.WriteElementString("DisableArchiveScanning", [string] $preferences.DisableArchiveScanning) 
             $xmlWriter.WriteElementString("DisableAutoExclusions",  [string] $preferences.DisableAutoExclusions)
@@ -820,7 +825,25 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
 
 
-
+        #######################################################################
+        # Printers
+        #######################################################################
+        if (Get-Command Get-Printer -ea SilentlyContinue) {
+            $printers = Get-Printer
+            $xmlWriter.WriteStartElement("Printers")
+            foreach ($p in $printers) {
+                $xmlWriter.WriteStartElement("Printer")
+                $xmlWriter.WriteElementString("Name", [string] $p.Name)
+                $xmlWriter.WriteElementString("ShareName", [string] $p.ShareName)
+                $xmlWriter.WriteElementString("Type", [string] $p.Type)
+                $xmlWriter.WriteElementString("DriverName", [string] $p.DriverName)
+                $xmlWriter.WriteElementString("PortName", [string] $p.PortName)
+                $xmlWriter.WriteElementString("Shared", [string] $p.Shared)
+                $xmlWriter.WriteElementString("Published", [string] $p.Published)
+                $xmlWriter.WriteEndElement() # Printer
+            }
+            $xmlWriter.WriteEndElement() # Printers
+        }
         #######################################################################
         # Proxy
         #######################################################################
@@ -835,10 +858,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteAttributeString("Component",[string] $c.Component)
             $xmlWriter.WriteAttributeString("Name", [string] $c.Name)
             $xmlWriter.WriteAttributeString("Method", [string] $c.Method)
-            $xmlWriter.WriteAttributeString("Key", [string] $c.Key)
-            $xmlWriter.WriteAttributeString("Value", [string] $c.Value)
-            $xmlWriter.WriteAttributeString("Result", [string] $c.Result)
-            $xmlWriter.WriteAttributeString("Message", [string] $c.Message)
+            $xmlWriter.WriteElementString("Key", [string] $c.Key)
+            $xmlWriter.WriteElementString("Value", [string] $c.Value)
+            $xmlWriter.WriteElementString("Result", [string] $c.Result)
+            $xmlWriter.WriteElementString("Message", [string] $c.Message)
             $xmlWriter.WriteEndElement()
         }
         $xmlWriter.WriteEndElement() # ConfigChecks

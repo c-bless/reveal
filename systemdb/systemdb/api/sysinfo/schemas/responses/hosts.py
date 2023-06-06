@@ -1,5 +1,41 @@
 from ....ma import ma
-from .....models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions
+from .....models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions, NetAdapter, DefenderSettings, Printer, ConfigCheck
+
+
+class PSInstalledVersionsSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = PSInstalledVersions
+        include_fk = True
+
+
+class PrinterSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Printer
+        include_fk = True
+
+
+class DefenderSettingSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = DefenderSettings
+        include_fk = True
+
+
+class ConfigCheckSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ConfigCheck
+        include_fk = True
+
+
+class NetAdapterSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = NetAdapter
+        include_fk = True
+
+
+class NetIPAddressSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = NetIPAddress
+        include_fk = True
 
 
 class NetIPAddressNestedSchema(ma.SQLAlchemyAutoSchema):
@@ -8,7 +44,7 @@ class NetIPAddressNestedSchema(ma.SQLAlchemyAutoSchema):
         include_fk = False
 
 
-class HotixSchema(ma.SQLAlchemyAutoSchema):
+class HotfixSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Hotfix
         include_fk = True

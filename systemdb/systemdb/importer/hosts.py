@@ -1,6 +1,6 @@
 from ..models.sysinfo import  Hotfix, Host, Product, Group, User, Service, Share, NetAdapter, Printer
 from ..models.sysinfo import NetIPAddress, GroupMember, ShareACL, ShareACLNTFS, ServiceACL, PSInstalledVersions
-from ..models.sysinfo import DefenderSettings
+from ..models.sysinfo import DefenderSettings, ConfigCheck
 from ..models.db import db
 import datetime
 
@@ -31,7 +31,7 @@ def import_host(root):
             if "PSVersions" == e.tag: psversions2db(e, host)
             if "Printers" == e.tag: printers2db(e, host)
             if "DefenderSettings" == e.tag: defenderSettings2db(e, host)
-            # TODO: ConfigCheck
+            if "ConfigChecks" == e.tag: configchecks2db(e, host)
         return host
 
 
@@ -393,3 +393,19 @@ def psversions2db(xml, host):
             v.Host_id = host.id
             db.session.add(v)
         #db.session.commit()
+
+
+def configchecks2db(xml, host):
+    for e in xml.getchildren():
+        if "ConfigCheck" == e.tag:
+            check = ConfigCheck()
+            check.Component = e.get("Component")
+            check.Name = e.get("Name")
+            check.Method = e.get("Method")
+            for c in e.getchildren():
+                if "Key" == c.tag: check.Key = c.text
+                if "Value" == c.tag: check.Value = c.text
+                if "Result" == c.tag: check.Result = c.text
+                if "Message" == c.tag: check.Message = c.text
+            check.Host_id = host.id
+            db.session.add(check)

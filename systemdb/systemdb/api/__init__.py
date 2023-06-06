@@ -2,6 +2,7 @@ from flask_smorest import Api
 
 api = Api()
 
+
 def register_api(app):
     api.init_app(app)
 
@@ -13,6 +14,9 @@ def register_api(app):
 
     from .sysinfo.resources.reports import blp as reports_bp
     api.register_blueprint(reports_bp)
+
+    from .ad.resources.domain import blp as addomain_bp
+    api.register_blueprint(addomain_bp)
 
 
 

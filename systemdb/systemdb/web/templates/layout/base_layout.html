@@ -102,6 +102,13 @@
     <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
     <!-- AdminLTE App -->
     <script src="{{ url_for('static', filename='dist/js/adminlte.min.js')}}"></script>
+    <script type="text/javascript" src="js/bootstrap/bootstrap-dropdown.js"></script>
+    <script>
+     $(document).ready(function(){
+        $('.dropdown-toggle').dropdown()
+    });
+    </script>
+
     {% endblock javascripts %}
 
 </body>

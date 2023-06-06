@@ -27,8 +27,8 @@ def create_app(config_class):
     # initialize extensions
     bootstrap.init_app(app)
     babel.init_app(app)
-    if config_class.DEBUG:
-        toolbar.init_app(app)
+    # if config_class.DEBUG:
+    #     toolbar.init_app(app)
     ma.init_app(app)
 
     register_commands(app)

@@ -17,6 +17,7 @@ class ADDomain(db.Model):
     DistinguishedName = db.Column(db.String(1024), unique=False)
     InfrastructureMaster = db.Column(db.String(1024), unique=False)
     PasswordPolicies = db.relationship('ADPasswordPolicy', backref='domain', lazy='dynamic')
+    Trusts = db.relationship('ADTrust', back_populates='Domain', lazy='dynamic')
 
     def __repr__(self):
         return self.Name
@@ -62,6 +63,7 @@ class ADTrust(db.Model):
     IsTreeParent = db.Column(db.String(256), unique=False, nullable=True)
     IsTreeRoot = db.Column(db.String(256), unique=False, nullable=True)
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
+    Domain = db.relationship("ADDomain", back_populates="Trusts")
 
     def __repr__(self):
         return self.Target

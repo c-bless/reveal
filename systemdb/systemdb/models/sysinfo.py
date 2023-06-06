@@ -358,3 +358,23 @@ class ShareACLNTFS(db.Model):
 
     def __str__(self):
         return self.Name
+
+
+class ConfigCheck(db.Model):
+    __tablename__ = "ConfigCheck"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(150), unique=False, nullable=True)
+    Component = db.Column(db.String(256), unique=False, nullable=True)
+    Method = db.Column(db.String(256), unique=False, nullable=True)
+    Key = db.Column(db.String(256), unique=False, nullable=True)
+    Value = db.Column(db.String(256), unique=False, nullable=True)
+    Result = db.Column(db.String(256), unique=False, nullable=True)
+    Message = db.Column(db.String(4096), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
+
