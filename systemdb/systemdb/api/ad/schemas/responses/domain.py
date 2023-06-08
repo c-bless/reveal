@@ -11,6 +11,12 @@ class ADDomainSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
 
 
+class ADOperationMasterRoleSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADOperationMasterRole
+        include_fk = True
+
+
 class ADForestGlobalCatalogSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ADForestGlobalCatalog
@@ -37,11 +43,24 @@ class ADUserSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
 
 
+class ADGroupMemberSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADGroupMember
+        include_fk = True
+
+
 class ADGroupSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ADGroup
         include_fk = True
 
+
+class ADGroupWithMembersSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADGroup
+        include_fk = True
+
+    Members = ma.Nested(ADGroupMemberSchema, many=True, allow_none=True)
 
 class ADSPNSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -53,3 +72,40 @@ class ADComputerSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ADComputer
         include_fk = True
+
+
+class ADDomainControllerSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADDomainController
+        include_fk = True
+
+    ADOperationMasterRole = ma.Nested(ADOperationMasterRoleSchema, many=True, allow_none=True)
+
+
+class ADDCServerRoleSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADDCServerRole
+        include_fk = True
+
+
+class ADUserMembershipSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADUserMembership
+        include_fk = True
+
+
+class ADGroupMemberSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADGroupMember
+        include_fk =True
+
+class ADForestSiteSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADForestSite
+        include_fk = True
+
+
+class ADPasswordPolicySchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ADPasswordPolicy
+        include_fk =True

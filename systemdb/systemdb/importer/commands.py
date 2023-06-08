@@ -2,9 +2,11 @@ import click
 from flask.cli import AppGroup
 from lxml import etree
 import os
+from ..models.db import db
 
 from .hosts import import_host, import_sysinfo_collector
 from .domain import import_domain_collector
+from ..models.eol import EoL
 
 import_cli = AppGroup('import')
 
@@ -34,6 +36,7 @@ def import_domain_command(filename):
     if etree.iselement(root):
         import_domain_collector(root=root)
 
+
 @import_cli.command('dir')
 @click.argument('name')
 def import_dir_command(name):
@@ -56,3 +59,19 @@ def import_dir_command(name):
                     print("[*] Importing SystemInfoCollector output")
                     import_host(root=root)
 
+
+@import_cli.command('eol-list')
+@click.argument('filename')
+def import_domain_command(filename):
+    import csv
+    with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file)
+        for row in csv_reader:
+            eol = EoL()
+            eol.Release = row[0]
+            eol.Released = row[1]
+            eol.ActiveSupport = row[2]
+            eol.SecuritySupport = row[3]
+            eol.Build = row[4]
+            db.session.add(eol)
+    db.session.commit()

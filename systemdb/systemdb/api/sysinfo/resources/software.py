@@ -4,7 +4,7 @@ from flask_smorest import Blueprint
 
 from ....models.sysinfo import Product
 from ..schemas.responses.product import ProductSchema
-from ..schemas.arguments.products import ProductSearchNameSchema
+from ..schemas.arguments.products import ProductNameSearchSchema
 
 from ....models.sysinfo import Service
 from ..schemas.responses.service import ServiceSchema
@@ -25,17 +25,19 @@ class ProductByIdView(MethodView):
     def get(self, product_id):
         return Product.query.get_or_404(product_id)
 
+
 @blp.route("/products/search/")
 class ProductSearchView(MethodView):
 
     @blp.doc(description="Return an installed product based on specified search filter",
              summary="Find product by name"
              )
-    @blp.arguments(ProductSearchNameSchema, location="json")
+    @blp.arguments(ProductNameSearchSchema, location="json")
     @blp.response(HTTPStatus.OK.value, ProductSchema(many=True))
     def post(self, search_data):
-        products = Product.query.filter(Product.Name.like("%"+search_data['name']+ "%" )).all()
+        products = Product.query.filter(Product.Name.like("%"+search_data['name']+"%")).all()
         return products
+
 
 @blp.route("/products/")
 class ProductListView(MethodView):

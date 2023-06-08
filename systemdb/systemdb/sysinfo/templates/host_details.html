@@ -74,6 +74,12 @@
                       <dd class="col-sm-8">{{ host.OSInstallDate }}</dd>
                       <dt class="col-sm-4">OSProductType</dt>
                       <dd class="col-sm-8">{{ host.OSProductType }}</dd>
+                      {% if eol %}
+                      <dt class="col-sm-4">EndofSupport (Active)</dt>
+                      <dd class="col-sm-8">{{ e.ActiveSupport }}</dd>
+                      <dt class="col-sm-4">EndofSupport (Security)</dt>
+                      <dd class="col-sm-8">{{ e.SecuritySupport }}</dd>
+                      {% endif %}
                     </dl>
                   </div>
                   <!-- /.card-body -->

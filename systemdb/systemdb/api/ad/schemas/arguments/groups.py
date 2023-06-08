@@ -3,5 +3,6 @@ from marshmallow.validate import Regexp
 from flask_marshmallow.fields import fields
 
 
-class ProductNameSearchSchema(ma.Schema):
+class GroupNameSearchSchema(ma.Schema):
+    id = fields.Integer(required=False)
     name = fields.String(validate=Regexp(regex="[a-zA-Z0-9 \.\-\_]+"))

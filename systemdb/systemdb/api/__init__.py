@@ -18,6 +18,10 @@ def register_api(app):
     from .ad.resources.domain import blp as addomain_bp
     api.register_blueprint(addomain_bp)
 
+    from .ad.resources.forest import blp as adforest_bp
+    api.register_blueprint(adforest_bp)
+
+
 
 
 
