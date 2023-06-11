@@ -217,7 +217,7 @@ class ServiceACL(db.Model):
     Name = db.Column(db.String(150), unique=False, nullable=True)
     AccountName = db.Column(db.String(1024), unique=False, nullable=True)
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
-    AccessRight = db.Column(db.String(150), unique=False, nullable=True)
+    AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Service_id = db.Column(db.Integer, db.ForeignKey('Service.id'), nullable=False)
 
     def __repr__(self):
@@ -334,7 +334,7 @@ class ShareACL(db.Model):
     ScopeName = db.Column(db.String(150), unique=False, nullable=True)
     AccountName = db.Column(db.String(1024), unique=False, nullable=True)
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
-    AccessRight = db.Column(db.String(150), unique=False, nullable=True)
+    AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Share_id = db.Column(db.Integer, db.ForeignKey('Share.id'), nullable=False)
 
     def __repr__(self):
@@ -350,7 +350,7 @@ class ShareACLNTFS(db.Model):
     Name = db.Column(db.String(150), unique=False, nullable=True)
     AccountName = db.Column(db.String(1024), unique=False, nullable=True)
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
-    AccessRight = db.Column(db.String(150), unique=False, nullable=True)
+    AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Share_id = db.Column(db.Integer, db.ForeignKey('Share.id'), nullable=False)
 
     def __repr__(self):

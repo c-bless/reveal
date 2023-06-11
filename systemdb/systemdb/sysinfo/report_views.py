@@ -1,5 +1,6 @@
 from flask import render_template, Response, url_for
 import datetime
+from sqlalchemy import and_
 
 from . import sysinfo_bp
 
@@ -126,6 +127,26 @@ def hosts_report_smbv1():
     return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_smbv1_excel"))
 
 
+
+####################################################################
+# Hosts with WSUS over http
+####################################################################
+@sysinfo_bp.route('/hosts/report/wsus-http/excel', methods=['GET'])
+def hosts_report_wsus_http_excel():
+    hosts = Host.query.filter(Host.WUServer.like('http://%'))
+    output = generate_hosts_excel(hosts)
+    return Response(output, mimetype="text/xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+@sysinfo_bp.route('/hosts/report/wsus-http', methods=['GET'])
+def hosts_report_wsus_http():
+    hosts = Host.query.filter(Host.WUServer.like('http://%'))
+    output = generate_hosts_excel(hosts)
+    return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_wsus_http_excel"))
+
+
 ####################################################################
 # Hosts with Domain Admins in local admin group
 ####################################################################
@@ -157,4 +178,40 @@ def hosts_report_domainadmin():
 
     output = generate_hosts_excel(hosts)
     return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_domainadmin_excel"))
+
+####################################################################
+# Hosts with Domain Admins in local admin group
+####################################################################
+@sysinfo_bp.route('/hosts/report/autologonadmin/excel', methods=['GET'])
+def hosts_report_autologonadmin_excel():
+    result = []
+    autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()
+    for h in autologon_hosts:
+        defaultUser = h.DefaultUserName
+        defaultDomain = h.DefaultDomain
+        admins = Group.query.filter(and_(Group.SID == "S-1-5-32-544", Group.Host_id == h.id)).first()
+        for m in admins.Members:
+            if defaultDomain == m.Domain and defaultUser == m.Name:
+                result.append(h)
+
+    output = generate_hosts_excel(result)
+    return Response(output, mimetype="text/xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+@sysinfo_bp.route('/hosts/report/autologonadmin', methods=['GET'])
+def hosts_report_autologonadmin():
+    result = []
+    autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()
+    for h in autologon_hosts:
+        defaultUser = h.DefaultUserName
+        defaultDomain = h.DefaultDomain
+        admins = Group.query.filter(and_(Group.SID == "S-1-5-32-544", Group.Host_id == h.id)).first()
+        for m in admins.Members:
+            if defaultDomain == m.Domain and defaultUser == m.Name:
+                result.append(h)
+
+    output = generate_hosts_excel(result)
+    return render_template('host_list.html', hosts=result, download_url=url_for("sysinfo.hosts_report_autologonadmin_excel"))
 

@@ -1,13 +1,18 @@
 from http import HTTPStatus
 from flask.views import MethodView
 from flask_smorest import Blueprint
+from sqlalchemy import and_
 
 from ....models.sysinfo import Product
 from ..schemas.responses.product import ProductSchema
 from ..schemas.arguments.products import ProductNameSearchSchema
+from ..schemas.arguments.services import ServicePermissionSearchSchema
 
-from ....models.sysinfo import Service
-from ..schemas.responses.service import ServiceSchema
+from ....models.sysinfo import Service, ServiceACL
+from ..schemas.responses.service import ServiceSchema, ServiceACLSchema
+
+from ....models.eol import EoL
+from ..schemas.responses.eol import EoLSchema
 
 blp = Blueprint('SysinfoCollector - Software', 'sysinfo_sw_api' , url_prefix='/api/sysinfo',
         description="Review products, services and hotfixes collected by sysinfo-collector PowerShell scripts.")
@@ -82,3 +87,39 @@ class ServiceListAllView(MethodView):
     def get(self):
         return Service.query.all()
 
+
+@blp.route("/services/acls/")
+class ServiceACLListAllView(MethodView):
+
+    @blp.doc(description="Returns a list of all ACLs for services from all hosts.",
+             summary="Find all services ACLs"
+             )
+    @blp.response(HTTPStatus.OK.value, ServiceACLSchema(many=True))
+    def get(self):
+        return ServiceACL.query.all()
+
+
+@blp.route("/services/acls/by-permission/")
+class ServiceACLByPermissionListView(MethodView):
+    @blp.doc(description="Returns a list of all ACLs for services based on specified search filter",
+             summary="Find product by permission"
+             )
+    @blp.arguments(ServicePermissionSearchSchema, location="json")
+    @blp.response(HTTPStatus.OK.value, ServiceACLSchema(many=True))
+    def post(self, search_data):
+
+        services = ServiceACL.query.filter(and_(ServiceACL.AccountName.like("%" + search_data['Accountname'] + "%"),
+                                                ServiceACL.AccessRight.like("%" + search_data['Permission'] + "%")
+                                                )).all()
+        return services
+
+
+@blp.route("/eol-dates/")
+class EoLDateListView(MethodView):
+
+    @blp.doc(description="Return a list end-of-life dates",
+             summary="Find all end-of-life dates"
+             )
+    @blp.response(HTTPStatus.OK.value, EoLSchema(many=True))
+    def get(self):
+        return EoL.query.all()

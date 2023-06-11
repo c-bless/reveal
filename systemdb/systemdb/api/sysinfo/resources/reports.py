@@ -1,9 +1,14 @@
 from http import HTTPStatus
 from flask.views import MethodView
 from flask_smorest import Blueprint
+from sqlalchemy import and_
 
-from ....models.sysinfo import Host, Group
+from ....models.sysinfo import Host, Group, User
+from ....models.eol import EoL
 from ..schemas.responses.hosts import HostSchema
+from ..schemas.responses.eol import EoLMatchSchema
+from ..schemas.arguments.eol import EoLSearchSchema
+
 import datetime
 
 blp = Blueprint('SysinfoCollector - Reports', 'sysinfo_reports_api' , url_prefix='/api/sysinfo/reports',
@@ -109,3 +114,64 @@ class HostListDomainAdminsReportResource(MethodView):
                 if m.SID.endswith("-512"):
                     host_ids.append(g.Host_id)
         return Host.query.filter(Host.id.in_(host_ids)).all()
+
+
+#####################################################################################
+# Matching host and End-of-Life entries
+#####################################################################################
+@blp.route("/wsus-http/")
+class HostListWsusResource(MethodView):
+
+    @blp.doc(description="Returns a list of hosts configured to use WSUS via http.",
+             summary="Find all hosts configured for using WSUS vi http."
+             )
+
+    @blp.response(HTTPStatus.OK.value, HostSchema(many=True))
+    def post(self):
+        return Host.query.filter(Host.WUServer.like('http://%'))
+
+
+
+#####################################################################################
+# Autologin as admin user
+#####################################################################################
+@blp.route("/autologon-admin/")
+class HostListAutologonAdminResource(MethodView):
+
+    @blp.doc(description="Returns a list of hosts that use autologon with an administrative account.",
+             summary="Find all hosts configured for using autologon with an administrative account."
+             )
+
+    @blp.response(HTTPStatus.OK.value, HostSchema(many=True))
+    def post(self):
+        result = []
+        autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()
+        for h in autologon_hosts:
+            defaultUser = h.DefaultUserName
+            defaultDomain = h.DefaultDomain
+            admins = Group.query.filter(and_( Group.SID == "S-1-5-32-544", Group.Host_id == h.id)).first()
+            for m in admins.Members:
+                if defaultDomain == m.Domain and defaultUser == m.Name:
+                    result.append(h)
+        return result
+
+#####################################################################################
+# Matching host and End-of-Life entries
+#####################################################################################
+@blp.route("/eol/")
+class HostListEOLMatchResource(MethodView):
+
+    @blp.doc(description="Returns the ......",
+             summary="Find all ..."
+             )
+    @blp.response(HTTPStatus.OK.value, EoLMatchSchema)
+    def post(self):
+        now = datetime.datetime.now()
+#TODO
+        eols = EoL.query.filter(EoL.SecuritySupport < now).all()
+
+        print(eols)
+        match = EoLMatchSchema()
+        match.EolMatches = eols
+
+        return match

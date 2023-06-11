@@ -127,6 +127,7 @@ class HostListNetAdaptersView(MethodView):
     def get(self, host_id):
         return NetAdapter.query.filter(NetAdapter.Host_id == host_id).all()
 
+
 @blp.route("/hosts/<int:host_id>/netipaddresses/")
 class HostListNetIPAddressesView(MethodView):
 
@@ -158,6 +159,17 @@ class HostListPSVersionsView(MethodView):
     @blp.response(HTTPStatus.OK.value, PSInstalledVersionsSchema(many=True))
     def get(self, host_id):
         return PSInstalledVersions.query.filter(PSInstalledVersions.Host_id == host_id).all()
+
+
+@blp.route("/hosts/<int:host_id>/printers/")
+class HostListPrintersView(MethodView):
+
+    @blp.doc(description="Return a list of installed printers from a specific host.",
+             summary="Find all installed printers on a specific host"
+             )
+    @blp.response(HTTPStatus.OK.value, PrinterSchema(many=True))
+    def get(self, host_id):
+        return Printer.query.filter(Printer.Host_id == host_id).all()
 
 
 

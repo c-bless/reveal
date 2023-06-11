@@ -112,20 +112,20 @@
             </tr>
 
             <tr>
-                <td> TODO: Autologon as admin</td>
+                <td> Autologon as admin</td>
                 <td> Report all hosts where the autologon user is member of the local administrator group</td>
                 <td class="actions">
-                    <a href="#" class="btn btn-default btn-xs">
+                    <a href="{{url_for('sysinfo.hosts_report_autologonadmin')}}" class="btn btn-default btn-xs">
                         <i class="fa fa-eye"></i> View
                     </a>
                 </td>
             </tr>
 
             <tr>
-                <td> TODO: WSUS via http</td>
+                <td> WSUS via http</td>
                 <td> Report all hosts where the WSUS server is configured to be reached via http</td>
                 <td class="actions">
-                    <a href="#" class="btn btn-default btn-xs">
+                    <a href="{{url_for('sysinfo.hosts_report_wsus_http')}}" class="btn btn-default btn-xs">
                         <i class="fa fa-eye"></i> View
                     </a>
                 </td>
