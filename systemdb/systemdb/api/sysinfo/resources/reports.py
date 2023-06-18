@@ -41,7 +41,6 @@ class HostListLastUpdateReportResource(MethodView):
     def get(self, days):
         now = datetime.datetime.now()
         delta = now - datetime.timedelta(days=days)
-        print(delta)
         return Host.query.filter(Host.LastUpdate <= delta).all()
 
 #####################################################################################
@@ -166,12 +165,11 @@ class HostListEOLMatchResource(MethodView):
              )
     @blp.response(HTTPStatus.OK.value, EoLMatchSchema)
     def post(self):
-        now = datetime.datetime.now()
-#TODO
-        eols = EoL.query.filter(EoL.SecuritySupport < now).all()
+        eols = EoL.query.filter(EoL.EndOfService == True).all()
+        build_numbers = [e.Build for e in eols]
+        print (eols)
+        print (build_numbers)
+        hosts = Host.query.filter(Host.OSBuildNumber.in_(build_numbers)).all()
+        print(hosts)
 
-        print(eols)
-        match = EoLMatchSchema()
-        match.EolMatches = eols
-
-        return match
+        return {}

@@ -7,7 +7,7 @@ from . import sysinfo_bp
 from ..models.sysinfo import Host, Group
 
 from .export_func import generate_hosts_excel
-
+from .vars import SID_LOCAL_ADMIN_GROUP
 
 @sysinfo_bp.route('/hosts/reports/', methods=['GET'])
 def hosts_reports():
@@ -123,7 +123,6 @@ def hosts_report_smbv1_excel():
 @sysinfo_bp.route('/hosts/report/smbv1', methods=['GET'])
 def hosts_report_smbv1():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
-    output = generate_hosts_excel(hosts)
     return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_smbv1_excel"))
 
 
@@ -143,7 +142,6 @@ def hosts_report_wsus_http_excel():
 @sysinfo_bp.route('/hosts/report/wsus-http', methods=['GET'])
 def hosts_report_wsus_http():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
-    output = generate_hosts_excel(hosts)
     return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_wsus_http_excel"))
 
 
@@ -152,7 +150,7 @@ def hosts_report_wsus_http():
 ####################################################################
 @sysinfo_bp.route('/hosts/report/domainadmin/excel', methods=['GET'])
 def hosts_report_domainadmin_excel():
-    groups = Group.query.filter(Group.SID == "S-1-5-32-544").all()
+    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
     host_ids = []
     for g in groups:
         for m in g.Members:
@@ -162,13 +160,13 @@ def hosts_report_domainadmin_excel():
 
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-domnadmin.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
 @sysinfo_bp.route('/hosts/report/domainadmin', methods=['GET'])
 def hosts_report_domainadmin():
-    groups = Group.query.filter(Group.SID == "S-1-5-32-544").all()
+    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
     host_ids = []
     for g in groups:
         for m in g.Members:
@@ -177,10 +175,11 @@ def hosts_report_domainadmin():
     hosts = Host.query.filter(Host.id.in_(host_ids)).all()
 
     output = generate_hosts_excel(hosts)
-    return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_report_domainadmin_excel"))
+    return render_template('host_list.html', hosts=hosts,
+                           download_url=url_for("sysinfo.hosts_report_domainadmin_excel"))
 
 ####################################################################
-# Hosts with Domain Admins in local admin group
+# Hosts with autologon user in local admin group
 ####################################################################
 @sysinfo_bp.route('/hosts/report/autologonadmin/excel', methods=['GET'])
 def hosts_report_autologonadmin_excel():
@@ -189,14 +188,14 @@ def hosts_report_autologonadmin_excel():
     for h in autologon_hosts:
         defaultUser = h.DefaultUserName
         defaultDomain = h.DefaultDomain
-        admins = Group.query.filter(and_(Group.SID == "S-1-5-32-544", Group.Host_id == h.id)).first()
+        admins = Group.query.filter(and_(Group.SID == SID_LOCAL_ADMIN_GROUP, Group.Host_id == h.id)).first()
         for m in admins.Members:
             if defaultDomain == m.Domain and defaultUser == m.Name:
                 result.append(h)
 
     output = generate_hosts_excel(result)
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-smbv1.xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-autologonadmin.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
@@ -207,11 +206,12 @@ def hosts_report_autologonadmin():
     for h in autologon_hosts:
         defaultUser = h.DefaultUserName
         defaultDomain = h.DefaultDomain
-        admins = Group.query.filter(and_(Group.SID == "S-1-5-32-544", Group.Host_id == h.id)).first()
+        admins = Group.query.filter(and_(Group.SID == SID_LOCAL_ADMIN_GROUP, Group.Host_id == h.id)).first()
         for m in admins.Members:
             if defaultDomain == m.Domain and defaultUser == m.Name:
                 result.append(h)
 
     output = generate_hosts_excel(result)
-    return render_template('host_list.html', hosts=result, download_url=url_for("sysinfo.hosts_report_autologonadmin_excel"))
+    return render_template('host_list.html', hosts=result,
+                           download_url=url_for("sysinfo.hosts_report_autologonadmin_excel"))
 

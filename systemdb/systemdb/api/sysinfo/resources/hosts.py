@@ -172,7 +172,6 @@ class HostListPrintersView(MethodView):
         return Printer.query.filter(Printer.Host_id == host_id).all()
 
 
-
 @blp.route("/hosts/<int:host_id>/printers/")
 class HostListPrintersView(MethodView):
 

@@ -60,18 +60,27 @@ def import_dir_command(name):
                     import_host(root=root)
 
 
-@import_cli.command('eol-list')
+@import_cli.command('eol')
 @click.argument('filename')
-def import_domain_command(filename):
+def update_eol_command(filename):
     import csv
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file)
+        i = 0
         for row in csv_reader:
-            eol = EoL()
-            eol.Release = row[0]
-            eol.Released = row[1]
-            eol.ActiveSupport = row[2]
-            eol.SecuritySupport = row[3]
-            eol.Build = row[4]
-            db.session.add(eol)
+            if i > 0:
+                eos = True
+                if row[5].lower() == "false":
+                    eos = False
+                eol = EoL()
+                eol.OS = row[0]
+                eol.Version = row[1]
+                eol.OSVersion = row[2]
+                eol.Build = row[3]
+                eol.ServiceOption = row[4]
+                eol.EndOfService = eos
+                eol.ActiveSupport = row[6]
+                eol.SecuritySupport = row[7]
+                db.session.add(eol)
+            i += 1
     db.session.commit()
