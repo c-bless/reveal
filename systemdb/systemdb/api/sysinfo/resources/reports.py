@@ -154,6 +154,7 @@ class HostListAutologonAdminResource(MethodView):
                     result.append(h)
         return result
 
+
 #####################################################################################
 # Matching host and End-of-Life entries
 #####################################################################################

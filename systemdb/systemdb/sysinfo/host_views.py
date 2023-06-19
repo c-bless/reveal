@@ -16,12 +16,7 @@ def host_list():
 @sysinfo_bp.route('/hosts/<int:id>', methods=['GET'])
 def host_detail(id):
     host = Host.query.get_or_404(id)
-    print(host.OSVersion)
-    eol = EoL.query.filter(EoL.Build == host.OSVersion).first()
-    #TODO:
-    print(eol)
-    print([f.Build for f in EoL.query.all()])
-    return render_template('host_details.html', host=host, eol=eol)
+    return render_template('host_details.html', host=host)
 
 
 @sysinfo_bp.route('/hosts/<int:id>/services/', methods=['GET'])

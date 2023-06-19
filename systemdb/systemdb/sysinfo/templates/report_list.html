@@ -112,6 +112,26 @@
             </tr>
 
             <tr>
+                <td> UQSP </td>
+                <td> Report all services where the path is not enclosed in quotes and which have a spaces in the path.</td>
+                <td class="actions">
+                    <a href="{{url_for('sysinfo.hosts_report_services_uqsp')}}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td> TODO: Direct user assignments</td>
+                <td> Report all hosts which have domain users directly assigned instead of centrally managed domain groups.</td>
+                <td class="actions">
+                    <a href="#" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
                 <td> Autologon as admin</td>
                 <td> Report all hosts where the autologon user is member of the local administrator group</td>
                 <td class="actions">

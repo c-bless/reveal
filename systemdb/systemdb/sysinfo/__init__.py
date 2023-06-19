@@ -4,4 +4,14 @@ sysinfo_bp = Blueprint('sysinfo', __name__, template_folder="templates", url_pre
 
 from .host_views import *
 from .export_views import *
+
+from .reports.smb import *
+from .reports.wsus import *
+from .reports.admins import *
+from .reports.updates import *
+from .reports.wsh import *
+from .reports.powershell import *
+from .reports.winlogon import *
+from .reports.services import *
+
 from .report_views import *

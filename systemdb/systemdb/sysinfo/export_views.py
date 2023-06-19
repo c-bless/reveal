@@ -7,7 +7,7 @@ from ..models.sysinfo import Host, Service, Product
 
 import os
 from .export_func import template_detail_dir, template_dir
-from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, generate_services_excel
+from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, generate_services_excel, generate_hosts_excel_brief
 from .export_func import generate_products_excel
 
 
@@ -36,6 +36,15 @@ def hosts_export_excel():
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/xslx",
                     headers={"Content-disposition": "attachment; filename=hosts.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+@sysinfo_bp.route('/hosts/export/excel/brief', methods=['GET'])
+def hosts_export_excel_brief():
+    hosts = Host.query.all()
+    output = generate_hosts_excel_brief(hosts)
+    return Response(output, mimetype="text/xslx",
+                    headers={"Content-disposition": "attachment; filename=hosts_brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
