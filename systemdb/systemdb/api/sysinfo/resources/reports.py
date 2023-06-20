@@ -9,6 +9,9 @@ from ..schemas.responses.hosts import HostSchema
 from ..schemas.responses.eol import EoLMatchSchema
 from ..schemas.arguments.eol import EoLSearchSchema
 
+from ..schemas.responses.usermgmt import UserGroupAssignment
+from ....sysinfo.reports.usermgmt import get_direct_domainuser_assignments
+
 import datetime
 
 blp = Blueprint('SysinfoCollector - Reports', 'sysinfo_reports_api' , url_prefix='/api/sysinfo/reports',
@@ -174,3 +177,28 @@ class HostListEOLMatchResource(MethodView):
         print(hosts)
 
         return {}
+
+
+
+
+#####################################################################################
+# Domainusers that are directly assigned to local groups
+#####################################################################################
+@blp.route("/domainuser-in-group/")
+class DirectUserAssignmentList(MethodView):
+
+    @blp.doc(description="Return a list of domain users that area directly assigned to a local group.",
+             summary="Find domain users that area directly assigned to a local group"
+             )
+    @blp.response(HTTPStatus.OK.value, UserGroupAssignment(many=True))
+    def get(self):
+        members = get_direct_domainuser_assignments()
+        result = []
+        for m in members:
+            host, group, user = m
+            u = UserGroupAssignment()
+            u.Host = host
+            u.Group = group
+            u.User = user
+            result.append(u)
+        return result
