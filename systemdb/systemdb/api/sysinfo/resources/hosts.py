@@ -9,6 +9,8 @@ from ..schemas.responses.hosts import HostSchema, UserSchema, GroupSchema, Hotfi
     PrinterSchema, PSInstalledVersionsSchema, ConfigCheckSchema, NetIPAddressSchema
 from ..schemas.responses.service import ServiceSchema
 from ..schemas.responses.product import ProductSchema
+from ..schemas.responses.usermgmt import UserGroupAssignment
+from ....sysinfo.reports.usermgmt import get_direct_domainuser_assignments
 
 blp = Blueprint('SysinfoCollector - Hosts', 'sysinfo_hosts_api' , url_prefix='/api/sysinfo',
                            description="Review hosts collected by sysinfo-collector PowerShell scripts.")
@@ -181,3 +183,15 @@ class HostListPrintersView(MethodView):
     @blp.response(HTTPStatus.OK.value, PrinterSchema(many=True))
     def get(self, host_id):
         return Printer.query.filter(Printer.Host_id == host_id).all()
+
+
+@blp.route("/usermgmt/assignments/domainusers/")
+class HostListPrintersView(MethodView):
+
+    @blp.doc(description="Return a list of domain users that area directly assigned to a local group.",
+             summary="Find domain users that area directly assigned to a local group"
+             )
+    @blp.response(HTTPStatus.OK.value, UserGroupAssignment(many=True))
+    def get(self, host_id):
+        members = get_direct_domainuser_assignments()
+        return members

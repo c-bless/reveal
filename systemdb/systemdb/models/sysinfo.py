@@ -259,7 +259,7 @@ class Group(db.Model):
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
-    Members = db.relationship('GroupMember', backref='dc', lazy='dynamic')
+    Members = db.relationship('GroupMember', backref='Group', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Groups")
 

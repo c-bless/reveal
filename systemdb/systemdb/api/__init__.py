@@ -12,6 +12,9 @@ def register_api(app):
     from .sysinfo.resources.hosts import blp as hosts_bp
     api.register_blueprint(hosts_bp)
 
+    from .sysinfo.resources.usermgmt import blp as usermgmt_bp
+    api.register_blueprint(usermgmt_bp)
+
     from .sysinfo.resources.reports import blp as reports_bp
     api.register_blueprint(reports_bp)
 
