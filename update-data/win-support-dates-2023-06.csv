@@ -1,0 +1,43 @@
+OS,Version,OS Version,Build,Service Option,End of Service,Date-Format,Start Date,Mainstream End Date,Extended End Date,Source
+Windows 10 Pro,22H2,,19045,General Availability Channel,False,YYYY-MM-DD,2022-10-18,2025-10-14,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise,22H2,,19045,General Availability Channel,False,YYYY-MM-DD,2022-10-18,2025-10-14,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Pro,21H2,10.0.19044,19044,General Availability Channel,True,YYYY-MM-DD,2021-11-16,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise,21H2,10.0.19044,19044,General Availability Channel,False,YYYY-MM-DD,2021-11-16,2024-06-11,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSC,21H2,10.0.19044,19044,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2021-11-16,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSC,1809,10.0.17763,17763,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2018-11-13,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSB,1607,10.0.14393,14393,Long-Term Servicing Branch (LTSB),False,YYYY-MM-DD,2016-08-02,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSB,1507 (RTM),10.0.10240,10240,Long-Term Servicing Branch (LTSB),False,YYYY-MM-DD,2015-07-29,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,21H1,10.0.19043,19043,Semi-Annual Channel,True,YYYY-MM-DD,2021-05-18,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,20H2,10.0.19042,19042,Semi-Annual Channel,True,YYYY-MM-DD,2020-10-20,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,2004,10.0.19041,19041,Semi-Annual Channel,True,YYYY-MM-DD,2020-05-27,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1909,10.0.18363,18363,Semi-Annual Channel,True,YYYY-MM-DD,2019-11-12,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1903,10.0.18362,18362,Semi-Annual Channel,True,YYYY-MM-DD,2019-05-21,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1803,10.0.17134,17134,Semi-Annual Channel / Semi-Annual Channel (Targeted),True,YYYY-MM-DD,2017-10-17,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1709,10.0.16299,16299,Semi-Annual Channel / Semi-Annual Channel (Targeted),True,YYYY-MM-DD,2017-04-11,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1703,10.0.15063,15063,Semi-Annual Channel / CB,True,YYYY-MM-DD,,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1511,10.0.10586,10586,CBB / CB,True,YYYY-MM-DD,2015-11-10,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 11 Pro,22H2,10.0.22621,22621,General Availability Channel,False,YYYY-MM-DD,,2024-10-08,,
+Windows 11 Enterprise,22H2,10.0.22621,22621,General Availability Channel,False,YYYY-MM-DD,,2025-10-14,,
+Windows 11 Pro,21H2,10.0.22000,22000,General Availability Channel,False,YYYY-MM-DD,,2023-10-10,,
+Windows 11 Enterprise,21H2,10.0.22000,22000,General Availability Channel,False,YYYY-MM-DD,,2024-10-08,,
+Windows Server 2022,,,20348,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2021-08-18,2026-10-13,2031-10-14,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2022
+Windows Server 2019,1809,,17763,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2018-11-13,2024-01-09,2029-01-09,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2019
+Windows Server 2016,1607,,14393,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2016-10-15,2022-01-11,2027-01-12,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2016
+Windows 8.1 (Update 1),NT 6.3,6.3.9600,9600,,True,,,2018-09-01,2023-01-10,
+Windows 8.1,NT 6.3,6.3.9200,9200,,True,YYYY-MM-DD,2013-11-13,2018-01-09,2023-01-10,"https://learn.microsoft.com/en-us/lifecycle/products/windows-81 , https://learn.microsoft.com/en-us/windows/release-health/status-windows-8.1-and-windows-server-2012-r2"
+Windows 8,NT 6.2,6.2.9200,9200,,True,YYYY-MM-DD,2012-10-30,2016-01-12,2016-01-12,https://learn.microsoft.com/en-us/lifecycle/products/windows-8
+Windows 7 SP1,NT 6.1,6.1.7601,7601,,True,YYYY-MM-DD,2011-02-22,"Jan 14, 2020",2023-01-10,https://learn.microsoft.com/en-us/lifecycle/products/windows-7
+Windows 7,NT 6.1,6.1.7600,7600,,True,YYYY-MM-DD,2009-10-22,2013-04-09,2020-01-14,https://learn.microsoft.com/en-us/lifecycle/products/windows-7
+Windows Vista SP2,NT 6.0,6.0.6002,6002,,True,YYYY-MM-DD,2009-04-29,2012-04-10,2017-04-11,https://learn.microsoft.com/en-us/lifecycle/products/windows-vista
+Windows Vista SP1,NT 6.0,6.0.6001,6001,,True,YYYY-MM-DD,2008-02-04,2011-07-12,2011-07-12,https://learn.microsoft.com/en-us/lifecycle/products/windows-vista
+Windows Vista,NT 6.0,6.0.6000,6000,,True,YYYY-MM-DD,2007-01-25,2010-04-13,2010-04-13,https://learn.microsoft.com/en-us/lifecycle/products/windows-vista
+Windows XP,NT 5.1,5.1.2600,2600,,True,YYYY-MM-DD,2001-12-31,2009-04-14,2014-04-08,https://learn.microsoft.com/en-us/lifecycle/products/windows-xp
+Windows Server 2003 SP2,NT 5.2,,3790,,True,YYYY-MM-DD,2007-03-13,2010-07-13,2015-07-14,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2003-
+Windows Server 2003 SP1,,,,,True,YYYY-MM-DD,2005-03-30,2009-04-14,2009-04-14,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2003-
+Windows Server 2003,,,,,True,YYYY-MM-DD,2003-05-28,2007-04-10,2007-04-10,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2003-
+Windows Server 2003 R2,NT 5.2,,3790,,True,YYYY-MM-DD,2006-03-05,2010-07-13,2015-07-14,https://learn.microsoft.com/en-us/lifecycle/products/windows-storage-server-2003-r2
+Windows Server 2008,NT 6.0,,6002,,True,YYYY-MM-DD,2008-05-06,2015-01-13,2023-01-10,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2008
+Windows Server 2008 R2,NT 6.1,,7601,,True,YYYY-MM-DD,2010-12-20,2020-01-13,2020-01-14,https://learn.microsoft.com/en-us/lifecycle/products/windows-storage-server-2008-r2
+Windows Server 2000,NT 5.0,,2195,,True,YYYY-MM-DD,,2010-07-13,,
+Windows Server 2012,NT 6.2,,9200,,False,YYYY-MM-DD,2012-10-30,2018-10-09,2026-10-13,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2012
+Windows Server 2012 R2,NT 6.3,,9600,,False,YYYY-MM-DD,2013-11-25,2023-10-10,2026-10-13,https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2012-r2

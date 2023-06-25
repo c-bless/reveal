@@ -45,6 +45,7 @@ class NetIPAddressNestedSchema(ma.SQLAlchemyAutoSchema):
 
 
 class HotfixSchema(ma.SQLAlchemyAutoSchema):
+
     class Meta:
         model = Hotfix
         include_fk = True

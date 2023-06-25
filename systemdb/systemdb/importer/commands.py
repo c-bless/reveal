@@ -64,6 +64,7 @@ def import_dir_command(name):
 @click.argument('filename')
 def update_eol_command(filename):
     import csv
+    from datetime import datetime
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file)
         i = 0
@@ -79,8 +80,19 @@ def update_eol_command(filename):
                 eol.Build = row[3]
                 eol.ServiceOption = row[4]
                 eol.EndOfService = eos
-                eol.ActiveSupport = row[6]
-                eol.SecuritySupport = row[7]
+                try:
+                    eol.StartDate = datetime.strptime(row[7], "%Y-%m-%d")
+                except:
+                    pass
+                try:
+                    eol.MainstreamEndDate = datetime.strptime(row[8], "%Y-%m-%d")
+                except:
+                    pass
+                try:
+                    eol.ExtendedEndDate = datetime.strptime(row[9], "%Y-%m-%d")
+                except:
+                    pass
+                eol.Source = row[10]
                 db.session.add(eol)
             i += 1
     db.session.commit()

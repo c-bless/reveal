@@ -27,7 +27,7 @@ class HostByIdView(MethodView):
         return Host.query.get_or_404(id)
 
 @blp.route("/hosts/by-name/<string:name>")
-class HostByIdView(MethodView):
+class HostByNameView(MethodView):
 
     @blp.doc(description="Returns a list of hosts containing the specified hostname.",
              summary="Find a host by hostname"
