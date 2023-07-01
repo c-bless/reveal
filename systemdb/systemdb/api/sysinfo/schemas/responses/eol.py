@@ -19,5 +19,5 @@ class EoLSchema(ma.SQLAlchemyAutoSchema):
 
 class EoLMatchSchema(ma.Schema):
 
-    EolMatches = ma.Nested(EoLSchema, many=True, allow_none=True)
+    Eol = ma.Nested(EoLSchema, many=False, allow_none=True)
     Hosts = ma.Nested(HostNestedSchema, many=True, allow_none=True)

@@ -11,6 +11,7 @@ from ..schemas.arguments.eol import EoLSearchSchema
 
 from ..schemas.responses.usermgmt import UserGroupAssignment
 from ....sysinfo.reports.usermgmt import get_direct_domainuser_assignments
+from ..querries.updates import get_EoLInfo
 
 import datetime
 
@@ -162,21 +163,15 @@ class HostListAutologonAdminResource(MethodView):
 # Matching host and End-of-Life entries
 #####################################################################################
 @blp.route("/eol/")
-class HostListEOLMatchResource(MethodView):
+class EoLHostListResource(MethodView):
 
     @blp.doc(description="Returns the ......",
              summary="Find all ..."
              )
-    @blp.response(HTTPStatus.OK.value, EoLMatchSchema)
+    @blp.response(HTTPStatus.OK.value, EoLMatchSchema(many=True))
     def post(self):
-        eols = EoL.query.filter(EoL.EndOfService == True).all()
-        build_numbers = [e.Build for e in eols]
-        print (eols)
-        print (build_numbers)
-        hosts = Host.query.filter(Host.OSBuildNumber.in_(build_numbers)).all()
-        print(hosts)
-
-        return {}
+        eol_matches = get_EoLInfo()
+        return eol_matches
 
 
 

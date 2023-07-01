@@ -1,0 +1,55 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "EoL Systems" %}
+{% block page_title %} EoL Systems {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} EoL Systems {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+    <a href="{{url_for('sysinfo.hosts_report_eol_excel_brief')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Brief (Excel)</i>
+    </a>
+    <a href="{{url_for('sysinfo.hosts_report_eol_excel_full')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Full (Excel)</i>
+    </a>
+{% endblock download_links %}
+X
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="55%">OS
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="DisplayName" width="15%">Version
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="DisplayName" width="15%">Build
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartMode" width="15%">Host Count
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if eol_matches %}
+                {% for m in eol_matches %}
+                  <tr>
+                    <td> {{ m.Eol.OS }} </td>
+                    <td> {{ m.Eol.Version }} </td>
+                    <td> {{ m.Eol.Build }} </td>
+                    <td> {{ m.Hosts | length }}</td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No end of life systems found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

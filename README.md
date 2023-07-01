@@ -18,6 +18,13 @@ python -m venv venv
 3. activate virtual environment `source venv\bin\activate`
 4. install requirements (in folder *systemdb*): `pip install -r requirements.txt`
 
+### Import End-Of-Life Dates ###
+from cmd in folder systemdb
+```
+flask import eol ../update-data/win-support-dates-2023-06.csv
+
+```
+
 ### Collect Data (System Information): ###
 
 Use collector script *sysinfo-collector.ps1* located in directory *collector-scripts*. The script has optional parameters *SystemGroup* and *Location* to specify additional information stored with the host. If parameters are not set "N/A" is used for them.

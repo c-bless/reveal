@@ -65,6 +65,8 @@ def import_dir_command(name):
 def update_eol_command(filename):
     import csv
     from datetime import datetime
+    db.session.query(EoL).delete()
+    db.session.commit()
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file)
         i = 0
