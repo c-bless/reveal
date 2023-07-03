@@ -1,10 +1,12 @@
 from http import HTTPStatus
+from flask import abort
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from sqlalchemy import and_
 
 from ....models.sysinfo import Host, Group, User, Printer
 from ....models.eol import EoL
+from ..schemas.arguments.printers import PrinterMatchSearchSchema
 from ..schemas.responses.hosts import HostSchema, PrinterMatchSchema
 from ..schemas.responses.eol import EoLMatchSchema
 from ..querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
@@ -216,9 +218,16 @@ class FilePrinterList(MethodView):
         results = get_hosts_by_printers(filters=filters)
         return results
 
+@blp.route("/printer/")
+class PrinterList(MethodView):
     @blp.doc(description="Returns a list of printer and hosts that match the specified search query.",
              summary="Find a list of printer and hosts that match the specified search query."
              )
     @blp.response(HTTPStatus.OK.value, PrinterMatchSchema(many=True))
-    def post(self):
-        pass
+    @blp.arguments(PrinterMatchSearchSchema)
+    def post(self, filters):
+        errors = PrinterMatchSearchSchema().validate(filters)
+        if errors:
+            abort(HTTPStatus.BAD_REQUEST, str(errors))
+        results = get_hosts_by_printers(filters=filters['names'])
+        return results
