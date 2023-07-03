@@ -67,3 +67,4 @@ target/
 *.sqlite
 
 /systemdb/systemdb.sqlite-journal
+/systemdb/systemdb/web/static/*
