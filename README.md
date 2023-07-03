@@ -8,7 +8,16 @@ This TOOL is licensed under the GNU General Public License in version 3. See htt
 
 ## Usage ##
 
-### Installation: ###
+### Use install.sh ###
+The base directory of the repository contains an installation file called *install.sh*. This file will download current version of 3rd-Party dependencies and copy required static files (e.g., of Admin-LTE) to local directories. Furthermore, the script creates a virutal environment, installs required python dependencies and setup the database. 
+
+### manual installation ###
+
+#### Install 3rd party dependencies ###
+1. Download Admin-LTE (e.g., https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip )
+2. extract the zip file and copy *dist* and *plugins* folders to directory *systemdb/systemdb/web/static/*
+
+#### Install python dependencies ####
 1. clone repository: `git clone https://bitbucket.org/cbless/systemdb.git`
 2. create virtual environment
 ```
@@ -18,10 +27,10 @@ python -m venv venv
 3. activate virtual environment `source venv\bin\activate`
 4. install requirements (in folder *systemdb*): `pip install -r requirements.txt`
 
-### Import End-Of-Life Dates ###
+#### Import End-Of-Life Dates ####
 from cmd in folder systemdb
 ```
-flask import eol ../update-data/win-support-dates-2023-06.csv
+flask import eol ../update-data/win-support-dates.csv
 
 ```
 
