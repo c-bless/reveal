@@ -17,6 +17,16 @@ def hosts_report_services_uqsp():
                                          Service.PathName.notlike('C:\\Windows%'))).all()
 
     return render_template('service_list.html', services=services,
-                           download_brief_url=url_for("sysinfo.hosts_report_smbv1_excel_brief"),
-                           download_url=url_for("sysinfo.hosts_report_smbv1_excel_full"))
+                           download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
 
+
+@sysinfo_bp.route('/hosts/report/services/uqsp/excel', methods=['GET'])
+def hosts_report_services_uqsp_excel():
+    services = Service.query.filter(and_(Service.PathName.notlike('"%'),
+                                         Service.PathName.contains(" "),
+                                         Service.PathName.notlike('C:\\Windows%'))).all()
+
+    output = generate_services_excel(services=services)
+    return Response(output, mimetype="text/xlsx",
+                    headers={"Content-disposition": "attachment; filename=usqp.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
