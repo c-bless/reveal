@@ -6,7 +6,7 @@ The scripts in the directory collector-scripts can be used to collect system inf
 This TOOL is licensed under the GNU General Public License in version 3. See http://www.gnu.org/licenses/ for further details.
 
 
-## Usage ##
+## Installation ##
 
 ### Use install.sh ###
 The base directory of the repository contains an installation file called *install.sh*. This file will download current version of 3rd-Party dependencies and copy required static files (e.g., of Admin-LTE) to local directories. Furthermore, the script creates a virutal environment, installs required python dependencies and setup the database. 
@@ -33,6 +33,10 @@ from cmd in folder systemdb
 flask import eol ../update-data/win-support-dates.csv
 
 ```
+
+
+## Usage ##
+
 
 ### Collect Data (System Information): ###
 
