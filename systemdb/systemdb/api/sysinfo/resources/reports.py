@@ -3,11 +3,11 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from sqlalchemy import and_
 
-from ....models.sysinfo import Host, Group, User
+from ....models.sysinfo import Host, Group, User, Printer
 from ....models.eol import EoL
-from ..schemas.responses.hosts import HostSchema
+from ..schemas.responses.hosts import HostSchema, PrinterMatchSchema
 from ..schemas.responses.eol import EoLMatchSchema
-from ..schemas.arguments.eol import EoLSearchSchema
+from ..querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
 
 from ..schemas.responses.usermgmt import UserGroupAssignment
 from ....sysinfo.reports.usermgmt import get_direct_domainuser_assignments
@@ -146,7 +146,7 @@ class HostListAutologonAdminResource(MethodView):
              )
 
     @blp.response(HTTPStatus.OK.value, HostSchema(many=True))
-    def post(self):
+    def get(self):
         result = []
         autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()
         for h in autologon_hosts:
@@ -169,7 +169,7 @@ class EoLHostListResource(MethodView):
              summary="Find all ..."
              )
     @blp.response(HTTPStatus.OK.value, EoLMatchSchema(many=True))
-    def post(self):
+    def get(self):
         eol_matches = get_EoLInfo()
         return eol_matches
 
@@ -197,3 +197,28 @@ class DirectUserAssignmentList(MethodView):
             u.User = user
             result.append(u)
         return result
+
+
+
+
+#####################################################################################
+# Display Hosts with installed file printers
+#####################################################################################
+@blp.route("/fileprinter/")
+class FilePrinterList(MethodView):
+
+    @blp.doc(description="Return a list of file printers and corresponding hosts having this printer installed.",
+             summary="Find a list of file printers and corresponding hosts having this printer installed."
+             )
+    @blp.response(HTTPStatus.OK.value, PrinterMatchSchema(many=True))
+    def get(self):
+        filters = FILE_PRINTER_LIST
+        results = get_hosts_by_printers(filters=filters)
+        return results
+
+    @blp.doc(description="Returns a list of printer and hosts that match the specified search query.",
+             summary="Find a list of printer and hosts that match the specified search query."
+             )
+    @blp.response(HTTPStatus.OK.value, PrinterMatchSchema(many=True))
+    def post(self):
+        pass

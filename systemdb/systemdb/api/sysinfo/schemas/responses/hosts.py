@@ -1,4 +1,6 @@
 from ....ma import ma
+from flask_marshmallow.fields import fields
+
 from .....models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions, NetAdapter, DefenderSettings, Printer, ConfigCheck
 
 
@@ -95,3 +97,17 @@ class HostSchema(ma.SQLAlchemyAutoSchema):
     Hotfixes = ma.Nested(HotfixNestedSchema, many=True, allow_none=True)
     Users = ma.Nested(UserNestedSchema, many=True, allow_none=True)
     Groups = ma.Nested(GroupNestedSchema, many=True, allow_none=True)
+
+
+class HostNestedSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Host
+        include_fk = False
+        fields = ("id", "Hostname", "Domain", "OSVersion", "OSBuildNumber", "OSProductType", "OSName",
+                  "SystemGroup", "Location")
+
+
+class PrinterMatchSchema(ma.Schema):
+
+    Printer = fields.String(allow_none=False)
+    Hosts = ma.Nested(HostNestedSchema, many=True, allow_none=True)

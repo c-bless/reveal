@@ -1,0 +1,47 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Hosts By Printer" %}
+{% block page_title %} Hosts By Printer {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Hosts By Printer Lists {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+    <a href="{{url_for('sysinfo.hosts_report_filerprinter_excel_brief')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Brief (Excel)</i>
+    </a>
+    <a href="{{url_for('sysinfo.hosts_report_filerprinter_excel_full')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Full (Excel)</i>
+    </a>
+{% endblock download_links %}
+X
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="70%">Printer Search Query
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartMode" width="30%">Host Count
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if printer_matches %}
+                {% for m in printer_matches %}
+                  <tr>
+                    <td> {{ m.Printer }} </td>
+                    <td> {{ m.Hosts | length }}</td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No printer matches found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

@@ -1,14 +1,9 @@
 from ....ma import ma
 from .....models.sysinfo import Host
 from .....models.eol import EoL
+from .hosts import HostNestedSchema
 
 
-class HostNestedSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Host
-        include_fk = False
-        fields = ("id", "Hostname", "Domain", "OSVersion", "OSBuildNumber", "OSProductType", "OSName",
-                  "SystemGroup", "Location")
 
 
 class EoLSchema(ma.SQLAlchemyAutoSchema):

@@ -14,5 +14,6 @@ from .reports.powershell import *
 from .reports.winlogon import *
 from .reports.services import *
 from .reports.usermgmt import *
+from .reports.printers import *
 
 from .report_views import *
