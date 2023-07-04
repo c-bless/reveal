@@ -72,3 +72,14 @@ def hosts_report_services_by_acl():
         return render_template('service_search_list.html',
                                form=form,
                                download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+
+class ReportByPermission(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Service By ACL",
+            category="Systemhardening",
+            tags=["Systemhardening", "ACL", "User Permissions"],
+            description='Report all services where the ACLs match specified User and Permission.',
+            views=[("view", url_for("sysinfo.hosts_report_services_by_acl"))]
+        )

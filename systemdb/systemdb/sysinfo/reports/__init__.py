@@ -95,8 +95,9 @@ def get_report_list():
     from .usermgmt import ReportDirectDomainUserAssignment
     report_plugin_list.append(ReportDirectDomainUserAssignment())
 
-    from .services import ReportUQSP
+    from .services import ReportUQSP, ReportByPermission
     report_plugin_list.append(ReportUQSP())
+    report_plugin_list.append(ReportByPermission())
 
     from .printers import ReportFilePrinterInstalled
     report_plugin_list.append(ReportFilePrinterInstalled())
