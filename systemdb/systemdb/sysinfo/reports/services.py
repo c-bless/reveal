@@ -88,7 +88,7 @@ class ReportServiceByPermission(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
-            name="Service By ACL",
+            name="Service by ACL",
             category="Systemhardening",
             tags=["Systemhardening", "ACL", "User Permissions"],
             description='Report all services where the ACLs match specified User and Permission.',
@@ -107,9 +107,9 @@ def hosts_report_services_by_usercontext():
             startname = form.Startname.data
             invert = form.Invert.data
             if invert == False:
-                services = Service.query.filter(Service.StartName.like("%" + startname + "%")).all()
+                services = Service.query.filter(Service.StartName.ilike("%" + startname + "%")).all()
             else:
-                services = Service.query.filter(Service.StartName.notlike("%" + startname + "%")).all()
+                services = Service.query.filter(Service.StartName.notilike("%" + startname + "%")).all()
             return render_template('service_search_list.html',
                                    form=form,
                                    services=services,
@@ -128,7 +128,7 @@ class ReportServiceByUsercontext(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
-            name="Service By user context (Startname)",
+            name="Service by user context (Startname)",
             category="Systemhardening",
             tags=["Systemhardening", "User Context", "User Permissions"],
             description='Report all services executed in context of specified user.',
