@@ -46,7 +46,7 @@ class ReportDirectDomainUserAssignment(ReportInfo):
         super().initWithParams(
             name="Direct user assignments",
             category="User Management",
-            tags=["Systemhardening", "WSUS", "Cleartext protocol"],
+            tags=["User Management", "User Assignment", "Revoke of Permission"],
             description='Report all hosts which have domain users directly assigned instead of centrally managed domain groups.',
             views=[("view", url_for("sysinfo.usermgmt_assignment_list"))]
         )
