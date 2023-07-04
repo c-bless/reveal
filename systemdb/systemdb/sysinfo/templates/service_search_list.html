@@ -1,5 +1,5 @@
-{% extends "layout/list_layout.html" %}
-
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field, render_submit_field %}
 {% set title = "Services" %}
 {% block page_title %} Services {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
@@ -7,18 +7,24 @@
 
 {% block download_links %}
     {{ super() }}
-    {% if download_url %}
-    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-    {% else %}
-    <a href="{{ url_for('sysinfo.service_export_excel') }}" class="btn btn-block btn-secondary btn-sm">
-    {% endif %}
-        <i class="fas fa-download"> Download (Excel)</i>
-    </a>
+
 {% endblock download_links %}
-X
+
+
+{% block searchform %}
+
+    <form class="form-horizontal form-bordered" method="post">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.User) }}
+        {{ render_field(form.Permission) }}
+        {{ render_submit_field(form.search) }}
+    </form>
+
+{% endblock searchform %}
+
 {% block datatable %}
 {{ super() }}
-    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
                        aria-describedby="table1_info">
             <thead>
             <tr>
@@ -26,22 +32,16 @@ X
                     aria-sort="ascending" aria-label="Name" width="15%">Name
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">DisplayName
+                    aria-label="DisplayName" width="15%">AccountName
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartMode" width="20%">StartMode
+                    aria-label="StartMode" width="20%">AccessControlType
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartName" width="5%">StartName
+                    aria-label="StartName" width="5%">AccessRight
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Started" width="5%">Started
-                </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="PathName" width="25%">PathName
-                </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="SystemName"width="10%">SystemName
+                    aria-label="Started" width="5%">SystemName
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Details" width="5%">Details
@@ -49,18 +49,17 @@ X
             </tr>
             </thead>
             <tbody>
-            {% if services %}
-                {% for s in services %}
+            {% if acls %}
+                {% for a in acls %}
                   <tr>
-                    <td> {{ s.Name }} </td>
-                    <td> {{ s.DisplayName }} </td>
-                    <td> {{ s.StartMode }} </td>
-                    <td> {{ s.StartName }} </td>
-                    <td> {{ s.Started }} </td>
-                    <td> {{ s.PathName }} </td><td> {{ s.SystemName }}</td>
+                    <td> {{ a.Name }} </td>
+                    <td> {{ a.AccountName }} </td>
+                    <td> {{ a.AccessControlType }} </td>
+                    <td> {{ a.AccessRight }} </td>
+                    <td> {{ a.Service.SystemName }} </td>
                     <td class="actions">
-                        <a href="{{url_for('sysinfo.service_detail',id=s.id)}}" class="btn btn-default btn-xs">
-                            <i class="fa fa-eye"></i> View
+                        <a href="{{ url_for('sysinfo.service_detail', id=a.Service.id) }}" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye"></i> View Service
                         </a>
                     </td>
                   </tr>

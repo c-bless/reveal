@@ -1,14 +1,17 @@
-from flask import render_template, Response, url_for
+from flask import render_template, Response, url_for, request
+from flask.views import MethodView
+
 from sqlalchemy import and_
 
 from .. import sysinfo_bp
 from ..export_func import generate_services_excel
 
-from ...models.sysinfo import Service
+from ...models.sysinfo import Service, ServiceACL
+from ..forms.services import ServiceAclSearchForm
 
 from . import ReportInfo
 ####################################################################
-# Hosts with enabled SMBv1
+# Hosts with UQSP vulnerabilities
 ####################################################################
 @sysinfo_bp.route('/hosts/report/services/uqsp/', methods=['GET'])
 def hosts_report_services_uqsp():
@@ -33,7 +36,6 @@ def hosts_report_services_uqsp_excel():
 
 
 
-
 class ReportUQSP(ReportInfo):
 
     def __init__(self):
@@ -44,3 +46,29 @@ class ReportUQSP(ReportInfo):
             description='Report all services where the path is not enclosed in quotes and which have a spaces in the path.',
             views=[("view", url_for("sysinfo.hosts_report_services_uqsp"))]
         )
+
+####################################################################
+@sysinfo_bp.route('/report/services/by-acl/', methods=['GET', 'POST'])
+def hosts_report_services_by_acl():
+    form = ServiceAclSearchForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = form.User.data
+            permission = form.Permission.data
+            acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.like("%" + user + "%"),
+                                                    ServiceACL.AccessRight.like("%" + permission + "%")
+                                                    )).all()
+            return render_template('service_search_list.html',
+                                   form=form,
+                                   acls=acls,
+                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+        else:
+            print("Invlaid input")
+            return render_template('service_search_list.html',
+                                   form=form,
+                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+    else:
+        return render_template('service_search_list.html',
+                               form=form,
+                               download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
