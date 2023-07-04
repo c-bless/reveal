@@ -5,11 +5,11 @@ from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 from ..vars import SID_LOCAL_ADMIN_GROUP
 
 from ...models.sysinfo import Host, Group
-
-
+from . import ReportInfo
 ####################################################################
 # Hosts with Domain Admins in local admin group
 ####################################################################
+
 def get_domadmin_memberof_local_admin():
     groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
     host_ids = []
@@ -48,9 +48,22 @@ def hosts_report_domainadmin():
                            download_url=url_for("sysinfo.hosts_report_domainadmin_excel_full"))
 
 
+class ReportDomAdminMemberOfLocalAdmin(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Domain Admins in local administrators group",
+            category="Hardening",
+            tags=["Domain Admins", "Local Admins", "User Assignments", "MemberOf", "Admins",
+                 "Admin Privileges"],
+            description='Report all hosts where "Domain Admins" are members of the local administrators group',
+            views=[("view", url_for('sysinfo.hosts_report_domainadmin'))]
+        )
+
 ####################################################################
 # Hosts with autologon user in local admin group
 ####################################################################
+
 def get_autologon_admin():
     result = []
     autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()
@@ -93,3 +106,16 @@ def hosts_report_autologonadmin():
                            download_brief_url=url_for("sysinfo.hosts_report_autologonadmin_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_autologonadmin_excel_full"))
 
+
+
+class ReportAutologonIsLocalAdmin(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Autologon as admin",
+            category="Hardening",
+            tags=["Autologon", "Local Admins", "User Assignments", "MemberOf", "Admins",
+                 "Admin Privileges"],
+            description='Report all hosts where the autologon user is member of the local administrator group.',
+            views=[("view",url_for("sysinfo.hosts_report_autologonadmin"))]
+        )

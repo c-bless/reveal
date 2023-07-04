@@ -4,7 +4,7 @@ from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel
 
 from ...models.sysinfo import Host
-
+from . import ReportInfo
 
 ####################################################################
 # Hosts with enabled SMBv1
@@ -34,3 +34,16 @@ def hosts_report_smbv1():
                            download_brief_url=url_for("sysinfo.hosts_report_smbv1_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_smbv1_excel_full"))
 
+
+
+
+class ReportSMBv1(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="SMBv1 Enabled",
+            category="Systemhardening",
+            tags=["Systemhardening", "SMB", "SMBv1"],
+            description='Report all hosts where SMBv1 is installed / enabled.',
+            views=[("view", url_for("sysinfo.hosts_report_smbv1"))]
+        )

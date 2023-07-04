@@ -5,7 +5,7 @@ from ..export_func import generate_userassignment_excel
 from ..vars import SID_LOCAL_ADMIN_GROUP
 
 from ...models.sysinfo import Host, Group, GroupMember
-
+from . import ReportInfo
 
 ####################################################################
 # Hosts with Domain Admins in local admin group
@@ -35,3 +35,18 @@ def usermgmt_assignment_excel_full():
     return Response(output, mimetype="text/xlsx",
                  headers={"Content-disposition": "attachment; filename=direct-assigned-domainusers.xlsx",
                               "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+
+
+
+class ReportDirectDomainUserAssignment(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Direct user assignments",
+            category="User Management",
+            tags=["Systemhardening", "WSUS", "Cleartext protocol"],
+            description='Report all hosts which have domain users directly assigned instead of centrally managed domain groups.',
+            views=[("view", url_for("sysinfo.usermgmt_assignment_list"))]
+        )

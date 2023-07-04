@@ -7,6 +7,7 @@ from ..export_func import generate_printer_excel_brief, generate_printer_excel_f
 from ...models.sysinfo import Host
 from ...api.sysinfo.querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
 
+from . import ReportInfo
 
 ####################################################################
 # List printers and corresponding hosts
@@ -35,3 +36,15 @@ def hosts_report_filerprinter_excel_full():
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=printer-hosts-matches-full.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+
+class ReportFilePrinterInstalled(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="File Printer Installed",
+            category="HMI Hardening",
+            tags=["Systemhardening", "Print to PDF", "PDFCreator", "XPS Printer", "Send to OneNote"],
+            description='Report all hosts which have a file printer installed',
+            views=[("view", url_for("sysinfo.hosts_report_fileprinter"))]
+        )

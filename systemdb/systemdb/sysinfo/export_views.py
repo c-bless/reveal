@@ -7,7 +7,8 @@ from ..models.sysinfo import Host, Service, Product
 
 import os
 from .export_func import template_detail_dir, template_dir
-from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, generate_services_excel, generate_hosts_excel_brief
+from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, \
+    generate_services_excel, generate_hosts_excel_brief
 from .export_func import generate_products_excel
 
 

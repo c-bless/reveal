@@ -17,10 +17,16 @@
         <thead>
         <tr>
             <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                aria-sort="ascending" aria-label="Name" width="15%">Category
+            </th>
+            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                 aria-sort="ascending" aria-label="Name" width="15%">Name
             </th>
             <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                 aria-label="Description">Description
+            </th>
+            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                aria-label="Description"  width="15%">tags
             </th>
             <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                 aria-label="Details" width="15%">Details
@@ -28,138 +34,35 @@
         </tr>
         </thead>
         <tbody>
-            <tr>
-                <td> Last update </td>
-                <td> Report all hosts where the last update was installed more that "n" days ago.</td>
-                <td class="actions">
-                    <a href="{{ url_for('sysinfo.hosts_report_lastupdate', days=180) }}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> 180 days
-                    </a>
-                    <a href="{{ url_for('sysinfo.hosts_report_lastupdate', days=365) }}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> 365 days
-                    </a>
-                </td>
-            </tr>
 
-            <tr>
-                <td> Password in Winlogon</td>
-                <td> Report all hosts where a password is stored in clear text in Windows Registry</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_winlogon')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
+            {% if report_plugins %}
+                {% for r in report_plugins %}
+                  <tr>
+                    <td> {{ r.category }} </td>
+                    <td> {{ r.name }} </td>
+                    <td> {{ r.description }} </td>
+                    <td>
+                    {% for t in r.tags %}
+                        <span class="badge badge-secondary">{{ t }}</span>
+                    {% endfor %}
+                    </td>
+                    <td class="actions">
+                    {% for title, link in r.views %}
 
-            <tr>
-                <td> PowerShell 2.0 Enabled</td>
-                <td> Report all hosts where PowerShell Version 2.0 is installed / enabled.</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_ps2')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
+                        <a href="{{ link }}" class="btn btn-default btn-xs">
+                        <i class="fa fa-eye"></i> {{ title }}
+                        </a>
 
-            <tr>
-                <td> SMBv1 Enabled</td>
-                <td> Report all hosts where SMBv1 is installed / enabled.</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_smbv1')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
+                    {% endfor %}
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10">No reports found!</td>
+                </tr>
+            {% endif %}
 
-            <tr>
-                <td> WSH Enabled</td>
-                <td> Report all hosts where WSH is enabled.</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_wsh')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> WSH Remote Enabled</td>
-                <td> Report all hosts where WSH remote access is enabled.</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_wshremote')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> Domain Admins in local administrators group</td>
-                <td> Report all hosts where "Domain Admins" are members of the local administrators group</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_domainadmin')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> Autologon as admin</td>
-                <td> Report all hosts where the autologon user is member of the local administrator group</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_autologonadmin')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> WSUS via http</td>
-                <td> Report all hosts where the WSUS server is configured to be reached via http</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_wsus_http')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> UQSP </td>
-                <td> Report all services where the path is not enclosed in quotes and which have a spaces in the path.</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_services_uqsp')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> EoL</td>
-                <td> Report all hosts which reached the End-of-Life / End-of-Support</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_eol')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> Direct user assignments</td>
-                <td> Report all hosts which have domain users directly assigned instead of centrally managed domain groups.</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.usermgmt_assignment_list')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
-
-            <tr>
-                <td> HMI Hardening - File Printer</td>
-                <td> Report all hosts which have a file printer installed</td>
-                <td class="actions">
-                    <a href="{{url_for('sysinfo.hosts_report_fileprinter')}}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                    </a>
-                </td>
-            </tr>
 
         </tbody>
     </table>

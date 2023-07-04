@@ -4,7 +4,7 @@ from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 from ...models.sysinfo import Host
-
+from . import ReportInfo
 
 ####################################################################
 # Hosts with enabled WSH
@@ -34,6 +34,19 @@ def hosts_report_wsh_excel_brief():
                     headers={"Content-disposition": "attachment; filename=hosts-with-wsh-enabled-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
+
+
+class ReportWSHEnabled(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="WSH Enabled",
+            category="Systemhardening",
+            tags=["Systemhardening", "WSH", "BSI: SiSyPHus Win10"],
+            description='Report all hosts where WSH is enabled.',
+            views=[("view", url_for("sysinfo.hosts_report_wsh"))]
+        )
+
 ####################################################################
 # Hosts with WSH enabled for remote connections
 ####################################################################
@@ -60,3 +73,15 @@ def hosts_report_wshremote_excel_brief():
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-wsh-remote-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+class ReportWSHRemoteEnabled(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="WSH Remote Enabled",
+            category="Systemhardening",
+            tags=["Systemhardening", "WSH", "BSI: SiSyPHus Win10"],
+            description='Report all hosts where WSH remote access is enabled.',
+            views=[("view", url_for("sysinfo.hosts_report_wshremote"))]
+        )

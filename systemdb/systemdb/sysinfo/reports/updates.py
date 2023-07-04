@@ -6,6 +6,7 @@ from ..export_func import generate_hosts_excel, generate_hosts_excel_brief, gene
 
 from ...models.sysinfo import Host
 from ...api.sysinfo.querries.updates import get_EoLInfo
+from . import ReportInfo
 
 ####################################################################
 # Hosts where last update has been installed for more that xxx days
@@ -43,6 +44,19 @@ def hosts_report_lastupdate_excel_brief(days):
 
 
 
+class ReportLastUpdate(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Last update",
+            category="Patch Management",
+            tags=["Updates", "Missing Patches", "Windows Updates", "Patch Management"],
+            description='Report all hosts where the last update was installed more that "n" days ago.',
+            views=[("180 days", url_for("sysinfo.hosts_report_lastupdate" , days=180) ),
+                  ("365 days", url_for("sysinfo.hosts_report_lastupdate" , days=365) )]
+        )
+
+
 ####################################################################
 # List OS and matching hosts that reached the end of life
 ####################################################################
@@ -67,3 +81,16 @@ def hosts_report_eol_excel_full():
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=eol-systems-full.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+
+
+class ReportEOL(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="End-Of-Life - OS",
+            category="Lifecycle Management",
+            tags=["End-Of-Life", "Lifecycle Managment", "Outdated OS"],
+            description='Report all hosts which reached the End-of-Life / End-of-Support',
+            views=[("view", url_for("sysinfo.hosts_report_eol"))]
+        )

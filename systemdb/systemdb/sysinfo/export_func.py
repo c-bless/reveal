@@ -107,10 +107,10 @@ def generate_hosts_excel(hosts=[]):
             else:
                 worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:X1")
         col = 0
         row += 1
 
+    worksheet.autofilter("A1:X1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
@@ -152,10 +152,10 @@ def generate_hosts_excel_brief(hosts=[]):
         for c in host:
             worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:H1")
         col = 0
         row += 1
 
+    worksheet.autofilter("A1:H1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
@@ -248,10 +248,10 @@ def generate_products_excel(products=[]):
         for c in service:
             worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:G1")
         col = 0
         row += 1
 
+    worksheet.autofilter("A1:G1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
@@ -293,10 +293,10 @@ def generate_userassignment_excel(members=[]):
         for c in host:
             worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:C1")
         col = 0
         row += 1
 
+    worksheet.autofilter("A1:C1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
@@ -304,7 +304,6 @@ def generate_userassignment_excel(members=[]):
     # Rewind the buffer.
     output.seek(0)
     return output
-
 
 
 def generate_eol_excel_brief(eol_matches=[]):
@@ -401,7 +400,6 @@ def generate_eol_excel_full(eol_matches=[]):
     # Rewind the buffer.
     output.seek(0)
     return output
-
 
 
 def generate_printer_excel_brief(printer_matches=[]):

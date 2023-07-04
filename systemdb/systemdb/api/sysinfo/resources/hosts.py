@@ -26,6 +26,7 @@ class HostByIdView(MethodView):
     def get(self, id):
         return Host.query.get_or_404(id)
 
+
 @blp.route("/hosts/by-name/<string:name>")
 class HostByNameView(MethodView):
 
@@ -54,7 +55,7 @@ class HostByIPView(MethodView):
 
 
 @blp.route("/hosts/")
-class HostListAllView(MethodView):
+class HostView(MethodView):
 
     @blp.doc(description="Returns a list of all hosts.",
              summary="Find all hosts"
@@ -62,6 +63,14 @@ class HostListAllView(MethodView):
     @blp.response(HTTPStatus.OK.value, HostSchema(many=True))
     def get(self):
         return Host.query.all()
+
+
+    def post(self):
+        pass
+
+
+    def put(self):
+        pass
 
 
 @blp.route("/hosts/<int:host_id>/services/")

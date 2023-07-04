@@ -4,7 +4,7 @@ from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 from ...models.sysinfo import Host
-
+from . import ReportInfo
 
 ####################################################################
 # Hosts with WSUS over http
@@ -33,3 +33,17 @@ def hosts_report_wsus_http():
     return render_template('host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_wsus_http_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_wsus_http_excel_full"))
+
+
+
+
+class ReportWSUSHttp(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="WSUS via http",
+            category="Systemhardening",
+            tags=["Systemhardening", "WSUS", "Cleartext protocol"],
+            description='Report all hosts where the WSUS server is configured to be reached via http',
+            views=[("view", url_for("sysinfo.hosts_report_wsus_http"))]
+        )

@@ -4,7 +4,7 @@ from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 from ...models.sysinfo import Host
-
+from . import ReportInfo
 
 ####################################################################
 # Hosts with PowerShell 2.0 installed
@@ -33,3 +33,16 @@ def hosts_report_ps2_excel_brief():
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-ps2-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+
+
+class ReportPS2Istalled(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="PowerShell 2.0 Enabled",
+            category="Hardening",
+            tags=["Powershell", "Systemhardening", "Missing Security Feature", "BSI: SiSyPHus Win10"],
+            description='Report all hosts where PowerShell Version 2.0 is installed / enabled.',
+            views=[('view', url_for('sysinfo.hosts_report_ps2'))]
+        )

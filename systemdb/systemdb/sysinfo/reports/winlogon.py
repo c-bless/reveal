@@ -4,7 +4,7 @@ from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 from ...models.sysinfo import Host
-
+from . import ReportInfo
 
 ####################################################################
 # Hosts with DefaultPassword in Registry
@@ -34,3 +34,15 @@ def hosts_report_winlogon_excel_brief():
                     headers={"Content-disposition": "attachment; filename=hosts-with-winlogon-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
+
+
+class ReportPWInWinlogon(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Password in Winlogon",
+            category="Systemhardening",
+            tags=["Cleartext password", "Missconfigured Autologon", "Winlogon", "Registry"],
+            description='Report all hosts where a password is stored in clear text in Windows Registry',
+            views=[("view", url_for("sysinfo.hosts_report_winlogon"))]
+        )
