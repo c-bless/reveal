@@ -7,7 +7,7 @@ from .. import sysinfo_bp
 from ..export_func import generate_services_excel
 
 from ...models.sysinfo import Service, ServiceACL
-from ..forms.services import ServiceAclSearchForm
+from ..forms.services import ServiceAclSearchForm, ServiceUserContextSearchForm
 
 from . import ReportInfo
 ####################################################################
@@ -48,6 +48,8 @@ class ReportUQSP(ReportInfo):
         )
 
 ####################################################################
+# Services by ACL
+####################################################################
 @sysinfo_bp.route('/report/services/by-acl/', methods=['GET', 'POST'])
 def hosts_report_services_by_acl():
     form = ServiceAclSearchForm()
@@ -55,25 +57,34 @@ def hosts_report_services_by_acl():
     if request.method == 'POST':
         if form.validate_on_submit():
             user = form.User.data
+            invert_user = form.InvertUser.data
             permission = form.Permission.data
-            acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.like("%" + user + "%"),
-                                                    ServiceACL.AccessRight.like("%" + permission + "%")
+            invert_permission = form.InvertPermission.data
+            if invert_user == False and invert_permission == False:
+                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.ilike("%" + user + "%"),
+                                                        ServiceACL.AccessRight.ilike("%" + permission + "%")
+                                                        )).all()
+            elif invert_user == False:
+                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.ilike("%" + user + "%"),
+                                                    ServiceACL.AccessRight.notilike("%" + permission + "%")
                                                     )).all()
-            return render_template('service_search_list.html',
-                                   form=form,
-                                   acls=acls,
-                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+            elif invert_permission == False:
+                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.notilike("%" + user + "%"),
+                                                    ServiceACL.AccessRight.ilike("%" + permission + "%")
+                                                    )).all()
+            else:
+                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.notilike("%" + user + "%"),
+                                                    ServiceACL.AccessRight.notilike("%" + permission + "%")
+                                                    )).all()
+            return render_template('service_acl_search_list.html', form=form, acls=acls)
         else:
-            print("Invlaid input")
-            return render_template('service_search_list.html',
-                                   form=form,
-                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+            print("Invalid input")
+            return render_template('service_acl_search_list.html', form=form)
     else:
-        return render_template('service_search_list.html',
-                               form=form,
-                               download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+        return render_template('service_acl_search_list.html', form=form)
 
-class ReportByPermission(ReportInfo):
+
+class ReportServiceByPermission(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
@@ -82,4 +93,44 @@ class ReportByPermission(ReportInfo):
             tags=["Systemhardening", "ACL", "User Permissions"],
             description='Report all services where the ACLs match specified User and Permission.',
             views=[("view", url_for("sysinfo.hosts_report_services_by_acl"))]
+        )
+
+####################################################################
+# Services by user context
+####################################################################
+@sysinfo_bp.route('/report/services/by-usercontext/', methods=['GET', 'POST'])
+def hosts_report_services_by_usercontext():
+    form = ServiceUserContextSearchForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            startname = form.Startname.data
+            invert = form.Invert.data
+            if invert == False:
+                services = Service.query.filter(Service.StartName.like("%" + startname + "%")).all()
+            else:
+                services = Service.query.filter(Service.StartName.notlike("%" + startname + "%")).all()
+            return render_template('service_search_list.html',
+                                   form=form,
+                                   services=services,
+                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+        else:
+            print("Invalid input")
+            return render_template('service_search_list.html',
+                                   form=form,
+                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+    else:
+        return render_template('service_search_list.html',
+                               form=form,
+                               download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+
+class ReportServiceByUsercontext(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Service By user context (Startname)",
+            category="Systemhardening",
+            tags=["Systemhardening", "User Context", "User Permissions"],
+            description='Report all services executed in context of specified user.',
+            views=[("view", url_for("sysinfo.hosts_report_services_by_usercontext"))]
         )
