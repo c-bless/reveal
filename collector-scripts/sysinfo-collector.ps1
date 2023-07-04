@@ -7,7 +7,7 @@
     https://bitbucket.org/cbless/systemdb
 
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.2
+    Version:    0.2.2
     License:    GPL
 
     .INPUTS
@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.2"
+$version="0.2.2"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -64,7 +64,7 @@ $xmlWriter.WriteStartDocument()
 # }
 $config_checks = New-Object System.Collections.ArrayList            
 
-
+ 
 
 $xmlWriter.WriteStartElement("SystemInfoCollector")
     $xmlWriter.WriteAttributeString("version", "$script_version")
@@ -134,6 +134,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
         # user used to collect information
         $xmlWriter.WriteElementString("Whoami", [string] [System.Environment]::UserName);
+        try {
+            $elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator);
+            $xmlWriter.WriteElementString("WhoamiIsAdmin", [string] $elevated);
+        }catch{}
+
         # active PowerShell version
         $xmlWriter.WriteElementString("PSVersion",[string]$PSVersionTable.PSVersion);
         try{
