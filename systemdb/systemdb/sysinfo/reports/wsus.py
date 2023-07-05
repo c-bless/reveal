@@ -9,7 +9,7 @@ from . import ReportInfo
 ####################################################################
 # Hosts with WSUS over http
 ####################################################################
-@sysinfo_bp.route('/hosts/report/wsus-http/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/wsus-http/excel/full', methods=['GET'])
 def hosts_report_wsus_http_excel_full():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
     output = generate_hosts_excel(hosts)
@@ -18,7 +18,7 @@ def hosts_report_wsus_http_excel_full():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/wsus-http/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/wsus-http/excel/brief', methods=['GET'])
 def hosts_report_wsus_http_excel_brief():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
     output = generate_hosts_excel_brief(hosts)
@@ -27,7 +27,7 @@ def hosts_report_wsus_http_excel_brief():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/wsus-http', methods=['GET'])
+@sysinfo_bp.route('/report/wsus-http', methods=['GET'])
 def hosts_report_wsus_http():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
     return render_template('host_list.html', hosts=hosts,

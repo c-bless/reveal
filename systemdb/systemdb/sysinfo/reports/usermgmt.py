@@ -21,13 +21,13 @@ def get_direct_domainuser_assignments():
     return result
 
 
-@sysinfo_bp.route('/hosts/reports/usermgmt/assigment/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/assigment/', methods=['GET'])
 def usermgmt_assignment_list():
     members = get_direct_domainuser_assignments()
     return render_template('userassignment_list.html',members=members)
 
 
-@sysinfo_bp.route('/hosts/report/usermgmt/assignment/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/usermgmt/assignment/excel/full', methods=['GET'])
 def usermgmt_assignment_excel_full():
     members = get_direct_domainuser_assignments()
     output = generate_userassignment_excel(members)

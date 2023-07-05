@@ -13,13 +13,13 @@ from . import ReportInfo
 # List printers and corresponding hosts
 ####################################################################
 
-@sysinfo_bp.route('/hosts/report/filerprinter/', methods=['GET'])
+@sysinfo_bp.route('/report/filerprinter/', methods=['GET'])
 def hosts_report_fileprinter():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)
     return render_template('printer_hosts_list.html', printer_matches=printer_matches)
 
-@sysinfo_bp.route('/hosts/report/filerprinter/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/filerprinter/excel/brief', methods=['GET'])
 def hosts_report_filerprinter_excel_brief():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)
@@ -28,7 +28,7 @@ def hosts_report_filerprinter_excel_brief():
                     headers={"Content-disposition": "attachment; filename=printer-hosts-matches-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-@sysinfo_bp.route('/hosts/report/filerprinter/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/filerprinter/excel/full', methods=['GET'])
 def hosts_report_filerprinter_excel_full():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)

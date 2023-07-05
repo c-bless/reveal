@@ -9,7 +9,7 @@ from . import ReportInfo
 ####################################################################
 # Hosts with enabled SMBv1
 ####################################################################
-@sysinfo_bp.route('/hosts/report/smbv1/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/smbv1/excel/full', methods=['GET'])
 def hosts_report_smbv1_excel_full():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel(hosts)
@@ -18,7 +18,7 @@ def hosts_report_smbv1_excel_full():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/smbv1/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/smbv1/excel/brief', methods=['GET'])
 def hosts_report_smbv1_excel_brief():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel(hosts)
@@ -27,7 +27,7 @@ def hosts_report_smbv1_excel_brief():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/smbv1', methods=['GET'])
+@sysinfo_bp.route('/report/smbv1', methods=['GET'])
 def hosts_report_smbv1():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     return render_template('host_list.html', hosts=hosts,

@@ -9,7 +9,7 @@ from . import ReportInfo
 ####################################################################
 # Hosts with DefaultPassword in Registry
 ####################################################################
-@sysinfo_bp.route('/hosts/report/winlogon', methods=['GET'])
+@sysinfo_bp.route('/report/winlogon', methods=['GET'])
 def hosts_report_winlogon():
     hosts = Host.query.filter(Host.DefaultPassword != "").all()
     return render_template('host_list.html', hosts=hosts,
@@ -17,7 +17,7 @@ def hosts_report_winlogon():
                            download_url=url_for("sysinfo.hosts_report_winlogon_excel_full"))
 
 
-@sysinfo_bp.route('/hosts/report/winlogon/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/winlogon/excel/full', methods=['GET'])
 def hosts_report_winlogon_excel_full():
     hosts = Host.query.filter(Host.DefaultPassword != "").all()
     output = generate_hosts_excel(hosts)
@@ -26,7 +26,7 @@ def hosts_report_winlogon_excel_full():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
 
-@sysinfo_bp.route('/hosts/report/winlogon/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/winlogon/excel/brief', methods=['GET'])
 def hosts_report_winlogon_excel_brief():
     hosts = Host.query.filter(Host.DefaultPassword != "").all()
     output = generate_hosts_excel_brief(hosts)

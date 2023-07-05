@@ -11,7 +11,7 @@ from . import ReportInfo
 ####################################################################
 # Hosts where last update has been installed for more that xxx days
 ####################################################################
-@sysinfo_bp.route('/hosts/report/lastupdate/<int:days>', methods=['GET'])
+@sysinfo_bp.route('/report/lastupdate/<int:days>', methods=['GET'])
 def hosts_report_lastupdate(days):
     now = datetime.datetime.now()
     delta = now - datetime.timedelta(days=days)
@@ -21,7 +21,7 @@ def hosts_report_lastupdate(days):
                            download_url=url_for("sysinfo.hosts_report_lastupdate_excel_full", days=days))
 
 
-@sysinfo_bp.route('/hosts/report/lastupdate/<int:days>/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/lastupdate/<int:days>/excel/full', methods=['GET'])
 def hosts_report_lastupdate_excel_full(days):
     now = datetime.datetime.now()
     delta = now - datetime.timedelta(days=days)
@@ -32,7 +32,7 @@ def hosts_report_lastupdate_excel_full(days):
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
 
-@sysinfo_bp.route('/hosts/report/lastupdate/<int:days>/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/lastupdate/<int:days>/excel/brief', methods=['GET'])
 def hosts_report_lastupdate_excel_brief(days):
     now = datetime.datetime.now()
     delta = now - datetime.timedelta(days=days)

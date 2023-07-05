@@ -9,9 +9,36 @@
     </div>
 {% endmacro %}
 
+{% macro render_check_field_sm2(field) %}
+  <div class="form-group row">
+      <div class="offset-sm-2 col-sm-10">
+        <div class="form-check">
+          {{ field(class="form-check-input", **kwargs)|safe }}
+          {{ field.label(class="form-check-label") | safe }}
+        </div>
+      </div>
+    </div>
+{% endmacro %}
+
+
 {% macro render_field(field) %}
    <div class="form-group row">
     {{ field.label(class="col-sm-1 col-form-label") | safe }}
+    <div class="col-sm-6">
+      {{ field(class="form-control")|safe }}
+      {% if field.errors %}
+        {% for error in field.errors %}
+          <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+
+{% macro render_field_sm2(field) %}
+   <div class="form-group row">
+    {{ field.label(class="col-sm-2 col-form-label") | safe }}
     <div class="col-sm-6">
       {{ field(class="form-control")|safe }}
       {% if field.errors %}

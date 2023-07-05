@@ -13,7 +13,7 @@ from . import ReportInfo
 ####################################################################
 # Hosts with UQSP vulnerabilities
 ####################################################################
-@sysinfo_bp.route('/hosts/report/services/uqsp/', methods=['GET'])
+@sysinfo_bp.route('/report/services/uqsp/', methods=['GET'])
 def hosts_report_services_uqsp():
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                                          Service.PathName.contains(" "),
@@ -23,7 +23,7 @@ def hosts_report_services_uqsp():
                            download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
 
 
-@sysinfo_bp.route('/hosts/report/services/uqsp/excel', methods=['GET'])
+@sysinfo_bp.route('/report/services/uqsp/excel', methods=['GET'])
 def hosts_report_services_uqsp_excel():
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                                          Service.PathName.contains(" "),

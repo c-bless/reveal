@@ -21,7 +21,7 @@ def get_domadmin_memberof_local_admin():
     return hosts
 
 
-@sysinfo_bp.route('/hosts/report/domainadmin/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/domainadmin/excel/full', methods=['GET'])
 def hosts_report_domainadmin_excel_full():
     hosts = get_domadmin_memberof_local_admin()
 
@@ -30,7 +30,7 @@ def hosts_report_domainadmin_excel_full():
                     headers={"Content-disposition": "attachment; filename=hosts-with-domnadmin.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
-@sysinfo_bp.route('/hosts/report/domainadmin/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/domainadmin/excel/brief', methods=['GET'])
 def hosts_report_domainadmin_excel_brief():
     hosts = get_domadmin_memberof_local_admin()
 
@@ -40,7 +40,7 @@ def hosts_report_domainadmin_excel_brief():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/domainadmin', methods=['GET'])
+@sysinfo_bp.route('/report/domainadmin', methods=['GET'])
 def hosts_report_domainadmin():
     hosts = get_domadmin_memberof_local_admin()
     return render_template('host_list.html', hosts=hosts,
@@ -77,7 +77,7 @@ def get_autologon_admin():
     return result
 
 
-@sysinfo_bp.route('/hosts/report/autologonadmin/excel/full', methods=['GET'])
+@sysinfo_bp.route('/report/autologonadmin/excel/full', methods=['GET'])
 def hosts_report_autologonadmin_excel_full():
     hosts = get_autologon_admin()
 
@@ -87,7 +87,7 @@ def hosts_report_autologonadmin_excel_full():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/autologonadmin/excel/brief', methods=['GET'])
+@sysinfo_bp.route('/report/autologonadmin/excel/brief', methods=['GET'])
 def hosts_report_autologonadmin_excel_brief():
     hosts = get_autologon_admin()
 
@@ -97,7 +97,7 @@ def hosts_report_autologonadmin_excel_brief():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@sysinfo_bp.route('/hosts/report/autologonadmin', methods=['GET'])
+@sysinfo_bp.route('/report/autologonadmin', methods=['GET'])
 def hosts_report_autologonadmin():
     hosts = get_autologon_admin()
 
