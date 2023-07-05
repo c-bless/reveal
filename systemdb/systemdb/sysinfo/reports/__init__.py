@@ -92,8 +92,9 @@ def get_report_list():
     from .wsus import ReportWSUSHttp
     report_plugin_list.append(ReportWSUSHttp())
 
-    from .usermgmt import ReportDirectDomainUserAssignment
+    from .usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser
     report_plugin_list.append(ReportDirectDomainUserAssignment())
+    report_plugin_list.append(ReportHostsByLocaluser())
 
     from .services import ReportUQSP, ReportServiceByPermission, ReportServiceByUsercontext
     report_plugin_list.append(ReportUQSP())

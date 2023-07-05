@@ -1,0 +1,87 @@
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field, render_check_field, render_submit_field %}
+
+{% set title = "Local Admins" %}
+{% block page_title %} Local Admins {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Local Admin List {% endblock menu_l2 %}
+
+
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    {{ render_field(form.Username) }}
+                    {{ render_check_field(form.InvertUsername) }}
+
+                    {{ render_field(form.Domain) }}
+                    {{ render_check_field(form.InvertDomain) }}
+
+                    {{ render_field(form.Hostname) }}
+                    {{ render_check_field(form.InvertHostname) }}
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {{ render_submit_field(form.search) }}
+
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
+
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+                <thead>
+                <tr>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Group" width="15%">Local Group
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Domain" width="15%">Domain (User)
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="User">Members
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="SystemGroup">SystemGroup
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Location">Location
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Details">Details
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if members %}
+                    {% for m in members %}
+                      <tr>
+                        <td> {{ m.Group.Host.Hostname }} </td>
+                        <td> {{ m.Group.Name }} </td>
+                        <td> {{ m.Domain }} </td>
+                        <td> {{ m.Caption }} </td>
+                        <td> {{ m.Group.Host.SystemGroup }} </td>
+                        <td> {{ m.Group.Host.Location }} </td>
+                        <td class="actions">
+                            <a href="{{ url_for('sysinfo.group_detail', id=m.Group_id) }}" class="btn btn-default btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7">No members found!</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+{% endblock datatable %}

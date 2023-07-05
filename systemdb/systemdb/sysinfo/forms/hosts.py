@@ -25,3 +25,10 @@ class HostSearchForm(FlaskForm):
     brief = SubmitField('Download Excel (Brief)')
     full = SubmitField('Download Excel (Full)')
 
+
+class HostByLocalUserSearchForm(FlaskForm):
+    Name = StringField('Local User', validators=[Regexp(regex="^[a-zA-Z0-9 \.\-\_]+$", message="Invalid input")] )
+
+    search = SubmitField('Search')
+    full = SubmitField('Download Excel (Full)')
+
