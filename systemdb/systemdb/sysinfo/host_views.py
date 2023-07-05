@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request
+from flask import render_template, url_for, request, Response
 from sqlalchemy import desc,and_
 
 from . import sysinfo_bp
@@ -6,6 +6,7 @@ from . import sysinfo_bp
 from ..models.sysinfo import Host, Group, User, Service, Share, Product
 from ..models.eol import EoL
 from .forms.hosts import HostSearchForm
+from .export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 
 @sysinfo_bp.route('/hosts/', methods=['GET'])
@@ -78,6 +79,19 @@ def host_search_list():
             else:
                 filters.append(Host.Location.notilike("%"+location+"%"))
         hosts = Host.query.filter(and_(*filters)).all()
+
+        if 'brief' in request.form:
+            output = generate_hosts_excel_brief(hosts)
+            return Response(output, mimetype="text/xslx",
+                            headers={"Content-disposition": "attachment; filename=hosts_brief.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        if 'full' in request.form:
+            output = generate_hosts_excel(hosts)
+            return Response(output, mimetype="text/xslx",
+                            headers={"Content-disposition": "attachment; filename=hosts.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+
     else:
         hosts = Host.query.all()
 

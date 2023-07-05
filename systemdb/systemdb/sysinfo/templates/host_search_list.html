@@ -6,27 +6,6 @@
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Host List {% endblock menu_l2 %}
 
-{% block download_links %}
-    {{ super() }}
-    {% if download_brief_url %}
-    <a href="{{ download_brief_url }}" class="btn btn-block btn-secondary btn-sm">
-    {% else %}
-    <a href="{{url_for('sysinfo.hosts_export_excel_brief')}}" class="btn btn-block btn-secondary btn-sm">
-    {% endif %}
-        <i class="fas fa-download"> Brief (Excel)</i>
-    </a>
-
-    {% if download_url %}
-    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-    {% else %}
-    <a href="{{url_for('sysinfo.hosts_export_excel')}}" class="btn btn-block btn-secondary btn-sm">
-    {% endif %}
-        <i class="fas fa-download"> Full (Excel)</i>
-    </a>
-
-{% endblock download_links %}
-
-
 
 {% block searchform %}
     <form class="form-horizontal" method="post">
