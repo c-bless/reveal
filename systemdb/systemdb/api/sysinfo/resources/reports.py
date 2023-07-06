@@ -130,9 +130,8 @@ class HostListWsusResource(MethodView):
     @blp.doc(description="Returns a list of hosts configured to use WSUS via http.",
              summary="Find all hosts configured for using WSUS vi http."
              )
-
     @blp.response(HTTPStatus.OK.value, HostSchema(many=True))
-    def post(self):
+    def get(self):
         return Host.query.filter(Host.WUServer.like('http://%'))
 
 
@@ -146,7 +145,6 @@ class HostListAutologonAdminResource(MethodView):
     @blp.doc(description="Returns a list of hosts that use autologon with an administrative account.",
              summary="Find all hosts configured for using autologon with an administrative account."
              )
-
     @blp.response(HTTPStatus.OK.value, HostSchema(many=True))
     def get(self):
         result = []
@@ -167,8 +165,8 @@ class HostListAutologonAdminResource(MethodView):
 @blp.route("/eol/")
 class EoLHostListResource(MethodView):
 
-    @blp.doc(description="Returns the ......",
-             summary="Find all ..."
+    @blp.doc(description="Returns the a list of end-of-life hosts",
+             summary="Find all end-of-life hosts"
              )
     @blp.response(HTTPStatus.OK.value, EoLMatchSchema(many=True))
     def get(self):
@@ -201,8 +199,6 @@ class DirectUserAssignmentList(MethodView):
         return result
 
 
-
-
 #####################################################################################
 # Display Hosts with installed file printers
 #####################################################################################
@@ -217,6 +213,7 @@ class FilePrinterList(MethodView):
         filters = FILE_PRINTER_LIST
         results = get_hosts_by_printers(filters=filters)
         return results
+
 
 @blp.route("/printer/")
 class PrinterList(MethodView):

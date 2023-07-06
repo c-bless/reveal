@@ -59,10 +59,8 @@ class ReportInfo(object):
     def views(self, views= []):
         self._views = views
 
-
     def __str__(self):
         return str(self._name)
-
 
 
 def get_report_list():

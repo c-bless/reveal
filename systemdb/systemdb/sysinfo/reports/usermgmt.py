@@ -162,6 +162,6 @@ class ReportHostsByLocaluser(ReportInfo):
             name="Local Admin",
             category="User Management",
             tags=["User Management", "Local Accounts"],
-            description='TODO:',
+            description='Report members of local administrators group.',
             views=[("view", url_for("sysinfo.report_localadmin_list"))]
         )

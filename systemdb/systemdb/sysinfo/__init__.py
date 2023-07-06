@@ -2,8 +2,13 @@ from flask import Blueprint
 
 sysinfo_bp = Blueprint('sysinfo', __name__, template_folder="templates", url_prefix='/sysinfo')
 
-from .host_views import *
 from .export_views import *
+
+from .views.hosts import *
+from .views.products import *
+from .views.services import *
+from .views.shares import *
+from .views.usermanagement import *
 
 from .reports.smb import *
 from .reports.wsus import *
