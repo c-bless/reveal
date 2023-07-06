@@ -65,12 +65,6 @@ class HostView(MethodView):
         return Host.query.all()
 
 
-    def post(self):
-        pass
-
-
-    def put(self):
-        pass
 
 
 @blp.route("/hosts/<int:host_id>/services/")

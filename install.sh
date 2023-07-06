@@ -16,6 +16,9 @@ mkdir "admin-lte"
 wget -O admin-lte.zip https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip 
 unzip admin-lte.zip -d "admin-lte"
 cd admin-lte/Admin*
+if [! -d $DISTDIR ]; then
+    mkdir $DISTDIR
+fi
 cp -r "dist/" $DISTDIR
 cp -r "plugins" $PLUGINDIR
 cd $BASEDIR
@@ -45,3 +48,6 @@ flask import eol "${BASEDIR}/update-data/win-support-dates.csv"
 
 echo "[*] removing temporary data"
 rm -r $TMPDIR
+
+echo "[*] Setup completed. You can import and analyze data now! For help visit:"
+echo "[*] https://bitbucket.org/cbless/systemdb/src/master/README.md"
