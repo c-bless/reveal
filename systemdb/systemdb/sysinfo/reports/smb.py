@@ -1,7 +1,7 @@
 from flask import render_template, Response, url_for
 
 from .. import sysinfo_bp
-from ..export_func import generate_hosts_excel
+from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 from ...models.sysinfo import Host
 from . import ReportInfo
@@ -21,7 +21,7 @@ def hosts_report_smbv1_excel_full():
 @sysinfo_bp.route('/report/smbv1/excel/brief', methods=['GET'])
 def hosts_report_smbv1_excel_brief():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
-    output = generate_hosts_excel(hosts)
+    output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/xlsx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-smbv1-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })

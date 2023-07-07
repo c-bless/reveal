@@ -1,4 +1,5 @@
-from flask import url_for
+from flask import url_for, render_template
+from .. import sysinfo_bp
 
 class ReportInfo(object):
 
@@ -103,3 +104,10 @@ def get_report_list():
     report_plugin_list.append(ReportFilePrinterInstalled())
 
     return report_plugin_list
+
+
+@sysinfo_bp.route('/reports/', methods=['GET'])
+def report_list():
+
+    get_report_list()
+    return render_template('report_list.html', report_plugins=get_report_list())

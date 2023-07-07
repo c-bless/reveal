@@ -90,7 +90,7 @@ class ReportEOL(ReportInfo):
         super().initWithParams(
             name="End-Of-Life - OS",
             category="Lifecycle Management",
-            tags=["End-Of-Life", "Lifecycle Managment", "Outdated OS"],
+            tags=["End-Of-Life", "EoL", "End-Of-Support", "Lifecycle Management", "Outdated OS"],
             description='Report all hosts which reached the End-of-Life / End-of-Support',
             views=[("view", url_for("sysinfo.hosts_report_eol"))]
         )

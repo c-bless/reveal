@@ -1,6 +1,5 @@
 from flask import render_template, Response, url_for, request
 from sqlalchemy import and_
-from ...models.db import db
 from .. import sysinfo_bp
 from ..export_func import generate_userassignment_excel, generate_hosts_excel
 from ..vars import SID_LOCAL_ADMIN_GROUP
@@ -9,6 +8,7 @@ from ...models.sysinfo import Host, Group, GroupMember, User
 from . import ReportInfo
 from ..forms.hosts import HostByLocalUserSearchForm
 from ..forms.groups import LocalAdminSearchForm
+
 
 ####################################################################
 # Hosts with Domain Admins in local admin group
@@ -38,9 +38,6 @@ def usermgmt_assignment_excel_full():
     return Response(output, mimetype="text/xlsx",
                  headers={"Content-disposition": "attachment; filename=direct-assigned-domainusers.xlsx",
                               "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
-
 
 
 class ReportDirectDomainUserAssignment(ReportInfo):
@@ -107,7 +104,6 @@ class ReportHostsByLocaluser(ReportInfo):
 def report_localadmin_list():
     form = LocalAdminSearchForm()
 
-
     if request.method == 'POST':
         username = form.Username.data
         domain = form.Domain.data
@@ -152,7 +148,6 @@ def report_localadmin_list():
         members = GroupMember.query.all()
 
     return render_template('local_admin_list.html',form=form, members=members)
-
 
 
 class ReportHostsByLocaluser(ReportInfo):
