@@ -120,7 +120,7 @@ def hosts_report_services_by_usercontext():
                                    form=form,
                                    download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
     else:
-        return render_template('service_search_list.html',
+        return render_template('service_startnamesearch_list.html',
                                form=form,
                                download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
 

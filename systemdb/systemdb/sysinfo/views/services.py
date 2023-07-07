@@ -4,13 +4,82 @@ from sqlalchemy import desc,and_
 from .. import sysinfo_bp
 
 from ...models.sysinfo import Host, Service
-
+from ..forms.services import ServiceSearchForm
+from ..export_func import generate_services_excel
 
 @sysinfo_bp.route('/services/', methods=['GET'])
 def service_list():
     services = Service.query.all()
     return render_template('service_list.html', services=services)
 
+@sysinfo_bp.route('/services/search/', methods=['GET', 'POST'])
+def service_search_list():
+    form = ServiceSearchForm()
+
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            name = form.Name.data
+            systemname = form.SystemName.data
+            displayname = form.DisplayName.data
+            pathname = form.PathName.data
+            started = form.Started.data
+            startmode = form.StartMode.data
+            startname = form.SystemName.data
+            invertName = form.InvertName.data
+            invertDisplayName = form.InvertDisplayName.data
+            invertSystemName = form.InvertSystemName.data
+            invertPathName = form.InvertPathName.data
+            invertStartMode = form.InvertStartMode.data
+            invertStartName = form.InvertStartName.data
+
+            if len(name) > 0 :
+                if invertName == False:
+                    filters.append(Service.Name.ilike("%"+name+"%"))
+                else:
+                    filters.append(Service.Name.notilike("%"+name+"%"))
+            if len(systemname) > 0:
+                if invertSystemName == False:
+                    filters.append(Service.SystemName.ilike("%"+systemname+"%"))
+                else:
+                    filters.append(Service.SystemName.notilike("%"+systemname+"%"))
+            if len(pathname) > 0 :
+                if invertPathName == False:
+                    filters.append(Service.PathName.ilike("%"+pathname+"%"))
+                else:
+                    filters.append(Service.PathName.notilike("%"+pathname+"%"))
+            if len(startmode) > 0 :
+                if invertStartMode == False:
+                    filters.append(Service.StartMode.ilike("%"+startmode+"%"))
+                else:
+                    filters.append(Service.StartMode.notilike("%"+startmode+"%"))
+            if len(startname) > 0 :
+                if invertStartName == False:
+                    filters.append(Service.StartName.ilike("%"+startname+"%"))
+                else:
+                    filters.append(Service.StartName.notilike("%"+startname+"%"))
+            if len(displayname) > 0 :
+                if invertDisplayName == False:
+                    filters.append(Service.DisplayName.ilike("%"+displayname+"%"))
+                else:
+                    filters.append(Service.DisplayName.notilike("%"+displayname+"%"))
+            if len(started) > 0 :
+                filters.append(Service.Started.ilike("%"+started+"%"))
+
+            services = Service.query.filter(*filters).all()
+
+            if 'download' in request.form:
+                output = generate_services_excel(services=services)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=services.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+        else:
+            return render_template('service_search_list.html', form=form)
+    else:
+        services = Service.query.all()
+
+    return render_template('service_search_list.html', form=form, services=services)
 
 @sysinfo_bp.route('/services/<int:id>', methods=['GET'])
 def service_detail(id):

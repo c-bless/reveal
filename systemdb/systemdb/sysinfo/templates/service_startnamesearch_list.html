@@ -1,5 +1,5 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% from "_formhelpers.html" import render_field, render_check_field, render_submit_field %}
 {% set title = "Services" %}
 {% block page_title %} Services {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
@@ -15,41 +15,13 @@
     <form class="form-horizontal" method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.Name) }}
-                            {{ render_check_field_sm2(form.InvertName) }}
+                    {{ render_field(form.Startname) }}
+                    {{ render_check_field(form.Invert) }}
 
-
-                            {{ render_field_sm2(form.DisplayName) }}
-                            {{ render_check_field_sm2(form.InvertDisplayName) }}
-
-
-                            {{ render_field_sm2(form.SystemName) }}
-                            {{ render_check_field_sm2(form.InvertSystemName) }}
-
-                            {{ render_field_sm2(form.PathName) }}
-                            {{ render_check_field_sm2(form.InvertPathName) }}
-
-                        </div>
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.Started) }}
-
-                            {{ render_field_sm2(form.StartMode) }}
-                            {{ render_check_field_sm2(form.InvertStartMode) }}
-
-
-                            {{ render_field_sm2(form.StartName) }}
-                            {{ render_check_field_sm2(form.InvertStartName) }}
-
-
-                        </div>
-                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
                     {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.download) }}
                 </div>
                 <!-- /.card-footer -->
     </form>

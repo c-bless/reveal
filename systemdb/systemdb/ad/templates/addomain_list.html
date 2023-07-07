@@ -31,6 +31,9 @@
                                 <a href="{{url_for('ad.domain_detail',id=d.id)}}" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View
                                 </a>
+                                <a href="{{url_for('ad.domain_export_excel', id=d.id)}}" class="btn btn-default btn-xs">
+                                    <i class="far fa-file-excel"></i> Download
+                                </a>
                             </td>
                           </tr>
                         {% endfor %}

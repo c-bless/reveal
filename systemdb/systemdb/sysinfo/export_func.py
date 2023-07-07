@@ -1,4 +1,3 @@
-
 import os
 from docxtpl import DocxTemplate, RichText
 import xlsxwriter
