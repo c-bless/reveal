@@ -6,8 +6,9 @@
     This PowerShell script is to fetch domain information. The collector script is published as part of "systemdb".
     https://bitbucket.org/cbless/systemdb
 
+
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.1
+    Version:    0.2.3
     License:    GPL
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -19,18 +20,15 @@
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
                                 amount of attributes about computer accounts. It should be used for smaller domains.
 
-    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins", "Enterprise Admins".
-                            "Schema Admins", "DNS Admins". It also collects a larger amount of attributes about computer
-                            accounts.
+    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
+                                 larger amount of attributes about computer accounts.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
-                                 "Enterprise Admins", "Schema Admins", "DNS Admins". It also collects a smaller amount
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
                                  of attributes about computer accounts. It could be used for larger domains.
 
 
-    Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.1
-    License:    GPL
 
     .INPUTS
     None
@@ -44,7 +42,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.1"
+$version="0.2.3"
 $script_type ="full"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"

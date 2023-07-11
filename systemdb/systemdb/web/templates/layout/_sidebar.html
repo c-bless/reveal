@@ -94,79 +94,7 @@
             </ul>
           </li>
         </ul>
-      <!--
-        <ul class="nav nav-treeview" style="display: block;">
-          <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="fas fa-book nav-icon"></i>
-                <p>
-                  Reports (Excel)
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="{{ url_for('sysinfo.hosts_report_lastupdate', days=180) }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Last update &gt 180 days</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="{{url_for('sysinfo.hosts_report_winlogon')}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Password in Winlogon</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="{{url_for('sysinfo.hosts_report_ps2')}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>PowerShell 2.0 enabled</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview" style="display: none;">
-                  <li class="nav-item">
-                    <a href="{{url_for('sysinfo.hosts_report_smbv1')}}" class="nav-link">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>SMBv1 Enabled</p>
-                    </a>
-                  </li>
-              </ul>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="{{url_for('sysinfo.hosts_report_wsh')}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>WSH Enabled</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="{{url_for('sysinfo.hosts_report_wshremote')}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>WSH Remote Enabled</p>
-                  </a>
-                </li>
-              </ul>
-              <ul class="nav nav-treeview" style="display: none;">
-                <li class="nav-item">
-                  <a href="{{url_for('sysinfo.hosts_report_domainadmin')}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Administrators Grp(Domain Admins)</p>
-                  </a>
-                </li>
-              </ul>
-          </li>
-        </ul>-->
-
       </li>
-
-
-
 
       <li class="nav-header"></li>
       <li class="nav-item menu">
@@ -238,6 +166,31 @@
             <a href="{{url_for('ad.groups_list')}}" class="nav-link">
               <i class="fa fa-users nav-icon"></i>
               <p>Groups</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-header"></li>
+      <li class="nav-item menu">
+        <a href="#" class="nav-link">
+          <i class="fas fa-solid nav-item"></i>
+          <p>
+            Data Import
+            <i class="fas fa-angle-left right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{{url_for('importer.upload')}}" class="nav-link">
+              <i class="fa fa-upload nav-icon"></i>
+              <p>Upload Files</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{url_for('importer.list_uploaded_files')}}" class="nav-link">
+              <i class="fa fa-tasks nav-icon"></i>
+              <p>Import Files</p>
             </a>
           </li>
         </ul>

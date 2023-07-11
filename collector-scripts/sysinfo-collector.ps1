@@ -7,7 +7,7 @@
     https://bitbucket.org/cbless/systemdb
 
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.2.2
+    Version:    0.2.3
     License:    GPL
 
     .INPUTS
@@ -159,8 +159,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteStartElement("Hotfixes")
             
         if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
-            $hotfixes = Get-HotFix | Sort-Object -Property InstalledOn -Descending
-               
+            try{
+                $hotfixes = Get-HotFix | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
+            } catch{
+                $hotfixes = Get-HotFix
+            }
             if ( $hotfixes.Length -gt 0 ){
                 $lastUpdate = $hotfixes[0]
                 $xmlWriter.WriteAttributeString("LastUpdate",  [string] $lastUpdate.InstalledOn);
@@ -176,8 +179,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteEndElement() # hotfix
             }
         } else {
-            $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering | Sort-Object -Property InstalledOn -Descending
-        
+            try{
+                $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
+            } catch {
+                $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering 
+            }
             if ( $hotfixes.Length -gt 0 ){
                 $lastUpdate = $hotfixes[0]
                 $xmlWriter.WriteAttributeString("LastUpdate",  [string] $lastUpdate.InstalledOn);
@@ -327,9 +333,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 }
                 $xmlWriter.WriteElementString("Executable",[string]$bin);
                 
-                $space2 = $bin.IndexOf(" ")
+               
+                $space2 = $bin.IndexOf('"')
                 if ($space2 -ne -1){
-                    $bin = '$bin'
+                    $bin =$bin.Replace('"','')
                 }
 
                 $acl = get-acl -Path $bin -ErrorAction SilentlyContinue

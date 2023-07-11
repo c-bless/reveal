@@ -30,7 +30,7 @@ class ServiceSearchForm(FlaskForm):
     SystemName = StringField('Systemname',
                              validators=[Regexp(regex="^([a-zA-Z0-9 \.\-\_]+)?$", message="Invalid input")])
     PathName = StringField('PathName',
-                           validators=[Regexp(regex="^([a-zA-Z0-9 \.\:\\\-\_]+)?$", message="Invalid input")])
+                           validators=[Regexp(regex='^([a-zA-Z0-9 \\\.\-\:\(\)\_]+)?$', message="Invalid input")])
     Started = StringField('Started', validators=[Regexp(regex="^([a-zA-Z]+)?$", message="Invalid input")])
     StartMode = StringField('StartMode', validators=[Regexp(regex="^([a-zA-Z0-9 \.\-\_]+)?$", message="Invalid input")])
     StartName = StringField('StartName', validators=[Regexp(regex="^([a-zA-Z0-9 \.\-\_]+)?$", message="Invalid input")])

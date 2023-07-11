@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_wtf.csrf import CSRFProtect
 
 from .models.db import db
 from .api.ma import ma
@@ -12,7 +13,7 @@ import os
 bootstrap = Bootstrap()
 babel = Babel()
 toolbar = DebugToolbarExtension()
-
+csrf = CSRFProtect()
 
 def create_app(config_class):
     app = Flask(__name__)
@@ -21,6 +22,8 @@ def create_app(config_class):
     _dir = os.path.dirname(os.path.abspath(__file__))
     app.template_folder = os.path.join(_dir, "web/templates")
     app.static_folder = os.path.join(_dir, "web/static")
+
+    csrf.init_app(app)
 
     db.init_app(app)
 
@@ -52,6 +55,9 @@ def register_blueprints(app):
 
     from .ad import ad_bp
     app.register_blueprint(ad_bp)
+
+    from .importer import import_bp
+    app.register_blueprint(import_bp)
 
 
 

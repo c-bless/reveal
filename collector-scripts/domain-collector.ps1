@@ -7,7 +7,7 @@
     https://bitbucket.org/cbless/systemdb
 
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.1
+    Version:    0.2.3
     License:    GPL
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -19,12 +19,12 @@
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
                                 amount of attributes about computer accounts. It should be used for smaller domains.
 
-    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins", "Enterprise Admins".
-                            "Schema Admins", "DNS Admins". It also collects a larger amount of attributes about computer
-                            accounts.
+    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
+                                 larger amount of attributes about computer accounts.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
-                                 "Enterprise Admins", "Schema Admins", "DNS Admins". It also collects a smaller amount
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
                                  of attributes about computer accounts. It could be used for larger domains.
 
 
@@ -40,7 +40,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.1"
+$version="0.2.3"
 $script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -49,7 +49,12 @@ import-module ActiveDirectory -ErrorAction SilentlyContinue
 #############################################################################################################
 # Definition for which domain groups an enumeration of memberships will be done
 #############################################################################################################
-$groups_to_enum = @("Domain Admins", "Enterprise Admins", "Schema Admins", "DNSAdmins")
+# Domain Admins -> "-512"
+# Hyper-V-Administrators -> "-578" "S-1-5-32-578"
+# Schema-Admins -> "-518"
+# Enterprise-Admins -> "-519"
+# ProtectedUsers -> "525"
+$group_sids_to_enum = @("-512", "S-1-5-32-578", "-518", "-519" , "-525")
 
 try{
     # check if command from activedirectory module is available. If if it not installed (command above would fail), it can be imported manually before executing the script. 
@@ -376,26 +381,31 @@ try{
                                 $xmlWriter.WriteElementString("SID", [string] $g.SID);
                                 $xmlWriter.WriteElementString("MemberOfStr", [string] $g.MemberOf);
                                 $xmlWriter.WriteStartElement("Members");
-                                if ($groups_to_enum -contains $g.SamAccountName ) {
-                                    Write-Host "[*] - Collecting members of group: $g.SamAccountName " 
-                                    try{
-                                        $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
-                                        foreach ($m in $members) {
+                                try{
+                                    foreach ($s in $group_sids_to_enum) {
+                                        $sid = [string] $g.SID
+                                        if ($sid.endswith($s) ){
+                                            Write-Host "[*] - Collecting members of group: $g.SamAccountName "
                                             try{
-                                                $xmlWriter.WriteStartElement("Member");
-                                                $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
-                                                $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
-                                                $xmlWriter.WriteAttributeString("name", [string] $m.Name)
-                                                $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
-                                                $xmlWriter.WriteEndElement(); # Member
+                                                $members = Get-ADGroupMember -Identity $g.SamAccountName -ErrorAction SilentlyContinue
+                                                foreach ($m in $members) {
+                                                    try{
+                                                        $xmlWriter.WriteStartElement("Member");
+                                                        $xmlWriter.WriteAttributeString("SamAccountName", [string] $m.SamAccountName)
+                                                        $xmlWriter.WriteAttributeString("SID", [string] $m.SID)
+                                                        $xmlWriter.WriteAttributeString("name", [string] $m.Name)
+                                                        $xmlWriter.WriteAttributeString("distinguishedName", [string] $m.distinguishedName)
+                                                        $xmlWriter.WriteEndElement(); # Member
+                                                    }catch{
+                                                        # Ignore this Member object and try to parse the next. No Tag will be added for this one.
+                                                    }
+                                                }
                                             }catch{
-                                                # Ignore this Member object and try to parse the next. No Tag will be added for this one. 
+                                                # Failed executions will be ignored and no Member tags will be added to Members
                                             }
                                         }
-                                    }catch{
-                                        # Failed executions will be ignored and no Member tags will be added to Members
                                     }
-                                }
+                                }catch{}
                                 $xmlWriter.WriteEndElement(); # Members
                                 $xmlWriter.WriteEndElement(); # ADGroup         
                             } catch {

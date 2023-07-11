@@ -9,6 +9,15 @@
     </div>
 {% endmacro %}
 
+{% macro render_file_field(field) %}
+  <div class="form-group row">
+        <div class="form-check">
+          {{ field(class="custom-file-input", **kwargs)|safe }}
+          {{ field.label(class="custom-file-label") | safe }}
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro render_check_field_sm2(field) %}
   <div class="form-group row">
       <div class="offset-sm-2 col-sm-10">

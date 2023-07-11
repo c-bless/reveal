@@ -12,6 +12,11 @@ class Config(object):
     LOG_LEVEL = logging.DEBUG
     DEBUG=True
 
+    # 200 MB
+    MAX_CONTENT_LENGTH = 1024 * 1024 * 200
+    UPLOAD_EXTENSIONS = ['.xml']
+    UPLOAD_DIR = os.path.abspath(os.path.join(basedir, os.pardir))+ "/uploads/"
+
     LANGUAGES = ['en', 'de']
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'systemdb.sqlite')

@@ -1,0 +1,40 @@
+{% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% from "_formhelpers.html" import render_submit_field %}
+
+{% block title_table %} Available Files {% endblock title_table %}
+
+
+{% block datatable %}
+{{ super() }}
+<table class="table table-bordered table-striped mb-none" id="datatable-editable">
+    <thead>
+        <tr>
+            <th width="80%"> Filename </th>
+            <th width="20%"> Actions </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if uploaded_files %}
+            {% for u in uploaded_files %}
+              <tr>
+                <td> {{ u }} </td>
+                <td> <a href="{{ url_for('importer.import_file_byname', file=u) }}" class="btn btn-default btn-xs">
+                        <i class="glyphicon glyphicon-eye-open"></i> Import</a>
+              </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="2">No uploaded files found!</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+<form class="form-horizontal" method="post" action="{{ url_for('importer.import_all') }}"
+                                  enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    {{ form.Submit }}
+</form>
+
+{% endblock datatable %}

@@ -10,7 +10,7 @@ class ProductSearchForm(FlaskForm):
 
     Version = StringField('Version', validators=[Regexp(regex='^([a-zA-Z0-9 \.\-\_]+)?$', message="Invalid input")])
     Host = StringField('Host', validators=[Regexp(regex='^([a-zA-Z0-9 \.\-\_]+)?$', message="Invalid input")])
-    InstallLocation = StringField('InstallLocation', validators=[Regexp(regex='^([a-zA-Z0-9 \.\-\:\(\)\_]+)?$',
+    InstallLocation = StringField('InstallLocation', validators=[Regexp(regex='^([a-zA-Z0-9 \\\.\-\:\(\)\_]+)?$',
                                                                         message="Invalid input")])
 
     InvertCaption = BooleanField('Invert Caption')

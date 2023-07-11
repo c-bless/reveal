@@ -68,3 +68,4 @@ target/
 
 /systemdb/systemdb.sqlite-journal
 /systemdb/systemdb/web/static/*
+/uploads/*.xml
