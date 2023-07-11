@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.2.2"
+$version="0.2.3"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"

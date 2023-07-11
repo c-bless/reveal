@@ -50,11 +50,10 @@ import-module ActiveDirectory -ErrorAction SilentlyContinue
 # Definition for which domain groups an enumeration of memberships will be done
 #############################################################################################################
 # Domain Admins -> "-512"
-# Hyper-V-Administrators -> "-578" "S-1-5-32-578"
 # Schema-Admins -> "-518"
 # Enterprise-Admins -> "-519"
 # ProtectedUsers -> "525"
-$group_sids_to_enum = @("-512", "S-1-5-32-578", "-518", "-519" , "-525")
+$group_sids_to_enum = @("-512","-518", "-519" , "-525")
 
 try{
     # check if command from activedirectory module is available. If if it not installed (command above would fail), it can be imported manually before executing the script. 

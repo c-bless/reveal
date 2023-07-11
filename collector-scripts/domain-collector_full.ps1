@@ -6,7 +6,6 @@
     This PowerShell script is to fetch domain information. The collector script is published as part of "systemdb".
     https://bitbucket.org/cbless/systemdb
 
-
     Author:     Christoph Bless (bitbucket@cbless.de)
     Version:    0.2.3
     License:    GPL
@@ -29,7 +28,6 @@
                                  of attributes about computer accounts. It could be used for larger domains.
 
 
-
     .INPUTS
     None
     
@@ -47,11 +45,6 @@ $script_type ="full"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 import-module ActiveDirectory -ErrorAction SilentlyContinue
-
-#############################################################################################################
-# Definition for which domain groups an enumeration of memberships will be done
-#############################################################################################################
-$groups_to_enum = @("Domain Admins", "Enterprise Admins", "Schema Admins", "DNSAdmins")
 
 try{
     # check if command from activedirectory module is available. If if it not installed (command above would fail), it can be imported manually before executing the script. 

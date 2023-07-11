@@ -17,16 +17,15 @@
     The amount of data collected by the script differs depending on the version of the domain-collector script.
 
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
-                                amount of attributes about computer accounts. It should be used for smaller domains
-                                (a few hundred computers / users).
+                                amount of attributes about computer accounts. It should be used for smaller domains.
 
-    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins", "Enterprise Admins".
-                            "Schema Admins", "DNS Admins". It also collects a larger amount of attributes about computer
-                            accounts.
+    domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
+                                 larger amount of attributes about computer accounts.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
-                                 "Enterprise Admins", "Schema Admins", "DNS Admins". It also collects a smaller amount
-                                 of attributes about computer accounts. It could be used for larger
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
+                                 of attributes about computer accounts. It could be used for larger domains.
 
     .INPUTS
     None
@@ -50,11 +49,10 @@ import-module ActiveDirectory -ErrorAction SilentlyContinue
 # Definition for which domain groups an enumeration of memberships will be done
 #############################################################################################################
 # Domain Admins -> "-512"
-# Hyper-V-Administrators -> "-578" "S-1-5-32-578"
 # Schema-Admins -> "-518"
 # Enterprise-Admins -> "-519"
 # ProtectedUsers -> "525"
-$group_sids_to_enum = @("-512", "S-1-5-32-578", "-518", "-519" , "-525")
+$group_sids_to_enum = @("-512", "-518", "-519" , "-525")
 
 
 try{

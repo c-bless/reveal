@@ -84,16 +84,16 @@ Example (full group enumeration and more computer properties):
 
 ### Import Data ###
 
-Data can be imported via `flask import <type> <file>`. Type could be either **host** (collected via *sysinfo-collector.ps1*), **domain** (collected via *domain-collector* scripts) or **dir** to specify a directory containing results from collector scripts (both types).
+Data can be imported via `flask import file <file>` or  `flask import dir <dir>`. The *import file* command can be used to import data collected via *sysinfo-collector.ps1* or *domain-collector* scripts. The *import file* command can import multiple outputs within a directory.
 
 Example (import result from *sysinfo-collector.ps1*):
 ```
-flask import host /path/to/SysInfo-Collector.xml
+flask import file /path/to/SysInfo-Collector.xml
 ```
 
 Example (import result from *domain-collector* scripts):
 ```
-flask import domain /path/to/Domain-Collector.xml
+flask import file /path/to/Domain-Collector.xml
 ```
 
 Example (import directory with results from collector scripts):
