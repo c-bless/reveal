@@ -7,7 +7,7 @@
     https://bitbucket.org/cbless/systemdb
 
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.2.3
+    Version:    0.3
     License:    GPL
 
     .INPUTS
@@ -809,6 +809,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #######################################################################
         # Defender Status / Settings
         #######################################################################
+        Write-Host "[*] Checking Defender settings"
         # Get-MpPreference
         # Get-MpComputerStatus
 
@@ -836,10 +837,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement() # Defender
         }
 
-
         #######################################################################
         # Printers
         #######################################################################
+        Write-Host "[*] Checking if printers are installed"
         if (Get-Command Get-Printer -ea SilentlyContinue) {
             $printers = Get-Printer
             $xmlWriter.WriteStartElement("Printers")
@@ -860,6 +861,195 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Proxy
         #######################################################################
         # [System.Net.WebProxy]::GetDefaultProxy()
+
+        
+        #######################################################################
+        # Additional checks for Entries in Windows Registry  
+        #######################################################################
+        Write-Host "[*] Checking additional entries in Windows Registry"
+        $registry_checks = New-Object System.Collections.ArrayList  
+
+        # Sticky Keys
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Sticky Keys disabled'
+                Description = 'Checks if Sticky Keys are disabled (Press SHIFT 5 times)'
+                Path        = 'HKCU:\Control Panel\Accessibility\StickyKeys\'
+                Key         = 'Flags'
+                Expected    = '506'
+            }
+        )
+
+        # Filter Keys
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Filter Keys disabled'
+                Description = 'Checks if Filter Keys are disabled (Hold right SHIFT for 12 seconds)'
+                Path        = 'HKCU:\Control Panel\Accessibility\Keyboard Response\'
+                Key         = 'Flags'
+                Expected    = '122'
+            }
+        )
+
+        # Toggle Keys
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Toggle Keys disabled'
+                Description = 'Checks if Toggle Keys are disabled (Hold NUMLOCK for 5 seconds)'
+                Path        = 'HKCU:\Control Panel\Accessibility\ToggleKeys\'
+                Key         = 'Flags'
+                Expected    = '58'
+            }
+        )
+
+        # Mouse Keys
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Mouse Keys disabled'
+                Description = 'Checks if Mouse Keys are disabled (SHIFT + ALT + NUMLOCK)'
+                Path        = 'HKCU:\Control Panel\Accessibility\MouseKeys\'
+                Key         = 'Flags'
+                Expected    = '59'
+            }
+        )
+
+        # Windows Key Disabled
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Windows Key disabled'
+                Description = 'Checks if Windows Keys are disabled.'
+                Path        = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
+                Key         = 'NoWinKeys'
+                Expected    = 0x1
+            }
+        )
+
+        # Access to CMD blocked
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'CMD Blocked'
+                Description = 'Checks if access to CMD is blocked.'
+                Path        = 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\System\'
+                Key         = 'DisableCMD'
+                Expected    = '2'
+            }
+        )
+
+        # Access to Registry Tools blocked
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Registry Tools Blocked'
+                Description = 'Checks if access to Registry tools is blocked.'
+                Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
+                Key         = 'DisableRegistryTools'
+                Expected    = '1'
+            }
+        )
+
+        # Access to control panel blocked
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'Control Panel Blocked'
+                Description = 'Checks if access to control panel is blocked.'
+                Path        = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
+                Key         = 'NoControlPanel'
+                Expected    = '1'
+            }
+        )
+
+        # Access to TaskManager blocked
+        [void]$registry_checks.Add(
+            [PSCustomObject]@{
+                Category    = 'Hardening'
+                Tags        = 'HMI Hardening, CITRIX Hardening'
+                Name        = 'TaskManager Blocked'
+                Description = 'Checks if access to task manager is blocked.'
+                Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
+                Key         = 'DisableTaskMgr'
+                Expected    = '1'
+            }
+        )
+
+        #########################
+        # Perform Registry Checks
+        ######################### 
+
+        $registry_check_results = New-Object System.Collections.ArrayList  
+        foreach ($c in $registry_checks){
+            $result = [PSCustomObject]@{
+                Category    = $c.Category
+                Tags        = $c.Tags
+                Name        = $c.Name
+                Description = $c.Description
+                Path        = $c.Path
+                Key         = $c.Key
+                Expected    = $c.Expected
+                KeyExists   = $false
+                ValueMatch  = $false
+                CurrentValue= ''
+            }
+            try{ 
+                $path = [string] $c.Path
+                if (Test-Path $path){
+                    $key = [string] $c.Key
+                    if ((get-item $path  -ea SilentlyContinue).Property -contains $key) {
+                        $result.KeyExists = $true
+                        $value = Get-ItemProperty -Path $path -Name $key -ErrorAction SilentlyContinue
+                        $value = [string] ($value).$key
+                        $expected = [string] $c.Expected
+                        $result.CurrentValue = $value
+                        # both are casted to string -> compare with -eq
+                        if ($expected -eq $value){ 
+                            $result.ValueMatch = $true
+                        } else{
+                            $result.ValueMatch = $false
+                        }
+                    } 
+                }else{
+                    $result.KeyExists = $false
+                }
+                [void]$registry_check_results.Add($result)
+            } catch {}
+        }
+        
+        #########################
+        # Add results to XML
+        ######################### 
+
+        $xmlWriter.WriteStartElement("AdditionalRegistryChecks")
+        foreach ($c in $registry_check_results){
+            $xmlWriter.WriteStartElement("RegistryCheck")
+            $xmlWriter.WriteAttributeString("Category",[string] $c.Category)
+            $xmlWriter.WriteAttributeString("Name", [string] $c.Name)
+            $xmlWriter.WriteElementString("Description", [string] $c.Description)
+            try {
+                $xmlWriter.WriteElementString("Tags", [string] $c.Tags)
+            }catch{}
+            $xmlWriter.WriteElementString("Path", [string] $c.Path)
+            $xmlWriter.WriteElementString("Key", [string] $c.Key)
+            $xmlWriter.WriteElementString("Expected", [string] $c.Expected)
+            $xmlWriter.WriteElementString("KeyExists", [string] $c.KeyExists)
+            $xmlWriter.WriteElementString("ValueMatch", [string] $c.ValueMatch)
+            $xmlWriter.WriteElementString("CurrentValue", [string] $c.CurrentValue)
+            $xmlWriter.WriteEndElement() # RegistryCheck
+        }
+        $xmlWriter.WriteEndElement() # AdditionalRegistryChecks
 
         #######################################################################
         # Adding ConfigChecks 

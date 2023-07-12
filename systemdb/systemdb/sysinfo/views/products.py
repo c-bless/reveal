@@ -1,5 +1,6 @@
 from flask import render_template, url_for, request, Response
-from sqlalchemy import desc,and_
+from flask_login import login_required
+from sqlalchemy import and_
 
 from .. import sysinfo_bp
 
@@ -8,13 +9,14 @@ from ..forms.products import ProductSearchForm
 from ..export_func import generate_products_excel
 
 @sysinfo_bp.route('/products/', methods=['GET'])
+@login_required
 def product_list():
     products = Product.query.all()
     return render_template('product_list.html', products=products)
 
 
-
 @sysinfo_bp.route('/products/search/', methods=['GET', 'POST'])
+@login_required
 def product_search_list():
     form = ProductSearchForm()
 

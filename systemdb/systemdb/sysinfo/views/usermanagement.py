@@ -1,5 +1,5 @@
-from flask import render_template, url_for, request, Response
-from sqlalchemy import desc,and_
+from flask import render_template
+from flask_login import login_required
 
 from .. import sysinfo_bp
 
@@ -7,6 +7,7 @@ from ...models.sysinfo import Host, Group, User
 
 
 @sysinfo_bp.route('/groups/<int:id>', methods=['GET'])
+@login_required
 def group_detail(id):
     group = Group.query.get_or_404(id)
     host = Host.query.get_or_404(group.Host_id)
@@ -14,6 +15,7 @@ def group_detail(id):
 
 
 @sysinfo_bp.route('/users/<int:id>', methods=['GET'])
+@login_required
 def user_detail(id):
     user = User.query.get_or_404(id)
     host = Host.query.get_or_404(user.Host_id)

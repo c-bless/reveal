@@ -1,10 +1,10 @@
 from flask import render_template, Response, url_for
-import datetime
+from flask_login import login_required
 
 from .. import sysinfo_bp
+
 from ..export_func import generate_printer_excel_brief, generate_printer_excel_full
 
-from ...models.sysinfo import Host
 from ...api.sysinfo.querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
 
 from . import ReportInfo
@@ -14,12 +14,15 @@ from . import ReportInfo
 ####################################################################
 
 @sysinfo_bp.route('/report/filerprinter/', methods=['GET'])
+@login_required
 def hosts_report_fileprinter():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)
     return render_template('printer_hosts_list.html', printer_matches=printer_matches)
 
+
 @sysinfo_bp.route('/report/filerprinter/excel/brief', methods=['GET'])
+@login_required
 def hosts_report_filerprinter_excel_brief():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)
@@ -28,7 +31,9 @@ def hosts_report_filerprinter_excel_brief():
                     headers={"Content-disposition": "attachment; filename=printer-hosts-matches-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
+
 @sysinfo_bp.route('/report/filerprinter/excel/full', methods=['GET'])
+@login_required
 def hosts_report_filerprinter_excel_full():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)

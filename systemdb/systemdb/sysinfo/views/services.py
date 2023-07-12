@@ -1,5 +1,5 @@
-from flask import render_template, url_for, request, Response
-from sqlalchemy import desc,and_
+from flask import render_template, request, Response
+from flask_login import login_required
 
 from .. import sysinfo_bp
 
@@ -7,12 +7,16 @@ from ...models.sysinfo import Host, Service
 from ..forms.services import ServiceSearchForm
 from ..export_func import generate_services_excel
 
+
 @sysinfo_bp.route('/services/', methods=['GET'])
+@login_required
 def service_list():
     services = Service.query.all()
     return render_template('service_list.html', services=services)
 
+
 @sysinfo_bp.route('/services/search/', methods=['GET', 'POST'])
+@login_required
 def service_search_list():
     form = ServiceSearchForm()
 
@@ -81,7 +85,9 @@ def service_search_list():
 
     return render_template('service_search_list.html', form=form, services=services)
 
+
 @sysinfo_bp.route('/services/<int:id>', methods=['GET'])
+@login_required
 def service_detail(id):
     service = Service.query.get_or_404(id)
     host = Host.query.get_or_404(service.Host_id)

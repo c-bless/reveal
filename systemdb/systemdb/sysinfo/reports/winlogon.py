@@ -1,4 +1,5 @@
 from flask import render_template, Response, url_for
+from flask_login import login_required
 
 from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
@@ -10,6 +11,7 @@ from . import ReportInfo
 # Hosts with DefaultPassword in Registry
 ####################################################################
 @sysinfo_bp.route('/report/winlogon', methods=['GET'])
+@login_required
 def hosts_report_winlogon():
     hosts = Host.query.filter(Host.DefaultPassword != "").all()
     return render_template('host_list.html', hosts=hosts,
@@ -18,6 +20,7 @@ def hosts_report_winlogon():
 
 
 @sysinfo_bp.route('/report/winlogon/excel/full', methods=['GET'])
+@login_required
 def hosts_report_winlogon_excel_full():
     hosts = Host.query.filter(Host.DefaultPassword != "").all()
     output = generate_hosts_excel(hosts)
@@ -27,6 +30,7 @@ def hosts_report_winlogon_excel_full():
 
 
 @sysinfo_bp.route('/report/winlogon/excel/brief', methods=['GET'])
+@login_required
 def hosts_report_winlogon_excel_brief():
     hosts = Host.query.filter(Host.DefaultPassword != "").all()
     output = generate_hosts_excel_brief(hosts)

@@ -1,5 +1,5 @@
 from flask import render_template, abort, Response, redirect, url_for
-import datetime
+from flask_login import login_required
 
 from . import sysinfo_bp
 
@@ -13,12 +13,14 @@ from .export_func import generate_products_excel
 
 
 @sysinfo_bp.route('/export/templates', methods=['GET'])
+@login_required
 def template_list():
     templates = os.listdir(template_dir)
     return render_template('template_list.html', templates=templates, title="Available templates")
 
 
 @sysinfo_bp.route('/hosts/export/word/<template>', methods=['GET'])
+@login_required
 def hosts_export_docx(template):
     hosts = Host.query.all()
     if template not in os.listdir(template_dir):
@@ -32,6 +34,7 @@ def hosts_export_docx(template):
 
 
 @sysinfo_bp.route('/hosts/export/excel/', methods=['GET'])
+@login_required
 def hosts_export_excel():
     hosts = Host.query.all()
     output = generate_hosts_excel(hosts)
@@ -41,6 +44,7 @@ def hosts_export_excel():
 
 
 @sysinfo_bp.route('/hosts/export/excel/brief', methods=['GET'])
+@login_required
 def hosts_export_excel_brief():
     hosts = Host.query.all()
     output = generate_hosts_excel_brief(hosts)
@@ -50,6 +54,7 @@ def hosts_export_excel_brief():
 
 
 @sysinfo_bp.route('/hosts/<int:id>/export/word', methods=['GET'])
+@login_required
 def host_export_word(id):
     host = Host.query.get_or_404(id)
     template = "host_detail_template.docx"
@@ -65,6 +70,7 @@ def host_export_word(id):
 
 
 @sysinfo_bp.route('/services/export/excel', methods=['GET'])
+@login_required
 def service_export_excel():
     services = Service.query.all()
     output = generate_services_excel(services)
@@ -75,6 +81,7 @@ def service_export_excel():
 
 
 @sysinfo_bp.route('/products/export/excel', methods=['GET'])
+@login_required
 def product_export_excel():
     products = Product.query.all()
     output = generate_products_excel(products)

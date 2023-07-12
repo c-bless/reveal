@@ -7,9 +7,11 @@ from .forms import UploadFileForm, ImportAllForm
 from .utils import import_file_once
 from ..models.files import ImportedFile
 from ..models.db import db
+from flask_login import login_required
 
 
 @import_bp.route('/upload/', methods=['GET'])
+@login_required
 def upload():
     form = UploadFileForm()
     return render_template("upload.html", title="Upload", form=form)

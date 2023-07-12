@@ -1,4 +1,5 @@
-from flask import url_for, render_template
+from flask import render_template
+from flask_login import login_required
 from .. import sysinfo_bp
 
 class ReportInfo(object):

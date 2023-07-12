@@ -1,5 +1,5 @@
 from flask import render_template, Response, url_for
-
+from flask_login import login_required
 from .. import sysinfo_bp
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
@@ -10,6 +10,7 @@ from . import ReportInfo
 # Hosts with WSUS over http
 ####################################################################
 @sysinfo_bp.route('/report/wsus-http/excel/full', methods=['GET'])
+@login_required
 def hosts_report_wsus_http_excel_full():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
     output = generate_hosts_excel(hosts)
@@ -19,6 +20,7 @@ def hosts_report_wsus_http_excel_full():
 
 
 @sysinfo_bp.route('/report/wsus-http/excel/brief', methods=['GET'])
+@login_required
 def hosts_report_wsus_http_excel_brief():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
     output = generate_hosts_excel_brief(hosts)
@@ -28,6 +30,7 @@ def hosts_report_wsus_http_excel_brief():
 
 
 @sysinfo_bp.route('/report/wsus-http', methods=['GET'])
+@login_required
 def hosts_report_wsus_http():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
     return render_template('host_list.html', hosts=hosts,

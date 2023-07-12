@@ -1,15 +1,19 @@
 from flask import render_template, Response, url_for
+from flask_login import login_required
 
 from .. import sysinfo_bp
+
 from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 from ...models.sysinfo import Host
+
 from . import ReportInfo
 
 ####################################################################
 # Hosts with enabled SMBv1
 ####################################################################
 @sysinfo_bp.route('/report/smbv1/excel/full', methods=['GET'])
+@login_required
 def hosts_report_smbv1_excel_full():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel(hosts)
@@ -19,6 +23,7 @@ def hosts_report_smbv1_excel_full():
 
 
 @sysinfo_bp.route('/report/smbv1/excel/brief', methods=['GET'])
+@login_required
 def hosts_report_smbv1_excel_brief():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     output = generate_hosts_excel_brief(hosts)
@@ -28,6 +33,7 @@ def hosts_report_smbv1_excel_brief():
 
 
 @sysinfo_bp.route('/report/smbv1', methods=['GET'])
+@login_required
 def hosts_report_smbv1():
     hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
     return render_template('host_list.html', hosts=hosts,

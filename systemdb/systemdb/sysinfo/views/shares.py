@@ -1,5 +1,5 @@
-from flask import render_template, url_for, request, Response
-from sqlalchemy import desc,and_
+from flask import render_template
+from flask_login import login_required
 
 from .. import sysinfo_bp
 
@@ -7,6 +7,7 @@ from ...models.sysinfo import Host, Share
 
 
 @sysinfo_bp.route('/shares/<int:id>', methods=['GET'])
+@login_required
 def share_detail(id):
     share = Share.query.get_or_404(id)
     host = Host.query.get_or_404(share.Host_id)

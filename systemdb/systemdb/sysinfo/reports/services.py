@@ -1,5 +1,5 @@
 from flask import render_template, Response, url_for, request
-from flask.views import MethodView
+from flask_login import login_required
 
 from sqlalchemy import and_
 
@@ -14,6 +14,7 @@ from . import ReportInfo
 # Hosts with UQSP vulnerabilities
 ####################################################################
 @sysinfo_bp.route('/report/services/uqsp/', methods=['GET'])
+@login_required
 def hosts_report_services_uqsp():
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                                          Service.PathName.contains(" "),
@@ -24,6 +25,7 @@ def hosts_report_services_uqsp():
 
 
 @sysinfo_bp.route('/report/services/uqsp/excel', methods=['GET'])
+@login_required
 def hosts_report_services_uqsp_excel():
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                                          Service.PathName.contains(" "),
@@ -51,6 +53,7 @@ class ReportUQSP(ReportInfo):
 # Services by ACL
 ####################################################################
 @sysinfo_bp.route('/report/services/by-acl/', methods=['GET', 'POST'])
+@login_required
 def hosts_report_services_by_acl():
     form = ServiceAclSearchForm()
 
@@ -99,6 +102,7 @@ class ReportServiceByPermission(ReportInfo):
 # Services by user context
 ####################################################################
 @sysinfo_bp.route('/report/services/by-usercontext/', methods=['GET', 'POST'])
+@login_required
 def hosts_report_services_by_usercontext():
     form = ServiceUserContextSearchForm()
 

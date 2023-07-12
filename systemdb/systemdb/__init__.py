@@ -1,19 +1,24 @@
+import uuid
+import os
+
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_wtf.csrf import CSRFProtect
+from flask_login import LoginManager
 
 from .models.db import db
+from .models.auth import AuthUser
 from .api.ma import ma
 from .api import register_api
-
-import os
 
 bootstrap = Bootstrap()
 babel = Babel()
 toolbar = DebugToolbarExtension()
 csrf = CSRFProtect()
+login_manager = LoginManager()
+
 
 def create_app(config_class):
     app = Flask(__name__)
@@ -26,6 +31,16 @@ def create_app(config_class):
     csrf.init_app(app)
 
     db.init_app(app)
+
+    login_manager.session_protection = "strong"
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        # ensure user_id is UUID
+        id = str(uuid.UUID(user_id))
+        return AuthUser.query.get(id)
 
     # initialize extensions
     bootstrap.init_app(app)
@@ -46,9 +61,10 @@ def create_app(config_class):
 
     return app
 
+
 def register_blueprints(app):
-    from .home import home as home_bp
-    app.register_blueprint(home_bp)
+    from .auth import auth_bp
+    app.register_blueprint(auth_bp)
 
     from .sysinfo import sysinfo_bp
     app.register_blueprint(sysinfo_bp)
@@ -58,7 +74,6 @@ def register_blueprints(app):
 
     from .importer import import_bp
     app.register_blueprint(import_bp)
-
 
 
 def register_errorhandlers(app):
@@ -79,3 +94,6 @@ def register_errorhandlers(app):
 def register_commands(app):
     from .importer.commands import import_cli
     app.cli.add_command(import_cli)
+
+    from .auth.commands import user_cli
+    app.cli.add_command(user_cli)

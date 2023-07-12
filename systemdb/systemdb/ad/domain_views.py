@@ -1,4 +1,5 @@
 from flask import render_template
+from flask_login import login_required
 
 from ..models.activedirectory import ADDomain, ADTrust, ADDomainController, ADPasswordPolicy, ADUser, ADGroup, ADComputer, ADGroupMember
 from sqlalchemy import and_
@@ -6,12 +7,14 @@ from . import ad_bp
 
 
 @ad_bp.route('/ad/domains', methods=['GET'])
+@login_required
 def domain_list():
     domains = ADDomain.query.all()
     return render_template('addomain_list.html', domains=domains)
 
 
 @ad_bp.route('/ad/domain/<int:id>', methods=['GET'])
+@login_required
 def domain_detail(id):
     domain = ADDomain.query.get_or_404(id)
     dc_list = ADDomainController.query.filter(ADDomainController.Domain_id == domain.id).all()
@@ -31,6 +34,7 @@ def domain_detail(id):
 
 
 @ad_bp.route('/ad/trusts', methods=['GET'])
+@login_required
 def trust_list():
     trusts = ADTrust.query.all()
     return render_template('adtrust_list.html', trusts=trusts)

@@ -1,4 +1,5 @@
 from flask import render_template, Response, url_for, request
+from flask_login import login_required
 from sqlalchemy import and_
 from .. import sysinfo_bp
 from ..export_func import generate_userassignment_excel, generate_hosts_excel
@@ -25,12 +26,14 @@ def get_direct_domainuser_assignments():
 
 
 @sysinfo_bp.route('/reports/usermgmt/assigment/', methods=['GET'])
+@login_required
 def usermgmt_assignment_list():
     members = get_direct_domainuser_assignments()
     return render_template('userassignment_list.html',members=members)
 
 
 @sysinfo_bp.route('/report/usermgmt/assignment/excel/full', methods=['GET'])
+@login_required
 def usermgmt_assignment_excel_full():
     members = get_direct_domainuser_assignments()
     output = generate_userassignment_excel(members)
@@ -56,6 +59,7 @@ class ReportDirectDomainUserAssignment(ReportInfo):
 # Get hosts by local user
 #####################################################################################
 @sysinfo_bp.route('/reports/hosts/by-localuser/', methods=['GET','POST'])
+@login_required
 def report_hosts_by_localuser_list():
     form = HostByLocalUserSearchForm()
 
@@ -101,6 +105,7 @@ class ReportHostsByLocaluser(ReportInfo):
 # Get local admins
 #####################################################################################
 @sysinfo_bp.route('/reports/localadmins/', methods=['GET','POST'])
+@login_required
 def report_localadmin_list():
     form = LocalAdminSearchForm()
 

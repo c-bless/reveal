@@ -1,5 +1,6 @@
 from flask import render_template, url_for, request, Response
-from sqlalchemy import desc,and_
+from flask_login import login_required
+from sqlalchemy import and_
 
 from .. import sysinfo_bp
 
@@ -9,12 +10,14 @@ from ..export_func import generate_hosts_excel, generate_hosts_excel_brief
 
 
 @sysinfo_bp.route('/hosts/', methods=['GET'])
+@login_required
 def host_list():
     hosts = Host.query.all()
     return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_export_excel"))
 
 
 @sysinfo_bp.route('/hosts/search/', methods=['GET', 'POST'])
+@login_required
 def host_search_list():
     form = HostSearchForm()
 
@@ -101,12 +104,14 @@ def host_search_list():
 
 
 @sysinfo_bp.route('/hosts/<int:id>', methods=['GET'])
+@login_required
 def host_detail(id):
     host = Host.query.get_or_404(id)
     return render_template('host_details.html', host=host)
 
 
 @sysinfo_bp.route('/hosts/<int:id>/services/', methods=['GET'])
+@login_required
 def host_service_list(id):
     services = Service.query.filter(Service.Host_id == id).all()
     return render_template('service_list.html', services=services)

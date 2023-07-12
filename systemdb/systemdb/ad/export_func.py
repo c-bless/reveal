@@ -1,8 +1,6 @@
-
 import os
-from docxtpl import DocxTemplate, RichText
 import xlsxwriter
-from io import StringIO, BytesIO
+from io import BytesIO
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__),"../../.."))
 template_dir = "{0}/reports/templates/sysinfo/".format(basedir)

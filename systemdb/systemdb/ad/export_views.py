@@ -1,6 +1,5 @@
 from flask import render_template, abort, Response, redirect, url_for
-from sqlalchemy import and_
-
+from flask_login import login_required
 from . import ad_bp
 
 from ..models.activedirectory import ADComputer, ADUser,ADDomain, ADPasswordPolicy, ADDomainController, ADTrust, ADGroup, ADGroupMember
@@ -11,6 +10,7 @@ import xlsxwriter
 from io import StringIO, BytesIO
 
 @ad_bp.route('/ad/computer/export/excel/', methods=['GET'])
+@login_required
 def export_computer_excel():
     computer_list = ADComputer.query.all()
 
@@ -23,6 +23,7 @@ def export_computer_excel():
     return redirect(url_for('ad.computer_list'))
 
 @ad_bp.route('/ad/users/export/excel/', methods=['GET'])
+@login_required
 def export_user_excel():
     user_list = ADUser.query.all()
 
@@ -38,6 +39,7 @@ def export_user_excel():
 
 
 @ad_bp.route('/ad/domain/<int:id>/export', methods=['GET'])
+@login_required
 def domain_export_excel(id):
     domain = ADDomain.query.get_or_404(id)
 
