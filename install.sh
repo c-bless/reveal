@@ -46,6 +46,10 @@ pip install --use-pep517 -r requirements.txt
 echo "[*] Initializing database and importing EoL dates"
 flask import eol "${BASEDIR}/update-data/win-support-dates.csv"
 
+echo "[*] Creating first user account. Ensure to store generated password!"
+echo "[!] Username: admin"
+flask user create admin
+
 echo "[*] removing temporary data"
 rm -r $TMPDIR
 

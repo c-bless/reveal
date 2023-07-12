@@ -1,0 +1,42 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout/base_layout.html" %}
+
+{% block content %}
+
+<div class="row m-1">
+  <div class="col-md-6">
+    <div class="col-md-6">
+
+      <!-- Profile Image -->
+      <div class="card card-primary card-outline">
+        <div class="card-body box-profile">
+
+          <h3 class="profile-username text-center">{{ user.Username }}</h3>
+
+
+          <ul class="list-group list-group-unbordered mb-3">
+            <li class="list-group-item">
+              <b>Username</b> <a class="float-right">{{ user.Username }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>Active</b> <a class="float-right">{{ user.Active }}</a>
+            </li>
+            <li class="list-group-item">
+              <b>UUID</b> <a class="float-right">{{ user.UUID }}</a>
+            </li>
+          </ul>
+          <strong><i class="fas fa-book mr-1"></i> API-Token</strong>
+
+        <p class="text-muted">{{ user.API_TOKEN }}</p>
+
+        <a href="{{ url_for('auth.renew_token') }}" class="btn btn-primary btn-block"><b>Regenerate Token</b></a>
+          <a href="{{ url_for('auth.change_pw') }}" class="btn btn-primary btn-block"><b>Change Password</b></a>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

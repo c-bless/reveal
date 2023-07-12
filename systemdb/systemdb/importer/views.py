@@ -1,12 +1,10 @@
-from flask import abort, render_template, request, flash, current_app
+from flask import render_template, flash, current_app
 from werkzeug.utils import secure_filename
 
 import os
 from . import import_bp
 from .forms import UploadFileForm, ImportAllForm
 from .utils import import_file_once
-from ..models.files import ImportedFile
-from ..models.db import db
 from flask_login import login_required
 
 
@@ -18,6 +16,7 @@ def upload():
 
 
 @import_bp.route('/upload/', methods=['POST'])
+@login_required
 def upload_post():
     form = UploadFileForm()
     if form.validate_on_submit():
@@ -38,6 +37,7 @@ def upload_post():
 
 
 @import_bp.route('/list-uploaded/', methods=['GET'])
+@login_required
 def list_uploaded_files():
     uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
 
@@ -46,6 +46,7 @@ def list_uploaded_files():
 
 
 @import_bp.route("/import-file/<file>", methods=['GET'])
+@login_required
 def import_file_byname(file):
     uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
     filename = secure_filename(file)
@@ -65,6 +66,7 @@ def import_file_byname(file):
 
 
 @import_bp.route('/import/all/', methods=['POST'])
+@login_required
 def import_all():
     uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
 

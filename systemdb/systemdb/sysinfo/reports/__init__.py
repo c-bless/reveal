@@ -108,6 +108,7 @@ def get_report_list():
 
 
 @sysinfo_bp.route('/reports/', methods=['GET'])
+@login_required
 def report_list():
 
     get_report_list()
