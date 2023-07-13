@@ -1,0 +1,35 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout/base_layout.html" %}
+{% from "_formhelpers.html" import render_pw_field_sm2,  render_submit_field %}
+
+{% block content %}
+
+<div class="row m-1">
+  <div class="col-md-6">
+    <div class="col-md-6">
+
+      <!-- Profile Image -->
+      <div class="card card-primary card-outline">
+
+
+          <form action="{{ url_for('auth.change_pw_post') }}" method="post">
+          <div class="card-body box-profile">
+
+              {{ form.hidden_tag() }}
+              {{ render_pw_field_sm2(form.password) }}
+              {{ render_pw_field_sm2(form.password2) }}
+
+
+        </div>
+        <!-- /.card-body -->
+            <div class="card-footer">
+              {{ render_submit_field(form.submit) }}
+            </div>
+            </form>
+      </div>
+      <!-- /.card -->
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
