@@ -68,40 +68,41 @@ class ReportInfo(object):
 def get_report_list():
     report_plugin_list = []
 
-    from .admins import ReportDomAdminMemberOfLocalAdmin, ReportAutologonIsLocalAdmin
+    from webapp.systemdb.sysinfo.reports.admins import ReportDomAdminMemberOfLocalAdmin, ReportAutologonIsLocalAdmin
     report_plugin_list.append(ReportDomAdminMemberOfLocalAdmin())
     report_plugin_list.append(ReportAutologonIsLocalAdmin())
 
-    from .powershell import ReportPS2Istalled
+    from webapp.systemdb.sysinfo.reports.powershell import ReportPS2Istalled
     report_plugin_list.append(ReportPS2Istalled())
 
-    from .updates import ReportLastUpdate, ReportEOL
+    from webapp.systemdb.sysinfo.reports.updates import ReportLastUpdate, ReportEOL
     report_plugin_list.append(ReportLastUpdate())
     report_plugin_list.append(ReportEOL())
 
-    from .winlogon import ReportPWInWinlogon
+    from webapp.systemdb.sysinfo.reports.winlogon import ReportPWInWinlogon
     report_plugin_list.append(ReportPWInWinlogon())
 
-    from .smb import ReportSMBv1
+    from webapp.systemdb.sysinfo.reports.smb import ReportSMBv1
     report_plugin_list.append(ReportSMBv1())
 
-    from .wsh import ReportWSHEnabled, ReportWSHRemoteEnabled
+    from webapp.systemdb.sysinfo.reports.wsh import ReportWSHEnabled, ReportWSHRemoteEnabled
     report_plugin_list.append(ReportWSHEnabled())
     report_plugin_list.append(ReportWSHRemoteEnabled())
 
-    from .wsus import ReportWSUSHttp
+    from webapp.systemdb.sysinfo.reports.wsus import ReportWSUSHttp
     report_plugin_list.append(ReportWSUSHttp())
 
-    from .usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser
+    from webapp.systemdb.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser
     report_plugin_list.append(ReportDirectDomainUserAssignment())
     report_plugin_list.append(ReportHostsByLocaluser())
 
-    from .services import ReportUQSP, ReportServiceByPermission, ReportServiceByUsercontext
+    from webapp.systemdb.sysinfo.reports.services import ReportUQSP, ReportServiceByPermission, \
+        ReportServiceByUsercontext
     report_plugin_list.append(ReportUQSP())
     report_plugin_list.append(ReportServiceByPermission())
     report_plugin_list.append(ReportServiceByUsercontext())
 
-    from .printers import ReportFilePrinterInstalled
+    from webapp.systemdb.sysinfo.reports.printers import ReportFilePrinterInstalled
     report_plugin_list.append(ReportFilePrinterInstalled())
 
     return report_plugin_list

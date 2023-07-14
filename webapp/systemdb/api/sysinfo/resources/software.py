@@ -64,8 +64,8 @@ class ProductListByHostView(MethodView):
              summary="Find all products of a specific host"
              )
     @blp.response(HTTPStatus.OK.value, ProductSchema(many=True))
-    def get(self):
-        return Product.query.filter(Product.Host_id == id).all()
+    def get(self, host_id):
+        return Product.query.filter(Product.Host_id == int(host_id)).all()
 
 
 @blp.route("/services/<int:service_id>")

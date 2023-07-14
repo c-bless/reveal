@@ -106,7 +106,7 @@ def forest2db(adforest):
         if "Sites" == e.tag:
             for s in e.getchildren():
                 if "Site" == s.tag:
-                    if (len(s.text) > 0):
+                    if len(s.text) > 0:
                         site = ADForestSite()
                         site.Site = s.text
                         site.Forest_id = forest.id

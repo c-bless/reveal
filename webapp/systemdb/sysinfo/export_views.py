@@ -1,15 +1,15 @@
 from flask import render_template, abort, Response, redirect, url_for
 from flask_login import login_required
 
-from . import sysinfo_bp
+from webapp.systemdb.sysinfo import sysinfo_bp
 
-from ..models.sysinfo import Host, Service, Product
+from webapp.systemdb.models.sysinfo import Host, Service, Product
 
 import os
-from .export_func import template_detail_dir, template_dir
-from .export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, \
+from webapp.systemdb.sysinfo.export_func import template_detail_dir, template_dir
+from webapp.systemdb.sysinfo.export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, \
     generate_services_excel, generate_hosts_excel_brief
-from .export_func import generate_products_excel
+from webapp.systemdb.sysinfo.export_func import generate_products_excel
 
 
 @sysinfo_bp.route('/export/templates', methods=['GET'])

@@ -8,8 +8,8 @@ from webapp.systemdb.ad import ad_bp
 from webapp.systemdb.ad.export_func import generate_computer_excel, generate_user_excel
 from webapp.systemdb.models.activedirectory import ADComputer, ADUser, ADDomain, ADPasswordPolicy, ADDomainController, \
     ADTrust
-from .export_func import create_user_worksheet, create_computer_worksheet, create_trust_worksheet, create_dc_worksheet, \
-    create_domain_worksheet
+from webapp.systemdb.ad.export_func import create_user_worksheet, create_computer_worksheet, create_trust_worksheet, \
+    create_dc_worksheet, create_domain_worksheet
 
 
 @ad_bp.route('/ad/computer/export/excel/', methods=['GET'])

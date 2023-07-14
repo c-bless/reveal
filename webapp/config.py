@@ -31,7 +31,7 @@ class Config(object):
     # API settings
     API_TITLE = "SYSTEMDB API"
     API_VERSION = "v0.3"
-    API_ENABLED = False
+    API_ENABLED = True
     OPENAPI_VERSION = "3.0.2"
     OPENAPI_JSON_PATH = "api-spec.json"
     OPENAPI_URL_PREFIX = "/"

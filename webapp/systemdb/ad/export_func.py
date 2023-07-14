@@ -63,7 +63,7 @@ def create_user_worksheet(workbook, user_list=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for r in (rows):
+    for r in rows:
         for c in r:
             if col == 16:
                 worksheet.write(row, col, str(c), wrap_format)
@@ -109,7 +109,7 @@ def create_computer_worksheet(workbook, computer_list=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for r in (rows):
+    for r in rows:
         for c in r:
             if col == 16:
                 worksheet.write(row, col, str(c), wrap_format)
@@ -150,7 +150,7 @@ def create_domain_worksheet(workbook, domain, policy_list=[]):
     # Start from the first cell. Rows and columns are zero indexed.
     row = 1
     # Iterate over the data and write it out row by row.
-    for r in (rows):
+    for r in rows:
         header , value = r
         worksheet.write(row, 0, str(header), bold_format)
         worksheet.write(row, 1 , str(value))
@@ -179,7 +179,7 @@ def create_domain_worksheet(workbook, domain, policy_list=[]):
     row = 21
     col = 0
     # Iterate over the data and write it out row by row.
-    for r in (rows):
+    for r in rows:
         for c in r:
             worksheet.write(row, col, str(c))
             col += 1
@@ -216,7 +216,7 @@ def create_dc_worksheet(workbook, dc_list=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for r in (rows):
+    for r in rows:
         for c in r:
             if col == 12:
                 worksheet.write(row, col, str(c), wrap_format)
@@ -258,7 +258,7 @@ def create_trust_worksheet(workbook, trust_list=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for r in (rows):
+    for r in rows:
         for c in r:
             worksheet.write(row, col, str(c))
             col += 1

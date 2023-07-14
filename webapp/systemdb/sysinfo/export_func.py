@@ -100,7 +100,7 @@ def generate_hosts_excel(hosts=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for host in (rows):
+    for host in rows:
         for c in host:
             if ( col > 7) and (col <= 14):
                 worksheet.write(row, col, str(c), wrap_format)
@@ -148,7 +148,7 @@ def generate_hosts_excel_brief(hosts=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for host in (rows):
+    for host in rows:
         for c in host:
             worksheet.write(row, col, str(c))
             col += 1
@@ -196,9 +196,9 @@ def generate_services_excel(services=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for service in (rows):
+    for service in rows:
         for c in service:
-            if (col == 14):
+            if col == 14:
                 worksheet.write(row, col, str(c), cell_format)
             else:
                 worksheet.write(row, col, str(c))
@@ -244,7 +244,7 @@ def generate_products_excel(products=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for service in (rows):
+    for service in rows:
         for c in service:
             worksheet.write(row, col, str(c))
             col += 1
@@ -289,7 +289,7 @@ def generate_userassignment_excel(members=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for host in (rows):
+    for host in rows:
         for c in host:
             worksheet.write(row, col, str(c))
             col += 1

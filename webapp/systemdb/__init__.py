@@ -21,6 +21,7 @@ csrf = CSRFProtect()
 login_manager = LoginManager()
 jwt = JWTManager()
 
+
 def create_app(config_class):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -43,16 +44,6 @@ def create_app(config_class):
         id = str(uuid.UUID(user_id))
         return AuthUser.query.get(id)
 
-    @login_manager.request_loader
-    def load_user_from_request(request):
-        api_key = request.headers.get('Authorization')
-        if api_key:
-            user = AuthUser.query.filter_by(api_key=api_key).first()
-            if user:
-                return user
-
-        # finally, return None if both methods did not login the user
-        return None
 
     # initialize JWT extention for API authentication
     from webapp.systemdb.api.auth import register_jwt_handler
