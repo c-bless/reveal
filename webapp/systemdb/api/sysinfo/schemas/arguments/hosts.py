@@ -1,4 +1,4 @@
-from ....ma import ma
+from webapp.systemdb.api.ma import ma
 from marshmallow.validate import Regexp
 from marshmallow import fields
 

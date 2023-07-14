@@ -1,7 +1,8 @@
 from webapp.systemdb.api.ma import ma
 from flask_marshmallow.fields import fields
 
-from .....models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions, NetAdapter, DefenderSettings, Printer, ConfigCheck
+from webapp.systemdb.models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions, NetAdapter, \
+    DefenderSettings, Printer, ConfigCheck
 
 
 class PSInstalledVersionsSchema(ma.SQLAlchemyAutoSchema):

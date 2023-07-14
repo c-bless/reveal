@@ -40,7 +40,7 @@ python -m venv venv
 source venv/bin/activate
 
 echo "[*] Installing python dependencies" 
-cd systemdb
+cd app
 pip install --use-pep517 -r requirements.txt
 
 echo "[*] Initializing database and importing EoL dates"

@@ -13,6 +13,7 @@ def is_url_allowed(url, host):
 
 
 @auth_bp.route('/', methods=['GET'])
+@login_required
 def index():
     return render_template('index.html')
 
