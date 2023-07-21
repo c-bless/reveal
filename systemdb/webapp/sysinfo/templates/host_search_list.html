@@ -1,0 +1,119 @@
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+
+{% set title = "Hosts" %}
+{% block page_title %} Hosts {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Host List {% endblock menu_l2 %}
+
+
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.Hostname) }}
+                            {{ render_check_field_sm2(form.InvertHostname) }}
+
+                            {{ render_field_sm2(form.Domain) }}
+                            {{ render_check_field_sm2(form.InvertDomain) }}
+
+                            {{ render_field_sm2(form.DomainRole) }}
+                            {{ render_check_field_sm2(form.InvertDomainRole) }}
+                            {{ render_field_sm2(form.SystemGroup) }}
+                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+
+                            {{ render_field_sm2(form.Location) }}
+                            {{ render_check_field_sm2(form.InvertLocation) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.OSVersion) }}
+                            {{ render_check_field_sm2(form.InvertOSVersion) }}
+
+                            {{ render_field_sm2(form.OSBuildNumber) }}
+                            {{ render_check_field_sm2(form.InvertOSBuildNumber) }}
+
+                            {{ render_field_sm2(form.OSName) }}
+                            {{ render_check_field_sm2(form.InvertOSName) }}
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {{ render_submit_field(form.search) }}
+                    {{ render_submit_field(form.brief) }}
+                    {{ render_submit_field(form.full) }}
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
+
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+                <thead>
+                <tr>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Domain" width="15%">Domain
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="OSName" width="20%">OS Name
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="OSVersion">OS Version
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="OSBuildNumber">OS BuildNumber
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="HyperVisorPresent">HyperVisor Present
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="LastUpdate">Last update
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="SystemGroup">SystemGroup
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Location">Location
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Details">Details
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if hosts %}
+                    {% for h in hosts %}
+                      <tr>
+                        <td> {{ h.Hostname }} </td>
+                        <td> {{ h.Domain }} </td>
+                        <td> {{ h.OSName }} </td>
+                        <td> {{ h.OSVersion }} </td>
+                        <td> {{ h.OSBuildNumber }} </td>
+                        <td> {{ h.HyperVisorPresent }} </td>
+                        <td> {% if h.LastUpdate %} {{ h.LastUpdate.strftime('%d-%m-%Y')}} {% endif %}</td>
+                        <td> {{ h.SystemGroup }} </td>
+                        <td> {{ h.Location }} </td>
+                        <td class="actions">
+                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="10">No hosts found!</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+{% endblock datatable %}

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  webapp:
+    build: ./services/web
+    command: gunicorn --bind 0.0.0.0:8000 systemdb.app:app
+    volumes:
+      - ./services/web/:/app
+      - static_volume:/app/systemdb/webapp/web/static
+      - upload_volume:/app/systemdb/uploads
+      - report_volume:/app/systemdb/reports
+      - update-data:/app/systemdb/update-data
+    ports:
+      - 8000:8000
+    env_file:
+      - ./services/web/webapp.env
+    depends_on:
+      - db
+  webapi:
+    build: ./services/api
+    command: gunicorn --bind 0.0.0.0:8001 systemdb.api:app
+    volumes:
+      - ./services/api/:/systemdb
+    ports:
+      - 8001:8001
+    env_file:
+      - ./services/web/webapp.env
+    depends_on:
+      - db
+      - webapp
+  db:
+    build: ./services/db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  nginx:
+      build: ./services/nginx
+      volumes:
+        - static_volume:/app/systemdb/webapp/web/static
+      ports:
+        - 8080:80
+        - 8443:443
+      depends_on:
+        - webapp
+volumes:
+  postgres_data:
+  static_volume:
+  upload_volume:
+  report_volume:
+  update-data:

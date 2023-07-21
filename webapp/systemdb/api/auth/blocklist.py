@@ -1,2 +1,0 @@
-
-BLOCKLIST = set()

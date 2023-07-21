@@ -67,5 +67,11 @@ target/
 *.sqlite
 
 /systemdb/systemdb.sqlite-journal
-/systemdb/systemdb/web/static/*
+/systemdb/webapp/web/static/*
 /uploads/*.xml
+/systemdb/webapp/web/static/dist/
+/systemdb/webapp/web/static/plugins/
+/tmp/
+/services/web/webapp/
+/services/
+/venv-api/
