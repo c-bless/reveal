@@ -9,11 +9,14 @@
     {{ super() }}
     {% if download_url %}
     <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-    {% else %}
-    <a href="{{ url_for('sysinfo.service_export_excel') }}" class="btn btn-block btn-secondary btn-sm">
-    {% endif %}
         <i class="fas fa-download"> Download (Excel)</i>
     </a>
+    {% else %}
+    <a href="{{ url_for('sysinfo.service_export_excel') }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Download (Excel)</i>
+    </a>
+    {% endif %}
+
 {% endblock download_links %}
 X
 {% block datatable %}

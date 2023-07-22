@@ -14,39 +14,6 @@ blp = Blueprint('ActiveDirectory - Domain', 'ad_domain_api' , url_prefix='/api/a
              description="Review active directory data collected by domain-collector PowerShell scripts.")
 
 
-@blp.route("/domain/<int:id>")
-class DomainByIdView(MethodView):
-
-    @blp.doc(description="Returns the domain with the specified id.",
-             summary="Find a domain by ID"
-             )
-    @blp.response(HTTPStatus.OK.value, ADDomainSchema)
-    def get(self, id):
-        return ADDomain.query.get_or_404(id)
-
-
-@blp.route("/domain/by-name/<string:name>")
-class DomainByNameView(MethodView):
-
-    @blp.doc(description="Returns a list of domains containing the specified name.",
-             summary="Find domains by name"
-             )
-    @blp.response(HTTPStatus.OK.value, ADDomainSchema(many=True))
-    def get(self, name):
-        return ADDomain.query.filter(ADDomain.Name.like("%"+name+"%")).all()
-
-
-@blp.route("/domain/")
-class DomainListView(MethodView):
-
-    @blp.doc(description="Returns a list of all domains. In case no domain is found an empty list is returned.",
-             summary="Find all domains."
-             )
-    @blp.response(HTTPStatus.OK.value, ADDomainSchema(many=True))
-    def get(self):
-        return ADDomain.query.all()
-
-
 @blp.route("/domain/<int:domain_id>/groups/domainadmins/")
 class DomainDomainAdminGroupView(MethodView):
 
