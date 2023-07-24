@@ -79,6 +79,49 @@ class Host(db.Model):
     def __str__(self):
         return self.Hostname
 
+    @staticmethod
+    def find_by_hostname(name, exact_match=False):
+        if exact_match:
+            return Host.query.filter(Host.Hostname == name).all()
+        else:
+            return Host.query.filter(Host.Hostname.ilike('%' + name + '%')).all()
+
+
+    @staticmethod
+    def find_by_domain(name, exact_match=False):
+        if exact_match:
+            return Host.query.filter(Host.Domain == name).all()
+        else:
+            return Host.query.filter(Host.Domain.ilike('%' + name + '%')).all()
+
+    @staticmethod
+    def find_by_os_name(name, exact_match=False):
+        if exact_match:
+            return Host.query.filter(Host.OSName == name).all()
+        else:
+            return Host.query.filter(Host.OSName.ilike('%' + name + '%')).all()
+
+    @staticmethod
+    def find_by_os_buildnumber(buildnumber, exact_match=False):
+        if exact_match:
+            return Host.query.filter(Host.OSBuildNumber == buildnumber).all()
+        else:
+            return Host.query.filter(Host.OSBuildNumber.ilike('%' + buildnumber + '%')).all()
+
+    @staticmethod
+    def find_by_location(name, exact_match=False):
+        if exact_match:
+            return Host.query.filter(Host.Location == name).all()
+        else:
+            return Host.query.filter(Host.Location.ilike('%' + name + '%')).all()
+
+    @staticmethod
+    def find_by_systemgroup(name, exact_match=False):
+        if exact_match:
+            return Host.query.filter(Host.SystemGroup == name).all()
+        else:
+            return Host.query.filter(Host.SystemGroup.ilike('%' + name + '%')).all()
+
 
 class PSInstalledVersions(db.Model):
     __tablename__ = "PSInstalledVersions"
@@ -406,4 +449,24 @@ class RegistryCheck(db.Model):
     def __str__(self):
         return self.Name
 
+    @staticmethod
+    def find_by_name(name, exact_match=False):
+        if exact_match:
+            return RegistryCheck.query.filter(RegistryCheck.Name == name).all()
+        else:
+            return RegistryCheck.query.filter(RegistryCheck.Name.ilike('%'+name+'%')).all()
 
+    @staticmethod
+    def find_by_category(name, exact_match=False):
+        if exact_match:
+            return RegistryCheck.query.filter(RegistryCheck.Category == name).all()
+        else:
+            return RegistryCheck.query.filter(RegistryCheck.Category.ilike('%' + name + '%')).all()
+
+    @staticmethod
+    def find_by_tag(tag):
+        return RegistryCheck.query.filter(RegistryCheck.Tags.ilike('%' + tag + '%')).all()
+
+    @staticmethod
+    def find_by_valuematch(match=True):
+        return RegistryCheck.query.filter(RegistryCheck.ValueMatch == match).all()

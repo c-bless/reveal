@@ -55,7 +55,7 @@ def import_file_by_name(file):
 
     if file_ext.endswith(".xml") and filename in uploaded_files:
         if import_file_once(fullpath):
-            flash('File: {0} uploaded successfully'.format(filename))
+            flash('File: {0} imported successfully'.format(filename))
         else:
             flash('File: {0} already imported'.format(filename))
 
@@ -78,7 +78,10 @@ def import_all():
             fullpath = current_app.config['UPLOAD_DIR'] + filename
 
             if file_ext.endswith(".xml"):
-                import_file_once(fullpath)
+                if import_file_once(fullpath):
+                    flash('File: {0} imported successfully'.format(filename))
+                else:
+                    flash('File: {0} already imported'.format(filename))
                 os.remove(fullpath)
 
     uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])

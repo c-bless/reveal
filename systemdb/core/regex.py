@@ -12,6 +12,11 @@ RE_SYSINFO_PRODUCT_NAME = '^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
 RE_SYSINFO_SERVICE_ACCOUNTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_SERVICE_PERMISSIONSTRING = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
+# Registry Checks
+RE_SYSINFO_REGISTRYCHECK_NAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+
+
+# Active Directory
 RE_AD_DOMAINNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_GROUPNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_FORESTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"

@@ -41,6 +41,8 @@ class AppConfig(object):
 
     API_DOCS = os.environ.get('API_DOCS') or 'http://localhost:8001/docs'
 
+    USE_PROXY = True
+
 
 class ApiConfig(object):
     # import secrets

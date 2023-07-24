@@ -5,7 +5,7 @@ from flask import current_app
 from systemdb.webapp.importer.utils import update_eol
 from systemdb.core.extentions import db
 from systemdb.core.commands.auth import create_user
-from systemdb.core.models.sysinfo import Host, User, Group, GroupMember,Share, ShareACL, ShareACLNTFS, ServiceACL, Service, Hotfix,ConfigCheck, PSInstalledVersions, NetIPAddress, NetAdapter, Product, Printer, DefenderSettings
+from systemdb.core.models.sysinfo import Host, User, Group, GroupMember,Share, ShareACL, ShareACLNTFS, ServiceACL, Service, Hotfix,ConfigCheck, PSInstalledVersions, NetIPAddress, NetAdapter, Product, Printer, DefenderSettings, RegistryCheck
 from systemdb.core.models.activedirectory import ADDomain
 from systemdb.core.models.activedirectory import ADForest, ADForestSite,ADUser, ADUserMembership, ADForestGlobalCatalog, ADGroup , ADTrust, ADComputer,ADGroupMember, ADPasswordPolicy, ADDomainController, ADDCServerRole, ADOperationMasterRole
 from systemdb.core.models.eol import EoL
@@ -46,6 +46,7 @@ def clear_db():
     db.session.query(Product).delete()
     db.session.query(DefenderSettings).delete()
     db.session.query(Printer).delete()
+    db.session.query(RegistryCheck).delete()
     db.session.query(Host).delete()
 
     db.session.query(ADForestSite).delete()

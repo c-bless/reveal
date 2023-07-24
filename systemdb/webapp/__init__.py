@@ -2,6 +2,9 @@ import os
 import uuid
 import sqlalchemy
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+
 from flask import Flask, render_template
 
 from systemdb.core.models.auth import AuthUser
@@ -12,6 +15,7 @@ from systemdb.webapp.extentions import bootstrap
 from systemdb.webapp.extentions import csrf
 from systemdb.webapp.extentions import login_manager
 from systemdb.webapp.extentions import toolbar
+
 
 def create_app(config_class):
     app = Flask(__name__)
@@ -27,6 +31,9 @@ def create_app(config_class):
 
     # import blueprints
     register_blueprints(app)
+
+    if app.config.get("USE_PROXY"):
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     with app.app_context():
         try:

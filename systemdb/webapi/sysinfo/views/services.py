@@ -10,7 +10,7 @@ from systemdb.webapi.sysinfo.schemas.responses.services import ServiceSchema
 
 @bp.get("/hosts/<int:host_id>/services/")
 @bp.auth_required(auth)
-@bp.output(HTTPStatus.OK.value, ServiceSchema(many=True))
+@bp.output(status_code=HTTPStatus.OK, schema=ServiceSchema(many=True))
 @bp.doc(description="Returns a list of all installed services from a specific host.",
         summary="Find all services of a specific host",
         security='ApiKeyAuth')

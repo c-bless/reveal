@@ -11,7 +11,7 @@ This TOOL is licensed under the GNU General Public License in version 3. See htt
 
 The Makefile covers necessary steps for downloading of dependencies, creating Docker Images (with Postgres, Python/Gunicorn and Nginx as Reverse Proxy) and setting up the application.
 
-**Note:** 
+**Note:**
 It is recommended to change db user passwords before building Docker images. Those can be found under:
 * service/db/Dockerfile (Variable: POSTGRES_PASSWORD)
 * service/web/webapp.env (password in connection string: DATABASE_URL)
@@ -19,26 +19,30 @@ It is recommended to change db user passwords before building Docker images. Tho
 
 **Build and Setup**
 1. Download AdminLTE / Bootstrap dependencies via `make deps`
-2. Build Docker Images `make build`. 
-*It is recommended to change db user passwords in environment variables under 'service/db' 
+2. Build Docker Images `make build`. *It is recommended to changes passwords in environment variables before this step.*
 3. Run Docker Images `make run`
 4. Create first user and import End of Life dates `make init-db`. This needs to be done in a secound console window while images are running. (!!! Initial password for user admin is printed to stdout, make sure you note it ;) !!!)
 
 
-**CLI Commands to interact with docker**
+### CLI Commands to interact with dockerized application ###
 
-Needs to be run from root directory of this repository while Docker Images are running
+Needs to be run from root directory of this repository while Docker Images are running.
 
-- Create user: `docker-compose exec webapp flask -e webapp.env db clear`
-- List user accounts (name/UUID): `docker-compose exec webapp flask -e webapp.env user list` 
-- Reset user password and API-Token: `docker-compose exec webapp flask -e webapp.env user reset <USERNAME>` 
-- Clear imported data (hosts, domains, etc.) but keep login user: `docker-compose exec webapp flask -e webapp.env db clear`
-- Import all files within the upload directory of Docker Image: `docker-compose exec webapp flask -e webapp.env import dir /app/uploads` 
+**User Management:**
+
+- Create user (initial password will be printed to stdout): `docker-compose exec webapp flask -e webapp.env user create <USERNAME>`
+- List user accounts (name/UUID): `docker-compose exec webapp flask -e webapp.env user list`
+- Reset user password and API-Token: `docker-compose exec webapp flask -e webapp.env user reset <USERNAME>`
+- Delete user accounts: `docker-compose exec webapp flask -e webapp.env user delete <USERNAME>`
+
+**Imported data:**
+- Clear imported data (hosts, domains, etc.). This will keep login user: `docker-compose exec webapp flask -e webapp.env db clear`
+- Import all files within the upload directory of Docker Image: `docker-compose exec webapp flask -e webapp.env import dir /app/uploads`
 
 
 
 
-## Installation ##
+## Manual installation to run applications locally ##
 
 ### Use download-dependencies.sh ###
 The base directory of the repository contains an installation file called *download-dependencies.sh*. This file will download current version of 3rd-Party dependencies and copy required static files (e.g., of Admin-LTE) to local directories.  
@@ -55,10 +59,10 @@ cd systemdb
 python -m venv venv
 ```
 3. activate virtual environment `source venv\bin\activate`
-4. install requirements (in folder *systemdb*): `pip install -r requirements.txt`
+4. install requirements (in folder *services/web* or *service/api*): `pip install -r requirements.txt`
 
 #### Import End-Of-Life Dates ####
-from cmd in folder systemdb
+from cmd in folder 'update-data'
 ```
 flask import eol ../update-data/win-support-dates.csv
 
@@ -87,7 +91,7 @@ Example (with parameters):
 
 Information can be collected with one of the collector scripts. *domain-collector_full.ps1* collects most information and could be used for smaller domains. It enumerates group memberships for all groups and selects more properties from computer objects.
 *domain-collector_brief.ps1* is selecting less information on computer objects and enumerates only the memberships for the groups "Domain Admins", "Enterprise Admins", "Schema Admins", "DNSAdmins".
-*domain-collector-basic.ps1* is work in progress and selects information without Microsofts AD-Module. Currently only a few things are collected. 
+*domain-collector-basic.ps1* is work in progress and selects information without Microsofts AD-Module. Currently only a few things are collected.
 
 Example (full group enumeration and more computer properties):
 ```
@@ -112,11 +116,17 @@ Example (full group enumeration and more computer properties):
 .\sysinfo-colloctor_full.ps1
 ```
 
-### Import Data ###
 
-Before Running the Webapplication or API you need to set the FLASK_APP environment variable to the corresponding app.
-- For Webapp: `FLASK_APP=systemdb.app:app` 
-- For Webapi: `FLASK_APP=systemdb.api:app`
+### Import Data (by using Docker images) ###
+Files can be uploaded and imported via web interface:
+1. Upload Files: *Import Data* -> *Upload Files* -> choose XML files to upload (results from collector scripts)
+2. Import Files: *Import Data* -> *Import Files* -> Import Files one by one or all at once.
+
+
+### Import Data (without Docker) ###
+
+Needs to be run from root directory of this repository and `FLASK_APP=systemdb.app:app` must be set
+
 
 Data can be imported via `flask import file <file>` or  `flask import dir <dir>`. The *import file* command can be used to import data collected via *sysinfo-collector.ps1* or *domain-collector* scripts. The *import file* command can import multiple outputs within a directory.
 
@@ -135,7 +145,12 @@ Example (import directory with results from collector scripts):
 flask import dir /path/to/result/folder/
 ```
 
+
 ### Start application (after import) ####
+
+Before Running the Webapplication or API you need to set the FLASK_APP environment variable to the corresponding app.
+- For Webapp: `FLASK_APP=systemdb.app:app`
+- For Webapi: `FLASK_APP=systemdb.api:app`
 
 ```
 flask run
@@ -145,3 +160,28 @@ or in debug mode
 ```
 flask --debug run
 ```
+
+if you want to run both applications you need to specify a different port for one application:
+
+```
+flask run --port 8001
+```
+or in debug mode
+
+```
+flask --debug run --port 8001
+```
+### Overview of CLI commands ###
+
+**User Management:**
+
+- Create user (initial password will be printed to stdout): `flask user create <USERNAME>`
+- List user accounts (name/UUID): `flask user list`
+- Reset user password and API-Token: `flask user reset <USERNAME>`
+- Delete user accounts: `flask user delete <USERNAME>`
+
+**Imported data:**
+- Clear imported data (hosts, domains, etc.). This will keep login user: `flask db clear`
+- Import all files within a given directory: `flask import dir <DIR>`
+- Import result from collector script: `flask import file <DIR>`
+- Import all files within a given directory: `flask import dir <DIR>`
