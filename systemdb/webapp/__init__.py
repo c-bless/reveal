@@ -4,9 +4,6 @@ import sqlalchemy
 
 from flask import Flask, render_template
 
-from systemdb.webapp.api import register_api
-from systemdb.webapp.api.ma import ma
-
 from systemdb.core.models.auth import AuthUser
 from systemdb.core.extentions import db
 
@@ -30,9 +27,6 @@ def create_app(config_class):
 
     # import blueprints
     register_blueprints(app)
-
-    if app.config.get('API_ENABLED'):
-        register_api(app)
 
     with app.app_context():
         try:
@@ -62,7 +56,6 @@ def register_extentisons(app: Flask, config_class):
     babel.init_app(app)
     if config_class.DEBUG:
         toolbar.init_app(app)
-    ma.init_app(app)
 
 
 def register_blueprints(app):

@@ -36,7 +36,6 @@ def upload_post():
     return render_template("upload.html", title="Upload", form=form)
 
 
-
 @import_bp.route('/list-uploaded/', methods=['GET'])
 @login_required
 def list_uploaded_files():
@@ -48,7 +47,7 @@ def list_uploaded_files():
 
 @import_bp.route("/import-file/<file>", methods=['GET'])
 @login_required
-def import_file_byname(file):
+def import_file_by_name(file):
     uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
     filename = secure_filename(file)
     file_ext = os.path.splitext(filename)[1]
@@ -81,6 +80,7 @@ def import_all():
             if file_ext.endswith(".xml"):
                 import_file_once(fullpath)
                 os.remove(fullpath)
-                uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
+
+    uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
 
     return render_template('file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")

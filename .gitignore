@@ -75,3 +75,4 @@ target/
 /services/web/webapp/
 /services/
 /venv-api/
+/.obsidian/

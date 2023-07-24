@@ -14,7 +14,7 @@ def domain_list():
     return render_template('addomain_list.html', domains=domains)
 
 
-@ad_bp.route('/ad/domain/<int:id>', methods=['GET'])
+@ad_bp.route('/ad/views/<int:id>', methods=['GET'])
 @login_required
 def domain_detail(id):
     domain = ADDomain.query.get_or_404(id)

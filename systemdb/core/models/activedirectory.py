@@ -16,7 +16,7 @@ class ADDomain(db.Model):
     ComputerContainer = db.Column(db.String(1024), unique=False)
     DistinguishedName = db.Column(db.String(1024), unique=False)
     InfrastructureMaster = db.Column(db.String(1024), unique=False)
-    PasswordPolicies = db.relationship('ADPasswordPolicy', backref='domain', lazy='dynamic')
+    PasswordPolicies = db.relationship('ADPasswordPolicy', backref='views', lazy='dynamic')
     Trusts = db.relationship('ADTrust', back_populates='Domain', lazy='dynamic')
 
     def __repr__(self):

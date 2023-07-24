@@ -18,8 +18,12 @@ class AppConfig(object):
     # 200 MB
     MAX_CONTENT_LENGTH = 1024 * 1024 * 200
     UPLOAD_EXTENSIONS = ['.xml']
-    UPLOAD_DIR = os.path.abspath(os.path.join(basedir, os.pardir))+ "/uploads/"
-    UPDATE_DATA_DIR = os.path.abspath(os.path.join(basedir, os.pardir))+ "/update-data/"
+    UPLOAD_DIR = os.environ.get('UPLOAD_DIR') or \
+                 os.path.abspath(os.path.join(basedir, os.pardir))+ "/uploads/"
+    REPORT_DIR = os.environ.get('REPORT_DIR') or \
+                 os.path.abspath(os.path.join(basedir, os.pardir))+ "/reports/"
+    UPDATE_DATA_DIR = os.environ.get('UPDATE_DATA_DIR') or \
+                      os.path.abspath(os.path.join(basedir, os.pardir))+ "/update-data/"
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(parentdir, 'systemdb.sqlite')
@@ -35,23 +39,7 @@ class AppConfig(object):
 
     TEMPLATES_AUTO_RELOAD = True
 
-    # API settings
-    API_TITLE = "SYSTEMDB API"
-    API_VERSION = "v0.3"
-    API_ENABLED = True
-    OPENAPI_VERSION = "3.0.2"
-    OPENAPI_JSON_PATH = "api-spec.json"
-    OPENAPI_URL_PREFIX = "/"
-    OPENAPI_REDOC_PATH = "/redoc"
-    OPENAPI_REDOC_URL = (
-        "https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"
-    )
-    OPENAPI_SWAGGER_UI_PATH = "/swagger-ui"
-    OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    OPENAPI_RAPIDOC_PATH = "/rapidoc"
-    OPENAPI_RAPIDOC_URL = "https://unpkg.com/rapidoc/dist/rapidoc-min.js"
-
-
+    API_DOCS = os.environ.get('API_DOCS') or 'http://127.0.0.1:8001'
 
 class ApiConfig(object):
     # import secrets
@@ -69,3 +57,6 @@ class ApiConfig(object):
     # one of swagger-ui(default), redoc, elements, rapidoc, and rapipdf
     DOCS_UI = "swagger-ui"
     OPENAPI_VERSION = '3.0.2'
+
+    USE_PROXY = True
+

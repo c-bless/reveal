@@ -11,20 +11,10 @@
 <ul class="navbar-nav">
         <li class="nav-item">
         </li>
-        {% if config['API_ENABLED'] %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarAPIDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            API Doc
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{{url_for('api-docs.openapi_swagger_ui')}}">swagger-ui</a>
-               <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{url_for('api-docs.openapi_redoc')}}">ReDoc</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{url_for('api-docs.openapi_rapidoc')}}">RapiDoc</a>
-          </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ config['API_DOCS'] }}" role="button"><i class="fa fa-wrench">API Docs</i></a>
         </li>
-        {% endif %}
       </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">

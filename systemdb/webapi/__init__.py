@@ -2,6 +2,7 @@ import typing as t
 from flask import Flask
 import sqlalchemy
 import re
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from apiflask import APIFlask
 from apiflask import HTTPTokenAuth
@@ -14,6 +15,7 @@ from systemdb.core.regex import RE_AUTH_TOKEN
 
 from systemdb.webapi.extentions import ma
 from systemdb.webapi.extentions import auth
+
 
 def create_app(config_class: ApiConfig) -> Flask:
     app = APIFlask(__name__, docs_ui="swagger-ui", title='SYSTEMDB API', version='v0.3')
@@ -40,6 +42,11 @@ def register_extentions(app: Flask) -> None:
 def config_api(app: Flask, config_class:ApiConfig) -> None:
     app.config.from_object(config_class)
 
+    if app.config.get("USE_PROXY"):
+        app.wsgi_app = ProxyFix(
+            app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+        )
+
     # openapi.info.description
     app.config['DESCRIPTION'] = """
         Description is something I need to add ;)
@@ -58,6 +65,21 @@ def config_api(app: Flask, config_class:ApiConfig) -> None:
         'url': 'http://www.gnu.org/licenses/'
     }
 
+    app.config['SERVERS'] = [
+        {
+            'name': 'Dev Server',
+            'url': 'http://localhost:5000'
+        },
+        {
+            'name': 'Docker Server',
+            'url': 'http://localhost:8001'
+        },
+        {
+            'name': 'Docker Nginx Server',
+            'url': 'http://localhost:81'
+        }
+    ]
+
     app.security_schemes = {
         'ApiKeyAuth': {
             'type': 'apiKey',
@@ -65,6 +87,7 @@ def config_api(app: Flask, config_class:ApiConfig) -> None:
             'name': 'X-API-Key',
         }
     }
+
 
 def register_auth_handler(auth: HTTPTokenAuth) -> None:
     @auth.verify_token
@@ -76,5 +99,13 @@ def register_auth_handler(auth: HTTPTokenAuth) -> None:
 
 
 def register_blueprints(app: Flask) -> None:
-    from systemdb.webapi.ad.domain import bp as domain_bp
-    app.register_blueprint(domain_bp)
+    from systemdb.webapi.ad import bp as ad_bp
+    app.register_blueprint(ad_bp)
+
+    from systemdb.webapi.sysinfo.views import bp as sysinfo_bp
+    app.register_blueprint(sysinfo_bp)
+
+    from systemdb.webapi.sysinfo.reportviews import report_bp as si_report_bp
+    app.register_blueprint(si_report_bp)
+
+

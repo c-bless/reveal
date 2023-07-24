@@ -36,7 +36,7 @@ def export_user_excel():
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
-@ad_bp.route('/ad/domain/<int:id>/export', methods=['GET'])
+@ad_bp.route('/ad/views/<int:id>/export', methods=['GET'])
 @login_required
 def domain_export_excel(id):
     domain = ADDomain.query.get_or_404(id)
@@ -66,5 +66,5 @@ def domain_export_excel(id):
     output.seek(0)
 
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=ad-domain.xlsx",
+                    headers={"Content-disposition": "attachment; filename=ad-views.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })

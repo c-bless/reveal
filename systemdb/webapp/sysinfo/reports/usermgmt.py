@@ -43,7 +43,7 @@ class ReportDirectDomainUserAssignment(ReportInfo):
             name="Direct user assignments",
             category="User Management",
             tags=["User Management", "User Assignment", "Revoke of Permission"],
-            description='Report all hosts which have domain users directly assigned instead of centrally managed domain groups.',
+            description='Report all hosts which have views users directly assigned instead of centrally managed views groups.',
             views=[("view", url_for("sysinfo.usermgmt_assignment_list"))]
         )
 

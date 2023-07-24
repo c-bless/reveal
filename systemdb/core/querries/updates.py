@@ -2,7 +2,7 @@ from sqlalchemy import and_
 
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.eol import EoL
-from systemdb.webapp.api.sysinfo.schemas.responses.eol import EoLMatchSchema
+from systemdb.webapi.sysinfo.schemas.responses.eol import EoLMatchSchema
 
 
 def get_EoLInfo():

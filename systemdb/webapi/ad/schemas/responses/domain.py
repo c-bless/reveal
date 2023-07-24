@@ -1,4 +1,4 @@
-from systemdb.webapp.api.ma import ma
+from systemdb.webapi.extentions import ma
 from systemdb.core.models.activedirectory import ADDomain
 from systemdb.core.models.activedirectory import ADTrust
 from systemdb.core.models.activedirectory import ADForest

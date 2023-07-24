@@ -42,7 +42,7 @@ def create_user_worksheet(workbook, user_list=[]):
 
     header_data = ["SamAccountName", "Name", "GivenName", "Surname", "SID", "Enabled", "BadLogonCount", "BadPwdCount",
                    "Created", "LastBadPasswordAttempt", "lastLogon", "logonCount", "PasswordExpired", "PasswordLastSet",
-                   "Modified", "memberof", "memberships", "domain"]
+                   "Modified", "memberof", "memberships", "views"]
 
     header_format = workbook.add_format(header_format_dict)
     wrap_format = workbook.add_format(wrap_format_dict)

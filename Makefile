@@ -43,8 +43,18 @@ build:
 	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPI))
 	docker-compose build
 
+run:
+	docker-compose up
+
+stop:
+	docker-compose down -v
+
 init-db:
 	docker-compose exec webapp flask -e webapp.env user create admin
 	docker-compose exec webapp flask -e webapp.env import eol "/app/update-data/win-support-dates.csv"
 
+clear-data:
+	docker-compose exec webapp flask -e webapp.env db clear
 
+reset-admin:
+	docker-compose exec webapp flask -e webapp.env user reset-pw admin

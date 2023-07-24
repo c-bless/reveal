@@ -20,7 +20,7 @@ services:
     build: ./services/api
     command: gunicorn --bind 0.0.0.0:8001 systemdb.api:app
     volumes:
-      - ./services/api/:/systemdb
+      - ./services/api/:/app
     ports:
       - 8001:8001
     env_file:
@@ -37,10 +37,11 @@ services:
       volumes:
         - static_volume:/app/systemdb/webapp/web/static
       ports:
-        - 8080:80
-        - 8443:443
+        - 80:80
+        - 81:81
       depends_on:
         - webapp
+        - webapi
 volumes:
   postgres_data:
   static_volume:

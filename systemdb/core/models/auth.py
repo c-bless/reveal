@@ -30,12 +30,16 @@ class AuthUser(db.Model):
     @staticmethod
     def find_by_UUID(uid: uuid.UUID) :
         uid = str(uuid.UUID(uid)) # verfiy that parameter is a valid UUID
-        return AuthUser.query.filter(AuthUser.UUID == uid).all()
+        return AuthUser.query.filter(AuthUser.UUID == uid).first()
 
     @staticmethod
     def find_by_username(name: str):
-        return AuthUser.query.filter(AuthUser.Username == name).all()
+        return AuthUser.query.filter(AuthUser.Username == name).first()
 
     @staticmethod
     def find_by_token(token: str):
-        return AuthUser.query.filter(AuthUser.API_TOKEN == token).all()
+        return AuthUser.query.filter(AuthUser.API_TOKEN == token).first()
+
+    @staticmethod
+    def find_all():
+        return AuthUser.query.all()

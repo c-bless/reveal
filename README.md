@@ -6,20 +6,50 @@ The scripts in the directory collector-scripts can be used to collect system inf
 This TOOL is licensed under the GNU General Public License in version 3. See http://www.gnu.org/licenses/ for further details.
 
 
+
+## Usage with docker ##
+
+The Makefile covers necessary steps for downloading of dependencies, creating Docker Images (with Postgres, Python/Gunicorn and Nginx as Reverse Proxy) and setting up the application.
+
+**Note:** 
+It is recommended to change db user passwords before building Docker images. Those can be found under:
+* service/db/Dockerfile (Variable: POSTGRES_PASSWORD)
+* service/web/webapp.env (password in connection string: DATABASE_URL)
+* service/api/webapi.env (password in connection string: DATABASE_URL)
+
+**Build and Setup**
+1. Download AdminLTE / Bootstrap dependencies via `make deps`
+2. Build Docker Images `make build`. 
+*It is recommended to change db user passwords in environment variables under 'service/db' 
+3. Run Docker Images `make run`
+4. Create first user and import End of Life dates `make init-db`. This needs to be done in a secound console window while images are running. (!!! Initial password for user admin is printed to stdout, make sure you note it ;) !!!)
+
+
+**CLI Commands to interact with docker**
+
+Needs to be run from root directory of this repository while Docker Images are running
+
+- Create user: `docker-compose exec webapp flask -e webapp.env db clear`
+- List user accounts (name/UUID): `docker-compose exec webapp flask -e webapp.env user list` 
+- Reset user password and API-Token: `docker-compose exec webapp flask -e webapp.env user reset <USERNAME>` 
+- Clear imported data (hosts, domains, etc.) but keep login user: `docker-compose exec webapp flask -e webapp.env db clear`
+- Import all files within the upload directory of Docker Image: `docker-compose exec webapp flask -e webapp.env import dir /app/uploads` 
+
+
+
+
 ## Installation ##
 
-### Use install.sh ###
-The base directory of the repository contains an installation file called *install.sh*. This file will download current version of 3rd-Party dependencies and copy required static files (e.g., of Admin-LTE) to local directories. Furthermore, the script creates a virutal environment, installs required python dependencies and setup the database. 
+### Use download-dependencies.sh ###
+The base directory of the repository contains an installation file called *download-dependencies.sh*. This file will download current version of 3rd-Party dependencies and copy required static files (e.g., of Admin-LTE) to local directories.  
 
-### manual installation ###
-
-#### Install 3rd party dependencies ###
+#### Manually install 3rd party dependencies ###
 1. Download Admin-LTE (e.g., https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip )
 2. extract the zip file and copy *dist* and *plugins* folders to directory *systemdb/systemdb/web/static/*
 
 #### Install python dependencies ####
 1. clone repository: `git clone https://bitbucket.org/cbless/systemdb.git`
-2. create virtual environment
+2. create virtual environment for webapp and webapi (requirement.txt files can be found under 'services/api' and 'services/web')
 ```
 cd systemdb
 python -m venv venv
@@ -83,6 +113,10 @@ Example (full group enumeration and more computer properties):
 ```
 
 ### Import Data ###
+
+Before Running the Webapplication or API you need to set the FLASK_APP environment variable to the corresponding app.
+- For Webapp: `FLASK_APP=systemdb.app:app` 
+- For Webapi: `FLASK_APP=systemdb.api:app`
 
 Data can be imported via `flask import file <file>` or  `flask import dir <dir>`. The *import file* command can be used to import data collected via *sysinfo-collector.ps1* or *domain-collector* scripts. The *import file* command can import multiple outputs within a directory.
 

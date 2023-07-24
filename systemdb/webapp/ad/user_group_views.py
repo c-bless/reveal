@@ -15,7 +15,7 @@ def user_list():
     return render_template('aduser_list.html', users=users)
 
 
-@ad_bp.route('/ad/domain/<int:id>/users', methods=['GET'])
+@ad_bp.route('/ad/views/<int:id>/users', methods=['GET'])
 @login_required
 def user_by_domain_list(id):
     users = ADUser.query.filter(ADUser.Domain_id == id)
@@ -36,7 +36,7 @@ def groups_list():
     return render_template('adgroup_list.html', groups=groups)
 
 
-@ad_bp.route('/ad/domain/<int:id>/groups', methods=['GET'])
+@ad_bp.route('/ad/views/<int:id>/groups', methods=['GET'])
 @login_required
 def groups_by_domain_list(id):
     groups = ADGroup.query.filter(ADGroup.Domain_id==id).all()
