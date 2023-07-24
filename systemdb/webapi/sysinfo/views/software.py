@@ -55,7 +55,7 @@ def get_product_list():
 @bp.doc(description="Return a list of installed products from a specific host.",
         summary="Find all products of a specific host",
         security='ApiKeyAuth')
-@bp.response(HTTPStatus.OK.value, ProductSchema(many=True))
+@bp.response(HTTPStatus.OK, ProductSchema(many=True))
 def get_products_by_host(host_id):
     return Product.query.filter(Product.Host_id == int(host_id)).all()
 
@@ -65,7 +65,7 @@ def get_products_by_host(host_id):
 @bp.doc(description="Return a service based on specified ID",
         summary="Find service by ID",
         security='ApiKeyAuth')
-@bp.response(HTTPStatus.OK.value, ServiceSchema)
+@bp.response(HTTPStatus.OK, ServiceSchema)
 def get_service_by_id(id):
     return Service.query.get_or_404(id)
 
@@ -75,7 +75,7 @@ def get_service_by_id(id):
 @bp.doc(description="Returns a list of all installed services from all hosts.",
         summary="Find all services",
         security='ApiKeyAuth')
-@bp.output(HTTPStatus.OK.value, ServiceSchema(many=True))
+@bp.output(HTTPStatus.OK, ServiceSchema(many=True))
 def get_service_list():
     return Service.query.all()
 

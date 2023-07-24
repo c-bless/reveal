@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.2.3"
+$version="0.3"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -864,7 +864,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         
         #######################################################################
-        # Additional checks for Entries in Windows Registry  
+        # Additional checks for entries in Windows Registry
         #######################################################################
         Write-Host "[*] Checking additional entries in Windows Registry"
         $registry_checks = New-Object System.Collections.ArrayList  

@@ -29,8 +29,8 @@ def get_domains():
 @bp.output(schema=ADDomainSchema,
            status_code=HTTPStatus.OK,
            description="An imported views")
-@bp.doc(description="Returns the views with the specified id.",
-        summary="Find a views by ID",
+@bp.doc(description="Returns the domain with the specified id.",
+        summary="Find a domain by ID",
         security='ApiKeyAuth')
 def get_domain_by_id(id):
         return ADDomain.query.get_or_404(id)

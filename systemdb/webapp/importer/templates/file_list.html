@@ -20,7 +20,7 @@
             {% for u in uploaded_files %}
               <tr>
                 <td> {{ u }} </td>
-                <td> <a href="{{ url_for('importer.import_file_byname', file=u) }}" class="btn btn-default btn-xs">
+                <td> <a href="{{ url_for('importer.import_file_by_name', file=u) }}" class="btn btn-default btn-xs">
                         <i class="glyphicon glyphicon-eye-open"></i> Import</a>
               </tr>
             {% endfor %}

@@ -39,24 +39,23 @@ class AppConfig(object):
 
     TEMPLATES_AUTO_RELOAD = True
 
-    API_DOCS = os.environ.get('API_DOCS') or 'http://127.0.0.1:8001'
+    API_DOCS = os.environ.get('API_DOCS') or 'http://localhost:8001/docs'
+
 
 class ApiConfig(object):
     # import secrets
     # secrets.token_hex(32)
     SECRET_KEY = os.environ.get('SECRET_KEY') or \
                  'e2c943e09c7af7282229cd32c32971bba9b6a2a26abbd7f2c0f8b42a856f02af' # change me!
-    SITE_ROOT_URL = 'http://127.0.0.1:8001'
     LOG_LEVEL = logging.DEBUG
     DEBUG=False
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'systemdb.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(parentdir, 'systemdb.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
 
     # one of swagger-ui(default), redoc, elements, rapidoc, and rapipdf
     DOCS_UI = "swagger-ui"
-    OPENAPI_VERSION = '3.0.2'
 
     USE_PROXY = True
 

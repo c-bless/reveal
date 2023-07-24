@@ -69,6 +69,9 @@ class Host(db.Model):
     Groups = db.relationship('Group', back_populates='Host', lazy='dynamic')
     Shares = db.relationship('Share', back_populates='Host', lazy='dynamic')
     Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
+    ConfigChecks = db.relationship('ConfigCheck', back_populates='Host', lazy='dynamic')
+    RegistryChecks = db.relationship('RegistryCheck', back_populates='Host', lazy='dynamic')
+    Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
 
     def __repr__(self):
         return self.Hostname
@@ -360,6 +363,7 @@ class ShareACLNTFS(db.Model):
         return self.Name
 
 
+
 class ConfigCheck(db.Model):
     __tablename__ = "ConfigCheck"
     id = db.Column(db.Integer, primary_key=True)
@@ -371,10 +375,35 @@ class ConfigCheck(db.Model):
     Result = db.Column(db.String(256), unique=False, nullable=True)
     Message = db.Column(db.String(4096), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="ConfigChecks")
 
     def __repr__(self):
         return self.Name
 
     def __str__(self):
         return self.Name
+
+
+class RegistryCheck(db.Model):
+    __tablename__ = "RegistryCheck"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(150), unique=False, nullable=True)
+    Category = db.Column(db.String(256), unique=False, nullable=True)
+    Description = db.Column(db.String(), unique=False, nullable=True)
+    Tags = db.Column(db.String(), unique=False, nullable=True)
+    Path = db.Column(db.String(), unique=False, nullable=True)
+    Key = db.Column(db.String(256), unique=False, nullable=True)
+    Expected = db.Column(db.String(), unique=False, nullable=True)
+    KeyExists = db.Column(db.Boolean())
+    ValueMatch = db.Column(db.Boolean())
+    CurrentValue = db.Column(db.String(), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="RegistryChecks")
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
+
 

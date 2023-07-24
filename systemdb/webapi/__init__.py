@@ -49,7 +49,7 @@ def config_api(app: Flask, config_class:ApiConfig) -> None:
 
     # openapi.info.description
     app.config['DESCRIPTION'] = """
-        Description is something I need to add ;)
+        This API provides access to data imported via the SYSTEMDB web application. It can be used to automate some analysis activities.
         """
 
     # openapi.info.contact
@@ -66,17 +66,23 @@ def config_api(app: Flask, config_class:ApiConfig) -> None:
     }
 
     app.config['SERVERS'] = [
+
         {
-            'name': 'Dev Server',
-            'url': 'http://localhost:5000'
+            'name': 'Docker Nginx Server',
+            'url': 'http://localhost:81'
         },
+
         {
             'name': 'Docker Server',
             'url': 'http://localhost:8001'
         },
         {
-            'name': 'Docker Nginx Server',
-            'url': 'http://localhost:81'
+            'name': 'Dev Server',
+            'url': 'http://localhost:5001'
+        },
+        {
+            'name': 'Dev Server',
+            'url': 'http://localhost:5000'
         }
     ]
 

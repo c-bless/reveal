@@ -140,6 +140,18 @@
           <a class="nav-link" id="tabs-ps-tab" data-toggle="pill" href="#tabs-ps"
              role="tab" aria-controls="tabs-ps" aria-selected="false">PS Versions</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-printer-tab" data-toggle="pill" href="#tabs-printer"
+             role="tab" aria-controls="tabs-printer" aria-selected="false">Printer</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-configchecks-tab" data-toggle="pill" href="#tabs-configchecks"
+             role="tab" aria-controls="tabs-configchecks" aria-selected="false">ConfigChecks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-registrychecks-tab" data-toggle="pill" href="#tabs-registrychecks"
+             role="tab" aria-controls="tabs-registrychecks" aria-selected="false">RegistryChecks</a>
+        </li>
       </ul>
     </div>
     <div class="card-body">
@@ -730,6 +742,158 @@
             </div>
           </div>
         </div>
+
+        <div class="tab-pane fade" id="tabs-printer" role="tabpanel" aria-labelledby="tabs-printer-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Printer</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>ShareName</th>
+                      <th>PortName</th>
+                      <th>Shared</th>
+                      <th>Published</th>
+                      <th>DriverName</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if host.Printers %}
+                      {% for p in host.Printers %}
+                      <tr>
+                        <td>{{ p.Name }}</td>
+                        <td>{{ p.Type }}</td>
+                        <td>{{ p.ShareName }}</td>
+                        <td>{{ p.PortName }}</td>
+                        <td>{{ p.Shared }}</td>
+                        <td>{{ p.Published }}</td>
+                        <td>{{ p.DriverName }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="7">No printers found!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-configchecks" role="tabpanel" aria-labelledby="tabs-configchecks-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">ConfigChecks</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+
+                    <tr>
+                      <th>Name</th>
+                      <th>Component</th>
+                      <th>Method</th>
+                      <th>Key</th>
+                      <th>Value</th>
+                      <th>Result</th>
+                      <th>Message</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if host.ConfigChecks %}
+                      {% for c in host.ConfigChecks %}
+                      <tr>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.Component }}</td>
+                        <td>{{ c.Method }}</td>
+                        <td>{{ c.Key }}</td>
+                        <td>{{ c.Value }}</td>
+                        <td>{{ c.Result }}</td>
+                        <td>{{ c.Message }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="7">No printers found!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-registrychecks" role="tabpanel" aria-labelledby="tabs-registrychecks-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">RegistryChecks</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+
+                    <tr>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Tags</th>
+                      <th>Path</th>
+                      <th>Key</th>
+                      <th>Expected</th>
+                      <th>KeyExists</th>
+                      <th>ValueMatch</th>
+                      <th>CurrentValue</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if host.RegistryChecks %}
+                      {% for c in host.RegistryChecks %}
+                      <tr>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.Category }}</td>
+                        <td>{{ c.Tags }}</td>
+                        <td>{{ c.Path }}</td>
+                        <td>{{ c.Key }}</td>
+                        <td>{{ c.Expected }}</td>
+                        <td>{{ c.KeyExists }}</td>
+                        <td>{{ c.ValueMatch }}</td>
+                        <td>{{ c.CurrentValue }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="7">No printers found!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
 
       </div>
     </div>

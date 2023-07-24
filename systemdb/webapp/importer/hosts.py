@@ -15,9 +15,15 @@ from systemdb.core.models.sysinfo import ServiceACL
 from systemdb.core.models.sysinfo import PSInstalledVersions
 from systemdb.core.models.sysinfo import DefenderSettings
 from systemdb.core.models.sysinfo import ConfigCheck
+from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.core.extentions import db
 import datetime
 
+
+def xml_text_to_boolean(text):
+    if text in ['True', '1', 'true']:
+        return True
+    return False
 
 def import_sysinfo_collector(root):
     if root.tag == "SystemInfoCollector":
@@ -46,6 +52,7 @@ def import_host(root):
             if "Printers" == e.tag: printers2db(e, host)
             if "DefenderSettings" == e.tag: defenderSettings2db(e, host)
             if "ConfigChecks" == e.tag: configchecks2db(e, host)
+            if "AdditionalRegistryChecks" == e.tag: registrychecks2db(e, host)
         return host
 
 
@@ -421,5 +428,24 @@ def configchecks2db(xml, host):
                 if "Value" == c.tag: check.Value = c.text
                 if "Result" == c.tag: check.Result = c.text
                 if "Message" == c.tag: check.Message = c.text
+            check.Host_id = host.id
+            db.session.add(check)
+
+
+def registrychecks2db(xml, host):
+    for e in xml.getchildren():
+        if "RegistryCheck" == e.tag:
+            check = RegistryCheck()
+            check.Category = e.get("Category")
+            check.Name = e.get("Name")
+            for c in e.getchildren():
+                if "Description" == c.tag: check.Description = c.text
+                if "Tags" == c.tag: check.Tags = c.text
+                if "Path" == c.tag: check.Path = c.text
+                if "Key" == c.tag: check.Key = c.text
+                if "Expected" == c.tag: check.Expected = c.text
+                if "KeyExists" == c.tag: check.KeyExists = xml_text_to_boolean(c.text)
+                if "ValueMatch" == c.tag: check.ValueMatch = xml_text_to_boolean(c.text)
+                if "CurrentValue" == c.tag: check.CurrentValue = c.text
             check.Host_id = host.id
             db.session.add(check)
