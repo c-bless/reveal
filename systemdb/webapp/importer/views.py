@@ -76,13 +76,14 @@ def import_all():
             filename = secure_filename(u)
             file_ext = os.path.splitext(filename)[1]
             fullpath = current_app.config['UPLOAD_DIR'] + filename
+            print('importing {0}'.format(fullpath))
 
             if file_ext.endswith(".xml"):
                 if import_file_once(fullpath):
                     flash('File: {0} imported successfully'.format(filename))
+                    os.remove(fullpath)
                 else:
                     flash('File: {0} already imported'.format(filename))
-                os.remove(fullpath)
 
     uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
 

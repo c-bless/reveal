@@ -17,9 +17,9 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY /systemdb systemdb
-COPY /update-data update-data
-COPY /uploads uploads
-COPY /reports reports
+COPY /systemdb .
+COPY /update-data .
+COPY /uploads .
+COPY /reports .
 
 

@@ -24,6 +24,16 @@ It is recommended to change db user passwords before building Docker images. Tho
 4. Create first user and import End of Life dates `make init-db`. This needs to be done in a secound console window while images are running. (!!! Initial password for user admin is printed to stdout, make sure you note it ;) !!!)
 
 
+**Ports reachable on docker containers:**
+- 8000: webapp (http)
+- 8001: webapi (http) -> http:localhost:8001/docs for API-doc
+- 80: Nginx reverse proxy for webapp (http)
+- 81: Nginx reverse proxy for webapi (http) -> http:localhost:81/docs for API-doc
+
+Not implemented yet:
+- 443: Nginx reverse proxy for webapp (https) -> if implemented redirect from 80 will be added as well
+- 8443: Nginx reverse proxy for webapi (https) -> if implemented redirect from 81 will be added as well
+
 ### CLI Commands to interact with dockerized application ###
 
 Needs to be run from root directory of this repository while Docker Images are running.
