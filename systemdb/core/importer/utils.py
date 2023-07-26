@@ -7,8 +7,8 @@ from systemdb.core.extentions import db
 from systemdb.core.models.eol import EoL
 from systemdb.core.models.files import ImportedFile
 
-from systemdb.webapp.importer.hosts import import_host, import_sysinfo_collector
-from systemdb.webapp.importer.domain import import_domain_collector
+from systemdb.core.importer.hosts import import_host, import_sysinfo_collector
+from systemdb.core.importer.domain import import_domain_collector
 
 BUF_SIZE = 65536
 
@@ -37,14 +37,16 @@ def import_file_once(filename):
     try:
         imported_file = ImportedFile()
         imported_file.Hash = hash
-
         db.session.add(imported_file)
         db.session.commit()
+
         print("importing file {0}".format(imported_file))
         import_file(filename)
         print("File imported")
+
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
 
 

@@ -1,7 +1,7 @@
 import click
 from flask.cli import AppGroup
 
-from systemdb.webapp.importer.utils import import_file_once, import_dir, update_eol
+from systemdb.core.importer.utils import import_file_once, import_dir, update_eol
 
 import_cli = AppGroup('import')
 

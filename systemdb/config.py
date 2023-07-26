@@ -15,8 +15,8 @@ class AppConfig(object):
     LOG_LEVEL = logging.DEBUG
     DEBUG=False
 
-    # 200 MB
-    MAX_CONTENT_LENGTH = 1024 * 1024 * 200
+    # 400 MB
+    MAX_CONTENT_LENGTH = 1024 * 1024 * 400
     UPLOAD_EXTENSIONS = ['.xml']
     UPLOAD_DIR = os.environ.get('UPLOAD_DIR') or \
                  os.path.abspath(os.path.join(basedir, os.pardir))+ "/uploads/"

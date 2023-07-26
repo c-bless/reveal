@@ -6,7 +6,7 @@ from flask_login import login_required
 
 from systemdb.webapp.importer import import_bp
 from systemdb.webapp.importer.forms import UploadFileForm, ImportAllForm
-from systemdb.webapp.importer.utils import import_file_once
+from systemdb.core.importer.utils import import_file_once
 
 
 @import_bp.route('/upload/', methods=['GET'])

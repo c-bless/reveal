@@ -107,10 +107,12 @@
                     <div class="col-12 col-sm-4">
                           <div class="info-box bg-light">
                             <div class="info-box-content">
+                                {% if domadmin_id %}
                                 <a href="{{url_for('ad.group_detail',id=domadmin_id)}}" >
                                     <span class="info-box-text text-center text-muted">Domain Admins</span>
                                     <span class="info-box-number text-center text-muted mb-0">{{ num_domadmins }}</span>
                                 </a>
+                                {% endif %}
                             </div>
                           </div>
                         </div>
@@ -203,7 +205,7 @@
                     {% endfor %}
                   {% else %}
                     <tr>
-                      <td>No DCs found.</td>
+                      <td colspan="4">No DCs found.</td>
                     </tr>
                   {% endif %}
                   </tbody>

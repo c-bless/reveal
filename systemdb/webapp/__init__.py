@@ -95,7 +95,7 @@ def register_errorhandlers(app):
 
 
 def register_commands(app):
-    from systemdb.webapp.importer.commands import import_cli
+    from systemdb.core.importer.commands import import_cli
     app.cli.add_command(import_cli)
 
     from systemdb.core.commands.auth import user_cli

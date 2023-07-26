@@ -359,10 +359,10 @@ class Share(db.Model):
     Name = db.Column(db.String(10), unique=False, nullable=True)
     Path = db.Column(db.String(2048), unique=False, nullable=True)
     Description = db.Column(db.String(2048), unique=False, nullable=True)
-    NTFSPermission = db.Column(db.String(4096), unique=False, nullable=True)
-    SharePermission = db.Column(db.String(4096), unique=False, nullable=True)
-    NTFSPermissions = db.relationship('ShareACLNTFS', backref='share', lazy='dynamic')
-    SharePermissions = db.relationship('ShareACL', backref='share', lazy='dynamic')
+    NTFSPermissionStr = db.Column(db.String(4096), unique=False, nullable=True)
+    SharePermissionStr = db.Column(db.String(4096), unique=False, nullable=True)
+    NTFSPermissions = db.relationship('ShareACLNTFS', back_populates='Share', lazy='dynamic')
+    SharePermissions = db.relationship('ShareACL', back_populates='Share', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Shares")
 
@@ -382,6 +382,7 @@ class ShareACL(db.Model):
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
     AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Share_id = db.Column(db.Integer, db.ForeignKey('Share.id'), nullable=False)
+    Share = db.relationship("Share", back_populates="SharePermissions")
 
     def __repr__(self):
         return self.Name
@@ -398,6 +399,7 @@ class ShareACLNTFS(db.Model):
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
     AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Share_id = db.Column(db.Integer, db.ForeignKey('Share.id'), nullable=False)
+    Share = db.relationship("Share", back_populates="NTFSPermissions")
 
     def __repr__(self):
         return self.Name

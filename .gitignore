@@ -65,6 +65,7 @@ target/
 # database files
 *.db
 *.sqlite
+*.sqlite-journal
 
 /systemdb/systemdb.sqlite-journal
 /systemdb/webapp/web/static/*

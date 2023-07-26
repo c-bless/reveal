@@ -18,7 +18,12 @@ from systemdb.webapi.extentions import auth
 
 
 def create_app(config_class: ApiConfig) -> Flask:
-    app = APIFlask(__name__, docs_ui="swagger-ui", title='SYSTEMDB API', version='v0.3')
+    docs_ui="swagger-ui"
+    try:
+        docs_ui = config_class.DOCS_UI
+    except:
+        pass
+    app = APIFlask(__name__, docs_ui=docs_ui, title='SYSTEMDB API', version='v0.3')
 
     config_api(app=app, config_class=config_class)
     register_extentions(app)

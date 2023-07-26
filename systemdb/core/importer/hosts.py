@@ -1,3 +1,6 @@
+import datetime
+from sqlalchemy.exc import SQLAlchemyError
+
 from systemdb.core.models.sysinfo import Hotfix
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Product
@@ -17,7 +20,6 @@ from systemdb.core.models.sysinfo import DefenderSettings
 from systemdb.core.models.sysinfo import ConfigCheck
 from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.core.extentions import db
-import datetime
 
 
 def xml_text_to_boolean(text):
@@ -34,61 +36,178 @@ def import_sysinfo_collector(root):
 def import_host(root):
     if root.tag == "Host":
         host = host2db(root)
+        if not host:
+            print("Error while creating Host. Error: {0}".format(str(e.__dict__['orig'])))
+            return None
         for e in root.getchildren():
-            if "Hotfixes" == e.tag: hotfix2db(e, host)
-            if "Products" == e.tag: products2db(e, host)
-            if "Netadapters" == e.tag: netadapter2db(e, host)
-            if "NetIPAddresses" == e.tag: netipaddresses2db(e, host)
-            if "Services" == e.tag: services2db(e, host)
-            if "Users" == e.tag: users2db(e, host)
-            if "Groups" == e.tag: groups2db(e, host)
-            if "Shares" == e.tag: shares2db(e, host)
-            if "NetFirewallProfiles" == e.tag: fwprofile2db(e, host)
-            if "WSUS" == e.tag: wsus2db(e, host)
-            if "SMBSettings" == e.tag: smb2db(e, host)
-            if "BIOS" == e.tag: bios2db(e, host)
-            if "WSH" == e.tag: wsh2db(e, host)
-            if "PSVersions" == e.tag: psversions2db(e, host)
-            if "Printers" == e.tag: printers2db(e, host)
-            if "DefenderSettings" == e.tag: defenderSettings2db(e, host)
-            if "ConfigChecks" == e.tag: configchecks2db(e, host)
-            if "AdditionalRegistryChecks" == e.tag: registrychecks2db(e, host)
+            if "Hotfixes" == e.tag:
+                try:
+                    hotfix2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Hotfixes. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Products" == e.tag:
+                try:
+                    products2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Products. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Netadapters" == e.tag:
+                try:
+                    netadapter2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Netadapters. Error: {0}".format(str(e.__dict__['orig'])))
+            if "NetIPAddresses" == e.tag:
+                try:
+                    netipaddresses2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating NetIPAddresses. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Services" == e.tag:
+                try:
+                    services2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Services. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Users" == e.tag:
+                try:
+                    users2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Users. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Groups" == e.tag:
+                try:
+                    groups2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Groups. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Shares" == e.tag:
+                try:
+                    shares2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Shares. Error: {0}".format(str(e.__dict__['orig'])))
+            if "NetFirewallProfiles" == e.tag:
+                try:
+                    fwprofile2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating NetFirewallProfiles. Error: {0}".format(str(e.__dict__['orig'])))
+            if "WSUS" == e.tag:
+                try:
+                    wsus2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating WSUS. Error: {0}".format(str(e.__dict__['orig'])))
+            if "SMBSettings" == e.tag:
+                try:
+                    smb2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating SMBSettings. Error: {0}".format(str(e.__dict__['orig'])))
+            if "BIOS" == e.tag:
+                try:
+                    bios2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating BIOS. Error: {0}".format(str(e.__dict__['orig'])))
+            if "WSH" == e.tag:
+                try:
+                    wsh2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating WSH. Error: {0}".format(str(e.__dict__['orig'])))
+            if "PSVersions" == e.tag:
+                try:
+                    psversions2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating PSVersions. Error: {0}".format(str(e.__dict__['orig'])))
+            if "Printers" == e.tag:
+                try:
+                    printers2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating Printers. Error: {0}".format(str(e.__dict__['orig'])))
+            if "DefenderSettings" == e.tag:
+                try:
+                    defenderSettings2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating DefenderSettings. Error: {0}".format(str(e.__dict__['orig'])))
+            if "ConfigChecks" == e.tag:
+                try:
+                    configchecks2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating ConfigChecks. Error: {0}".format(str(e.__dict__['orig'])))
+            if "AdditionalRegistryChecks" == e.tag:
+                try:
+                    registrychecks2db(e, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating AdditionalRegistryChecks. Error: {0}".format(str(e.__dict__['orig'])))
         return host
 
 
 def host2db(xml_element):
-    host = Host()
-    for e in xml_element.getchildren():
-        # print("{0} {1}".format(e.tag, e.text))
-        if "Hostname" == e.tag: host.Hostname = e.text
-        if "Domain" == e.tag: host.Domain = e.text
-        if "DomainRole" == e.tag: host.DomainRole = e.text
-        if "OSVersion" == e.tag: host.OSVersion = e.text
-        if "OSBuildNumber" == e.tag: host.OSBuildNumber = e.text
-        if "OSName" == e.tag: host.OSName = e.text
-        if "OSInstallDate" == e.tag: host.OSInstallDate = e.text
-        if "OSProductType" == e.tag: host.OSProductType = e.text
-        if "LogonServer" == e.tag: host.LogonServer = e.text
-        if "TimeZone" == e.tag: host.TimeZone = e.text
-        if "KeyboardLayout" == e.tag: host.KeyboardLayout = e.text
-        if "HyperVisorPresent" == e.tag: host.HyperVisorPresent = e.text
-        if "DeviceGuardSmartStatus" == e.tag: host.DeviceGuardSmartStatus = e.text
-        if "PSVersion" == e.tag: host.PSVersion = e.text
-        if "PSVersion2Installed" == e.tag: host.PS2Installed = e.text
-        if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
-        if "SystemGroup" == e.tag: host.SystemGroup = e.text
-        if "Location" == e.tag: host.Location = e.text
-        if "Winlogon" == e.tag:
-            for w in e.getchildren():
-                if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
-                if "DefaultPassword" == w.tag: host.DefaultPassword = w.text
-                if "AutoAdminLogon" == w.tag: host.AutoAdminLogon = w.text
-                if "DefaultDomain" == w.tag: host.DefaultDomain = w.text
-                if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = w.text
-    db.session.add(host)
-    db.session.commit()
-    db.session.refresh(host)
-    return host
+    try:
+        host = Host()
+        for e in xml_element.getchildren():
+            # print("{0} {1}".format(e.tag, e.text))
+            if "Hostname" == e.tag: host.Hostname = e.text
+            if "Domain" == e.tag: host.Domain = e.text
+            if "DomainRole" == e.tag: host.DomainRole = e.text
+            if "OSVersion" == e.tag: host.OSVersion = e.text
+            if "OSBuildNumber" == e.tag: host.OSBuildNumber = e.text
+            if "OSName" == e.tag: host.OSName = e.text
+            if "OSInstallDate" == e.tag: host.OSInstallDate = e.text
+            if "OSProductType" == e.tag: host.OSProductType = e.text
+            if "LogonServer" == e.tag: host.LogonServer = e.text
+            if "TimeZone" == e.tag: host.TimeZone = e.text
+            if "KeyboardLayout" == e.tag: host.KeyboardLayout = e.text
+            if "HyperVisorPresent" == e.tag: host.HyperVisorPresent = e.text
+            if "DeviceGuardSmartStatus" == e.tag: host.DeviceGuardSmartStatus = e.text
+            if "PSVersion" == e.tag: host.PSVersion = e.text
+            if "PSVersion2Installed" == e.tag: host.PS2Installed = e.text
+            if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
+            if "SystemGroup" == e.tag: host.SystemGroup = e.text
+            if "Location" == e.tag: host.Location = e.text
+            if "Winlogon" == e.tag:
+                for w in e.getchildren():
+                    if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
+                    if "DefaultPassword" == w.tag: host.DefaultPassword = w.text
+                    if "AutoAdminLogon" == w.tag: host.AutoAdminLogon = w.text
+                    if "DefaultDomain" == w.tag: host.DefaultDomain = w.text
+                    if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = w.text
+        db.session.add(host)
+        db.session.commit()
+        db.session.refresh(host)
+        return host
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print("Error while creating Host. Error: {0}".format(str(e.__dict__['orig'])))
+        return None
+
 
 def hotfix2db(xml, host):
     if "Hotfixes" == xml.tag:
@@ -107,7 +226,7 @@ def hotfix2db(xml, host):
             except:
                 pass
             hf.Description = c.get("Description")
-            hf.Host_id = host.id
+            hf.Host = host
             db.session.add(hf)
 
 
@@ -123,7 +242,7 @@ def products2db(xml, host):
                 if "Name" == i.tag: prod.Name = i.text
                 if "Version" == i.tag: prod.Version = i.text
                 if "InstallLocation" == i.tag: prod.InstallLocation = i.text
-            prod.Host_id = host.id
+            prod.Host = host
             db.session.add(prod)
 
 
@@ -139,7 +258,7 @@ def printers2db(xml, host):
                 if "PortName" == i.tag: printer.PortName = i.text
                 if "Shared" == i.tag: printer.Shared = i.text
                 if "Published" == i.tag: printer.Published = i.text
-            printer.Host_id = host.id
+            printer.Host = host
             db.session.add(printer)
 
 
@@ -148,7 +267,7 @@ def defenderSettings2db(xml, host):
         setting = DefenderSettings()
         setting.Name == i.tag
         setting.Value = i.text
-        setting.Host_id = host.id
+        setting.Host = host
         db.session.add(setting)
 
 
@@ -160,7 +279,7 @@ def netadapter2db(xml, host):
             na.Status = c.get("Status")
             na.Name = c.get("Name")
             na.InterfaceDescription = c.get("InterfaceDescription")
-            na.Host_id = host.id
+            na.Host = host
             db.session.add(na)
 
 
@@ -183,10 +302,10 @@ def services2db(xml, host):
                 if "AcceptPause" == i.tag: service.AcceptPause = i.text
                 if "ProcessId" == i.tag: service.ProcessId = i.text
                 if "DelayedAutoStart" == i.tag: service.DelayedAutoStart = i.text
-            service.Host_id = host.id
+            service.Host = host
             db.session.add(service)
-            db.session.commit()
-            db.session.refresh(service)
+            #db.session.commit()
+            #db.session.refresh(service)
             for i in c.getchildren():
                 if "BinaryPermissions" == i.tag:
                     childs = i.getchildren()
@@ -199,7 +318,7 @@ def services2db(xml, host):
                                 ntfs.AccountName = c.get("AccountName")
                                 ntfs.AccessControlType = c.get("AccessControlType")
                                 ntfs.AccessRight = c.get("AccessRight")
-                                ntfs.Service_id = service.id
+                                ntfs.Service = service
                                 db.session.add(ntfs)
                                 o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType, ntfs.AccessRight)
                                 perm_str.append(o)
@@ -207,7 +326,7 @@ def services2db(xml, host):
                     else:
                         service.BinaryPermissionsStr = i.text
                     db.session.add(service)
-    db.session.commit()
+
 
 def netipaddresses2db(xml, host):
     for c in xml.getchildren():
@@ -218,8 +337,9 @@ def netipaddresses2db(xml, host):
             n.Prefix = c.get("Prefix")
             n.Type = c.get("Type")
             n.InterfaceAlias = c.get("InterfaceAlias")
-            n.Host_id = host.id
+            n.Host = host
             db.session.add(n)
+
 
 
 def users2db(xml, host):
@@ -238,8 +358,9 @@ def users2db(xml, host):
                 if "Lockout" == i.tag: user.Lockout = i.text
                 if "PasswordChanged" == i.tag: user.PasswordChanged = i.text
                 if "PasswordRequired" == i.tag: user.PasswordRequired = i.text
-            user.Host_id = host.id
+            user.Host = host
             db.session.add(user)
+
 
 
 def groups2db(xml, host):
@@ -252,10 +373,10 @@ def groups2db(xml, host):
                 if "Description" == i.tag: group.Description = i.text
                 if "LocalAccount" == i.tag: group.LocalAccount = i.text
                 if "SID" == i.tag: group.SID = i.text
-            group.Host_id = host.id
+            group.Host = host
             db.session.add(group)
-            db.session.commit()
-            db.session.refresh(group)
+            #db.session.commit()
+            #db.session.refresh(group)
             for i in c.getchildren():
                 if "Members" == i.tag:
                     for m in i.getchildren():
@@ -266,72 +387,62 @@ def groups2db(xml, host):
                             if "Caption" == a.tag: member.Caption = a.text
                             if "AccountType" == a.tag: member.AccountType = a.text
                             if "SID" == a.tag: member.SID = a.text
-                        member.Group_id = group.id
+                        member.Group = group
                         db.session.add(member)
+
 
 
 def shares2db(xml, host):
     for c in xml.getchildren():
         if "Share" == c.tag:
-            try:
-                # create a share object, add it to the database and refresh it to ensure an id is set that can be used
-                # for reference in the permission objects
-                share = Share()
-                for i in c.getchildren():
-                    if "Name" == i.tag: share.Name = i.text
-                    if "Path" == i.tag: share.Path = i.text
-                    if "Description" == i.tag: share.Description = i.text
-                    if "NTFSPermission" == i.tag: share.NTFSPermission = i.text
-                    if "SharePermission" == i.tag: share.SharePermission = i.text
-                share.Host_id = host.id
-                db.session.add(share)
-                db.session.commit()
-                db.session.refresh(share)
+            share = Share()
+            for i in c.getchildren():
+                if "Name" == i.tag: share.Name = i.text
+                if "Path" == i.tag: share.Path = i.text
+                if "Description" == i.tag: share.Description = i.text
+                if "NTFSPermission" == i.tag: share.NTFSPermission = i.text
+                if "SharePermission" == i.tag: share.SharePermission = i.text
+            share.Host = host
+            db.session.add(share)
+            #db.session.commit()
+            #db.session.refresh(share)
 
-                perm_str_ntfs = []
-                perm_str_share = []
-                for i in c.getchildren():
-                    if "NTFSPermissions" == i.tag:
-                        for n in i.getchildren():
-                            if "Permission" == n.tag:
-                                try:
-                                    ntfs = ShareACLNTFS()
-                                    ntfs.Name = n.get("Name")
-                                    ntfs.AccountName = n.get("AccountName")
-                                    ntfs.AccessControlType = n.get("AccessControlType")
-                                    ntfs.AccessRight = n.get("AccessRight")
-                                    ntfs.Share_id = share.id
-                                    o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
-                                                              ntfs.AccessRight)
-                                    perm_str_ntfs.append(o)
-                                    # add the object to the transaction. commit is done later
-                                    db.session.add(ntfs)
-                                except:
-                                    pass
-                    if "SharePermissions" == i.tag:
-                        for n in i.getchildren():
-                            if "Permission" == n.tag:
-                                try:
-                                    perm = ShareACL()
-                                    perm.Name = n.get("Name")
-                                    perm.ScopeName = n.get("ScopeName")
-                                    perm.AccountName = n.get("AccountName")
-                                    perm.AccessControlType = n.get("AccessControlType")
-                                    perm.AccessRight = n.get("AccessRight")
-                                    perm.Share_id = share.id
-                                    o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
-                                                              ntfs.AccessRight)
-                                    perm_str_share.append(o)
-                                    # add the object to the transaction. commit is done later
-                                    db.session.add(perm)
-                                except:
-                                    pass
-                share.NTFSPermission("\n".join(perm_str_ntfs))
-                share.SharePermission("\n".join(perm_str_share))
-                # commit all permission objects for the share
-                db.session.commit()
-            except:
-                pass
+            perm_str_ntfs = []
+            perm_str_share = []
+            for i in c.getchildren():
+                if "NTFSPermissions" == i.tag:
+                    for n in i.getchildren():
+                        if "Permission" == n.tag:
+                            ntfs = ShareACLNTFS()
+                            ntfs.Name = n.get("Name")
+                            ntfs.AccountName = n.get("AccountName")
+                            ntfs.AccessControlType = n.get("AccessControlType")
+                            ntfs.AccessRight = n.get("AccessRight")
+                            ntfs.Share = share
+                            o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
+                                                      ntfs.AccessRight)
+                            perm_str_ntfs.append(o)
+                            # add the object to the transaction. commit is done later
+                            db.session.add(ntfs)
+                if "SharePermissions" == i.tag:
+                    for n in i.getchildren():
+                        if "Permission" == n.tag:
+                            perm = ShareACL()
+                            perm.Name = n.get("Name")
+                            perm.ScopeName = n.get("ScopeName")
+                            perm.AccountName = n.get("AccountName")
+                            perm.AccessControlType = n.get("AccessControlType")
+                            perm.AccessRight = n.get("AccessRight")
+                            perm.Share = share
+                            o = "{0}{1}{2}{3}".format(ntfs.Name, ntfs.AccountName, ntfs.AccessControlType,
+                                                      ntfs.AccessRight)
+                            perm_str_share.append(o)
+                            # add the object to the transaction. commit is done later
+                            db.session.add(perm)
+            #share.NTFSPermission("\n".join(perm_str_ntfs))
+            #share.SharePermission("\n".join(perm_str_share))
+            # commit all permission objects for the share
+            db.session.commit()
 
 
 def fwprofile2db(xml, host):
@@ -361,7 +472,7 @@ def fwprofile2db(xml, host):
                 host.FwProfilePrivate = enabled
             if name == "Public":
                 host.FwProfilePublic = enabled
-            db.session.commit()
+
 
 def wsus2db(xml, host):
     # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
@@ -373,7 +484,6 @@ def wsus2db(xml, host):
         if "TargetGroupEnabled" == e.tag: host.TargetGroupEnabled = e.text
         if "WUServer" == e.tag: host.WUServer = e.text
         if "WUStatusServer" == e.tag: host.WUStatusServer = e.text
-    db.session.commit()
 
 
 def smb2db(xml, host):
@@ -383,7 +493,7 @@ def smb2db(xml, host):
         if "EncryptData" == e.tag: host.SMBEncryptData = e.text
         if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = e.text
         if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = e.text
-    db.session.commit()
+
 
 
 def wsh2db(xml, host):
@@ -391,7 +501,7 @@ def wsh2db(xml, host):
         if "TrustPolicy" == e.tag: host.WSHTrustPolicy = e.text
         if "EnabledStatus" == e.tag: host.WSHEnabled = e.text
         if "RemoteStatus" == e.tag: host.WSHRemote = e.text
-    db.session.commit()
+
 
 
 def bios2db(xml, host):
@@ -399,7 +509,7 @@ def bios2db(xml, host):
     host.BiosName = xml.get("Name")
     host.BiosVersion = xml.get("Version")
     host.BiosSerial = xml.get("Serial")
-    db.session.commit()
+
 
 
 def psversions2db(xml, host):
@@ -411,9 +521,8 @@ def psversions2db(xml, host):
             v.ConsoleHostModuleName = e.get("ConsoleHostModuleName")
             v.PSCompatibleVersion = e.get("PSCompatibleVersion")
             v.RuntimeVersion = e.get("RuntimeVersion")
-            v.Host_id = host.id
+            v.Host = host
             db.session.add(v)
-        #db.session.commit()
 
 
 def configchecks2db(xml, host):
@@ -428,7 +537,7 @@ def configchecks2db(xml, host):
                 if "Value" == c.tag: check.Value = c.text
                 if "Result" == c.tag: check.Result = c.text
                 if "Message" == c.tag: check.Message = c.text
-            check.Host_id = host.id
+            check.Host = host
             db.session.add(check)
 
 
@@ -447,5 +556,5 @@ def registrychecks2db(xml, host):
                 if "KeyExists" == c.tag: check.KeyExists = xml_text_to_boolean(c.text)
                 if "ValueMatch" == c.tag: check.ValueMatch = xml_text_to_boolean(c.text)
                 if "CurrentValue" == c.tag: check.CurrentValue = c.text
-            check.Host_id = host.id
+            check.Host = host
             db.session.add(check)
