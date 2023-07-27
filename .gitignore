@@ -21,6 +21,7 @@ parts/
 sdist/
 var/
 venv/
+/venv-api/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -67,13 +68,20 @@ target/
 *.sqlite
 *.sqlite-journal
 
-/systemdb/systemdb.sqlite-journal
-/systemdb/webapp/web/static/*
+# DATA directories
 /uploads/*.xml
+/data-directories/uploads/*.xml
+/data-directories/static/*
+/data-directories/static/dist/
+/data-directories/static/plugins/
+
+/systemdb/webapp/web/static/*
 /systemdb/webapp/web/static/dist/
 /systemdb/webapp/web/static/plugins/
+
 /tmp/
+# Docker
 /services/web/webapp/
 /services/
-/venv-api/
+# OBSIDIAN Cache
 /.obsidian/

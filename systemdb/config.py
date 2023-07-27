@@ -19,12 +19,13 @@ class AppConfig(object):
     MAX_CONTENT_LENGTH = 1024 * 1024 * 400
     UPLOAD_EXTENSIONS = ['.xml']
     UPLOAD_DIR = os.environ.get('UPLOAD_DIR') or \
-                 os.path.abspath(os.path.join(basedir, os.pardir))+ "/uploads/"
+                 os.path.abspath(os.path.join(basedir, os.pardir))+ "/data-directories/uploads/"
     REPORT_DIR = os.environ.get('REPORT_DIR') or \
-                 os.path.abspath(os.path.join(basedir, os.pardir))+ "/reports/"
+                 os.path.abspath(os.path.join(basedir, os.pardir))+ "/data-directories/reports/"
     UPDATE_DATA_DIR = os.environ.get('UPDATE_DATA_DIR') or \
-                      os.path.abspath(os.path.join(basedir, os.pardir))+ "/update-data/"
-
+                      os.path.abspath(os.path.join(basedir, os.pardir))+ "/data-directories/update-data/"
+    STATIC_DATA_DIR = os.environ.get('STATIC_DIR') or \
+                      os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/static/"
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(parentdir, 'systemdb.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

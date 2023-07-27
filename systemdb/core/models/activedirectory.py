@@ -11,11 +11,11 @@ class ADDomain(db.Model):
     PDCEmulator = db.Column(db.String(1024), unique=False)
     ParentDomain = db.Column(db.String(1024), unique=False)
     Forest = db.Column(db.String(1024), unique=False)
-    UsersContainer = db.Column(db.String(1024), unique=False)
-    SystemContainer = db.Column(db.String(1024), unique=False)
-    ComputerContainer = db.Column(db.String(1024), unique=False)
-    DistinguishedName = db.Column(db.String(1024), unique=False)
-    InfrastructureMaster = db.Column(db.String(1024), unique=False)
+    UsersContainer = db.Column(db.String(), unique=False)
+    SystemContainer = db.Column(db.String(), unique=False)
+    ComputerContainer = db.Column(db.String(), unique=False)
+    DistinguishedName = db.Column(db.String(), unique=False)
+    InfrastructureMaster = db.Column(db.String(), unique=False)
     PasswordPolicies = db.relationship('ADPasswordPolicy', backref='Domain', lazy='dynamic')
     Trusts = db.relationship('ADTrust', backref='Domain', lazy='dynamic')
     DCs = db.relationship('ADDomainController', backref='Domain', lazy='dynamic')
@@ -94,13 +94,13 @@ class ADPasswordPolicy(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Type = db.Column(db.String(50), unique=False, nullable=False)
     ComplexityEnabled = db.Column(db.String(10), unique=False)
-    DistinguishedName = db.Column(db.String(1024), unique=False)
-    Name = db.Column(db.String(1024), unique=False)
+    DistinguishedName = db.Column(db.String(), unique=False)
+    Name = db.Column(db.String(), unique=False)
     LockoutDuration = db.Column(db.String(10), unique=False)
-    LockoutObservationWindow = db.Column(db.String(10), unique=False)
+    LockoutObservationWindow = db.Column(db.String(20), unique=False)
     LockoutThreshold = db.Column(db.String(10), unique=False)
-    MaxPasswordAge = db.Column(db.String(10), unique=False)
-    MinPasswordAge = db.Column(db.String(10), unique=False)
+    MaxPasswordAge = db.Column(db.String(20), unique=False)
+    MinPasswordAge = db.Column(db.String(20), unique=False)
     MinPasswordLength = db.Column(db.String(10), unique=False)
     PasswordHistoryCount = db.Column(db.String(10), unique=False)
     ReversibleEncryptionEnabled = db.Column(db.String(10), unique=False)
@@ -130,7 +130,7 @@ class ADForestGlobalCatalog(db.Model):
 class ADDCServerRole(db.Model):
     __tablename__ = "ADDCServerRole"
     id = db.Column(db.Integer, primary_key=True)
-    Role = db.Column(db.String(150), unique=False, nullable=False)
+    Role = db.Column(db.String(256), unique=False, nullable=False)
     DC_id = db.Column(db.Integer, db.ForeignKey('ADDomainController.id'), nullable=False)
 
     def __repr__(self):
@@ -143,7 +143,7 @@ class ADDCServerRole(db.Model):
 class ADOperationMasterRole(db.Model):
     __tablename__ = "ADOperationMasterRole"
     id = db.Column(db.Integer, primary_key=True)
-    Role = db.Column(db.String(150), unique=False, nullable=False)
+    Role = db.Column(db.String(256), unique=False, nullable=False)
     DC_id = db.Column(db.Integer, db.ForeignKey('ADDomainController.id'), nullable=False)
 
     def __repr__(self):
@@ -156,7 +156,7 @@ class ADOperationMasterRole(db.Model):
 class ADDomainController(db.Model):
     __tablename__ = "ADDomainController"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(255), unique=False, nullable=True)
+    Name = db.Column(db.String(1024), unique=False, nullable=True)
     Hostname = db.Column(db.String(255), unique=False, nullable=False)
     OperatingSystem = db.Column(db.String(1024), unique=False)
     IPv4Address = db.Column(db.String(16), unique=False, nullable=True)

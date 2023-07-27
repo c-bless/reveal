@@ -547,7 +547,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                                 Method       = 'Get-NetFirewallProfile'
                                 Key   = $p.Name
                                 Value      = $p.Enabled
-                                Result = 'Cleartext password in Registry'
+                                Result = 'Firewall is not enabled for the profile'
                             }
                             $config_checks.Add($result)
                         }
@@ -568,35 +568,35 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         Write-Host "[*] Checking autologon configuration"           
         $xmlWriter.WriteStartElement("Winlogon")
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultUserName") {
-            $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultUserName -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("DefaultUserName", $user.DefaultUserName)    
+            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultUserName -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("DefaultUserName", $value.DefaultUserName)    
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultPassword") {
-            $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultPassword -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("DefaultPassword", $user.DefaultPassword)
+            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultPassword -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("DefaultPassword", $value.DefaultPassword)
             # add additional entry to config_checks
             $result = [PSCustomObject]@{
                 Component = 'Winlogon'
                 Name = 'WinlogonDefaultPassword'
                 Method       = 'Registry'
                 Key   = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\DefaultPassword'
-                Value      = $user
+                Value      = $value.DefaultPassword
                 Result = 'DefaultPassword set'
                 Message = 'Password for autologon user stored in Registry'
             }
             [void]$config_checks.Add($result)
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "AutoAdminLogon") {
-            $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("AutoAdminLogon", $user.AutoAdminLogon)    
+            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("AutoAdminLogon", $value.AutoAdminLogon)    
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "ForceAutoLogon") {
-            $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name ForceAutoLogon -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("ForceAutoLogon", $user.ForceAutoLogon)    
+            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name ForceAutoLogon -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("ForceAutoLogon", $value.ForceAutoLogon)    
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultDomain") {
-            $user =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomain -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("DefaultDomain", $user.DefaultDomain)   
+            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomain -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("DefaultDomain", $value.DefaultDomain)   
         }
         $xmlWriter.WriteEndElement() # Winlogon
 

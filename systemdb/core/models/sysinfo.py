@@ -282,7 +282,7 @@ class User(db.Model):
     LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
     Name = db.Column(db.String(256), unique=False, nullable=True)
     FullName = db.Column(db.String(1024), unique=False, nullable=True)
-    Description = db.Column(db.String(2048), unique=False, nullable=True)
+    Description = db.Column(db.String(), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     Lockout = db.Column(db.String(10), unique=False, nullable=True)
     PasswordChanged = db.Column(db.String(10), unique=False, nullable=True)
@@ -300,9 +300,9 @@ class User(db.Model):
 class Group(db.Model):
     __tablename__ = "Group"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(10), unique=False, nullable=True)
-    Caption = db.Column(db.String(2048), unique=False, nullable=True)
-    Description = db.Column(db.String(2048), unique=False, nullable=True)
+    Name = db.Column(db.String(512), unique=False, nullable=True)
+    Caption = db.Column(db.String(), unique=False, nullable=True)
+    Description = db.Column(db.String(), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
     Members = db.relationship('GroupMember', backref='Group', lazy='dynamic')
@@ -319,7 +319,7 @@ class Group(db.Model):
 class GroupMember(db.Model):
     __tablename__ = "GroupMember"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(10), unique=False, nullable=True)
+    Name = db.Column(db.String(512), unique=False, nullable=True)
     Caption = db.Column(db.String(2048), unique=False, nullable=True)
     Domain = db.Column(db.String(256), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
@@ -338,11 +338,11 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Caption = db.Column(db.String(150), unique=False, nullable=True)
     InstallDate = db.Column(db.String(150), unique=False, nullable=True)
-    Description = db.Column(db.String(2048), unique=False, nullable=True)
+    Description = db.Column(db.String(), unique=False, nullable=True)
     Vendor = db.Column(db.String(256), unique=False, nullable=True)
     Name = db.Column(db.String(1024), unique=False, nullable=True)
     Version = db.Column(db.String(150), unique=False, nullable=True)
-    InstallLocation = db.Column(db.String(2048), unique=False, nullable=True)
+    InstallLocation = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Products")
 
@@ -412,13 +412,13 @@ class ShareACLNTFS(db.Model):
 class ConfigCheck(db.Model):
     __tablename__ = "ConfigCheck"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(150), unique=False, nullable=True)
+    Name = db.Column(db.String(512), unique=False, nullable=True)
     Component = db.Column(db.String(256), unique=False, nullable=True)
     Method = db.Column(db.String(256), unique=False, nullable=True)
-    Key = db.Column(db.String(256), unique=False, nullable=True)
-    Value = db.Column(db.String(256), unique=False, nullable=True)
-    Result = db.Column(db.String(256), unique=False, nullable=True)
-    Message = db.Column(db.String(4096), unique=False, nullable=True)
+    Key = db.Column(db.String(), unique=False, nullable=True)
+    Value = db.Column(db.String(), unique=False, nullable=True)
+    Result = db.Column(db.String(), unique=False, nullable=True)
+    Message = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="ConfigChecks")
 
@@ -432,12 +432,12 @@ class ConfigCheck(db.Model):
 class RegistryCheck(db.Model):
     __tablename__ = "RegistryCheck"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(150), unique=False, nullable=True)
+    Name = db.Column(db.String(512), unique=False, nullable=True)
     Category = db.Column(db.String(256), unique=False, nullable=True)
     Description = db.Column(db.String(), unique=False, nullable=True)
     Tags = db.Column(db.String(), unique=False, nullable=True)
     Path = db.Column(db.String(), unique=False, nullable=True)
-    Key = db.Column(db.String(256), unique=False, nullable=True)
+    Key = db.Column(db.String(), unique=False, nullable=True)
     Expected = db.Column(db.String(), unique=False, nullable=True)
     KeyExists = db.Column(db.Boolean())
     ValueMatch = db.Column(db.Boolean())

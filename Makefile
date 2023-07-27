@@ -4,18 +4,20 @@ TMPDIR      = $(BASEDIR)/tmp/
 SYSTEMDB_SRC="$(BASEDIR)/systemdb/"
 WEBAPP_SRC  = $(SYSTEMDB_SRC)/webapp/
 WEBAPI_SRC  = $(SYSTEMDB_SRC)/webapi/
-STATICDIR   = $(WEBAPP_SRC)/systemdb/web/static/
-DISTDIR     = $(STATICDIR)dist/
-PLUGINDIR   = $(STATICDIR)plugins/
+STATIC_DIR   = $(BASEDIR)/data-directories/static/
+DISTDIR     = $(STATIC_DIR)dist/
+PLUGINDIR   = $(STATIC_DIR)plugins/
 
-DOCKER_WEBAPP           = $(BASEDIR)/services/web/
-DOCKER_WEBAPP_SRC       = $(BASEDIR)/services/web/systemdb/
-REPORT_DIR              = $(BASEDIR)/reports/
-DOCKER_REPORT_DIR       = $(BASEDIR)/services/web/reports/
-UPLOAD_DIR              = $(BASEDIR)/uploads/
-DOCKER_UPLOAD_DIR       = $(BASEDIR)/services/web/uploads/
-UPDATE_DATA_DIR         = $(BASEDIR)/update-data/
-DOCKER_UPDATE_DATA_DIR  = $(BASEDIR)/services/web/update-data/
+DOCKER_WEBAPP                   = $(BASEDIR)/services/web/
+DOCKER_WEBAPP_SRC               = $(BASEDIR)/services/web/systemdb/
+REPORT_DIR                      = $(BASEDIR)/data-directories/reports/
+DOCKER_REPORT_DIR               = $(BASEDIR)/services/web/reports/
+UPLOAD_DIR                      = $(BASEDIR)/data-directories/uploads/
+DOCKER_UPLOAD_DIR               = $(BASEDIR)/services/web/uploads/
+UPDATE_DATA_DIR                 = $(BASEDIR)/data-directories/update-data/
+DOCKER_UPDATE_DATA_DIR          = $(BASEDIR)/services/web/update-data/
+DOCKER_WEB_STATIC_DATA_DIR      = $(BASEDIR)/services/web/static/
+DOCKER_NGINX_STATIC_DATA_DIR      = $(BASEDIR)/services/nginx/static/
 
 DOCKER_WEBAPI           = $(BASEDIR)/services/api/
 DOCKER_WEBAPI_SRC       = $(BASEDIR)/services/api/systemdb/
@@ -30,7 +32,7 @@ deps:
 	@echo $(BASEDIR)
 	@echo $(WEBAPP_SRC)
 	@echo $(PLUGINDIR)
-	$(shell ./download-dependencies.sh)
+	./download-dependencies.sh
 
 clean:
 	$(shell rm -r $(TMPDIR)))
@@ -39,7 +41,10 @@ build:
 	@$(shell cp -r $(REPORT_DIR) $(DOCKER_REPORT_DIR))
 	@$(shell cp -r $(UPLOAD_DIR) $(DOCKER_UPLOAD_DIR))
 	@$(shell cp -r $(UPDATE_DATA_DIR) $(DOCKER_UPDATE_DATA_DIR))
+	@$(shell cp -r $(STATIC_DIR) $(DOCKER_WEB_STATIC_DATA_DIR))
+	@$(shell cp -r $(STATIC_DIR) $(DOCKER_NGINX_STATIC_DATA_DIR))
 	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPI))
 	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPI))
 	docker-compose build
 

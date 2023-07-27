@@ -4,10 +4,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN mkdir /app
-RUN mkdir /app/systemdb
-RUN mkdir /app/reports
-RUN mkdir /app/update-data
-RUN mkdir /app/uploads
 
 WORKDIR /app
 
@@ -21,5 +17,6 @@ COPY /systemdb .
 COPY /update-data .
 COPY /uploads .
 COPY /reports .
+COPY /static .
 
 

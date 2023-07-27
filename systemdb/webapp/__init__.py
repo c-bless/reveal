@@ -5,11 +5,13 @@ import sqlalchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
+
 
 from systemdb.core.models.auth import AuthUser
 from systemdb.core.extentions import db
 
+from systemdb.config import AppConfig
 from systemdb.webapp.extentions import babel
 from systemdb.webapp.extentions import bootstrap
 from systemdb.webapp.extentions import csrf
@@ -17,13 +19,13 @@ from systemdb.webapp.extentions import login_manager
 from systemdb.webapp.extentions import toolbar
 
 
-def create_app(config_class):
+def create_app(config_class: AppConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
     _dir = os.path.dirname(os.path.abspath(__file__))
     app.template_folder = os.path.join(_dir, "web/templates")
-    app.static_folder = os.path.join(_dir, "web/static")
+    app.static_folder = config_class.STATIC_DATA_DIR
 
     register_extentisons(app=app, config_class=config_class)
 

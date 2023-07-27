@@ -1,0 +1,111 @@
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% set title = "ConfigChecks" %}
+{% block page_title %} ConfigChecks {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} ConfigCheck List {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+
+{% endblock download_links %}
+
+
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.Name) }}
+                            {{ render_check_field_sm2(form.InvertName) }}
+
+                            {{ render_field_sm2(form.Component) }}
+                            {{ render_check_field_sm2(form.InvertComponent) }}
+
+                            {{ render_field_sm2(form.Method) }}
+                            {{ render_check_field_sm2(form.InvertMethod) }}
+
+                            {{ render_field_sm2(form.Key) }}
+                            {{ render_check_field_sm2(form.InvertKey) }}
+
+                        </div>
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.Value) }}
+                            {{ render_check_field_sm2(form.InvertValue) }}
+
+                            {{ render_field_sm2(form.Result) }}
+                            {{ render_check_field_sm2(form.InvertResult) }}
+
+
+                            {{ render_field_sm2(form.Message) }}
+                            {{ render_check_field_sm2(form.InvertMessage) }}
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {{ render_submit_field(form.search) }}
+                    {{ render_submit_field(form.download) }}
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+
+
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="DisplayName" width="15%">Component
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartMode" width="10%">Method
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartName" width="5%">Result
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="PathName" width="15%">Key
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="PathName" width="35%">Message
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Details" width="5%">Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if checks %}
+                {% for c in checks %}
+                  <tr>
+                    <td> {{ c.Name }} </td>
+                    <td> {{ c.Component }} </td>
+                    <td> {{ c.Method }} </td>
+                    <td> {{ c.Result }} </td>
+                    <td> {{ c.Key }} </td>
+                    <td> {{ c.Message }} </td>
+                    <td class="actions">
+                        <a href="#" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye"></i> View
+                        </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10">No performed configuration checks found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

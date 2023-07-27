@@ -6,10 +6,10 @@ services:
     command: gunicorn --bind 0.0.0.0:8000 systemdb.app:app
     volumes:
       - ./services/web/:/app
-      - static_volume:/app/systemdb/webapp/web/static
-      - upload_volume:/app/systemdb/uploads
-      - report_volume:/app/systemdb/reports
-      - update-data:/app/systemdb/update-data
+      - static_volume:/app/static/
+      - upload_volume:/app/uploads/
+      - report_volume:/app/reports/
+      - update-data:/app/update-data/
     ports:
       - 8000:8000
     env_file:
@@ -35,7 +35,7 @@ services:
   nginx:
       build: ./services/nginx
       volumes:
-        - static_volume:/app/systemdb/webapp/web/static
+        - static_volume:/app/static/
       ports:
         - 80:80
         - 81:81

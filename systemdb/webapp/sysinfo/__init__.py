@@ -9,6 +9,7 @@ from systemdb.webapp.sysinfo.views.products import  *
 from systemdb.webapp.sysinfo.views.services import  *
 from systemdb.webapp.sysinfo.views.shares import *
 from systemdb.webapp.sysinfo.views.usermanagement import  *
+from systemdb.webapp.sysinfo.views.checks import  *
 
 from systemdb.webapp.sysinfo.reports import *
 from systemdb.webapp.sysinfo.reports.smb import  *

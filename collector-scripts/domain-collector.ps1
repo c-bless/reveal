@@ -7,7 +7,7 @@
     https://bitbucket.org/cbless/systemdb
 
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.2.3
+    Version:    0.3
     License:    GPL
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -40,7 +40,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.2.3"
+$version="0.3"
 $script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
