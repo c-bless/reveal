@@ -12,6 +12,4 @@ from systemdb.core.models.sysinfo import Share
 def share_detail(id):
     share = Share.query.get_or_404(id)
     host = Host.query.get_or_404(share.Host_id)
-    ntfs_permissions = share.NTFSPermission.split("\n") if share.NTFSPermissionStr is not None else ""
-    share_permissions = share.SharePermission.split("\n") if share.SharePermissionStr is not None else ""
-    return render_template("share_details.html", share=share, host=host, ntfs_permissions=ntfs_permissions, share_permissions=share_permissions)
+    return render_template("share_details.html", share=share, host=host)

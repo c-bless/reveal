@@ -56,7 +56,7 @@
                   {% if share.SharePermissions %}
                     <thead>
                         <tr>
-                          <th>ACL</th>
+                          <th>Share Name</th>
                           <th>AccountName</th>
                           <th>ScopeName</th>
                           <th>AccessControlType</th>
@@ -83,7 +83,7 @@
                         </thead>
                       <tbody>
                         <tr>
-                          <td colspan="4">{{ share.SharePermissionStr }}</td>
+                          <td colspan="4">No Permissions found</td>
                         </tr>
                       </tbody>
                     {% endif %}
@@ -105,21 +105,21 @@
                     {% if share.NTFSPermissions %}
                     <thead>
                         <tr>
-                          <th>ACL</th>
+                          <th>Share Name</th>
                           <th>AccountName</th>
                           <th>AccessControlType</th>
                           <th>AccessRight</th>
                         </tr>
                       </thead>
                       <tbody>
-                    {% for p in share.NTFSPermissions %}
-                      <tr>
-                        <td>{{ p.Name }}</td>
-                        <td>{{ p.AccountName }}</td>
-                        <td>{{ p.AccessControlType }}</td>
-                        <td>{{ p.AccessRight }}</td>
-                      </tr>
-                    {% endfor %}
+                        {% for p in share.NTFSPermissions %}
+                          <tr>
+                            <td>{{ p.Name }}</td>
+                            <td>{{ p.AccountName }}</td>
+                            <td>{{ p.AccessControlType }}</td>
+                            <td>{{ p.AccessRight }}</td>
+                          </tr>
+                        {% endfor %}
                       </tbody>
                     {% else %}
                       <thead>
@@ -129,7 +129,7 @@
                         </thead>
                       <tbody>
                         <tr>
-                          <td colspan="4">{{ share.NTFSPermissionStr }}</td>
+                          <td colspan="4">No Permissions found</td>
                         </tr>
                       </tbody>
                     {% endif %}

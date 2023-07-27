@@ -359,8 +359,6 @@ class Share(db.Model):
     Name = db.Column(db.String(10), unique=False, nullable=True)
     Path = db.Column(db.String(2048), unique=False, nullable=True)
     Description = db.Column(db.String(2048), unique=False, nullable=True)
-    NTFSPermissionStr = db.Column(db.String(4096), unique=False, nullable=True)
-    SharePermissionStr = db.Column(db.String(4096), unique=False, nullable=True)
     NTFSPermissions = db.relationship('ShareACLNTFS', back_populates='Share', lazy='dynamic')
     SharePermissions = db.relationship('ShareACL', back_populates='Share', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
