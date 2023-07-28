@@ -13,11 +13,13 @@ The Makefile covers necessary steps for downloading of dependencies, creating Do
 
 **Note:**
 It is recommended to change db user passwords before building Docker images. Those can be found under:
-* service/db/Dockerfile (Variable: POSTGRES_PASSWORD)
-* service/web/webapp.env (password in connection string: DATABASE_URL)
-* service/api/webapi.env (password in connection string: DATABASE_URL)
+
+- service/db/Dockerfile (Variable: POSTGRES_PASSWORD)
+- service/web/webapp.env (password in connection string: DATABASE_URL)
+- service/api/webapi.env (password in connection string: DATABASE_URL)
 
 **Build and Setup**
+
 1. Download AdminLTE / Bootstrap dependencies via `make deps`
 2. Build Docker Images `make build`. *It is recommended to changes passwords in environment variables before this step.*
 3. Run Docker Images `make run`
@@ -25,12 +27,14 @@ It is recommended to change db user passwords before building Docker images. Tho
 
 
 **Ports reachable on docker containers:**
+
 - 8000: webapp (http) (directly accessible port to gunicorn server might be removed in future!)
 - 8001: webapi (http) -> http:localhost:8001/docs for API-doc (directly accessible port to gunicorn server might be removed in future!)
 - 80: Nginx reverse proxy for webapp (http)
 - 81: Nginx reverse proxy for webapi (http) -> http:localhost:81/docs for API-doc
 
 Not implemented yet:
+
 - 443: Nginx reverse proxy for webapp (https) -> if implemented redirect from 80 will be added as well
 - 8443: Nginx reverse proxy for webapi (https) -> if implemented redirect from 81 will be added as well
 
@@ -46,6 +50,7 @@ Needs to be run from root directory of this repository while Docker Images are r
 - Delete user accounts: `docker-compose exec webapp flask -e webapp.env user delete <USERNAME>`
 
 **Imported data:**
+
 - Clear imported data (hosts, domains, etc.). This will keep login user: `docker-compose exec webapp flask -e webapp.env db clear`
 - Import all files within the upload directory of Docker Image: `docker-compose exec webapp flask -e webapp.env import dir /app/uploads`
 
@@ -191,6 +196,7 @@ flask --debug run --port 8001
 - Delete user accounts: `flask user delete <USERNAME>`
 
 **Imported data:**
+
 - Clear imported data (hosts, domains, etc.). This will keep login user: `flask db clear`
 - Import all files within a given directory: `flask import dir <DIR>`
 - Import result from collector script: `flask import file <DIR>`
