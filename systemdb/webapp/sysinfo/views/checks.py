@@ -4,9 +4,9 @@ from flask_login import login_required
 from systemdb.webapp.sysinfo import sysinfo_bp
 
 from systemdb.core.models.sysinfo import ConfigCheck
-from systemdb.core.models.sysinfo import Service
+from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.webapp.sysinfo.forms.checks import ConfigCheckSearchForm
-from systemdb.webapp.sysinfo.export_func import generate_services_excel
+from systemdb.webapp.sysinfo.forms.checks import RegistryCheckSearchForm
 
 
 @sysinfo_bp.route('/checks/config', methods=['GET', 'POST'])
@@ -74,6 +74,89 @@ def configcheck_search_list():
             checks = ConfigCheck.query.all()
         return render_template('configcheck_search_list.html', form=form, checks=checks)
     else:
-        print('GET')
         checks = ConfigCheck.query.all()
         return render_template('configcheck_search_list.html', form=form, checks=checks)
+
+
+@sysinfo_bp.route('/checks/registry', methods=['GET', 'POST'])
+@login_required
+def registrycheck_search_list():
+    form = RegistryCheckSearchForm()
+
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            name = form.Name.data
+            category = form.Category.data
+            description = form.Description.data
+            tags = form.Tags.data
+            expected = form.Expected.data
+            path = form.Path.data
+            key = form.Key.data
+            keyExists = form.KeyExists.data
+            valueMatch = form.ValueMatch.data
+            currentValue = form.CurrentValue.data
+            invertName = form.InvertName.data
+            invertCategory = form.InvertCategory.data
+            invertDescription = form.InvertDescription.data
+            invertPath = form.InvertPath.data
+            invertKey = form.InvertKey.data
+            invertTags = form.InvertTags.data
+            invertCurrentValue = form.InvertCurrentValue.data
+            invertExpected = form.InvertExpected.data
+            useKeyExist = form.UseKeyExists.data
+            useValueMatch = form.UseValueMatch
+
+
+            if len(name) > 0:
+                if invertName == False:
+                    filters.append(RegistryCheck.Name.ilike("%" + name + "%"))
+                else:
+                    filters.append(RegistryCheck.Name.notilike("%" + name + "%"))
+            if len(category) > 0:
+                if invertCategory == False:
+                    filters.append(RegistryCheck.Category.ilike("%" + category + "%"))
+                else:
+                    filters.append(RegistryCheck.Category.notilike("%" + category + "%"))
+            if len(description) > 0:
+                if invertDescription == False:
+                    filters.append(RegistryCheck.Description.ilike("%" + description + "%"))
+                else:
+                    filters.append(RegistryCheck.Description.notilike("%" + description + "%"))
+            if len(tags) > 0:
+                if invertTags == False:
+                    filters.append(RegistryCheck.Tags.ilike("%" + tags + "%"))
+                else:
+                    filters.append(RegistryCheck.Tags.notilike("%" + tags + "%"))
+            if len(expected) > 0:
+                if invertExpected == False:
+                    filters.append(RegistryCheck.Expected.ilike("%" + expected + "%"))
+                else:
+                    filters.append(RegistryCheck.Expected.notilike("%" + expected + "%"))
+            if len(path) > 0:
+                if invertPath == False:
+                    filters.append(RegistryCheck.Path.ilike("%" + path + "%"))
+                else:
+                    filters.append(RegistryCheck.Path.notilike("%" + path + "%"))
+            if len(key) > 0:
+                if invertKey == False:
+                    filters.append(RegistryCheck.Key.ilike("%" + key + "%"))
+                else:
+                    filters.append(RegistryCheck.Key.notilike("%" + key + "%"))
+            if len(currentValue) > 0:
+                if invertCurrentValue == False:
+                    filters.append(RegistryCheck.Message.ilike("%" + currentValue + "%"))
+                else:
+                    filters.append(RegistryCheck.Message.notilike("%" + currentValue + "%"))
+            if useValueMatch:
+                filters.append(RegistryCheck.ValueMatch == valueMatch)
+            if useKeyExist:
+                filters.append(RegistryCheck.KeyExists == keyExists)
+            checks = RegistryCheck.query.filter(*filters).all()
+        else:
+            checks = RegistryCheck.query.all()
+        return render_template('registrycheck_search_list.html', form=form, checks=checks)
+    else:
+        print('GET')
+        checks = RegistryCheck.query.all()
+        return render_template('registrycheck_search_list.html', form=form, checks=checks)

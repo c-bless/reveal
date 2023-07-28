@@ -1,15 +1,14 @@
 {% extends "layout/search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
-{% set title = "ConfigChecks" %}
-{% block page_title %} ConfigChecks {% endblock page_title %}
+{% set title = "RegistryChecks" %}
+{% block page_title %} RegistryChecks {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} ConfigCheck List {% endblock menu_l2 %}
+{% block menu_l2 %} RegistryChecks List {% endblock menu_l2 %}
 
 {% block download_links %}
     {{ super() }}
 
 {% endblock download_links %}
-
 
 {% block searchform %}
     <form class="form-horizontal" method="post">
@@ -20,26 +19,33 @@
                             {{ render_field_sm2(form.Name) }}
                             {{ render_check_field_sm2(form.InvertName) }}
 
-                            {{ render_field_sm2(form.Component) }}
-                            {{ render_check_field_sm2(form.InvertComponent) }}
+                            {{ render_field_sm2(form.Category) }}
+                            {{ render_check_field_sm2(form.InvertCategory) }}
 
-                            {{ render_field_sm2(form.Method) }}
-                            {{ render_check_field_sm2(form.InvertMethod) }}
+                            {{ render_field_sm2(form.Path) }}
+                            {{ render_check_field_sm2(form.InvertPath) }}
 
                             {{ render_field_sm2(form.Key) }}
                             {{ render_check_field_sm2(form.InvertKey) }}
 
+                            {{ render_field_sm2(form.Description) }}
+                            {{ render_check_field_sm2(form.InvertDescription) }}
                         </div>
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Value) }}
-                            {{ render_check_field_sm2(form.InvertValue) }}
+                            {{ render_field_sm2(form.Tags) }}
+                            {{ render_check_field_sm2(form.InvertTags) }}
 
-                            {{ render_field_sm2(form.Result) }}
-                            {{ render_check_field_sm2(form.InvertResult) }}
+                            {{ render_field_sm2(form.Expected) }}
+                            {{ render_check_field_sm2(form.InvertExpected) }}
 
+                            {{ render_check_field_sm2(form.KeyExists) }}
+                            {{ render_check_field_sm2(form.UseKeyExists) }}
 
-                            {{ render_field_sm2(form.Message) }}
-                            {{ render_check_field_sm2(form.InvertMessage) }}
+                            {{ render_check_field_sm2(form.ValueMatch) }}
+                            {{ render_check_field_sm2(form.UseValueMatch) }}
+
+                            {{ render_check_field_sm2(form.CurrentValue) }}
+                            {{ render_check_field_sm2(form.InvertCurrentValue) }}
 
                         </div>
                     </div>
@@ -65,25 +71,25 @@
                     aria-sort="ascending" aria-label="Name" width="15%">Name
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Component" width="15%">Component
+                    aria-label="DisplayName" width="15%">Category
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Method" width="10%">Method
+                    aria-label="Path" width="30%">Path
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Result" width="5%">Result
+                    aria-label="Key" width="10%">Key
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Key" width="15%">Key
+                    aria-label="KeyExist" width="5%">KeyExist
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Host" width="15%">Host
+                    aria-label="ValueMatch" width="5%">ValueMatch
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Message" width="20%">Message
+                    aria-label="Host" width="10%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Actions" width="5%">Actions
+                    aria-label="Actions" width="10%">Actions
                 </th>
             </tr>
             </thead>
@@ -92,12 +98,12 @@
                 {% for c in checks %}
                   <tr>
                     <td> {{ c.Name }} </td>
-                    <td> {{ c.Component }} </td>
-                    <td> {{ c.Method }} </td>
-                    <td> {{ c.Result }} </td>
+                    <td> {{ c.Category }} </td>
+                    <td> {{ c.Path }} </td>
                     <td> {{ c.Key }} </td>
+                    <td> {{ c.KeyExist }} </td>
+                    <td> {{ c.ValueMatch }} </td>
                     <td> {{ c.Host }} </td>
-                    <td> {{ c.Message }} </td>
                     <td class="actions">
                         <a href="#" class="btn btn-default btn-xs">
                             <i class="fa fa-eye"></i> View
@@ -107,7 +113,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="8">No performed configuration checks found!</td>
+                    <td colspan="10">No performed configuration checks found!</td>
                 </tr>
             {% endif %}
         </tbody>

@@ -261,7 +261,6 @@ def generate_products_excel(products=[]):
     return output
 
 
-
 def generate_userassignment_excel(members=[]):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})

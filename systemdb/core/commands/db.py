@@ -34,11 +34,14 @@ def clear_db():
     db.session.query(User).delete()
     db.session.query(GroupMember).delete()
     db.session.query(Group).delete()
+
     db.session.query(ShareACL).delete()
-    db.session.query(Share).delete()
     db.session.query(ShareACLNTFS).delete()
+    db.session.query(Share).delete()
+
     db.session.query(ServiceACL).delete()
     db.session.query(Service).delete()
+    
     db.session.query(Hotfix).delete()
     db.session.query(ConfigCheck).delete()
     db.session.query(PSInstalledVersions).delete()
