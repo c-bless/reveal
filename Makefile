@@ -24,9 +24,13 @@ DOCKER_WEBAPI_SRC       = $(BASEDIR)/services/api/systemdb/
 
 help:
 	@echo
-	@echo all           : download dependencies and build docker container
+	@echo deps          : download dependencies and build docker container
 	@echo build         : build docker container
 	@echo clean		    : cleanup temporary directory "tmp"
+	@echo run		    : start docker container
+	@echo stop		    : stop docker container and drives
+	@echo init-db	    : create user "admin" and import EoL dates
+	@echo clear-data    : remove all imported data (keep user accounts)
 
 deps:
 	@echo $(BASEDIR)
