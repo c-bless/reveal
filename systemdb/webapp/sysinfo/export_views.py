@@ -3,12 +3,12 @@ from flask_login import login_required
 
 from systemdb.webapp.sysinfo import sysinfo_bp
 
-from systemdb.core.models.sysinfo import Host, Service, Product
+from systemdb.core.models.sysinfo import Host, Service, Product, Share
 
 import os
 from systemdb.webapp.sysinfo.export_func import template_detail_dir, template_dir
 from systemdb.webapp.sysinfo.export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, \
-    generate_services_excel, generate_hosts_excel_brief
+    generate_services_excel, generate_hosts_excel_brief, generate_shares_excel
 from systemdb.webapp.sysinfo.export_func import generate_products_excel
 
 
@@ -89,3 +89,13 @@ def product_export_excel():
                     headers={"Content-disposition": "attachment; filename=products.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
+
+
+@sysinfo_bp.route('/shares/export/excel', methods=['GET'])
+@login_required
+def share_export_excel():
+    shares = Share.query.all()
+    output = generate_shares_excel(shares=shares)
+    return Response(output, mimetype="text/xslx",
+                    headers={"Content-disposition": "attachment; filename=shares.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})

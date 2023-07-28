@@ -74,7 +74,7 @@ def share_search_list():
             if 'download' in request.form:
                 output = generate_shares_excel(shares=shares)
                 return Response(output, mimetype="text/xslx",
-                                headers={"Content-disposition": "attachment; filename=services.xlsx",
+                                headers={"Content-disposition": "attachment; filename=shares.xlsx",
                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:

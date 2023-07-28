@@ -38,14 +38,19 @@
                             {{ render_field_sm2(form.Expected) }}
                             {{ render_check_field_sm2(form.InvertExpected) }}
 
+                            {{ render_field_sm2(form.CurrentValue) }}
+                            {{ render_check_field_sm2(form.InvertCurrentValue) }}
+
+                            {{ render_field_sm2(form.Host) }}
+                            {{ render_check_field_sm2(form.InvertHost) }}
+
+                            <br />
                             {{ render_check_field_sm2(form.KeyExists) }}
                             {{ render_check_field_sm2(form.UseKeyExists) }}
 
                             {{ render_check_field_sm2(form.ValueMatch) }}
                             {{ render_check_field_sm2(form.UseValueMatch) }}
 
-                            {{ render_check_field_sm2(form.CurrentValue) }}
-                            {{ render_check_field_sm2(form.InvertCurrentValue) }}
 
                         </div>
                     </div>

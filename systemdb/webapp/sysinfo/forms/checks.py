@@ -18,6 +18,7 @@ from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_DESCRIPTION
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_PATH
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_TAGS
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_KEY
+from systemdb.core.regex import RE_SYSINFO_HOSTNAME
 
 
 class ConfigCheckSearchForm(FlaskForm):
@@ -30,6 +31,8 @@ class ConfigCheckSearchForm(FlaskForm):
     Result = StringField('Result', validators=[Regexp(regex=RE_SYSINFO_CONFIGCHECK_RESULT, message="Invalid input")])
     Message = StringField('Message', validators=[Regexp(regex=RE_SYSINFO_CONFIGCHECK_MESSAGE, message="Invalid input")])
 
+    Host = StringField('Host', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
+
     InvertName = BooleanField('Invert Name')
     InvertComponent = BooleanField('Invert Component')
     InvertMethod = BooleanField('Invert Method')
@@ -37,6 +40,7 @@ class ConfigCheckSearchForm(FlaskForm):
     InvertValue = BooleanField('Invert Value')
     InvertResult = BooleanField('Invert Result')
     InvertMessage = BooleanField('Invert Message')
+    InvertHost = BooleanField('Invert Host')
 
     search = SubmitField('Search')
     download = SubmitField('Download Excel')
@@ -55,6 +59,8 @@ class RegistryCheckSearchForm(FlaskForm):
     ValueMatch = BooleanField('ValueMatch')
     CurrentValue = StringField('CurrentValue', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_CURRENTVALUE, message="Invalid input")])
 
+    Host = StringField('Host', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
+
     InvertName = BooleanField('Invert Name')
     InvertCategory = BooleanField('Invert Category')
     InvertDescription = BooleanField('Invert Description')
@@ -65,6 +71,7 @@ class RegistryCheckSearchForm(FlaskForm):
     InvertCurrentValue = BooleanField('Invert CurrentValue')
     UseKeyExists = BooleanField('use KeyExists')
     UseValueMatch = BooleanField('use ValueMatch')
+    InvertHost = BooleanField('Invert Host')
 
     search = SubmitField('Search')
     download = SubmitField('Download Excel')
