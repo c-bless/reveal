@@ -12,7 +12,7 @@ from systemdb.webapp.sysinfo.reports import ReportInfo
 @sysinfo_bp.route('/report/wsh', methods=['GET'])
 @login_required
 def hosts_report_wsh():
-    hosts = Host.query.filter(Host.WSHEnabled == "Enabled").all()
+    hosts = Host.query.filter(Host.WSHEnabled == True).all()
     return render_template('host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_wsh_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_wsh_excel_full"))
@@ -21,7 +21,7 @@ def hosts_report_wsh():
 @sysinfo_bp.route('/report/wsh/excel/full', methods=['GET'])
 @login_required
 def hosts_report_wsh_excel_full():
-    hosts = Host.query.filter(Host.WSHEnabled == "Enabled").all()
+    hosts = Host.query.filter(Host.WSHEnabled == True).all()
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-wsh-enabled-full.xlsx",
@@ -31,7 +31,7 @@ def hosts_report_wsh_excel_full():
 @sysinfo_bp.route('/report/wsh/excel/brief', methods=['GET'])
 @login_required
 def hosts_report_wsh_excel_brief():
-    hosts = Host.query.filter(Host.WSHEnabled == "Enabled").all()
+    hosts = Host.query.filter(Host.WSHEnabled == True).all()
     output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-wsh-enabled-brief.xlsx",
@@ -56,7 +56,7 @@ class ReportWSHEnabled(ReportInfo):
 @sysinfo_bp.route('/report/wshremote', methods=['GET'])
 @login_required
 def hosts_report_wshremote():
-    hosts = Host.query.filter(Host.WSHRemote == "Enabled").all()
+    hosts = Host.query.filter(Host.WSHRemote == True).all()
     return render_template('host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_wshremote_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_wshremote_excel_full"))
@@ -65,7 +65,7 @@ def hosts_report_wshremote():
 @sysinfo_bp.route('/report/wshremote/excel/full', methods=['GET'])
 @login_required
 def hosts_report_wshremote_excel_full():
-    hosts = Host.query.filter(Host.WSHRemote == "Enabled").all()
+    hosts = Host.query.filter(Host.WSHRemote == True).all()
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-wsh-remote-full.xlsx",
@@ -74,7 +74,7 @@ def hosts_report_wshremote_excel_full():
 @sysinfo_bp.route('/report/wshremote/excel/brief', methods=['GET'])
 @login_required
 def hosts_report_wshremote_excel_brief():
-    hosts = Host.query.filter(Host.WSHRemote == "Enabled").all()
+    hosts = Host.query.filter(Host.WSHRemote == True).all()
     output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-wsh-remote-brief.xlsx",

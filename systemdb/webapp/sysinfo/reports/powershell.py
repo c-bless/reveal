@@ -12,7 +12,7 @@ from systemdb.webapp.sysinfo.reports import ReportInfo
 @sysinfo_bp.route('/report/ps2', methods=['GET'])
 @login_required
 def hosts_report_ps2():
-    hosts = Host.query.filter(Host.PS2Installed == "True").all()
+    hosts = Host.query.filter(Host.PS2Installed == True).all()
     return render_template('host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_ps2_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_ps2_excel_full"))
@@ -21,7 +21,7 @@ def hosts_report_ps2():
 @sysinfo_bp.route('/report/ps2/excel/full', methods=['GET'])
 @login_required
 def hosts_report_ps2_excel_full():
-    hosts = Host.query.filter(Host.PS2Installed == "True").all()
+    hosts = Host.query.filter(Host.PS2Installed == True).all()
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-ps2-full.xlsx",
@@ -31,7 +31,7 @@ def hosts_report_ps2_excel_full():
 @sysinfo_bp.route('/report/ps2/excel/brief', methods=['GET'])
 @login_required
 def hosts_report_ps2_excel_brief():
-    hosts = Host.query.filter(Host.PS2Installed == "True").all()
+    hosts = Host.query.filter(Host.PS2Installed == True).all()
     output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/docx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-ps2-brief.xlsx",

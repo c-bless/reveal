@@ -59,9 +59,9 @@ def report_hosts_by_localuser_list():
     if request.method == 'POST':
         user_filter = form.Name.data
         users = User.query.filter(and_(
-            User.LocalAccount == "True",
+            User.LocalAccount == True,
             User.Name.ilike("%"+user_filter+"%"),
-            User.Disabled == "False"
+            User.Disabled == False
         )).all()
         hosts = [u.Host for u in users]
         if 'full' in request.form:
@@ -72,8 +72,8 @@ def report_hosts_by_localuser_list():
 
     else:
         users = User.query.filter(and_(
-            User.LocalAccount == "True",
-            User.Disabled == "False"
+            User.LocalAccount == True,
+            User.Disabled == False
         )).all()
         hosts = [u.Host for u in users]
 

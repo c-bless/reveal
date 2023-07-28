@@ -17,6 +17,7 @@ from systemdb.core.models.activedirectory import ADSPN
 from systemdb.core.models.activedirectory import ADPasswordPolicy
 from systemdb.core.models.activedirectory import ADTrust
 
+from systemdb.core.importer.converter import str2bool
 
 def import_domain_collector(root):
     if root.tag != "DomainCollector":
@@ -225,11 +226,11 @@ def dc2db(xml, domain, forest):
         if "OperatingSystem" == e.tag: dc.OperatingSystem = e.text
         if "IPv4Address" == e.tag: dc.IPv4Address = e.text
         if "IPv6Address" == e.tag: dc.IPv6Address = e.text
-        if "Enabled" == e.tag: dc.Enabled = e.text
-        if "Domainname" == e.tag: dc.Domain = e.text
-        if "Forestname" == e.tag: dc.Forest = e.text
-        if "IsGlobalCatalog" == e.tag: dc.IsGlobalCatalog = e.text
-        if "IsReadOnly" == e.tag: dc.IsReadOnly = e.text
+        if "Enabled" == e.tag: dc.Enabled = str2bool(e.text)
+        if "Domainname" == e.tag: dc.Domainname = e.text
+        if "Forestname" == e.tag: dc.Forestname = e.text
+        if "IsGlobalCatalog" == e.tag: dc.IsGlobalCatalog = str2bool(e.text)
+        if "IsReadOnly" == e.tag: dc.IsReadOnly = str2bool(e.text)
         if "LdapPort" == e.tag: dc.LdapPort = e.text
         if "SslPort" == e.tag: dc.SslPort = e.text
     db.session.add(dc)
@@ -259,19 +260,19 @@ def computer2db(xml, domain):
     for e in xml.getchildren():
         if "DistinguishedName" == e.tag: c.DistinguishedName = e.text
         if "DNSHostName" == e.tag: c.DNSHostName = e.text
-        if "Enabled" == e.tag: c.Enabled = e.text
+        if "Enabled" == e.tag: c.Enabled = str2bool(e.text)
         if "IPv4Address" == e.tag: c.IPv4Address = e.text
         if "IPv6Address" == e.tag: c.IPv6Address = e.text
         if "SID" == e.tag: c.SID = e.text
         if "SamAccountName" == e.tag: c.SamAccountName = e.text
         if "ServiceAccount" == e.tag: c.ServiceAccount = e.text
         if "servicePrincipalNamesStr" == e.tag: c.servicePrincipalNamesStr = e.text
-        if "TrustedForDelegation" == e.tag: c.TrustedForDelegation = e.text
-        if "TrustedToAuthForDelegation" == e.tag: c.TrustedToAuthForDelegation = e.text
+        if "TrustedForDelegation" == e.tag: c.TrustedForDelegation = str2bool(e.text)
+        if "TrustedToAuthForDelegation" == e.tag: c.TrustedToAuthForDelegation = str2bool(e.text)
         if "PrimaryGroup" == e.tag: c.PrimaryGroup = e.text
         if "primaryGroupID" == e.tag: c.primaryGroupID = e.text
         if "pwdLastSet" == e.tag: c.pwdLastSet = e.text
-        if "ProtectedFromAccidentalDeletion" == e.tag: c.ProtectedFromAccidentalDeletion = e.text
+        if "ProtectedFromAccidentalDeletion" == e.tag: c.ProtectedFromAccidentalDeletion = str2bool(e.text)
         if "OperatingSystem" == e.tag: c.OperatingSystem = e.text
         if "OperatingSystemVersion" == e.tag: c.OperatingSystemVersion = e.text
         if "Description" == e.tag: c.Description = e.text
@@ -300,7 +301,7 @@ def user2db(xml, domain):
         if "Surname" == e.tag: user.Surname = e.text
         if "Name" == e.tag: user.Name = e.text
         if "SIDHistory" == e.tag: user.SIDHistory = e.text
-        if "Enabled" == e.tag: user.Enabled = e.text
+        if "Enabled" == e.tag: user.Enabled = str2bool(e.text)
         if "Description" == e.tag: user.Description = e.text
         if "DistinguishedName" == e.tag: user.DistinguishedName = e.text
         if "BadLogonCount" == e.tag: user.BadLogonCount = e.text
@@ -310,11 +311,11 @@ def user2db(xml, domain):
         if "lastLogon" == e.tag: user.lastLogon = e.text
         if "LastLogonDate" == e.tag: user.LastLogonDate = e.text
         if "logonCount" == e.tag: user.logonCount = e.text
-        if "LockedOut" == e.tag: user.LockedOut = e.text
-        if "PasswordExpired" == e.tag: user.PasswordExpired = e.text
+        if "LockedOut" == e.tag: user.LockedOut = str2bool(e.text)
+        if "PasswordExpired" == e.tag: user.PasswordExpired = str2bool(e.text)
         if "PasswordLastSet" == e.tag: user.PasswordLastSet = e.text
-        if "PasswordNeverExpires" == e.tag: user.PasswordNeverExpires = e.text
-        if "PasswordNotRequired" == e.tag: user.PasswordNotRequired = e.text
+        if "PasswordNeverExpires" == e.tag: user.PasswordNeverExpires = str2bool(e.text)
+        if "PasswordNotRequired" == e.tag: user.PasswordNotRequired = str2bool(e.text)
         if "pwdLastSet" == e.tag: user.pwdLastSet = e.text
         if "Modified" == e.tag: user.Modified = e.text
         if "MemberOfStr" == e.tag: user.MemberOfStr = e.text
@@ -370,18 +371,18 @@ def trusts2db(xml, domain):
                 if "Target" == e.tag: trust.Target = e.text
                 if "Direction" == e.tag: trust.Direction = e.text
                 if "TrustType" == e.tag: trust.TrustType = e.text
-                if "UplevelOnly" == e.tag: trust.UplevelOnly = e.text
-                if "UsesAESKeys" == e.tag: trust.UsesAESKeys = e.text
-                if "UsesRC4Encryption" == e.tag: trust.UsesRC4Encryption = e.text
-                if "TGTDelegation" == e.tag: trust.TGTDelegation = e.text
-                if "SIDFilteringForestAware" == e.tag: trust.SIDFilteringForestAware = e.text
-                if "SIDFilteringQuarantined" == e.tag: trust.SIDFilteringQuarantined = e.text
-                if "SelectiveAuthentication" == e.tag: trust.SelectiveAuthentication = e.text
-                if "DisallowTransivity" == e.tag: trust.DisallowTransivity = e.text
+                if "UplevelOnly" == e.tag: trust.UplevelOnly = str2bool(e.text)
+                if "UsesAESKeys" == e.tag: trust.UsesAESKeys = str2bool(e.text)
+                if "UsesRC4Encryption" == e.tag: trust.UsesRC4Encryption = str2bool(e.text)
+                if "TGTDelegation" == e.tag: trust.TGTDelegation = str2bool(e.text)
+                if "SIDFilteringForestAware" == e.tag: trust.SIDFilteringForestAware = str2bool(e.text)
+                if "SIDFilteringQuarantined" == e.tag: trust.SIDFilteringQuarantined = str2bool(e.text)
+                if "SelectiveAuthentication" == e.tag: trust.SelectiveAuthentication = str2bool(e.text)
+                if "DisallowTransivity" == e.tag: trust.DisallowTransivity = str2bool(e.text)
                 if "DistinguishedName" == e.tag: trust.DistinguishedName = e.text
-                if "ForestTransitive" == e.tag: trust.ForestTransitive = e.text
-                if "IntraForest" == e.tag: trust.IntraForest = e.text
-                if "IsTreeParent" == e.tag: trust.IsTreeParent = e.text
-                if "IsTreeRoot" == e.tag: trust.IsTreeRoot = e.text
+                if "ForestTransitive" == e.tag: trust.ForestTransitive = str2bool(e.text)
+                if "IntraForest" == e.tag: trust.IntraForest = str2bool(e.text)
+                if "IsTreeParent" == e.tag: trust.IsTreeParent = str2bool(e.text)
+                if "IsTreeRoot" == e.tag: trust.IsTreeRoot = str2bool(e.text)
             db.session.add(trust)
     db.session.commit()

@@ -12,7 +12,7 @@ from systemdb.webapp.sysinfo.reports import ReportInfo
 @sysinfo_bp.route('/report/smbv1/excel/full', methods=['GET'])
 @login_required
 def hosts_report_smbv1_excel_full():
-    hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
+    hosts = Host.query.filter(Host.SMBv1Enabled == True).all()
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/xlsx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-smbv1-full.xlsx",
@@ -22,7 +22,7 @@ def hosts_report_smbv1_excel_full():
 @sysinfo_bp.route('/report/smbv1/excel/brief', methods=['GET'])
 @login_required
 def hosts_report_smbv1_excel_brief():
-    hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
+    hosts = Host.query.filter(Host.SMBv1Enabled == True).all()
     output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/xlsx",
                     headers={"Content-disposition": "attachment; filename=hosts-with-smbv1-brief.xlsx",
@@ -32,7 +32,7 @@ def hosts_report_smbv1_excel_brief():
 @sysinfo_bp.route('/report/smbv1', methods=['GET'])
 @login_required
 def hosts_report_smbv1():
-    hosts = Host.query.filter(Host.SMBv1Enabled == "True").all()
+    hosts = Host.query.filter(Host.SMBv1Enabled == True).all()
     return render_template('host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_smbv1_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_smbv1_excel_full"))

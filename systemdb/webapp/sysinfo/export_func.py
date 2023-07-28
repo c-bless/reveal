@@ -175,7 +175,7 @@ def generate_services_excel(services=[]):
     for s in services:
         tmp = [s.SystemName, s.Caption, s.Description, s.Name, s.StartMode, s.PathName, s.Started, s.StartName,
                s.DisplayName, s.Running, s.AcceptStop, s.AcceptPause, s.ProcessId, s.DelayedAutoStart,
-               s.BinaryPermissionsStr, s.Host, s.Host.SystemGroup, s.Host.Location,]
+               s.BinaryPermissionsStr, s.Host, s.Host.SystemGroup, s.Host.Location]
         rows.append(tmp)
 
 
@@ -252,6 +252,50 @@ def generate_products_excel(products=[]):
         row += 1
 
     worksheet.autofilter("A1:G1")
+    worksheet.autofit()
+    # Close the workbook before streaming the data.
+    workbook.close()
+
+    # Rewind the buffer.
+    output.seek(0)
+    return output
+
+
+def generate_shares_excel(shares=[]):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    worksheet = workbook.add_worksheet()
+
+    rows = []
+
+    for s in shares:
+        uri = "\\\\{0}\\{1}".format(s.Host, s.Name)
+        uri2 = "\\\\{0}.{1}\\{2}".format(s.Host, s.Host.Domain, s.Name)
+        tmp = [s.Name, s.Path, s.Description, s.Host, s.Host.SystemGroup, s.Host.Location, uri, uri2]
+        rows.append(tmp)
+
+
+    header_data = ["Name", "Path", "Description", "Hostname", "SystemGroup", "Location", "URI", "URI (with domain)"]
+
+    header_format = workbook.add_format({'bold': True,
+                                         'bottom': 2,
+                                         'bg_color': '#CCCCCC'})
+
+    for col_num, data in enumerate(header_data):
+        worksheet.write(0, col_num, data, header_format)
+
+    # Start from the first cell. Rows and columns are zero indexed.
+    row = 1
+    col = 0
+    # Iterate over the data and write it out row by row.
+    for service in rows:
+        for c in service:
+            worksheet.write(row, col, str(c))
+            col += 1
+        worksheet.autofilter("A1:H1")
+        col = 0
+        row += 1
+
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()

@@ -31,7 +31,7 @@ from systemdb.webapi.tags import T_HMI_HARDENING
         security='ApiKeyAuth',
         tags=[T_REPORT_SYSINFO, T_GENERAL_HARDENING, T_SISYPHUS])
 def report_PS2():
-    return Host.query.filter(Host.PS2Installed == "True").all()
+    return Host.query.filter(Host.PS2Installed == True).all()
 
 
 #####################################################################################
@@ -46,7 +46,7 @@ def report_PS2():
 @bp.output(status_code=HTTPStatus.OK,
            schema=HostSchema(many=True))
 def report_smbv1():
-    return Host.query.filter(Host.SMBv1Enabled == "True").all()
+    return Host.query.filter(Host.SMBv1Enabled == True).all()
 
 
 #####################################################################################
@@ -61,7 +61,7 @@ def report_smbv1():
 @bp.output(status_code=HTTPStatus.OK,
            schema=HostSchema(many=True))
 def report_wsh_enabled():
-    return Host.query.filter(Host.WSHEnabled == "Enabled").all()
+    return Host.query.filter(Host.WSHEnabled == True).all()
 
 #####################################################################################
 # Hosts with WSH remote enabled
@@ -75,7 +75,7 @@ def report_wsh_enabled():
 @bp.output(status_code=HTTPStatus.OK,
            schema=HostSchema(many=True))
 def report_wsh_remote_enabled():
-    return Host.query.filter(Host.WSHRemote == "Enabled").all()
+    return Host.query.filter(Host.WSHRemote == True).all()
 
 
 

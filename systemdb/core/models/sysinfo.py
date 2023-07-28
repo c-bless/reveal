@@ -15,11 +15,13 @@ class Host(db.Model):
     LogonServer = db.Column(db.String(150), unique=False, nullable=True)
     TimeZone = db.Column(db.String(150), unique=False, nullable=True)
     KeyboardLayout = db.Column(db.String(150), unique=False, nullable=True)
-    HyperVisorPresent = db.Column(db.String(150), unique=False, nullable=True)
+    HyperVisorPresent = db.Column(db.Boolean(), nullable=True)
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
     SystemGroup = db.Column(db.String(256), unique=False, nullable=True)
     Location = db.Column(db.String(256), unique=False, nullable=True)
     LastUpdate = db.Column(db.DateTime, unique=False, nullable=True)
+    Whoami = db.Column(db.String(256), unique=False, nullable=True)
+    WhoamiIsAdmin = db.Column(db.Boolean(), nullable=True)
     #active PS version
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
     PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
@@ -36,9 +38,9 @@ class Host(db.Model):
     DefaultUserName = db.Column(db.String(256), unique=False, nullable=True)
     DefaultDomain = db.Column(db.String(256), unique=False, nullable=True)
     # Firewall Profiles
-    FwProfileDomain = db.Column(db.String(5),  unique=False, nullable=True)
-    FwProfilePrivate = db.Column(db.String(5),  unique=False, nullable=True)
-    FwProfilePublic = db.Column(db.String(5),  unique=False, nullable=True)
+    FwProfileDomain = db.Column(db.Boolean(), nullable=True)
+    FwProfilePrivate = db.Column(db.Boolean(), nullable=True)
+    FwProfilePublic = db.Column(db.Boolean(), nullable=True)
     # WSUS
     AcceptTrustedPublisherCerts = db.Column(db.String(5), unique=False, nullable=True)
     DisableWindowsUpdateAccess = db.Column(db.String(5), unique=False, nullable=True)
@@ -48,15 +50,15 @@ class Host(db.Model):
     WUServer = db.Column(db.String(1024), unique=False, nullable=True)
     WUStatusServer = db.Column(db.String(1024), unique=False, nullable=True)
     # SMB Settings
-    SMBv1Enabled = db.Column(db.String(5), unique=False, nullable=True)
-    SMBv2Enabled = db.Column(db.String(5), unique=False, nullable=True)
-    SMBEncryptData = db.Column(db.String(5), unique=False, nullable=True)
-    SMBEnableSecuritySignature = db.Column(db.String(5), unique=False, nullable=True)
-    SMBRequireSecuritySignature = db.Column(db.String(5), unique=False, nullable=True)
+    SMBv1Enabled = db.Column(db.Boolean(), nullable=True)
+    SMBv2Enabled = db.Column(db.Boolean(), nullable=True)
+    SMBEncryptData = db.Column(db.Boolean(), nullable=True)
+    SMBEnableSecuritySignature = db.Column(db.Boolean(), nullable=True)
+    SMBRequireSecuritySignature = db.Column(db.Boolean(), nullable=True)
     # WSH
     WSHTrustPolicy = db.Column(db.String(256), unique=False, nullable=True)
-    WSHEnabled = db.Column(db.String(10), unique=False, nullable=True)
-    WSHRemote = db.Column(db.String(10), unique=False, nullable=True)
+    WSHEnabled = db.Column(db.Boolean(), nullable=True)
+    WSHRemote = db.Column(db.Boolean(), nullable=True)
     # references
     PSInstalledVersions = db.relationship("PSInstalledVersions", back_populates='Host', lazy='dynamic')
     Hotfixes = db.relationship('Hotfix', back_populates='Host', lazy='dynamic')
@@ -161,7 +163,7 @@ class Hotfix(db.Model):
 class DefenderSettings(db.Model):
     __tablename__ = "DefenderSettings"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(256), unique=False, nullable=True)
+    Name = db.Column(db.String(512), unique=False, nullable=True)
     Value = db.Column(db.String(256), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="DefenderSettings")
@@ -232,7 +234,7 @@ class Service(db.Model):
     __tablename__ = "Service"
     id = db.Column(db.Integer, primary_key=True)
     Caption = db.Column(db.String(2048), unique=False, nullable=True)
-    Description = db.Column(db.String(2048), unique=False, nullable=True)
+    Description = db.Column(db.String(), unique=False, nullable=True)
     Name = db.Column(db.String(1024), unique=False, nullable=True)
     StartMode = db.Column(db.String(20), unique=False, nullable=True)
     PathName = db.Column(db.String(2048), unique=False, nullable=True)
@@ -278,15 +280,15 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     AccountType = db.Column(db.String(10), unique=False, nullable=True)
     Domain = db.Column(db.String(1024), unique=False, nullable=True)
-    Disabled = db.Column(db.String(10), unique=False, nullable=True)
-    LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
+    Disabled = db.Column(db.Boolean(), nullable=True)
+    LocalAccount = db.Column(db.Boolean(), nullable=True)
     Name = db.Column(db.String(256), unique=False, nullable=True)
     FullName = db.Column(db.String(1024), unique=False, nullable=True)
     Description = db.Column(db.String(), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
-    Lockout = db.Column(db.String(10), unique=False, nullable=True)
+    Lockout = db.Column(db.Boolean(), nullable=True)
     PasswordChanged = db.Column(db.String(10), unique=False, nullable=True)
-    PasswordRequired = db.Column(db.String(10), unique=False, nullable=True)
+    PasswordRequired = db.Column(db.Boolean(), nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Users")
 
@@ -295,6 +297,32 @@ class User(db.Model):
 
     def __str__(self):
         return self.Name
+
+    @staticmethod
+    def find_by_name(name: str, exact_match=False):
+        if not exact_match:
+            return User.query.filter(User.Name.ilike("%" + name + "%")).all()
+        else:
+            return User.query.filter(User.Name == name).all()
+
+    @staticmethod
+    def find_by_SID(sid: str, exact_match=False):
+        if not exact_match:
+            return User.query.filter(User.SID.ilike("%"+ sid + "%")).all()
+        else:
+            return User.query.filter(User.SID == sid).all()
+
+    @staticmethod
+    def find_disabled():
+        return User.query.filter(User.Disabled == True).all()
+
+    @staticmethod
+    def find_enabled():
+        return User.query.filter(User.Disabled == False).all()
+
+    @staticmethod
+    def find_password_not_required():
+        return User.query.filter(User.PasswordRequired == False).all()
 
 
 class Group(db.Model):
@@ -356,9 +384,9 @@ class Product(db.Model):
 class Share(db.Model):
     __tablename__ = "Share"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(10), unique=False, nullable=True)
-    Path = db.Column(db.String(2048), unique=False, nullable=True)
-    Description = db.Column(db.String(2048), unique=False, nullable=True)
+    Name = db.Column(db.String(512), unique=False, nullable=True)
+    Path = db.Column(db.String(), unique=False, nullable=True)
+    Description = db.Column(db.String(), unique=False, nullable=True)
     NTFSPermissions = db.relationship('ShareACLNTFS', back_populates='Share', lazy='dynamic')
     SharePermissions = db.relationship('ShareACL', back_populates='Share', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)

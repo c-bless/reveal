@@ -6,14 +6,26 @@ RE_SYSINFO_PRINTERNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
 # Product related keys
 RE_SYSINFO_PRODUCT_NAME = '^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
-
+RE_SYSINFO_PRODUCT_CAPTION = '^([a-zA-Z0-9 \.\-\(\)\_]+)?$'
+RE_SYSINFO_PRODUCT_VERSION = '^([a-zA-Z0-9 \.\-\_]+)?$'
+RE_SYSINFO_PRODUCT_HOST = '^([a-zA-Z0-9 \.\-\_]+)?$'
+RE_SYSINFO_PRODUCT_INSTALLLOCATION = '^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
 
 # service related keys
 RE_SYSINFO_SERVICE_ACCOUNTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_SERVICE_PERMISSIONSTRING = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_SERVICE_STARTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_SERVICE_SYSTEMNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_SERVICE_PATHNAME = '^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
+RE_SYSINFO_SERVICE_DISPLAYNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_SERVICE_NAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_SERVICE_STARTED = "^([a-zA-Z]+)?$"
+RE_SYSINFO_SERVICE_STARTMODE = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
-# Registry Checks
-RE_SYSINFO_REGISTRYCHECK_NAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+# Share related keys
+RE_SYSINFO_Share_NAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_Share_DESCRIPTION = '^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
+RE_SYSINFO_Share_PATH = '^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
 
 #TODO: Review DATA inputs
 # ConfigChecks
@@ -26,7 +38,7 @@ RE_SYSINFO_CONFIGCHECK_VALUE = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_CONFIGCHECK_MESSAGE = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
 #TODO: Review DATA inputs
-# ConfigChecks
+# Registry Checks
 RE_SYSINFO_REGISTRYCHECK_NAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_REGISTRYCHECK_CATEGORY = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_REGISTRYCHECK_DESCRIPTION = "^([a-zA-Z0-9 \.\-\_]+)?$"

@@ -85,3 +85,4 @@ target/
 /services/
 # OBSIDIAN Cache
 /.obsidian/
+/todos.txt
