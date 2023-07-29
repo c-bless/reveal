@@ -110,7 +110,7 @@
                     <td> {{ c.ValueMatch }} </td>
                     <td> {{ c.Host }} </td>
                     <td class="actions">
-                        <a href="#" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.registrycheck_detail', id=c.id) }}" class="btn btn-default btn-xs">
                             <i class="fa fa-eye"></i> View
                         </a>
                     </td>

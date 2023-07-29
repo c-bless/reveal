@@ -37,9 +37,11 @@
                             {{ render_field_sm2(form.Result) }}
                             {{ render_check_field_sm2(form.InvertResult) }}
 
-
                             {{ render_field_sm2(form.Message) }}
                             {{ render_check_field_sm2(form.InvertMessage) }}
+
+                            {{ render_field_sm2(form.Host) }}
+                            {{ render_check_field_sm2(form.InvertHost) }}
 
                         </div>
                     </div>
@@ -71,13 +73,13 @@
                     aria-label="Method" width="10%">Method
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Result" width="5%">Result
+                    aria-label="Result" width="15%">Result
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Key" width="15%">Key
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Host" width="15%">Host
+                    aria-label="Host" width="5%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Message" width="20%">Message
@@ -99,7 +101,7 @@
                     <td> {{ c.Host }} </td>
                     <td> {{ c.Message }} </td>
                     <td class="actions">
-                        <a href="#" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.configcheck_detail', id=c.id) }}" class="btn btn-default btn-xs">
                             <i class="fa fa-eye"></i> View
                         </a>
                     </td>
