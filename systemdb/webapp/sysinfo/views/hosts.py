@@ -7,7 +7,8 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Service
 from systemdb.webapp.sysinfo.forms.hosts import HostSearchForm
-from systemdb.webapp.sysinfo.export_func import generate_hosts_excel, generate_hosts_excel_brief
+from systemdb.core.export.excel.hosts import generate_hosts_excel
+from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 
 
 @sysinfo_bp.route('/hosts/', methods=['GET'])

@@ -6,7 +6,7 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Service
 from systemdb.webapp.sysinfo.forms.services import ServiceSearchForm
-from systemdb.webapp.sysinfo.export_func import generate_services_excel
+from systemdb.core.export.excel.services import generate_services_excel
 
 
 @sysinfo_bp.route('/services/', methods=['GET'])

@@ -3,7 +3,7 @@ from flask_login import login_required
 from sqlalchemy import and_
 
 from systemdb.webapp.sysinfo import sysinfo_bp
-from systemdb.webapp.sysinfo.export_func import generate_products_excel
+from systemdb.core.export.excel.products import generate_products_excel
 from systemdb.webapp.sysinfo.forms.products import ProductSearchForm
 from systemdb.core.models.sysinfo import Product
 from systemdb.core.models.sysinfo import Host

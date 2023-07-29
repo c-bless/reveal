@@ -6,7 +6,8 @@ from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 from systemdb.core.models.sysinfo import Host, Group, GroupMember, User
 from systemdb.core.querries.usermgmt import get_direct_domainuser_assignments
 from systemdb.webapp.sysinfo import sysinfo_bp
-from systemdb.webapp.sysinfo.export_func import generate_userassignment_excel, generate_hosts_excel
+from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
+from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.webapp.sysinfo.reports import ReportInfo
 from systemdb.webapp.sysinfo.forms.hosts import HostByLocalUserSearchForm
 from systemdb.webapp.sysinfo.forms.groups import LocalAdminSearchForm

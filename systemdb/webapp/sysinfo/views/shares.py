@@ -7,7 +7,8 @@ from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Share
 
 from systemdb.webapp.sysinfo.forms.shares import ShareSearchForm
-from systemdb.webapp.sysinfo.export_func import generate_shares_excel
+from systemdb.core.export.excel.shares import generate_shares_excel
+
 
 @sysinfo_bp.route('/shares/<int:id>', methods=['GET'])
 @login_required
@@ -15,7 +16,6 @@ def share_detail(id):
     share = Share.query.get_or_404(id)
     host = Host.query.get_or_404(share.Host_id)
     return render_template("share_details.html", share=share, host=host)
-
 
 
 @sysinfo_bp.route('/shares/', methods=['GET', 'POST'])

@@ -2,7 +2,8 @@ from flask import render_template, Response, url_for
 from flask_login import login_required
 
 from systemdb.webapp.sysinfo import sysinfo_bp
-from systemdb.webapp.sysinfo.export_func import generate_printer_excel_brief, generate_printer_excel_full
+from systemdb.core.export.excel.printer import generate_printer_excel_brief
+from systemdb.core.export.excel.printer import generate_printer_excel_full
 from systemdb.webapi.querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
 from systemdb.webapp.sysinfo.reports import ReportInfo
 

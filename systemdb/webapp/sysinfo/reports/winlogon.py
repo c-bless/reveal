@@ -2,7 +2,8 @@ from flask import render_template, Response, url_for
 from flask_login import login_required
 
 from systemdb.webapp.sysinfo import sysinfo_bp
-from systemdb.webapp.sysinfo.export_func import generate_hosts_excel, generate_hosts_excel_brief
+from systemdb.core.export.excel.hosts import generate_hosts_excel
+from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.models.sysinfo import Host
 from systemdb.webapp.sysinfo.reports import ReportInfo
 

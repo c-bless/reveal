@@ -1,20 +1,32 @@
-from flask import render_template, abort, Response, redirect, url_for
+import os
+
+from flask import render_template
+from flask import abort
+from flask import Response
+from flask import redirect
+from flask import url_for
+from flask import current_app
+
 from flask_login import login_required
 
 from systemdb.webapp.sysinfo import sysinfo_bp
 
 from systemdb.core.models.sysinfo import Host, Service, Product, Share
 
-import os
-from systemdb.webapp.sysinfo.export_func import template_detail_dir, template_dir
-from systemdb.webapp.sysinfo.export_func import generate_hosts_docx, generate_single_host_docx, generate_hosts_excel, \
-    generate_services_excel, generate_hosts_excel_brief, generate_shares_excel
-from systemdb.webapp.sysinfo.export_func import generate_products_excel
+from systemdb.core.export.word.hosts import generate_hosts_docx
+from systemdb.core.export.word.hosts import generate_single_host_docx
+
+from systemdb.core.export.excel.hosts import generate_hosts_excel
+from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
+from systemdb.core.export.excel.services import generate_services_excel
+from systemdb.core.export.excel.shares import  generate_shares_excel
+from systemdb.core.export.excel.products import generate_products_excel
 
 
 @sysinfo_bp.route('/export/templates', methods=['GET'])
 @login_required
 def template_list():
+    template_dir = "{0}/templates/hosts/".format(current_app.config.get(('REPORT_DIR')))
     templates = os.listdir(template_dir)
     return render_template('template_list.html', templates=templates, title="Available templates")
 
@@ -23,6 +35,7 @@ def template_list():
 @login_required
 def hosts_export_docx(template):
     hosts = Host.query.all()
+    template_dir = "{0}/templates/hosts/".format(current_app.config.get(('REPORT_DIR')))
     if template not in os.listdir(template_dir):
         abort(403, "Unknown template.")
     template_file = "{0}{1}".format(template_dir, template)
@@ -58,6 +71,7 @@ def hosts_export_excel_brief():
 def host_export_word(id):
     host = Host.query.get_or_404(id)
     template = "host_detail_template.docx"
+    template_detail_dir = "{0}/templates/details/".format(current_app.config.get(('REPORT_DIR')))
     if template not in os.listdir(template_detail_dir):
         abort(403, "Unknown template.")
     template_file = "{0}{1}".format(template_detail_dir, template)

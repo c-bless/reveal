@@ -2,7 +2,8 @@ from flask import render_template, Response, url_for
 from flask_login import login_required
 from sqlalchemy import and_
 from systemdb.webapp.sysinfo import sysinfo_bp
-from systemdb.webapp.sysinfo.export_func import generate_hosts_excel, generate_hosts_excel_brief
+from systemdb.core.export.excel.hosts import generate_hosts_excel
+from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 
 from systemdb.core.models.sysinfo import Host, Group

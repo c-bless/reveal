@@ -4,7 +4,7 @@ from flask_login import login_required
 from sqlalchemy import and_
 
 from systemdb.webapp.sysinfo import sysinfo_bp
-from systemdb.webapp.sysinfo.export_func import generate_services_excel
+from systemdb.core.export.excel.services import generate_services_excel
 
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
