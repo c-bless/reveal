@@ -27,6 +27,7 @@ It is recommended to change db user passwords before building Docker images. Tho
 
 
 **Ports reachable on docker containers:**
+
 - 80: Nginx reverse proxy for webapp (http) -> redirect to port 443 (https)
 - 443: Nginx reverse proxy for webapp (https)
 - 8443: Nginx reverse proxy for webapi (https)
