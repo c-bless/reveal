@@ -27,16 +27,9 @@ It is recommended to change db user passwords before building Docker images. Tho
 
 
 **Ports reachable on docker containers:**
-
-- 8000: webapp (http) (directly accessible port to gunicorn server might be removed in future!)
-- 8001: webapi (http) -> http:localhost:8001/docs for API-doc (directly accessible port to gunicorn server might be removed in future!)
-- 80: Nginx reverse proxy for webapp (http)
-- 81: Nginx reverse proxy for webapi (http) -> http:localhost:81/docs for API-doc
-
-Not implemented yet:
-
-- 443: Nginx reverse proxy for webapp (https) -> if implemented redirect from 80 will be added as well
-- 8443: Nginx reverse proxy for webapi (https) -> if implemented redirect from 81 will be added as well
+- 80: Nginx reverse proxy for webapp (http) -> redirect to port 443 (https)
+- 443: Nginx reverse proxy for webapp (https)
+- 8443: Nginx reverse proxy for webapi (https)
 
 ### CLI Commands to interact with dockerized application ###
 

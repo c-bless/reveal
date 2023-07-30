@@ -81,8 +81,6 @@ target/
 
 /tmp/
 # Docker
-/services/web/webapp/
-/services/
 # OBSIDIAN Cache
 /.obsidian/
 /todos.txt
