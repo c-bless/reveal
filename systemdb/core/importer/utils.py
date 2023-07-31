@@ -46,7 +46,7 @@ def import_file_once(filename):
 
         return True
     except Exception as e:
-        print(e)
+        db.session.rollback()
         return False
 
 

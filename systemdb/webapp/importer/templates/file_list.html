@@ -11,7 +11,9 @@
 <table class="table table-bordered table-striped mb-none" id="datatable-editable">
     <thead>
         <tr>
-            <th width="80%"> Filename </th>
+            <th width="60%"> Filename </th>
+            <th width="20%"> UUID </th>
+            <th width="10%"> Imported </th>
             <th width="20%"> Actions </th>
         </tr>
     </thead>
@@ -19,14 +21,23 @@
         {% if uploaded_files %}
             {% for u in uploaded_files %}
               <tr>
-                <td> {{ u }} </td>
-                <td> <a href="{{ url_for('importer.import_file_by_name', file=u) }}" class="btn btn-default btn-xs">
-                        <i class="glyphicon glyphicon-eye-open"></i> Import</a>
+                <td> {{ u.OriginalFilename }} </td>
+                <td> {{ u.UUID }} </td>
+                <td> {{ u.Imported }} </td>
+                <td>
+                    {% if not u.Imported %}
+                    <a href="{{ url_for('importer.import_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
+                            <i class="glyphicon glyphicon-eye-open"></i> Import</a>
+                  {% endif %}
+                  <a href="{{ url_for('importer.delete_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
+                        <i class="glyphicon glyphicon-eye-open"></i> Delete</a>
+                </td>
+
               </tr>
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="2">No uploaded files found!</td>
+                <td colspan="4">No uploaded files found!</td>
             </tr>
         {% endif %}
     </tbody>
