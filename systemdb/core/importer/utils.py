@@ -50,14 +50,17 @@ def import_file_once(filename):
                 return True
         else:
             # File has not been uploaded via web interface, import via CLI command
+            print("not uploaded yet")
             uploaded_file = UploadedFile()
             uploaded_file.Hash = hash
+            uploaded_file.OriginalFilename = os.path.basename(filename)
+            uploaded_file.Fullpath = filename
             uploaded_file.UUID = str(uuid.uuid4())
             uploaded_file.Imported = True
             db.session.add(uploaded_file)
             db.session.commit()
 
-            print("importing file {0}".format(uploaded_file))
+            print("importing file {0}".format(uploaded_file.OriginalFilename))
             import_file(filename)
             print("File imported")
 
