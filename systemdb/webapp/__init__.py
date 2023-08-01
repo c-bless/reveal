@@ -33,6 +33,7 @@ def create_app(config_class: AppConfig):
 
     # import blueprints
     register_blueprints(app)
+    register_errorhandlers(app)
 
     if app.config.get("USE_PROXY"):
         app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)

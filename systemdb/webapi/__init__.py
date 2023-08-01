@@ -73,12 +73,15 @@ def config_api(app: Flask, config_class:ApiConfig) -> None:
     app.config['SERVERS'] = [
 
         {
-            'name': 'Docker Nginx Server',
+            'name': 'Docker Nginx Server (HTTPS)',
+            'url': 'https://localhost:8443'
+        },
+        {
+            'name': 'Docker Nginx Server (HTTP)',
             'url': 'http://localhost:81'
         },
-
         {
-            'name': 'Docker Server',
+            'name': 'Docker Server (without NGINX)',
             'url': 'http://localhost:8001'
         },
         {
