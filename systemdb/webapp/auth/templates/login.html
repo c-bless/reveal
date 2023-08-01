@@ -11,7 +11,14 @@
     </div>
     <div class="card-body">
 
-      <p class="login-box-msg">Sign in to start your session</p>
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p class="login-box-msg">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
 
       <form action="{{ url_for('auth.login_post') }}" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

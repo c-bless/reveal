@@ -81,6 +81,14 @@ target/
 
 /tmp/
 # Docker
+/services/web/update-data/*.csv
+/services/web/uploads/*.xml
+/services/web/reports/*
+/services/web/static/*
+
 # OBSIDIAN Cache
 /.obsidian/
 /todos.txt
+
+
+

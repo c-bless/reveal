@@ -5,5 +5,5 @@ COPY nginx.conf /etc/nginx/conf.d
 
 RUN mkdir /ssl/
 
-COPY /static .
 COPY /ssl /ssl/
+COPY /static /app/static

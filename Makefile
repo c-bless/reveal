@@ -1,12 +1,13 @@
 BASEDIR     = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-TMPDIR      = $(BASEDIR)/tmp/
 
-SYSTEMDB_SRC="$(BASEDIR)/systemdb/"
+TMP_DIR      = $(BASEDIR)/tmp
+SYSTEMDB_SRC = $(BASEDIR)/systemdb/
 WEBAPP_SRC  = $(SYSTEMDB_SRC)/webapp/
 WEBAPI_SRC  = $(SYSTEMDB_SRC)/webapi/
 STATIC_DIR   = $(BASEDIR)/data-directories/static/
 DISTDIR     = $(STATIC_DIR)dist/
 PLUGINDIR   = $(STATIC_DIR)plugins/
+
 
 DOCKER_WEBAPP                   = $(BASEDIR)/services/web/
 DOCKER_WEBAPP_SRC               = $(BASEDIR)/services/web/systemdb/
@@ -17,38 +18,54 @@ DOCKER_UPLOAD_DIR               = $(BASEDIR)/services/web/uploads/
 UPDATE_DATA_DIR                 = $(BASEDIR)/data-directories/update-data/
 DOCKER_UPDATE_DATA_DIR          = $(BASEDIR)/services/web/update-data/
 DOCKER_WEB_STATIC_DATA_DIR      = $(BASEDIR)/services/web/static/
-DOCKER_NGINX_STATIC_DATA_DIR      = $(BASEDIR)/services/nginx/static/
 
-DOCKER_WEBAPI           = $(BASEDIR)/services/api/
-DOCKER_WEBAPI_SRC       = $(BASEDIR)/services/api/systemdb/
+DOCKER_NGINX_STATIC_DATA_DIR    = $(BASEDIR)/services/nginx/static/
+DOCKER_NGINX                    = $(BASEDIR)/services/nginx/
+
+DOCKER_WEBAPI                   = $(BASEDIR)/services/api/
+DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/systemdb/
+
+TMP_ADMIN_LTE_URL = https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip
+TMP_ADMIN_LTE_ZIP = "admin-lte.zip"
+TMP_ADMIN_LTE_DIR = "$(TMP_DIR)/admin-lte"
+TMP_ADMIN_LTE_DIST = "$(TMP_DIR)/AdminLTE-3.2.0/dist"
+TMP_ADMIN_LTE_PLUGINS = "$(TMP_DIR)/AdminLTE-3.2.0/plugins"
+
+
+tmp:
+	@$(shell mkdir -p $(TMP_ADMIN_LTE_DIR) )
+	./download-dependencies.sh
+
 
 help:
 	@echo
-	@echo deps          : download dependencies and build docker container
+	@echo tmp          	: download dependencies
 	@echo build         : build docker container
-	@echo clean		    : cleanup temporary directory "tmp"
+	@echo clean		    : cleanup temporary directories
 	@echo run		    : start docker container
 	@echo stop		    : stop docker container and drives
 	@echo init-db	    : create user "admin" and import EoL dates
 	@echo clear-data    : remove all imported data (keep user accounts)
 
-deps:
-	@echo $(BASEDIR)
-	@echo $(WEBAPP_SRC)
-	@echo $(PLUGINDIR)
-	./download-dependencies.sh
 
 clean:
-	$(shell rm -r $(TMPDIR)))
+	@$(shell rm -r $(TMP_DIR))
+	@$(shell rm -r $(DOCKER_WEBAPP_SRC))
+	@$(shell rm -r $(DOCKER_REPORT_DIR))
+	@$(shell rm -r $(DOCKER_UPLOAD_DIR))
+	@$(shell rm -r $(DOCKER_UPDATE_DATA_DIR))
+	@$(shell rm -r $(DOCKER_WEB_STATIC_DATA_DIR))
+	@$(shell rm -r $(DOCKER_NGINX_STATIC_DATA_DIR))
+	@$(shell rm -r $(DOCKER_WEBAPI_SRC))
 
-build:
-	@$(shell cp -r $(REPORT_DIR) $(DOCKER_REPORT_DIR))
-	@$(shell cp -r $(UPLOAD_DIR) $(DOCKER_UPLOAD_DIR))
-	@$(shell cp -r $(UPDATE_DATA_DIR) $(DOCKER_UPDATE_DATA_DIR))
-	@$(shell cp -r $(STATIC_DIR) $(DOCKER_WEB_STATIC_DATA_DIR))
-	@$(shell cp -r $(STATIC_DIR) $(DOCKER_NGINX_STATIC_DATA_DIR))
+
+build: tmp
+	@$(shell cp -r $(REPORT_DIR) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(UPLOAD_DIR) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(UPDATE_DATA_DIR) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(STATIC_DIR) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(STATIC_DIR) $(DOCKER_NGINX))
 	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPP))
-	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPI))
 	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPI))
 	docker-compose build
 

@@ -4,27 +4,22 @@
 BASEDIR=$(pwd)
 
 TMPDIR="${BASEDIR}/tmp/"
-
-SYSTEMDB_SRC="${BASEDIR}/systemdb"
-WEBAPP_SRC="${SYSTEMDB_SRC}/webapp"
-STATICDIR="${BASEDIR}/data-directories/static"
+STATIC_DIR="${BASEDIR}/data-directories/static"
 
 
-if [! -d $TMPDIR ]; then
-    mkdir $TMPDIR
-fi
+TMP_ADMIN_LTE_URL = "https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip"
+TMP_ADMIN_LTE_ZIP = "admin-lte.zip"
+TMP_ADMIN_LTE_DIR = "AdminLTE-3.2.0"
+
 
 echo "[*] Downloading static dependencies"
-
 echo "[*] - AdminLTE"
-cd $TMPDIR
-if [! -d "admin-lte" ]; then
-    mkdir "admin-lte"
-fi
-wget -O admin-lte.zip https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip
-unzip admin-lte.zip -d "admin-lte"
-cd admin-lte/Admin*
 
-cp -r "dist/" $STATICDIR
-cp -r "plugins" $STATICDIR
+cd $TMPDIR
+wget -O "admin-lte.zip" "https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip"
+unzip "admin-lte.zip" -d $TMPDIR
+
+cd AdminLTE*
+cp -r "dist" $STATIC_DIR
+cp -r "plugins" $STATIC_DIR
 
