@@ -28,9 +28,10 @@
                     {% if not u.Imported %}
                     <a href="{{ url_for('importer.import_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
                             <i class="glyphicon glyphicon-eye-open"></i> Import</a>
-                  {% endif %}
-                  <a href="{{ url_for('importer.delete_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
+                    <a href="{{ url_for('importer.delete_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
                         <i class="glyphicon glyphicon-eye-open"></i> Delete</a>
+                  {% endif %}
+
                 </td>
 
               </tr>

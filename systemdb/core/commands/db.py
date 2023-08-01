@@ -1,4 +1,4 @@
-
+import os
 from flask.cli import AppGroup
 from flask import current_app
 
@@ -10,7 +10,7 @@ from systemdb.core.models.activedirectory import ADDomain
 from systemdb.core.models.activedirectory import ADForest, ADForestSite,ADUser, ADUserMembership, ADForestGlobalCatalog, \
     ADGroup , ADTrust, ADComputer,ADGroupMember, ADPasswordPolicy, ADDomainController, ADDCServerRole, ADOperationMasterRole, ADSPN
 from systemdb.core.models.eol import EoL
-from systemdb.core.models.files import ImportedFile
+from systemdb.core.models.files import UploadedFile
 db_cli = AppGroup('db')
 
 
@@ -29,7 +29,7 @@ def create_db():
 
 @db_cli.command('clear')
 def clear_db():
-    print("[*] Clearing data")
+    print("[*] Clearing data in database")
     db.session.query(EoL).delete()
     db.session.query(User).delete()
     db.session.query(GroupMember).delete()
@@ -68,5 +68,11 @@ def clear_db():
     db.session.query(ADDomainController).delete()
     db.session.query(ADDomain).delete()
     db.session.query(ADForest).delete()
-    db.session.query(ImportedFile).delete()
+    db.session.query(UploadedFile).delete()
     db.session.commit()
+
+
+    print("[*] Clearing data in upload directory")
+    for f in os.listdir(current_app.config['UPLOAD_DIR']):
+        filename = current_app.config['UPLOAD_DIR'] + f
+        os.remove(filename)

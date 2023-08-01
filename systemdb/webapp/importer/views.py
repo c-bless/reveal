@@ -8,11 +8,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from systemdb.webapp.importer import import_bp
 from systemdb.webapp.importer.forms import UploadFileForm, ImportAllForm
-from systemdb.core.importer.utils import import_file_once
+from systemdb.core.importer.utils import import_file
 from systemdb.core.importer.utils import hash_file
 from systemdb.core.extentions import db
 from systemdb.core.models.files import UploadedFile
-from systemdb.core.models.files import ImportedFile
 
 
 @import_bp.route('/upload/', methods=['GET'])
@@ -44,22 +43,16 @@ def upload_post():
                     upload_file.OriginalFilename = filename
                     upload_file.Fullpath = fullpath
                     upload_file.UUID = uid
+                    upload_file.Hash = hash_file(fullpath)
+                    upload_file.Imported = False
 
-                    filehash = hash_file(fullpath)
-
-                    if ImportedFile.is_imported(filehash):
-                        upload_file.Imported = True
-
-                    print(3)
                     db.session.add(upload_file)
                     db.session.commit()
-
-                    print(4)
-
                     flash('File: {0} -> uploaded successfully'.format(filename))
                 except SQLAlchemyError as e:
                     db.session.rollback()
-                    print("Error while creating Hotfixes. Error: {0}".format(str(e.__dict__['orig'])))
+                    flash('File: {0} -> already uploaded'.format(filename), category='error')
+                    #print("Error while uploading file. Error: {0}".format(str(e.__dict__['orig'])))
                     os.remove(fullpath)
 
     return render_template("upload.html", title="Upload", form=form)
@@ -83,14 +76,16 @@ def import_file_by_uid(uid):
     if not uploaded_file:
         flash('File with UUID {0} not found'.format(uid_str))
     else:
-        fullpath = os.path.join(current_app.config['UPLOAD_DIR'], uid_str + ".xml")
-
-        if import_file_once(fullpath):
+        if uploaded_file.Imported:
+            flash('File: {0} already imported'.format(UploadedFile.OriginalFilename))
+        try:
             uploaded_file.Imported = True
             db.session.commit()
+            import_file(uploaded_file.Fullpath)
             flash('File: {0} imported successfully'.format(UploadedFile.OriginalFilename))
-        else:
-            flash('File: {0} already imported'.format(UploadedFile.OriginalFilename))
+            os.remove(uploaded_file.Fullpath)
+        except SQLAlchemyError as e:
+            db.session.rollback()
 
     uploaded_files = UploadedFile.query.all()
 
@@ -107,9 +102,16 @@ def delete_file_by_uid(uid):
     if not uploaded_file:
         flash('File with UUID {0} not found'.format(uid_str))
     else:
-        fullpath = os.path.join(current_app.config['UPLOAD_DIR'], uid_str + ".xml")
-        os.remove(fullpath)
-
+        if not uploaded_file.Imported:
+            try:
+                db.session.delete(uploaded_file)
+                db.session.commit()
+                fullpath = os.path.join(current_app.config['UPLOAD_DIR'], uid_str + ".xml")
+                os.remove(fullpath)
+            except SQLAlchemyError as e:
+                db.session.rollback()
+        else:
+            flash('File with UUID {0} already imported and can not be deleted'.format(uid_str))
     uploaded_files = UploadedFile.query.all()
 
     form = ImportAllForm()
@@ -119,23 +121,25 @@ def delete_file_by_uid(uid):
 @import_bp.route('/files/import/all/', methods=['POST'])
 @login_required
 def import_all():
-    uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
+    uploaded_files = UploadedFile.query.all()
 
     form = ImportAllForm()
     if form.validate_on_submit():
         for u in uploaded_files:
-            filename = secure_filename(u)
-            file_ext = os.path.splitext(filename)[1]
-            fullpath = current_app.config['UPLOAD_DIR'] + filename
-            print('importing {0}'.format(fullpath))
-
-            if file_ext.endswith(".xml"):
-                if import_file_once(fullpath):
-                    flash('File: {0} imported successfully'.format(filename))
-                    os.remove(fullpath)
-                else:
-                    flash('File: {0} already imported'.format(filename))
-
-    uploaded_files = os.listdir(current_app.config['UPLOAD_DIR'])
+            if not u.Imported:
+                try:
+                    if not u.Imported:
+                        u.Imported = True
+                        db.session.commit()
+                        import_file(u.Fullpath)
+                        flash('File: {0} imported successfully'.format(u.UUID))
+                        os.remove(u.Fullpath)
+                    else:
+                        flash('File: {0} already imported'.format(u.UUID))
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    flash('Error! File: {0} -> already uploaded'.format(u.UUID), category='error')
+                    #print("Error while importing file. Error: {0}".format(str(e.__dict__['orig'])))
+    uploaded_files = UploadedFile.query.all()
 
     return render_template('file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")

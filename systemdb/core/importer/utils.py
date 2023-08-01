@@ -1,11 +1,12 @@
 import hashlib
 import os
+import uuid
 
 from lxml import etree
 
 from systemdb.core.extentions import db
 from systemdb.core.models.eol import EoL
-from systemdb.core.models.files import ImportedFile
+from systemdb.core.models.files import UploadedFile
 
 from systemdb.core.importer.hosts import import_host, import_sysinfo_collector
 from systemdb.core.importer.domain import import_domain_collector
@@ -35,21 +36,37 @@ def import_file_once(filename):
     hash = hash_file(filename)
 
     try:
-        imported_file = ImportedFile()
-        imported_file.Hash = hash
-        db.session.add(imported_file)
-        db.session.commit()
+        uploaded_file = UploadedFile.find_by_hash(hash)
+        if uploaded_file:
+            # File has been uploaded via web interface
+            if uploaded_file.Imported:
+                # already imported, no additional import
+                return False
+            else:
+                # not yet imported -> Import file
+                uploaded_file.Imported = True
+                db.session.commit()
+                import_file(filename)
+                return True
+        else:
+            # File has not been uploaded via web interface, import via CLI command
+            uploaded_file = UploadedFile()
+            uploaded_file.Hash = hash
+            uploaded_file.UUID = str(uuid.uuid4())
+            uploaded_file.Imported = True
+            db.session.add(uploaded_file)
+            db.session.commit()
 
-        print("importing file {0}".format(imported_file))
-        import_file(filename)
-        print("File imported")
+            print("importing file {0}".format(uploaded_file))
+            import_file(filename)
+            print("File imported")
 
-        return True
+            return True
     except Exception as e:
         db.session.rollback()
         return False
 
-
+# File has been uploaded via web interface
 def import_file(filename):
     with open(filename, 'rb') as f:
         xml = f.read()
