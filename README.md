@@ -20,10 +20,9 @@ It is recommended to change db user passwords before building Docker images. Tho
 
 **Build and Setup**
 
-1. Download AdminLTE / Bootstrap dependencies via `make deps`
-2. Build Docker Images `make build`. *It is recommended to changes passwords in environment variables before this step.*
-3. Run Docker Images `make run`
-4. Create first user and import End of Life dates `make init-db`. This needs to be done in a secound console window while images are running. (!!! Initial password for user admin is printed to stdout, make sure you note it ;) !!!)
+1. Download AdminLTE / Bootstrap dependencies and Build Docker Images `make build`. *It is recommended to changes passwords in environment variables before this step.*
+2. Run Docker Images `make run`
+3. Create first user and import End of Life dates `make init-db`. This needs to be done in a secound console window while images are running. (!!! Initial password for user admin is printed to stdout, make sure you note it ;) !!!)
 
 
 **Ports reachable on docker containers:**
