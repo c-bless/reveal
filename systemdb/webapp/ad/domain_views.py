@@ -35,10 +35,3 @@ def domain_detail(id):
                            num_comp=num_comp, num_groups=num_groups, num_users=num_users, trusts=trusts,
                            num_domadmins=num_domadmins, domadmin_id=domadmins_id)
 
-
-@ad_bp.route('/ad/trusts', methods=['GET'])
-@login_required
-def trust_list():
-    trusts = ADTrust.query.all()
-    return render_template('adtrust_list.html', trusts=trusts)
-
