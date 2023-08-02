@@ -10,33 +10,20 @@
       <!-- Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library -->
 
-
-      <li class="nav-item menu-open">
-        <a href="#" class="nav-link">
-          <i class="fas fa-solid nav-item"></i>
-          <p>
-            System Reviews
-            <i class="right fas fa-angle-left"></i>
-          </p>
+      <li class="nav-header"><span class="font-weight-bold">SYSTEM REVIEWS</span></li>
+      <li class="nav-item">
+        <a href="{{url_for('sysinfo.host_search_list')}}" class="nav-link">
+          <i class="fas fa-desktop nav-icon"></i>
+          <p>Hosts</p>
         </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('sysinfo.host_search_list')}}" class="nav-link">
-              <i class="fas fa-desktop nav-icon"></i>
-              <p>Hosts</p>
-            </a>
-          </li>
-        </ul>
-
-        <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{url_for('sysinfo.report_list')}}" class="nav-link">
-                  <i class="fas fa-edit nav-icon"></i>
-                  <p>Report List</p>
-                </a>
-              </li>
-            </ul>
-        <ul class="nav nav-treeview" style="display: block;">
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('sysinfo.report_list')}}" class="nav-link">
+          <i class="fas fa-edit nav-icon"></i>
+          <p>Report List</p>
+        </a>
+      </li>
+      <ul class="nav nav-treeview" style="display: block;">
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="fas fa-search nav-icon"></i>
@@ -138,106 +125,101 @@
             </ul>
           </li>
         </ul>
+
+      <hr />
+<!--   ---------------------------- Active Directory Links ----------------------------------->
+      <li class="nav-header"><span class="font-weight-bold">DOMAIN INFOS</span></li>
+      <li class="nav-item">
+        <a href="{{url_for('ad.domain_list')}}" class="nav-link">
+          <i class="fa fa-sitemap nav-icon"></i>
+          <p>Domain</p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('ad.forest_list')}}" class="nav-link">
+          <i class="fa fa-tree nav-icon"></i>
+          <p>Forest</p>
+        </a>
       </li>
 
-      <li class="nav-header"></li>
-      <li class="nav-item menu-open">
-        <a href="#" class="nav-link">
-          <i class="fas fa-solid nav-item"></i>
-          <p>
-            Domain Infos
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.domain_list')}}" class="nav-link">
-              <i class="fa fa-sitemap nav-icon"></i>
-              <p>Domain</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.forest_list')}}" class="nav-link">
-              <i class="fa fa-tree nav-icon"></i>
-              <p>Forest</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.trust_list')}}" class="nav-link">
-              <i class="fa fa-handshake nav-icon"></i>
-              <p>Trusts</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.dc_list')}}" class="nav-link">
-              <i class="fa fa-star nav-icon"></i>
-              <p>Domain Controller</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.gc_list')}}" class="nav-link">
-              <i class="fa fa-globe nav-icon"></i>
-              <p>Global Catalogs</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.computer_list')}}" class="nav-link">
-              <i class="fa fa-desktop nav-icon"></i>
-              <p>Computer</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.user_list')}}" class="nav-link">
-              <i class="fa fa-user nav-icon"></i>
-              <p>User</p>
-            </a>
-          </li>
-        </ul>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('ad.groups_list')}}" class="nav-link">
-              <i class="fa fa-users nav-icon"></i>
-              <p>Groups</p>
-            </a>
-          </li>
-        </ul>
-      </li>
+      <ul class="nav nav-treeview" style="display: block;">
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-search nav-icon"></i>
+            <p>
+              Search Forms
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url_for('ad.trust_list')}}" class="nav-link">
+                <i class="fa fa-handshake nav-icon"></i>
+                <p>Trusts</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url_for('ad.dc_list')}}" class="nav-link">
+                <i class="fa fa-star nav-icon"></i>
+                <p>Domain Controller</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url_for('ad.gc_list')}}" class="nav-link">
+                <i class="fa fa-globe nav-icon"></i>
+                <p>Global Catalogs</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url_for('ad.computer_list')}}" class="nav-link">
+                <i class="fa fa-desktop nav-icon"></i>
+                <p>Computer</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url_for('ad.user_list')}}" class="nav-link">
+                <i class="fa fa-user nav-icon"></i>
+                <p>User</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url_for('ad.groups_list')}}" class="nav-link">
+                <i class="fa fa-users nav-icon"></i>
+                <p>Groups</p>
+              </a>
+            </li>
+          </ul>
 
-      <li class="nav-header"></li>
-      <li class="nav-item menu">
-        <a href="#" class="nav-link">
-          <i class="fas fa-solid nav-item"></i>
-          <p>
-            Data Import
-            <i class="fas fa-angle-left right"></i>
-          </p>
+        </li>
+      </ul>
+
+
+
+
+
+      <hr />
+      <li class="nav-header"><span class="font-weight-bold">DATA IMPORT</span></li>
+      <li class="nav-item">
+        <a href="{{url_for('importer.upload')}}" class="nav-link">
+          <i class="fa fa-upload nav-icon"></i>
+          <p>Upload Files</p>
         </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="{{url_for('importer.upload')}}" class="nav-link">
-              <i class="fa fa-upload nav-icon"></i>
-              <p>Upload Files</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{url_for('importer.list_uploaded_files')}}" class="nav-link">
-              <i class="fa fa-tasks nav-icon"></i>
-              <p>Import Files</p>
-            </a>
-          </li>
-        </ul>
+      </li>
+      <li class="nav-item">
+        <a href="{{url_for('importer.list_uploaded_files')}}" class="nav-link">
+          <i class="fa fa-tasks nav-icon"></i>
+          <p>Import Files</p>
+        </a>
       </li>
 
     </ul>
