@@ -74,3 +74,10 @@ def trust_search_list():
         trusts = ADTrust.query.all()
 
     return render_template('adtrust_search_list.html', form=form, trusts=trusts)
+
+
+@ad_bp.route('/ad/trusts/<int:id>', methods=['GET'])
+@login_required
+def trust_detail(id):
+    trust = ADTrust.query.get_or_404(id)
+    return render_template('adtrust_details.html', trust=trust)

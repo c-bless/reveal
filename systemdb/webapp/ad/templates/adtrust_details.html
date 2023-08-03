@@ -1,0 +1,87 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "AD Trust" %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Domain Group {% endblock menu_l2 %}
+
+{% block content %}
+{% if trust %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+
+
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+                      {% if trust %}
+                      <dt class="col-sm-4">Source</dt>
+                      <dd class="col-sm-8">{{ trust.Source }}</dd>
+                      {% endif %}
+                      <dt class="col-sm-4">Target</dt>
+                      <dd class="col-sm-8">{{ trust.Target }}</dd>
+                      <dt class="col-sm-4">Direction</dt>
+                      <dd class="col-sm-8">{{ trust.Direction }}</dd>
+                      <dt class="col-sm-4">DistinguishedName</dt>
+                      <dd class="col-sm-8">{{ trust.DistinguishedName }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-olive">
+              <div class="card-header">
+                <h3 class="card-title">Details</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                    <dl class="row">
+                      <dt class="col-sm-4">UplevelOnly</dt>
+                      <dd class="col-sm-8">{{ trust.UplevelOnly }}</dd>
+                      <dt class="col-sm-4">UsesAESKeys</dt>
+                      <dd class="col-sm-8">{{ trust.UsesAESKeys }}</dd>
+                      <dt class="col-sm-4">UsesRC4Encryption</dt>
+                      <dd class="col-sm-8">{{ trust.UsesRC4Encryption }}</dd>
+                      <dt class="col-sm-4">TGTDelegation</dt>
+                      <dd class="col-sm-8">{{ trust.TGTDelegation }}</dd>
+                      <dt class="col-sm-4">SIDFilteringForestAware</dt>
+                      <dd class="col-sm-8">{{ trust.SIDFilteringForestAware }}</dd>
+                      <dt class="col-sm-4">SelectiveAuthentication</dt>
+                      <dd class="col-sm-8">{{ trust.SelectiveAuthentication }}</dd>
+                      <dt class="col-sm-4">DisallowTransivity</dt>
+                      <dd class="col-sm-8">{{ trust.DisallowTransivity }}</dd>
+                      <dt class="col-sm-4">ForestTransitive</dt>
+                      <dd class="col-sm-8">{{ trust.ForestTransitive }}</dd>
+                      <dt class="col-sm-4">IntraForest</dt>
+                      <dd class="col-sm-8">{{ trust.IntraForest }}</dd>
+                      <dt class="col-sm-4">IsTreeParent</dt>
+                      <dd class="col-sm-8">{{ trust.IsTreeParent }}</dd>
+                      <dt class="col-sm-4">IsTreeRoot</dt>
+                      <dd class="col-sm-8">{{ trust.IsTreeRoot }}</dd>
+                    </dl>
+                  </div>
+              <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+{% endblock content %}

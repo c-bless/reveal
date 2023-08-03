@@ -6,7 +6,7 @@ class ADDomain(db.Model):
     Name = db.Column(db.String(1024), unique=False, nullable=False)
     NetBIOSName = db.Column(db.String(1024), unique=False, nullable=False)
     DNSRoot = db.Column(db.String(1024), unique=False)
-    DomainSID = db.Column(db.String(1024), unique=False, nullable=False)
+    DomainSID = db.Column(db.String(1024), unique=True, nullable=False)
     RIDMaster = db.Column(db.String(1024), unique=False)
     PDCEmulator = db.Column(db.String(1024), unique=False)
     ParentDomain = db.Column(db.String(1024), unique=False)
