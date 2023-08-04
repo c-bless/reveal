@@ -24,7 +24,7 @@ class Host(db.Model):
     WhoamiIsAdmin = db.Column(db.Boolean(), nullable=True)
     #active PS version
     PSVersion = db.Column(db.String(150), unique=False, nullable=True)
-    PS2Installed = db.Column(db.String(10), unique=False, nullable=True)
+    PS2Installed = db.Column(db.Boolean(), unique=False, nullable=True)
     PSScriptBlockLogging = db.Column(db.String(256), unique=False, nullable=True)
     # BIOS
     BiosManufacturer = db.Column(db.String(256), unique=False, nullable=True)

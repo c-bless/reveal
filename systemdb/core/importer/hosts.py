@@ -185,7 +185,7 @@ def host2db(xml_element):
             if "HyperVisorPresent" == e.tag: host.HyperVisorPresent = str2bool(e.text)
             if "DeviceGuardSmartStatus" == e.tag: host.DeviceGuardSmartStatus = e.text
             if "PSVersion" == e.tag: host.PSVersion = e.text
-            if "PSVersion2Installed" == e.tag: host.PS2Installed = e.text
+            if "PSVersion2Installed" == e.tag: host.PS2Installed = str2bool(e.text)
             if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
             if "SystemGroup" == e.tag: host.SystemGroup = e.text
             if "Location" == e.tag: host.Location = e.text
