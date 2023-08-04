@@ -111,6 +111,11 @@ def user_search_list():
 
             users = ADUser.query.filter(and_(*filters)).all()
 
+            if 'download' in request.form:
+                output = generate_user_excel(user_list=users)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=domain-user.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:
             return render_template('aduser_search_list.html', form=form)
