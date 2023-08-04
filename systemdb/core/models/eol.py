@@ -14,3 +14,9 @@ class EoL(db.Model):
     MainstreamEndDate = db.Column(db.DateTime, nullable=True)
     ExtendedEndDate = db.Column(db.DateTime, nullable=True)
     Source = db.Column(db.String, nullable=True)
+
+    def __repr__(self):
+        return self.OS
+
+    def __str__(self):
+        return self.OS

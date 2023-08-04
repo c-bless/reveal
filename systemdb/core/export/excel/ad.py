@@ -2,7 +2,7 @@ import os
 import xlsxwriter
 from io import BytesIO
 
-basedir = os.path.abspath(os.path.join(os.path.dirname(__file__),"../../.."))
+basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
 template_dir = "{0}/reports/templates/sysinfo/".format(basedir)
 template_detail_dir = "{0}/reports/templates/details/".format(basedir)
 report_dir = "{0}/reports/outdir/".format(basedir)

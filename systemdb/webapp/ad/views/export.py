@@ -5,10 +5,10 @@ from flask import Response
 from flask_login import login_required
 
 from systemdb.webapp.ad import ad_bp
-from systemdb.webapp.ad.export_func import generate_computer_excel, generate_user_excel
+from systemdb.core.export.excel.ad import generate_computer_excel, generate_user_excel
 from systemdb.core.models.activedirectory import ADComputer, ADUser, ADDomain, ADPasswordPolicy, \
     ADDomainController, ADTrust
-from systemdb.webapp.ad.export_func import create_user_worksheet, create_computer_worksheet, create_trust_worksheet, \
+from systemdb.core.export.excel.ad import create_user_worksheet, create_computer_worksheet, create_trust_worksheet, \
     create_dc_worksheet, create_domain_worksheet
 
 

@@ -295,7 +295,6 @@ class ADGroup(db.Model):
         return self.SamAccountName
 
 
-
 class ADGroupMember(db.Model):
     __tablename__ = "ADGroupMember"
     id = db.Column(db.Integer, primary_key=True)

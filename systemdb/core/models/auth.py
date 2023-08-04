@@ -9,6 +9,13 @@ class AuthUser(db.Model):
     API_TOKEN = db.Column(db.String(256), unique=True)
     Active = db.Column(db.Boolean(), default=True)
 
+
+    def __repr__(self):
+        return self.Username
+
+    def __str__(self):
+        return self.Username
+
     def is_authenticated(self):
         return True
 

@@ -454,6 +454,26 @@ class ConfigCheck(db.Model):
     def __str__(self):
         return self.Name
 
+    @staticmethod
+    def find_by_name(name, exact_match=False):
+        if exact_match:
+            return ConfigCheck.query.filter(ConfigCheck.Name == name).all()
+        else:
+            return ConfigCheck.query.filter(ConfigCheck.Name.ilike('%'+name+'%')).all()
+
+    @staticmethod
+    def find_by_component(name, exact_match=False):
+        if exact_match:
+            return ConfigCheck.query.filter(ConfigCheck.Component == name).all()
+        else:
+            return ConfigCheck.query.filter(ConfigCheck.Component.ilike('%' + name + '%')).all()
+
+    @staticmethod
+    def find_by_method(name, exact_match=False):
+        if exact_match:
+            return ConfigCheck.query.filter(ConfigCheck.Method == name).all()
+        else:
+            return ConfigCheck.query.filter(ConfigCheck.Method.ilike('%' + name + '%')).all()
 
 class RegistryCheck(db.Model):
     __tablename__ = "RegistryCheck"

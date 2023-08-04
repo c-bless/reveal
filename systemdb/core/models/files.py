@@ -10,6 +10,13 @@ class UploadedFile(db.Model):
     Fullpath = db.Column(db.String(), unique=False, nullable=False)
     Imported = db.Column(db.Boolean(), default=False)
 
+
+    def __repr__(self):
+        return self.Hash
+
+    def __str__(self):
+        return self.Hash
+
     @staticmethod
     def find_by_uuid(uid):
         return UploadedFile.query.filter(UploadedFile.uuid == hash).first()
