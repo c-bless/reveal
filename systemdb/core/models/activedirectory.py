@@ -166,8 +166,8 @@ class ADDomainController(db.Model):
     Forestname = db.Column(db.String(1024), unique=False)
     IsGlobalCatalog = db.Column(db.Boolean(), nullable=True)
     IsReadOnly = db.Column(db.Boolean(), nullable=True)
-    LdapPort = db.Column(db.String(10), unique=False)
-    SslPort = db.Column(db.String(10), unique=False)
+    LdapPort = db.Column(db.Integer(), unique=False)
+    SslPort = db.Column(db.Integer(), unique=False)
     # ForeignKeys
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
     Forest_id = db.Column(db.Integer, db.ForeignKey('ADForest.id'), nullable=False)

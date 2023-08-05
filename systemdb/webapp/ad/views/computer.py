@@ -37,7 +37,7 @@ def computer_list():
     return render_template('adcomputer_list.html', computer_list=computer_list)
 
 
-@ad_bp.route('/ad/views/<int:id>/computer', methods=['GET'])
+@ad_bp.route('/ad/domain/<int:id>/computer', methods=['GET'])
 @login_required
 def computer_by_domain_list(id):
     computer_list = ADComputer.query.filter(ADComputer.Domain_id==id)
@@ -142,6 +142,13 @@ def computer_search_list():
     return render_template('adcomputer_search_list.html', form=form, computer_list=computer_list)
 
 
+
+
+@ad_bp.route('/ad/dc/<int:id>/', methods=['GET'])
+@login_required
+def dc_detail(id):
+    dc = ADDomainController.query.get_or_404(id)
+    return render_template('addc_details.html', dc=dc)
 
 
 @ad_bp.route('/ad/dc/search/', methods=['GET', 'POST'])

@@ -1,0 +1,132 @@
+
+{% extends "layout/base_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "{% if dc %} {{ dc.SamAccountName}} {% endif %} " %}
+
+{% block page_title %}  {% endblock page_title %}
+{% block menu_l1 %} Active Directory {% endblock menu_l1 %}
+{% block menu_l2 %} Domain Controller {% endblock menu_l2 %}
+
+{% block content %}
+{% if dc %}
+
+<div class="row m-1">
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">General Information</h3>
+
+                    <div class="card-tools">
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-download"></i>
+                      </a>
+                      <a href="#" class="btn btn-tool btn-sm">
+                        <i class="fas fa-bars"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <dl class="row">
+
+
+                      <dt class="col-sm-4">Name</dt>
+                      <dd class="col-sm-8">{{ dc.Name }}</dd>
+                      <dt class="col-sm-4">Hostname</dt>
+                      <dd class="col-sm-8">{{ dc.Hostname }}</dd>
+                      <dt class="col-sm-4">OperatingSystem</dt>
+                      <dd class="col-sm-8">{{ dc.OperatingSystem }}</dd>
+                      <dt class="col-sm-4">IPv4Address</dt>
+                      <dd class="col-sm-8">{{ dc.IPv4Address }}</dd>
+                      <dt class="col-sm-4">IPv6Address</dt>
+                      <dd class="col-sm-8">{{ dc.IPv6Address }}</dd>
+                      <dt class="col-sm-4">Enabled</dt>
+                      <dd class="col-sm-8">{{ dc.Enabled }}</dd>
+                      <dt class="col-sm-4">Domainname</dt>
+                      <dd class="col-sm-8">{{ dc.Domainname }}</dd>
+                      <dt class="col-sm-4">Forestname</dt>
+                      <dd class="col-sm-8">{{ dc.Forestname }}</dd>
+                      <dt class="col-sm-4">IsGlobalCatalog</dt>
+                      <dd class="col-sm-8">{{ dc.IsGlobalCatalog }}</dd>
+                      <dt class="col-sm-4">IsReadOnly</dt>
+                      <dd class="col-sm-8">{{ dc.IsReadOnly }}</dd>
+                      <dt class="col-sm-4">LdapPort</dt>
+                      <dd class="col-sm-8">{{ dc.LdapPort }}</dd>
+                      <dt class="col-sm-4">SslPort</dt>
+                      <dd class="col-sm-8">{{ dc.SslPort }}</dd>
+                    </dl>
+                  </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="row">
+              <div class="card card-olive">
+                <div class="card-header">
+                  <h3 class="card-title">Server Roles</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% if dc.ServerRoles %}
+                      {% for r in dc.ServerRoles %}
+                      <tr>
+                        <td>{{ r.Role }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td>No roles found.</td>
+                      </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+          </div>
+          <div class="row">
+            <div class="card card-olive">
+                <div class="card-header">
+                  <h3 class="card-title">OperationMasterRoleRoles</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% if dc.OperationMasterRoleRoles %}
+                      {% for r in dc.OperationMasterRoleRoles %}
+                      <tr>
+                        <td>{{ r.Role }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td>No roles found.</td>
+                      </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+
+            <!-- /.card -->
+          </div>
+    </div>
+
+{% endif %}
+{% endblock content %}

@@ -20,7 +20,7 @@ def user_list():
     return render_template('aduser_list.html', users=users)
 
 
-@ad_bp.route('/ad/views/<int:id>/users', methods=['GET'])
+@ad_bp.route('/ad/domain/<int:id>/users', methods=['GET'])
 @login_required
 def user_by_domain_list(id):
     users = ADUser.query.filter(ADUser.Domain_id == id)

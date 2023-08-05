@@ -86,7 +86,7 @@
                             <td> {{ dc.IsGlobalCatalog }} </td>
                             <td> {{ dc.IsReadOnly }} </td>
                             <td class="actions">
-                                <a href="#" class="btn btn-default btn-xs">
+                                <a href="{{ url_for('ad.dc_detail', id=dc.id) }}" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View
                                 </a>
                             </td>

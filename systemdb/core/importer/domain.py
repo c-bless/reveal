@@ -231,8 +231,8 @@ def dc2db(xml, domain, forest):
         if "Forestname" == e.tag: dc.Forestname = e.text
         if "IsGlobalCatalog" == e.tag: dc.IsGlobalCatalog = str2bool(e.text)
         if "IsReadOnly" == e.tag: dc.IsReadOnly = str2bool(e.text)
-        if "LdapPort" == e.tag: dc.LdapPort = e.text
-        if "SslPort" == e.tag: dc.SslPort = e.text
+        if "LdapPort" == e.tag: dc.LdapPort = int(e.text)
+        if "SslPort" == e.tag: dc.SslPort = int(e.text)
     db.session.add(dc)
     # db.session.commit()
     # db.session.refresh(dc)
