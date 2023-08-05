@@ -82,9 +82,9 @@ def computer_search_list():
 
             if len(SAMAccountName) > 0 :
                 if not invertSAMAccountName:
-                    filters.append(ADComputer.SAMAccountName.ilike("%"+SAMAccountName+"%"))
+                    filters.append(ADComputer.SamAccountName.ilike("%"+SAMAccountName+"%"))
                 else:
-                    filters.append(ADComputer.SAMAccountName.notilike("%"+SAMAccountName+"%"))
+                    filters.append(ADComputer.SamAccountName.notilike("%"+SAMAccountName+"%"))
             if len(DNSHostName) > 0:
                 if not invertDNSHostName:
                     filters.append(ADComputer.DNSHostName.ilike("%"+DNSHostName+"%"))
