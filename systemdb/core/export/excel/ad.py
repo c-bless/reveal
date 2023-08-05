@@ -24,6 +24,19 @@ def generate_computer_excel(computer_list=[]):
     return output
 
 
+def generate_dc_list_excel(dc_list=[]):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+
+    create_dc_worksheet(workbook=workbook, dc_list=dc_list)
+    # Close the workbook before streaming the data.
+    workbook.close()
+
+    # Rewind the buffer.
+    output.seek(0)
+    return output
+
+
 def generate_user_excel(user_list=[]):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})

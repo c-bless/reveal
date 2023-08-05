@@ -1,10 +1,10 @@
 {% extends "layout/search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
 
-{% set title = "Domain List" %}
+{% set title = "Domain Controller List" %}
 {% block page_title %} Domain List {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
-{% block menu_l2 %} Domain List {% endblock menu_l2 %}
+{% block menu_l2 %} Domain Controller List {% endblock menu_l2 %}
 
 
 
@@ -25,6 +25,12 @@
 
                             {{ render_field_sm2(form.IPv6Address) }}
                             {{ render_check_field_sm2(form.InvertIPv6Address) }}
+
+                            {{ render_field_sm2(form.LDAP_port) }}
+                            {{ render_check_field_sm2(form.InvertLDAP_port) }}
+
+                            {{ render_field_sm2(form.SSL_port) }}
+                            {{ render_check_field_sm2(form.InvertSSL_port) }}
                         </div>
                         <div class="col-sm-6">
 
@@ -35,8 +41,13 @@
                             {{ render_field_sm2(form.DistinguishedName) }}
                             {{ render_check_field_sm2(form.InvertDistinguishedName) }}
 
+                            <br/>
+
                             {{ render_check_field_sm2(form.Enabled) }}
                             {{ render_check_field_sm2(form.Disabled) }}
+
+                            {{ render_check_field_sm2(form.GlobalCatalog_True) }}
+                            {{ render_check_field_sm2(form.GlobalCatalog_False) }}
                         </div>
                     </div>
                 </div>
@@ -61,7 +72,7 @@
                         <td width="30%">OperatingSystem</td>
                         <th width="10%"> IsGlobalCatalog </th>
                         <th width="10%"> IsReadOnly </th>
-                        <th width="5%"> Details</th>
+                        <th width="5%"> Actions </th>
                     </tr>
                 </thead>
                 <tbody>

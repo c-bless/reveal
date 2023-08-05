@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import Regexp
 from wtforms.validators import Optional
 from wtforms.validators import IPAddress
+from wtforms.validators import NumberRange
 
 
 from systemdb.core.regex import RE_AD_HOSTNAME
@@ -27,13 +28,9 @@ class ADComputerSearchForm(FlaskForm):
                                   validators=[
                                       Regexp(regex=RE_AD_DISTINGUISHED_NAME,message="Invalid input")]
                                   )
-
+    
     Enabled = BooleanField('Enabled Account')
     Disabled = BooleanField('Disabled Account')
-
-    GlobalCatalog_True = BooleanField('Globale Catalog (True)')
-    GlobalCatalog_False = BooleanField('Globale Catalog (False)')
-
 
     InvertDNSHostName = BooleanField('Invert DNSHostName')
     InvertSID = BooleanField('Invert SID')
@@ -52,8 +49,8 @@ class DCSearchForm(FlaskForm):
     Hostname = StringField('Hostname', validators=[Regexp(regex=RE_AD_SAMACCOUNT, message="Invalid input")])
     OperatingSystem = StringField('OperatingSystem', validators=[Regexp(regex=RE_AD_OS, message="Invalid input"), Optional()])
 
-    IPv4Address = StringField('IPv4Address', validators=[IPAddress()])
-    IPv6Address = StringField('IPv6Address', validators=[IPAddress()])
+    IPv4Address = StringField('IPv4Address', validators=[IPAddress(), Optional()])
+    IPv6Address = StringField('IPv6Address', validators=[IPAddress(), Optional()])
 
     Domain = StringField('Domain', validators=[Regexp(regex=RE_AD_DOMAINNAME, message="Invalid input")])
     DistinguishedName = StringField('DistinguishedName',
@@ -67,6 +64,11 @@ class DCSearchForm(FlaskForm):
     GlobalCatalog_True = BooleanField('Globale Catalog (True)')
     GlobalCatalog_False = BooleanField('Globale Catalog (False)')
 
+    IsReadOnly_True = BooleanField('IsReadOnly (True)')
+    IsReadOnly_False = BooleanField('IsReadOnly (False)')
+
+    LDAP_port = IntegerField('LDAP port', validators=[NumberRange(1,65536), Optional()])
+    SSL_port = IntegerField('SSL port', validators=[NumberRange(1,65536), Optional()])
 
     InvertHostname = BooleanField('Invert Hostname')
     InvertOperatingSystem = BooleanField('Invert OperatingSystem')
@@ -74,6 +76,8 @@ class DCSearchForm(FlaskForm):
     InvertIPv6Address = BooleanField('Invert IPv6Address')
     InvertDomain = BooleanField('Invert Domain')
     InvertDistinguishedName = BooleanField('Invert DistinguishedName')
+    InvertLDAP_port = BooleanField('Invert LDAP port')
+    InvertSSL_port = BooleanField('Invert SSL port')
 
     search = SubmitField('Search')
     download = SubmitField('Download (Excel)')
