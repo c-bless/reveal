@@ -58,6 +58,9 @@ RE_AD_TRUSTS_SOURCE = "^([a-zA-Z0-9 \\\(\)\=\,\.\-\_]+)?$"
 RE_AD_TRUSTS_TARGET = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_TRUSTS_DIRECTION = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
+RE_AD_HOSTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_AD_OS = "^([a-zA-Z0-9 \.\-\_]+)?$"
+
 RE_SID_USER_ACCOUNTS = "^S-1-5-((32-\d*)|(21-\d*-\d*-\d*-\d*))$"
 RE_AD_USER_NAME = "^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
 RE_AD_SAMACCOUNT = "^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
