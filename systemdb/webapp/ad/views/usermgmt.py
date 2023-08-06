@@ -10,6 +10,7 @@ from systemdb.core.models.activedirectory import ADDomain
 from systemdb.webapp.ad.forms.users import ADUserSearchForm
 from systemdb.webapp.ad.forms.groups import ADGroupSearchForm
 from systemdb.core.export.excel.ad import generate_user_excel
+from systemdb.core.export.excel.ad import generate_group_excel
 
 from systemdb.webapp.ad import ad_bp
 
@@ -148,12 +149,6 @@ def group_detail(id):
     domain = ADDomain.query.filter(ADDomain.id == group.Domain_id).first()
     return render_template('adgroup_details.html', group=group, domain=domain)
 
-    InvertSAMAccountName = BooleanField('Invert SAMAccountName')
-    InvertSID = BooleanField('Invert SID')
-    InvertGroupCategory = BooleanField('Invert GroupCategory')
-    InvertGroupScope = BooleanField('Invert GroupScope')
-    InvertCN = BooleanField('Invert CN')
-    InvertDomain
 
 @ad_bp.route('/ad/group/search/', methods=['GET', 'POST'])
 @login_required
@@ -212,10 +207,14 @@ def group_search_list():
 
             groups = ADGroup.query.filter(and_(*filters)).all()
 
+            if 'download' in request.form:
+                output = generate_group_excel(group_list=groups)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=domain-groups.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
             return render_template('adgroup_search_list.html', form=form)
     else:
-        # users = ADUser.query.all()
-        users = []
+        groups = []
 
     return render_template('adgroup_search_list.html', form=form, groups=groups)

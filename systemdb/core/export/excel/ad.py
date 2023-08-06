@@ -339,6 +339,56 @@ def generate_trust_excel(trust_list=[]):
     return output
 
 
+def create_group_worksheet(workbook, group_list=[]):
+    worksheet = workbook.add_worksheet("Groups")
+
+    header_data = ["CN", "GroupCategory", "GroupScope", "SAMAccountName", "SID", "Domain", "Members"]
+
+    header_format = workbook.add_format(header_format_dict)
+    wrap_format = workbook.add_format(wrap_format_dict)
+
+    for col_num, data in enumerate(header_data):
+        worksheet.write(0, col_num, data, header_format)
+
+    rows = []
+    for g in group_list:
+        members = "\n".join(str(m) for m in g.Members)
+        tmp = [g.CN, g.GroupCategory, g.GroupScope, g.SamAccountName, g.SID, g.Domain, members ]
+        rows.append(tmp)
+
+    # Start from the first cell. Rows and columns are zero indexed.
+    row = 1
+    col = 0
+    # Iterate over the data and write it out row by row.
+    for r in rows:
+        for c in r:
+            if col == 6:
+                worksheet.write(row, col, str(c), wrap_format)
+            else:
+                worksheet.write(row, col, str(c))
+            col += 1
+        worksheet.autofilter("A1:G1")
+        col = 0
+        row += 1
+
+    worksheet.autofit()
+    return worksheet
+
+
+def generate_group_excel(group_list=[]):
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+
+    trust_worksheet = create_group_worksheet(workbook=workbook, group_list=group_list)
+
+    # Close the workbook before streaming the data.
+    workbook.close()
+
+    # Rewind the buffer.
+    output.seek(0)
+    return output
+
+
 def generate_domain_excel(domain, user_list=[], computer_list=[], dc_list=[], trust_list=[], policy_list=[]):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})
