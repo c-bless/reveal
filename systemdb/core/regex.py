@@ -48,6 +48,9 @@ RE_SYSINFO_REGISTRYCHECK_KEY = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_REGISTRYCHECK_EXPECTED = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_REGISTRYCHECK_CURRENTVALUE = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
+RE_AD_GROUP_SCOPE = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_AD_GROUP_CATEGORY = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_AD_GROUP_CN = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
 # Active Directory
 RE_AD_DOMAINNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"

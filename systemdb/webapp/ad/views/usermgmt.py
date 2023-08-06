@@ -8,6 +8,7 @@ from systemdb.core.models.activedirectory import ADUser
 from systemdb.core.models.activedirectory import ADGroup
 from systemdb.core.models.activedirectory import ADDomain
 from systemdb.webapp.ad.forms.users import ADUserSearchForm
+from systemdb.webapp.ad.forms.groups import ADGroupSearchForm
 from systemdb.core.export.excel.ad import generate_user_excel
 
 from systemdb.webapp.ad import ad_bp
@@ -146,3 +147,75 @@ def group_detail(id):
     group = ADGroup.query.get_or_404(id)
     domain = ADDomain.query.filter(ADDomain.id == group.Domain_id).first()
     return render_template('adgroup_details.html', group=group, domain=domain)
+
+    InvertSAMAccountName = BooleanField('Invert SAMAccountName')
+    InvertSID = BooleanField('Invert SID')
+    InvertGroupCategory = BooleanField('Invert GroupCategory')
+    InvertGroupScope = BooleanField('Invert GroupScope')
+    InvertCN = BooleanField('Invert CN')
+    InvertDomain
+
+@ad_bp.route('/ad/group/search/', methods=['GET', 'POST'])
+@login_required
+def group_search_list():
+    form = ADGroupSearchForm()
+
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            samAccountName = form.SAMAccountName.data
+            sid = form.SID.data
+            group_category = form.GroupCategory.data
+            group_scope = form.GroupScope.data
+            domain = form.Domain.data
+            cn = form.CN.data
+
+            invertSAMAccountName = form.InvertSAMAccountName.data
+            invertSID = form.InvertSID.data
+            invertGroupCategory = form.InvertGroupCategory.data
+            invertGroupScope = form.InvertGroupScope.data
+            invertDomain = form.InvertDomain.data
+            invertCN = form.InvertCN.data
+
+            if len(samAccountName) > 0 :
+                if not invertSAMAccountName:
+                    filters.append(ADGroup.SamAccountName.ilike("%"+samAccountName+"%"))
+                else:
+                    filters.append(ADGroup.SamAccountName.notilike("%"+samAccountName+"%"))
+            if len(sid) > 0:
+                if not invertSID:
+                    filters.append(ADGroup.SID.ilike("%"+sid+"%"))
+                else:
+                    filters.append(ADGroup.SID.notilike("%"+sid+"%"))
+            if len(group_category) > 0:
+                if not invertGroupCategory:
+                    filters.append(ADGroup.GroupCategory.ilike("%"+group_category+"%"))
+                else:
+                    filters.append(ADGroup.GroupCategory.notilike("%"+group_category+"%"))
+            if len(group_scope) > 0:
+                if not invertGroupScope:
+                    filters.append(ADGroup.GroupScope.ilike("%"+group_scope+"%"))
+                else:
+                    filters.append(ADGroup.GroupScope.notilike("%"+group_scope+"%"))
+            if len(cn) > 0:
+                if invertCN == False:
+                    filters.append(ADGroup.CN.ilike("%"+cn+"%"))
+                else:
+                    filters.append(ADGroup.CN.notilike("%"+cn+"%"))
+            if len(domain) > 0:
+                if invertDomain == False:
+                    ids = [d.id for d in  ADDomain.query.filter(ADDomain.Name.ilike("%"+domain+"%")).all()]
+                    filters.append(ADGroup.Domain_id.in_(ids))
+                else:
+                    ids = [d.id for d in  ADDomain.query.filter(ADDomain.Name.notilike("%"+domain+"%")).all()]
+                    filters.append(ADGroup.Domain_id.in_(ids))
+
+            groups = ADGroup.query.filter(and_(*filters)).all()
+
+        else:
+            return render_template('adgroup_search_list.html', form=form)
+    else:
+        # users = ADUser.query.all()
+        users = []
+
+    return render_template('adgroup_search_list.html', form=form, groups=groups)
