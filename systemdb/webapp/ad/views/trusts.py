@@ -1,10 +1,13 @@
 from flask import render_template
 from flask import request
+from flask import Response
 from flask_login import login_required
 from sqlalchemy import and_
 
 from systemdb.core.models.activedirectory import ADDomain
 from systemdb.core.models.activedirectory import ADTrust
+from systemdb.core.export.excel.ad import generate_trust_excel
+
 from systemdb.webapp.ad.forms.trusts import ADTrustSearchForm
 
 from systemdb.webapp.ad import ad_bp
@@ -67,6 +70,11 @@ def trust_search_list():
 
             trusts = ADTrust.query.filter(and_(*filters)).all()
 
+            if 'download' in request.form:
+                output = generate_trust_excel(trust_list=trusts)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=domain-trusts.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:
             return render_template('adtrust_search_list.html', form=form)
