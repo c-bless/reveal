@@ -86,13 +86,13 @@ Use collector script *sysinfo-collector.ps1* located in directory *collector-scr
 
 Example (without parameters):
 ```
-.\sysinfo-colloctor.ps1
+.\sysinfo-collector.ps1
 ```
 
 
 Example (with parameters):
 ```
-.\sysinfo-colloctor.ps1 -Systemgroup PCS7 -Location "Production Area"
+.\sysinfo-collector.ps1 -Systemgroup PCS7 -Location "Production Area"
 ```
 
 ### Collect Data (Active Directory): ###
@@ -103,25 +103,25 @@ Information can be collected with one of the collector scripts. *domain-collecto
 
 Example (full group enumeration and more computer properties):
 ```
-.\sysinfo-colloctor_full.ps1
+.\domain-collector_full.ps1
 ```
 
 Example (enumeration of a few groups (e.g., domain admins) and less computer properties are collected):
 ```
-.\sysinfo-colloctor_brief.ps1
+.\domain-collector_brief.ps1
 ```
 
 
 Example (first draft version, enumeration of a AD infos with AD-Module, less information is collected):
 ```
-.\sysinfo-colloctor_basic.ps1
+.\domain-collector_basic.ps1
 ```
 
 
 
 Example (full group enumeration and more computer properties):
 ```
-.\sysinfo-colloctor_full.ps1
+.\domain-collector_full.ps1
 ```
 
 

@@ -85,10 +85,10 @@ target/
 /services/web/uploads/*.xml
 /services/web/reports/*
 /services/web/static/*
+/services/api/systemdb/
+/services/web/systemdb/
 
 # OBSIDIAN Cache
 /.obsidian/
 /todos.txt
-
-
 
