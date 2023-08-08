@@ -36,129 +36,129 @@ def import_host(root):
         if not host:
             print("Error while creating Host")
             return None
-        for e in root.getchildren():
-            if "Hotfixes" == e.tag:
+        for elem in root.getchildren():
+            if "Hotfixes" == elem.tag:
                 try:
-                    hotfix2db(e, host)
+                    hotfix2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Hotfixes. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Products" == e.tag:
+            if "Products" == elem.tag:
                 try:
-                    products2db(e, host)
+                    products2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Products. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Netadapters" == e.tag:
+            if "Netadapters" == elem.tag:
                 try:
-                    netadapter2db(e, host)
+                    netadapter2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Netadapters. Error: {0}".format(str(e.__dict__['orig'])))
-            if "NetIPAddresses" == e.tag:
+            if "NetIPAddresses" == elem.tag:
                 try:
-                    netipaddresses2db(e, host)
+                    netipaddresses2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating NetIPAddresses. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Services" == e.tag:
+            if "Services" == elem.tag:
                 try:
-                    services2db(e, host)
+                    services2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Services. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Users" == e.tag:
+            if "Users" == elem.tag:
                 try:
-                    users2db(e, host)
+                    users2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Users. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Groups" == e.tag:
+            if "Groups" == elem.tag:
                 try:
-                    groups2db(e, host)
+                    groups2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Groups. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Shares" == e.tag:
+            if "Shares" == elem.tag:
                 try:
-                    shares2db(e, host)
+                    shares2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Shares. Error: {0}".format(str(e.__dict__['orig'])))
-            if "NetFirewallProfiles" == e.tag:
+            if "NetFirewallProfiles" == elem.tag:
                 try:
-                    fwprofile2db(e, host)
+                    fwprofile2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating NetFirewallProfiles. Error: {0}".format(str(e.__dict__['orig'])))
-            if "WSUS" == e.tag:
+            if "WSUS" == elem.tag:
                 try:
-                    wsus2db(e, host)
+                    wsus2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating WSUS. Error: {0}".format(str(e.__dict__['orig'])))
-            if "SMBSettings" == e.tag:
+            if "SMBSettings" == elem.tag:
                 try:
-                    smb2db(e, host)
+                    smb2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating SMBSettings. Error: {0}".format(str(e.__dict__['orig'])))
-            if "BIOS" == e.tag:
+            if "BIOS" == elem.tag:
                 try:
-                    bios2db(e, host)
+                    bios2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating BIOS. Error: {0}".format(str(e.__dict__['orig'])))
-            if "WSH" == e.tag:
+            if "WSH" == elem.tag:
                 try:
-                    wsh2db(e, host)
+                    wsh2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating WSH. Error: {0}".format(str(e.__dict__['orig'])))
-            if "PSVersions" == e.tag:
+            if "PSVersions" == elem.tag:
                 try:
-                    psversions2db(e, host)
+                    psversions2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating PSVersions. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Printers" == e.tag:
+            if "Printers" == elem.tag:
                 try:
-                    printers2db(e, host)
+                    printers2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Printers. Error: {0}".format(str(e.__dict__['orig'])))
-            if "DefenderSettings" == e.tag:
+            if "DefenderSettings" == elem.tag:
                 try:
-                    defenderSettings2db(e, host)
+                    defenderSettings2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating DefenderSettings. Error: {0}".format(str(e.__dict__['orig'])))
-            if "ConfigChecks" == e.tag:
+            if "ConfigChecks" == elem.tag:
                 try:
-                    configchecks2db(e, host)
+                    configchecks2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating ConfigChecks. Error: {0}".format(str(e.__dict__['orig'])))
-            if "AdditionalRegistryChecks" == e.tag:
+            if "AdditionalRegistryChecks" == elem.tag:
                 try:
-                    registrychecks2db(e, host)
+                    registrychecks2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
