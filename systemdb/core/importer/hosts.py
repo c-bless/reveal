@@ -21,7 +21,7 @@ from systemdb.core.models.sysinfo import ConfigCheck
 from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.core.extentions import db
 
-from systemdb.core.importer.converter import str2bool
+from systemdb.core.importer.converter import str2bool_or_none
 
 
 def import_sysinfo_collector(root):
@@ -182,15 +182,15 @@ def host2db(xml_element):
             if "LogonServer" == e.tag: host.LogonServer = e.text
             if "TimeZone" == e.tag: host.TimeZone = e.text
             if "KeyboardLayout" == e.tag: host.KeyboardLayout = e.text
-            if "HyperVisorPresent" == e.tag: host.HyperVisorPresent = str2bool(e.text)
+            if "HyperVisorPresent" == e.tag: host.HyperVisorPresent = str2bool_or_none(e.text)
             if "DeviceGuardSmartStatus" == e.tag: host.DeviceGuardSmartStatus = e.text
             if "PSVersion" == e.tag: host.PSVersion = e.text
-            if "PSVersion2Installed" == e.tag: host.PS2Installed = str2bool(e.text)
+            if "PSVersion2Installed" == e.tag: host.PS2Installed = str2bool_or_none(e.text)
             if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
             if "SystemGroup" == e.tag: host.SystemGroup = e.text
             if "Location" == e.tag: host.Location = e.text
             if "Whoami" == e.tag : host.Whoami = e.text
-            if "WhoamiIsAdmin" == e.tag : host.WhoamiIsAdmin = str2bool(e.text)
+            if "WhoamiIsAdmin" == e.tag : host.WhoamiIsAdmin = str2bool_or_none(e.text)
             if "Winlogon" == e.tag:
                 for w in e.getchildren():
                     if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
@@ -348,15 +348,15 @@ def users2db(xml, host):
             for i in c.getchildren():
                 if "AccountType" == i.tag: user.AccountType = i.text
                 if "Domain" == i.tag: user.Domain = i.text
-                if "Disabled" == i.tag: user.Disabled = str2bool(i.text)
-                if "LocalAccount" == i.tag: user.LocalAccount = str2bool(i.text)
+                if "Disabled" == i.tag: user.Disabled = str2bool_or_none(i.text)
+                if "LocalAccount" == i.tag: user.LocalAccount = str2bool_or_none(i.text)
                 if "Name" == i.tag: user.Name = i.text
                 if "FullName" == i.tag: user.FullName = i.text
                 if "Description" == i.tag: user.Description = i.text
                 if "SID" == i.tag: user.SID = i.text
-                if "Lockout" == i.tag: user.Lockout = str2bool(i.text)
+                if "Lockout" == i.tag: user.Lockout = str2bool_or_none(i.text)
                 if "PasswordChanged" == i.tag: user.PasswordChanged = i.text
-                if "PasswordRequired" == i.tag: user.PasswordRequired = str2bool(i.text)
+                if "PasswordRequired" == i.tag: user.PasswordRequired = str2bool_or_none(i.text)
             user.Host = host
             db.session.add(user)
 
@@ -456,11 +456,11 @@ def fwprofile2db(xml, host):
             name = c.get("Name")
             enabled = c.get("Enabled")
             if name == "Domain":
-                host.FwProfileDomain = str2bool(enabled)
+                host.FwProfileDomain = str2bool_or_none(enabled)
             if name == "Private":
-                host.FwProfilePrivate = str2bool(enabled)
+                host.FwProfilePrivate = str2bool_or_none(enabled)
             if name == "Public":
-                host.FwProfilePublic = str2bool(enabled)
+                host.FwProfilePublic = str2bool_or_none(enabled)
 
 
 def wsus2db(xml, host):
@@ -477,19 +477,19 @@ def wsus2db(xml, host):
 
 def smb2db(xml, host):
     for e in xml.getchildren():
-        if "SMB1Enabled" == e.tag: host.SMBv1Enabled = str2bool(e.text)
-        if "SMB2Enabled" == e.tag: host.SMBv2Enabled = str2bool(e.text)
-        if "EncryptData" == e.tag: host.SMBEncryptData = str2bool(e.text)
-        if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = str2bool(e.text)
-        if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = str2bool(e.text)
+        if "SMB1Enabled" == e.tag: host.SMBv1Enabled = str2bool_or_none(e.text)
+        if "SMB2Enabled" == e.tag: host.SMBv2Enabled = str2bool_or_none(e.text)
+        if "EncryptData" == e.tag: host.SMBEncryptData = str2bool_or_none(e.text)
+        if "EnableSecuritySignature" == e.tag: host.SMBEnableSecuritySignature = str2bool_or_none(e.text)
+        if "RequireSecuritySignature" == e.tag: host.SMBRequireSecuritySignature = str2bool_or_none(e.text)
 
 
 
 def wsh2db(xml, host):
     for e in xml.getchildren():
         if "TrustPolicy" == e.tag: host.WSHTrustPolicy = e.text
-        if "EnabledStatus" == e.tag: host.WSHEnabled = str2bool(e.text)
-        if "RemoteStatus" == e.tag: host.WSHRemote = str2bool(e.text)
+        if "EnabledStatus" == e.tag: host.WSHEnabled = str2bool_or_none(e.text)
+        if "RemoteStatus" == e.tag: host.WSHRemote = str2bool_or_none(e.text)
 
 
 
@@ -542,8 +542,8 @@ def registrychecks2db(xml, host):
                 if "Path" == c.tag: check.Path = c.text
                 if "Key" == c.tag: check.Key = c.text
                 if "Expected" == c.tag: check.Expected = c.text
-                if "KeyExists" == c.tag: check.KeyExists = str2bool(c.text)
-                if "ValueMatch" == c.tag: check.ValueMatch = str2bool(c.text)
+                if "KeyExists" == c.tag: check.KeyExists = str2bool_or_none(c.text)
+                if "ValueMatch" == c.tag: check.ValueMatch = str2bool_or_none(c.text)
                 if "CurrentValue" == c.tag: check.CurrentValue = c.text
             check.Host = host
             db.session.add(check)

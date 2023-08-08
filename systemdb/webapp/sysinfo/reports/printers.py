@@ -5,7 +5,7 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.printer import generate_printer_excel_brief
 from systemdb.core.export.excel.printer import generate_printer_excel_full
 from systemdb.webapi.querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
-from systemdb.webapp.sysinfo.reports import ReportInfo
+from systemdb.core.reports import ReportInfo
 
 ####################################################################
 # List printers and corresponding hosts

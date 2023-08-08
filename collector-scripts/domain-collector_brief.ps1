@@ -327,7 +327,7 @@ try{
                         # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
                         # new XML Element
                         $basic_properties = @(
-                            'DistinguishedName', 'SID', 'SAMAccountName', 'Description', 'GivenName', 'Surname', 'Name',
+                            'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name',
                             'Enabled', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired'
                         )
                         # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 

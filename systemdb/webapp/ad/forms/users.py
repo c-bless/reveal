@@ -10,6 +10,7 @@ from systemdb.core.regex import RE_AD_USER_SURNAME
 from systemdb.core.regex import RE_AD_USER_NAME
 from systemdb.core.regex import RE_AD_SAMACCOUNT
 from systemdb.core.regex import RE_AD_DISTINGUISHED_NAME
+from systemdb.core.regex import RE_AD_USER_DISPLAYNAME
 
 
 class ADUserSearchForm(FlaskForm):
@@ -19,6 +20,7 @@ class ADUserSearchForm(FlaskForm):
     GivenName = StringField('GivenName', validators=[Regexp(regex=RE_AD_USER_GIVENNAME, message="Invalid input")])
     Surname = StringField('Surname', validators=[Regexp(regex=RE_AD_USER_SURNAME, message="Invalid input")])
     Name = StringField('Name', validators=[Regexp(regex=RE_AD_USER_NAME, message="Invalid input")])
+    DisplayName = StringField('Displayname', validators=[Regexp(regex=RE_AD_USER_DISPLAYNAME, message="Invalid input")])
 
     Domain = StringField('Domain', validators=[Regexp(regex=RE_AD_DOMAINNAME, message="Invalid input")])
     DistinguishedName = StringField('DistinguishedName',
@@ -37,6 +39,7 @@ class ADUserSearchForm(FlaskForm):
     InvertGivenName = BooleanField('Invert GivenName')
     InvertSurname = BooleanField('Invert Surname')
     InvertName = BooleanField('Invert Name')
+    InvertDisplayName = BooleanField('Invert Displayname')
     InvertDomain = BooleanField('Invert Domain')
     InvertDistinguishedName = BooleanField('Invert DistinguishedName')
 

@@ -7,7 +7,7 @@ from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 
 from systemdb.core.models.sysinfo import Host, Group
-from systemdb.webapp.sysinfo.reports import ReportInfo
+from systemdb.core.reports import ReportInfo
 
 
 ####################################################################

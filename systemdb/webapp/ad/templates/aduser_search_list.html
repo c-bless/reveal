@@ -15,23 +15,25 @@
                             {{ render_field_sm2(form.SAMAccountName) }}
                             {{ render_check_field_sm2(form.InvertSAMAccountName) }}
 
-                            {{ render_field_sm2(form.SID) }}
-                            {{ render_check_field_sm2(form.InvertSID) }}
-
                             {{ render_field_sm2(form.GivenName) }}
                             {{ render_check_field_sm2(form.InvertGivenName) }}
 
                             {{ render_field_sm2(form.Surname) }}
                             {{ render_check_field_sm2(form.InvertSurname) }}
 
+                            {{ render_field_sm2(form.DisplayName) }}
+                            {{ render_check_field_sm2(form.InvertDisplayName) }}
+
                             {{ render_field_sm2(form.Name) }}
                             {{ render_check_field_sm2(form.InvertName) }}
                         </div>
                         <div class="col-sm-6">
 
+                            {{ render_field_sm2(form.SID) }}
+                            {{ render_check_field_sm2(form.InvertSID) }}
+
                             {{ render_field_sm2(form.Domain) }}
                             {{ render_check_field_sm2(form.InvertDomain) }}
-
 
                             {{ render_field_sm2(form.DistinguishedName) }}
                             {{ render_check_field_sm2(form.InvertDistinguishedName) }}

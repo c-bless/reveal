@@ -12,7 +12,7 @@ from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.export.excel.eol import generate_eol_excel_brief
 from systemdb.core.export.excel.eol import generate_eol_excel_full
 
-from systemdb.webapp.sysinfo.reports import ReportInfo
+from systemdb.core.reports import ReportInfo
 
 ####################################################################
 # Hosts where last update has been installed for more that xxx days

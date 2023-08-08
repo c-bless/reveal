@@ -10,7 +10,7 @@ from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
 from systemdb.webapp.sysinfo.forms.services import ServiceAclSearchForm, ServiceUserContextSearchForm
 
-from systemdb.webapp.sysinfo.reports import ReportInfo
+from systemdb.core.reports import ReportInfo
 ####################################################################
 # Hosts with UQSP vulnerabilities
 ####################################################################

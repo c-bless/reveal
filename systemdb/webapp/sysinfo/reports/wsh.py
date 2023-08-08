@@ -5,7 +5,7 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.models.sysinfo import Host
-from systemdb.webapp.sysinfo.reports import ReportInfo
+from systemdb.core.reports import ReportInfo
 
 ####################################################################
 # Hosts with enabled WSH
