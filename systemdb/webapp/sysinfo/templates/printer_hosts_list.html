@@ -5,6 +5,16 @@
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Hosts By Printer Lists {% endblock menu_l2 %}
 
+{% block download_links %}
+    {{ super() }}
+    <a href="{{url_for('sysinfo.hosts_report_filerprinter_excel_brief')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Brief (Excel)</i>
+    </a>
+    <a href="{{url_for('sysinfo.hosts_report_filerprinter_excel_full')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Full (Excel)</i>
+    </a>
+{% endblock download_links %}
+
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
