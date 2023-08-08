@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Regexp
+from wtforms.validators import DataRequired, Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SERVICE_ACCOUNTNAME
 from systemdb.core.regex import RE_SYSINFO_SERVICE_PERMISSIONSTRING
@@ -16,12 +16,12 @@ from systemdb.core.regex import RE_SYSINFO_SERVICE_STARTMODE
 class ServiceAclSearchForm(FlaskForm):
     User = StringField('User',
                        validators=[
-                            DataRequired(message="Data required"),
+                            Optional(),
                             Regexp(regex=RE_SYSINFO_SERVICE_ACCOUNTNAME, message="Invalid input") ]
                        )
     Permission = StringField('Permission',
                              validators=[
-                                 DataRequired(message="Data required"),
+                            Optional(),
                                  Regexp(regex=RE_SYSINFO_SERVICE_PERMISSIONSTRING, message="Invalid input") ]
                              )
     InvertUser = BooleanField('Invert User')

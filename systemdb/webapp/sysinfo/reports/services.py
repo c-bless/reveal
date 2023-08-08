@@ -64,22 +64,20 @@ def hosts_report_services_by_acl():
             invert_user = form.InvertUser.data
             permission = form.Permission.data
             invert_permission = form.InvertPermission.data
-            if invert_user == False and invert_permission == False:
-                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.ilike("%" + user + "%"),
-                                                        ServiceACL.AccessRight.ilike("%" + permission + "%")
-                                                        )).all()
-            elif invert_user == False:
-                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.ilike("%" + user + "%"),
-                                                    ServiceACL.AccessRight.notilike("%" + permission + "%")
-                                                    )).all()
-            elif invert_permission == False:
-                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.notilike("%" + user + "%"),
-                                                    ServiceACL.AccessRight.ilike("%" + permission + "%")
-                                                    )).all()
-            else:
-                acls = ServiceACL.query.filter(and_(ServiceACL.AccountName.notilike("%" + user + "%"),
-                                                    ServiceACL.AccessRight.notilike("%" + permission + "%")
-                                                    )).all()
+            filters = []
+            if len(user) > 0:
+                if not invert_user:
+                    filters.append(ServiceACL.AccountName.ilike("%" + user + "%"))
+                else:
+                    filters.append(ServiceACL.AccountName.notilike("%" + user + "%"))
+            if len(permission) > 0:
+                if not invert_permission:
+                    filters.append(ServiceACL.AccessRight.ilike("%" + permission + "%"))
+                else:
+                    filters.append(ServiceACL.AccessRight.notilike("%" + permission + "%"))
+
+            acls = ServiceACL.query.filter(*filters).all()
+
             return render_template('service_acl_search_list.html', form=form, acls=acls)
         else:
             print("Invalid input")
