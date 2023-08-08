@@ -7,9 +7,9 @@ from flask_login import login_required
 from systemdb.webapp.ad import ad_bp
 from systemdb.core.export.excel.ad import generate_computer_excel, generate_user_excel
 from systemdb.core.models.activedirectory import ADComputer, ADUser, ADDomain, ADPasswordPolicy, \
-    ADDomainController, ADTrust
+    ADDomainController, ADTrust, ADGroup
 from systemdb.core.export.excel.ad import create_user_worksheet, create_computer_worksheet, create_trust_worksheet, \
-    create_dc_worksheet, create_domain_worksheet
+    create_dc_worksheet, create_domain_worksheet, create_group_worksheet
 
 
 @ad_bp.route('/ad/computer/export/excel/', methods=['GET'])
@@ -59,6 +59,9 @@ def domain_export_excel(id):
     trust_list = ADTrust.query.filter(ADTrust.Domain_id == domain.id).all()
     trust_worksheet = create_trust_worksheet(workbook=workbook, trust_list=trust_list)
 
+    group_list = ADGroup.query.filter(ADGroup.Domain_id == domain.id).all()
+    group_worksheet = create_group_worksheet(workbook=workbook, group_list=group_list)
+
     # Close the workbook before streaming the data.
     workbook.close()
 
@@ -66,5 +69,5 @@ def domain_export_excel(id):
     output.seek(0)
 
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=ad-views.xlsx",
+                    headers={"Content-disposition": "attachment; filename=ad-domain.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
