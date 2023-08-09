@@ -60,7 +60,7 @@ The base directory of the repository contains an installation file called *downl
 2. extract the zip file and copy *dist* and *plugins* folders to directory *systemdb/systemdb/web/static/*
 
 #### Install python dependencies ####
-1. clone repository: `git clone https://bitbucket.org/cbless/systemdb.git`
+1. clone repository: `git clone https://github.com/c-bless/systemdb.git`
 2. create virtual environment for webapp and webapi (requirement.txt files can be found under 'services/api' and 'services/web')
 ```
 cd systemdb
