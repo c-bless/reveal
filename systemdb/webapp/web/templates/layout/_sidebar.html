@@ -17,12 +17,49 @@
           <p>Hosts</p>
         </a>
       </li>
-      <li class="nav-item">
-        <a href="{{url_for('sysinfo.report_list')}}" class="nav-link">
-          <i class="fas fa-edit nav-icon"></i>
-          <p>Report List</p>
-        </a>
-      </li>
+      <ul class="nav nav-treeview" style="display: block;">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-search nav-icon"></i>
+              <p>
+                Reports (By Category)
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('sysinfo.report_list') }}" class="nav-link">
+                  <i class="fas fa-edit nav-icon"></i>
+                  <p>ALL</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('sysinfo.usermgmt_report_list') }}" class="nav-link">
+                  <i class="fa fa-address-card nav-icon"></i>
+                  <p>Usermanagement</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('sysinfo.syshardening_report_list') }}" class="nav-link">
+                  <i class="fa fa-cog nav-icon"></i>
+                  <p>Systemhardening</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('sysinfo.update_eol_report_list') }}" class="nav-link">
+                  <i class="fas fa-edit nav-icon"></i>
+                  <p>Patch / Lifecycle Management</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+      </ul>
       <ul class="nav nav-treeview" style="display: block;">
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -194,9 +231,6 @@
 
         </li>
       </ul>
-
-
-
 
 
       <hr />

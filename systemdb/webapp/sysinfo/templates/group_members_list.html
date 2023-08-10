@@ -1,0 +1,69 @@
+
+{% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+
+{% set title = "Local group members" %}
+
+{% block page_title %} Local Group members {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Local Group members {% endblock menu_l2 %}
+
+
+{% block download_links %}
+    {{ super() }}
+    <a href="{{url_for('sysinfo.local_admin_assignment_excel_full')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download">Excel</i>
+    </a>
+{% endblock download_links %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="15%">Host
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="DisplayName" width="15%">Systemgroup
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartMode" width="10%">Location
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartName" width="20%">Group
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Started" width="15%">SID (Group)
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="PathName" width="25%">Members
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if groups %}
+                {% for g in groups %}
+                  <tr>
+                    <td> {{ g.Host.Hostname }} </td>
+                    <td> {{ g.Host.Location }} </td>
+                    <td> {{ g.Host.SystemGroup }} </td>
+                    <td> {{ g.Name }} </td>
+                    <td> {{ g.SID }} </td>
+                    <td>
+                        {% for m in g.Members %}
+                          {{ m.Caption }} <br />
+                        {% endfor %}
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8">No groups found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}
+

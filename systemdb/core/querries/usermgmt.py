@@ -1,6 +1,7 @@
 from sqlalchemy import and_
 
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
+from systemdb.core.sids import SID_BUILTIN_REMOTE_DESKTOP_USERS
 from systemdb.core.models.sysinfo import Group
 from systemdb.core.models.sysinfo import Host
 
@@ -36,3 +37,12 @@ def find_hosts_where_domadm_is_localadmin():
             if m.SID.endswith("-512"):
                 host_ids.append(g.Host_id)
     return Host.query.filter(Host.id.in_(host_ids)).all()
+
+
+def find_local_admins():
+    return Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
+
+
+def find_rdp_users():
+    return Group.query.filter(Group.SID == SID_BUILTIN_REMOTE_DESKTOP_USERS).all()
+

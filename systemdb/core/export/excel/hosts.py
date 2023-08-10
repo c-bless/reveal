@@ -3,6 +3,8 @@ from io import BytesIO
 
 import xlsxwriter
 
+from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
+from systemdb.core.sids import SID_BUILTIN_REMOTE_DESKTOP_USERS
 
 def generate_hosts_excel(hosts=[]):
     output = BytesIO()
@@ -41,9 +43,9 @@ def generate_hosts_excel(hosts=[]):
             else:
                 outstr = "{0}: ({1})".format(name, ", ".join(members))
                 groups.append(outstr)
-            if g.SID == "S-1-5-32-544":
+            if g.SID == SID_LOCAL_ADMIN_GROUP:
                 admins.append("\n".join(members))
-            if g.SID == "S-1-5-32-555":
+            if g.SID == SID_BUILTIN_REMOTE_DESKTOP_USERS:
                 rdp.append("\n".join(members))
 
         tmp = [h.SystemGroup, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber,

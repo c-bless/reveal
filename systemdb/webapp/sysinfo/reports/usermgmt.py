@@ -5,8 +5,11 @@ from sqlalchemy import and_
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 from systemdb.core.models.sysinfo import Host, Group, GroupMember, User
 from systemdb.core.querries.usermgmt import get_direct_domainuser_assignments
+from systemdb.core.querries.usermgmt import find_local_admins
+from systemdb.core.querries.usermgmt import find_rdp_users
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
+from systemdb.core.export.excel.usermgmt import generate_group_members_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.reports import ReportInfo
 from systemdb.webapp.sysinfo.forms.hosts import HostByLocalUserSearchForm
@@ -44,7 +47,7 @@ class ReportDirectDomainUserAssignment(ReportInfo):
             name="Direct user assignments",
             category="User Management",
             tags=["User Management", "User Assignment", "Revoke of Permission"],
-            description='Report all hosts which have views users directly assigned instead of centrally managed views groups.',
+            description='Report all hosts which have domain users directly assigned instead of centrally managed views groups.',
             views=[("view", url_for("sysinfo.usermgmt_assignment_list"))]
         )
 
@@ -77,7 +80,7 @@ def report_hosts_by_localuser_list():
             User.Disabled == False
         )).all()
         hosts = [u.Host for u in users]
-
+        hosts = str2bin()
     return render_template('host_search_by_user_list.html',form=form, hosts=hosts)
 
 
@@ -153,9 +156,44 @@ class ReportHostsByLocaluser(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
-            name="Local Admin",
+            name="Local Admin (search form)",
             category="User Management",
             tags=["User Management", "Local Accounts"],
             description='Report members of local administrators group.',
             views=[("view", url_for("sysinfo.report_localadmin_list"))]
         )
+
+
+####################################################################
+# Members in local admin group
+####################################################################
+
+@sysinfo_bp.route('/reports/usermgmt/localadmins/', methods=['GET'])
+@login_required
+def local_admin_assignment_list():
+    groups = find_local_admins()
+    return render_template('group_members_list.html', groups=groups)
+
+
+@sysinfo_bp.route('/report/usermgmt/localadmins/excel/full', methods=['GET'])
+@login_required
+def local_admin_assignment_excel_full():
+    groups = find_local_admins()
+    output = generate_group_members_excel(groups)
+
+    return Response(output, mimetype="text/xlsx",
+                 headers={"Content-disposition": "attachment; filename=groupmembers_local_admins.xlsx",
+                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+class ReportLocalAdmins(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="List local administrators",
+            category="User Management",
+            tags=["User Management", "Administrators", "Administartive Permission"],
+            description='Report all members of local administrator groups.',
+            views=[("view", url_for("sysinfo.local_admin_assignment_list"))]
+        )
+

@@ -10,9 +10,10 @@ def get_usermgmt_report_list():
     report_plugin_list.append(ReportDomAdminMemberOfLocalAdmin())
     report_plugin_list.append(ReportAutologonIsLocalAdmin())
 
-    from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser
+    from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser, ReportLocalAdmins
     report_plugin_list.append(ReportDirectDomainUserAssignment())
     report_plugin_list.append(ReportHostsByLocaluser())
+    report_plugin_list.append(ReportLocalAdmins())
 
     return report_plugin_list
 
@@ -91,5 +92,12 @@ def update_eol_report_list():
 @login_required
 def syshardening_report_list():
     report_list = get_systemhardening_report_list()
+    return render_template('report_list.html', report_plugins=report_list)
+
+
+@sysinfo_bp.route('/reports/usermgmt/', methods=['GET'])
+@login_required
+def usermgmt_report_list():
+    report_list = get_usermgmt_report_list()
     return render_template('report_list.html', report_plugins=report_list)
 
