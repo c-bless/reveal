@@ -5,6 +5,7 @@ from sqlalchemy import and_
 
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.services import generate_services_excel
+from systemdb.core.export.excel.services import generate_services_acl_excel
 
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
@@ -77,6 +78,12 @@ def hosts_report_services_by_acl():
                     filters.append(ServiceACL.AccessRight.notilike("%" + permission + "%"))
 
             acls = ServiceACL.query.filter(*filters).all()
+
+            if 'download' in request.form:
+                output = generate_services_acl_excel(acls)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=hosts.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
             return render_template('service_acl_search_list.html', form=form, acls=acls)
         else:

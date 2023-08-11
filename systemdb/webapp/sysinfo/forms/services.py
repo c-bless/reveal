@@ -27,6 +27,7 @@ class ServiceAclSearchForm(FlaskForm):
     InvertUser = BooleanField('Invert User')
     InvertPermission = BooleanField('Invert Permission')
     search = SubmitField('Search')
+    download = SubmitField('Download')
 
 
 class ServiceUserContextSearchForm(FlaskForm):
