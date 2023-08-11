@@ -2,19 +2,40 @@ from flask import render_template
 from flask_login import login_required
 from systemdb.webapp.sysinfo import sysinfo_bp
 
+from systemdb.webapp.sysinfo.reports.admins import ReportDomAdminMemberOfLocalAdmin
+from systemdb.webapp.sysinfo.reports.admins import ReportAutologonIsLocalAdmin
+
+from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment
+from systemdb.webapp.sysinfo.reports.usermgmt import ReportHostsByLocaluser
+from systemdb.webapp.sysinfo.reports.usermgmt import ReportLocalAdmins
+from systemdb.webapp.sysinfo.reports.usermgmt import ReportHostsByLocalAdmin
+from systemdb.webapp.sysinfo.reports.usermgmt import ReportSIMATICUsers
+
+from systemdb.webapp.sysinfo.reports.updates import ReportLastUpdate
+from systemdb.webapp.sysinfo.reports.updates import ReportEOL
+
+from systemdb.webapp.sysinfo.reports.powershell import ReportPS2Istalled
+from systemdb.webapp.sysinfo.reports.winlogon import ReportPWInWinlogon
+from systemdb.webapp.sysinfo.reports.smb import ReportSMBv1
+from systemdb.webapp.sysinfo.reports.wsh import ReportWSHEnabled, ReportWSHRemoteEnabled
+from systemdb.webapp.sysinfo.reports.wsus import ReportWSUSHttp
+from systemdb.webapp.sysinfo.reports.services import ReportUQSP
+from systemdb.webapp.sysinfo.reports.services import ReportServiceByPermission
+from systemdb.webapp.sysinfo.reports.services import ReportUQSP
+from systemdb.webapp.sysinfo.reports.services import ReportServiceByUsercontext
+from systemdb.webapp.sysinfo.reports.printers import ReportFilePrinterInstalled
+
 
 def get_usermgmt_report_list():
     report_plugin_list = []
 
-    from systemdb.webapp.sysinfo.reports.admins import ReportDomAdminMemberOfLocalAdmin, ReportAutologonIsLocalAdmin
     report_plugin_list.append(ReportDomAdminMemberOfLocalAdmin())
     report_plugin_list.append(ReportAutologonIsLocalAdmin())
-
-    from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser, ReportLocalAdmins, ReportHostsByLocalAdmin
     report_plugin_list.append(ReportDirectDomainUserAssignment())
     report_plugin_list.append(ReportHostsByLocaluser())
     report_plugin_list.append(ReportHostsByLocalAdmin())
     report_plugin_list.append(ReportLocalAdmins())
+    report_plugin_list.append(ReportSIMATICUsers())
 
     return report_plugin_list
 
@@ -22,7 +43,6 @@ def get_usermgmt_report_list():
 def get_patch_and_lifecyle_report_list():
     report_plugin_list = []
 
-    from systemdb.webapp.sysinfo.reports.updates import ReportLastUpdate, ReportEOL
     report_plugin_list.append(ReportLastUpdate())
     report_plugin_list.append(ReportEOL())
 
@@ -32,29 +52,15 @@ def get_patch_and_lifecyle_report_list():
 def get_systemhardening_report_list():
     report_plugin_list = []
 
-    from systemdb.webapp.sysinfo.reports.powershell import ReportPS2Istalled
     report_plugin_list.append(ReportPS2Istalled())
-
-    from systemdb.webapp.sysinfo.reports.winlogon import ReportPWInWinlogon
     report_plugin_list.append(ReportPWInWinlogon())
-
-    from systemdb.webapp.sysinfo.reports.smb import ReportSMBv1
     report_plugin_list.append(ReportSMBv1())
-
-    from systemdb.webapp.sysinfo.reports.wsh import ReportWSHEnabled, ReportWSHRemoteEnabled
     report_plugin_list.append(ReportWSHEnabled())
     report_plugin_list.append(ReportWSHRemoteEnabled())
-
-    from systemdb.webapp.sysinfo.reports.wsus import ReportWSUSHttp
     report_plugin_list.append(ReportWSUSHttp())
-
-    from systemdb.webapp.sysinfo.reports.services import ReportUQSP, ReportServiceByPermission, \
-        ReportServiceByUsercontext
     report_plugin_list.append(ReportUQSP())
     report_plugin_list.append(ReportServiceByPermission())
     report_plugin_list.append(ReportServiceByUsercontext())
-
-    from systemdb.webapp.sysinfo.reports.printers import ReportFilePrinterInstalled
     report_plugin_list.append(ReportFilePrinterInstalled())
 
     return report_plugin_list

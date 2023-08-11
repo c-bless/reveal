@@ -7,6 +7,7 @@ from systemdb.core.models.sysinfo import Host, Group, GroupMember, User
 from systemdb.core.querries.usermgmt import get_direct_domainuser_assignments
 from systemdb.core.querries.usermgmt import find_local_admins
 from systemdb.core.querries.usermgmt import find_rdp_users
+from systemdb.core.querries.usermgmt import find_SIMATIC_users
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
 from systemdb.core.export.excel.usermgmt import generate_group_members_excel
@@ -196,5 +197,39 @@ class ReportLocalAdmins(ReportInfo):
             tags=["User Management", "Administrators", "Administartive Permission"],
             description='Report all members of local administrator groups.',
             views=[("view", url_for("sysinfo.local_admin_assignment_list"))]
+        )
+
+
+####################################################################
+# Members in local SIMATIC groups
+####################################################################
+
+@sysinfo_bp.route('/reports/usermgmt/SIMATIC/', methods=['GET'])
+@login_required
+def local_SIMATIC_users_list():
+    groups = find_SIMATIC_users()
+    return render_template('group_members_list.html', groups=groups)
+
+
+@sysinfo_bp.route('/report/usermgmt/SIMATIC/excel/full', methods=['GET'])
+@login_required
+def local_SIMATIC_users_excel_full():
+    groups = find_SIMATIC_users()
+    output = generate_group_members_excel(groups)
+
+    return Response(output, mimetype="text/xlsx",
+                 headers={"Content-disposition": "attachment; filename=groupmembers_SIMATIC.xlsx",
+                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+class ReportSIMATICUsers(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="List Members of SIMATIC* groups",
+            category="User Management",
+            tags=["User Management", "Siemens", "SIMATIC", "SIMATIC HMI", "SIMATIC HMI Viewer"],
+            description='Report all members of Siemens SIMATIC groups.',
+            views=[("view", url_for("sysinfo.local_SIMATIC_users_list"))]
         )
 

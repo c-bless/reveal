@@ -46,3 +46,6 @@ def find_local_admins():
 def find_rdp_users():
     return Group.query.filter(Group.SID == SID_BUILTIN_REMOTE_DESKTOP_USERS).all()
 
+
+def find_SIMATIC_users():
+    return Group.query.filter(Group.Name.ilike("%SIMATIC%")).all()
