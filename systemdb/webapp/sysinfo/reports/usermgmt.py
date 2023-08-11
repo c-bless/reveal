@@ -226,10 +226,43 @@ class ReportSIMATICUsers(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
-            name="List Members of SIMATIC* groups",
+            name="List members of SIMATIC* groups",
             category="User Management",
             tags=["User Management", "Siemens", "SIMATIC", "SIMATIC HMI", "SIMATIC HMI Viewer"],
             description='Report all members of Siemens SIMATIC groups.',
             views=[("view", url_for("sysinfo.local_SIMATIC_users_list"))]
         )
 
+
+####################################################################
+# Members in local SIMATIC groups
+####################################################################
+
+@sysinfo_bp.route('/reports/usermgmt/RDP/', methods=['GET'])
+@login_required
+def local_rdp_users_list():
+    groups = find_rdp_users()
+    return render_template('group_members_list.html', groups=groups)
+
+
+@sysinfo_bp.route('/report/usermgmt/RDP/excel/full', methods=['GET'])
+@login_required
+def local_rdp_users_excel_full():
+    groups = find_rdp_users()
+    output = generate_group_members_excel(groups)
+
+    return Response(output, mimetype="text/xlsx",
+                 headers={"Content-disposition": "attachment; filename=groupmembers_RDP.xlsx",
+                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+class ReportRDPUsers(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List members of local "Remote Desktop Users" groups',
+            category="User Management",
+            tags=["User Management", "Remote Desktop Users", "RDP"],
+            description='Report all members of local "Remote desktop Users" group.',
+            views=[("view", url_for("sysinfo.local_rdp_users_list"))]
+        )
