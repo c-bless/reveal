@@ -82,7 +82,7 @@ def service_search_list():
         else:
             return render_template('service_search_list.html', form=form)
     else:
-        services = Service.query.all()
+        services = []
 
     return render_template('service_search_list.html', form=form, services=services)
 

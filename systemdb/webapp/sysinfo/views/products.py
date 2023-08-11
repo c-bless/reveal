@@ -74,6 +74,6 @@ def product_search_list():
         else:
             return render_template('product_search_list.html', form=form)
     else:
-        products = Product.query.all()
+        products = []
 
     return render_template('product_search_list.html', form=form, products=products)

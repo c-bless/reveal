@@ -80,6 +80,6 @@ def share_search_list():
         else:
             return render_template('share_search_list.html', form=form)
     else:
-        shares = Share.query.all()
+        shares = []
 
     return render_template('share_search_list.html', form=form, shares=shares)
