@@ -10,9 +10,10 @@ def get_usermgmt_report_list():
     report_plugin_list.append(ReportDomAdminMemberOfLocalAdmin())
     report_plugin_list.append(ReportAutologonIsLocalAdmin())
 
-    from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser, ReportLocalAdmins
+    from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment, ReportHostsByLocaluser, ReportLocalAdmins, ReportHostsByLocalAdmin
     report_plugin_list.append(ReportDirectDomainUserAssignment())
     report_plugin_list.append(ReportHostsByLocaluser())
+    report_plugin_list.append(ReportHostsByLocalAdmin())
     report_plugin_list.append(ReportLocalAdmins())
 
     return report_plugin_list

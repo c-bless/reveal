@@ -72,7 +72,7 @@ class ReportDomAdminMemberOfLocalAdmin(ReportInfo):
 ####################################################################
 def get_autologon_admin():
     result = []
-    autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()
+    autologon_hosts = Host.query.filter(Host.AutoAdminLogon == True).all()
     for h in autologon_hosts:
         defaultUser = h.DefaultUserName
         defaultDomain = h.DefaultDomain

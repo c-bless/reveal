@@ -68,6 +68,7 @@ def report_hosts_by_localuser_list():
             User.Disabled == False
         )).all()
         hosts = [u.Host for u in users]
+
         if 'full' in request.form:
             output = generate_hosts_excel(hosts)
             return Response(output, mimetype="text/xslx",
@@ -80,7 +81,7 @@ def report_hosts_by_localuser_list():
             User.Disabled == False
         )).all()
         hosts = [u.Host for u in users]
-        hosts = str2bin()
+
     return render_template('host_search_by_user_list.html',form=form, hosts=hosts)
 
 
@@ -152,7 +153,7 @@ def report_localadmin_list():
     return render_template('local_admin_list.html',form=form, members=members)
 
 
-class ReportHostsByLocaluser(ReportInfo):
+class ReportHostsByLocalAdmin(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
