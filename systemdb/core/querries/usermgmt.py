@@ -60,3 +60,10 @@ def find_domain_admin_groups() -> list[ADGroup]:
 def find_domain_admin_groups_by_domain_id(domain_id: int) -> list[ADGroup]:
     return ADGroup.query.filter(and_(ADGroup.SID.ilike("%-512"), ADGroup.Domain_id == int(domain_id))).all()
 
+
+def find_enterprise_admin_groups() -> list[ADGroup]:
+    return ADGroup.query.filter(ADGroup.SID.ilike("%-519")).all()
+
+
+def find_schema_admin_groups() -> list[ADGroup]:
+    return ADGroup.query.filter(ADGroup.SID.ilike("%-518")).all()

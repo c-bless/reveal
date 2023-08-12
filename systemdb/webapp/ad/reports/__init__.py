@@ -2,7 +2,7 @@ from flask import render_template
 from flask_login import login_required
 from systemdb.webapp.ad import ad_bp
 from systemdb.webapp.ad.reports.admins import ReportDomainAdminGroups
-
+from systemdb.webapp.ad.reports.admins import ReportEnterpriseAdminGroups
 
 def get_report_list():
     report_plugin_list = []
@@ -16,7 +16,7 @@ def get_report_usermgmt_list():
     report_plugin_list = []
 
     report_plugin_list.append(ReportDomainAdminGroups())
-
+    report_plugin_list.append(ReportEnterpriseAdminGroups())
     return report_plugin_list
 
 
