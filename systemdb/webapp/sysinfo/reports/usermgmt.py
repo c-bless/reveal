@@ -6,8 +6,8 @@ from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 from systemdb.core.models.sysinfo import Host, Group, GroupMember, User
 from systemdb.core.querries.usermgmt import get_direct_domainuser_assignments
 from systemdb.core.querries.usermgmt import find_local_admins
-from systemdb.core.querries.usermgmt import find_rdp_users
-from systemdb.core.querries.usermgmt import find_SIMATIC_users
+from systemdb.core.querries.usermgmt import find_rdp_groups
+from systemdb.core.querries.usermgmt import find_SIMATIC_groups
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
 from systemdb.core.export.excel.usermgmt import generate_group_members_excel
@@ -160,7 +160,7 @@ class ReportHostsByLocalAdmin(ReportInfo):
         super().initWithParams(
             name="Local Admin (search form)",
             category="User Management",
-            tags=["User Management", "Local Accounts"],
+            tags=["User Management", "Local Accounts", "GroupMembers"],
             description='Report members of local administrators group.',
             views=[("view", url_for("sysinfo.report_localadmin_list"))]
         )
@@ -194,7 +194,7 @@ class ReportLocalAdmins(ReportInfo):
         super().initWithParams(
             name="List local administrators",
             category="User Management",
-            tags=["User Management", "Administrators", "Administartive Permission"],
+            tags=["User Management", "Administrators", "Administartive Permission", "GroupMembers"],
             description='Report all members of local administrator groups.',
             views=[("view", url_for("sysinfo.local_admin_assignment_list"))]
         )
@@ -207,14 +207,14 @@ class ReportLocalAdmins(ReportInfo):
 @sysinfo_bp.route('/reports/usermgmt/SIMATIC/', methods=['GET'])
 @login_required
 def local_SIMATIC_users_list():
-    groups = find_SIMATIC_users()
+    groups = find_SIMATIC_groups()
     return render_template('group_members_list.html', groups=groups)
 
 
 @sysinfo_bp.route('/report/usermgmt/SIMATIC/excel/full', methods=['GET'])
 @login_required
 def local_SIMATIC_users_excel_full():
-    groups = find_SIMATIC_users()
+    groups = find_SIMATIC_groups()
     output = generate_group_members_excel(groups)
 
     return Response(output, mimetype="text/xlsx",
@@ -228,7 +228,7 @@ class ReportSIMATICUsers(ReportInfo):
         super().initWithParams(
             name="List members of SIMATIC* groups",
             category="User Management",
-            tags=["User Management", "Siemens", "SIMATIC", "SIMATIC HMI", "SIMATIC HMI Viewer"],
+            tags=["User Management", "Siemens", "SIMATIC", "SIMATIC HMI", "SIMATIC HMI Viewer", "GroupMembers"],
             description='Report all members of Siemens SIMATIC groups.',
             views=[("view", url_for("sysinfo.local_SIMATIC_users_list"))]
         )
@@ -241,14 +241,14 @@ class ReportSIMATICUsers(ReportInfo):
 @sysinfo_bp.route('/reports/usermgmt/RDP/', methods=['GET'])
 @login_required
 def local_rdp_users_list():
-    groups = find_rdp_users()
+    groups = find_rdp_groups()
     return render_template('group_members_list.html', groups=groups)
 
 
 @sysinfo_bp.route('/report/usermgmt/RDP/excel/full', methods=['GET'])
 @login_required
 def local_rdp_users_excel_full():
-    groups = find_rdp_users()
+    groups = find_rdp_groups()
     output = generate_group_members_excel(groups)
 
     return Response(output, mimetype="text/xlsx",
@@ -262,7 +262,7 @@ class ReportRDPUsers(ReportInfo):
         super().initWithParams(
             name='List members of local "Remote Desktop Users" groups',
             category="User Management",
-            tags=["User Management", "Remote Desktop Users", "RDP"],
+            tags=["User Management", "Remote Desktop Users", "RDP", "GroupMembers"],
             description='Report all members of local "Remote desktop Users" group.',
             views=[("view", url_for("sysinfo.local_rdp_users_list"))]
         )

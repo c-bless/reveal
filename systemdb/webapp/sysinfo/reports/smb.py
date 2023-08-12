@@ -39,8 +39,6 @@ def hosts_report_smbv1():
                            download_url=url_for("sysinfo.hosts_report_smbv1_excel_full"))
 
 
-
-
 class ReportSMBv1(ReportInfo):
 
     def __init__(self):

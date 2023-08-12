@@ -1,9 +1,9 @@
 {% extends "layout/list_layout.html" %}
 
-{% set title = "Group List" %}
-{% block page_title %} Group List {% endblock page_title %}
+{% set title = "GroupMember List" %}
+{% block page_title %} Report: {{ report_name }} {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
-{% block menu_l2 %} Group List {% endblock menu_l2 %}
+{% block menu_l2 %} GroupMember List {% endblock menu_l2 %}
 
 {% block datatable %}
 {{ super() }}
@@ -15,8 +15,7 @@
                         <th width="5%"> GroupCategory</th>
                         <th width="10%"> GroupScope </th>
                         <th width="20%"> SID </th>
-                        <th width="15%"> CN </th>
-                        <th width="20">Description</th>
+                        <th width="35%"> Members </th>
                         <th width="5">Details</th>
                     </tr>
                 </thead>
@@ -29,8 +28,12 @@
                             <td> {{ u.GroupCategory }} </td>
                             <td> {{ u.GroupScope }} </td>
                             <td> {{ u.SID }} </td>
-                            <td> {{ u.CN }} </td>
-                            <td> {{ u.Description }} </td>
+                            <td> {% if  u.Members %}
+                                    {% for m in u.Members %}
+                                        {{ m.SamAccountName }} <br />
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
                             <td class="actions">
                                 <a href="{{url_for('ad.group_detail',id=u.id)}}" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View
@@ -40,7 +43,7 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="8">No domain groups found!</td>
+                            <td colspan="8">No Members found!</td>
                         </tr>
                     {% endif %}
                 </tbody>

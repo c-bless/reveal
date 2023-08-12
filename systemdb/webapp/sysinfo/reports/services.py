@@ -51,6 +51,7 @@ class ReportUQSP(ReportInfo):
             views=[("view", url_for("sysinfo.hosts_report_services_uqsp"))]
         )
 
+
 ####################################################################
 # Services by ACL
 ####################################################################
@@ -103,6 +104,7 @@ class ReportServiceByPermission(ReportInfo):
             description='Report all services where the ACLs match specified User and Permission.',
             views=[("view", url_for("sysinfo.hosts_report_services_by_acl"))]
         )
+
 
 ####################################################################
 # Services by user context
