@@ -5,6 +5,15 @@
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
 {% block menu_l2 %} GroupMember List {% endblock menu_l2 %}
 
+{% block download_links %}
+    {{ super() }}
+        {% if download_url %}
+        <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
+            <i class="fas fa-download"> Download (Excel)</i>
+        </a>
+        {% endif %}
+{% endblock download_links %}
+
 {% block datatable %}
 {{ super() }}
       <table id="table1" class="table table-striped table-bordered">
@@ -30,7 +39,7 @@
                             <td> {{ u.SID }} </td>
                             <td> {% if  u.Members %}
                                     {% for m in u.Members %}
-                                        {{ m.SamAccountName }} <br />
+                                        {{ m.Group.Domain }}\{{ m.SamAccountName }} <br />
                                     {% endfor %}
                                 {% endif %}
                             </td>

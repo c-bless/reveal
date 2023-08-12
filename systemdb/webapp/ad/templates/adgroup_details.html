@@ -73,7 +73,7 @@
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th>Name</th>
+                      <th>Domain</th>
                       <th>SAMAccountName</th>
                       <th>SID</th>
                     </tr>
@@ -82,7 +82,7 @@
                   {% if group.Members %}
                     {% for m in group.Members %}
                     <tr>
-                      <td>{{ m.Name }}</td>
+                      <td>{{ m.Group.Domain }}</td>
                       <td>{{ m.SamAccountName}}</td>
                       <td>{{ m.SID }}</td>
                     </tr>
