@@ -3,6 +3,7 @@ from flask_login import login_required
 from systemdb.webapp.ad import ad_bp
 from systemdb.webapp.ad.reports.admins import ReportDomainAdminGroups
 from systemdb.webapp.ad.reports.admins import ReportEnterpriseAdminGroups
+from systemdb.webapp.ad.reports.admins import ReportSchemaAdminGroups
 
 def get_report_list():
     report_plugin_list = []
@@ -17,6 +18,7 @@ def get_report_usermgmt_list():
 
     report_plugin_list.append(ReportDomainAdminGroups())
     report_plugin_list.append(ReportEnterpriseAdminGroups())
+    report_plugin_list.append(ReportSchemaAdminGroups())
     return report_plugin_list
 
 
