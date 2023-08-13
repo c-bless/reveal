@@ -1,8 +1,8 @@
 {% extends "layout/search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
-{% set title = "Hosts" %}
-{% block page_title %} Hosts {% endblock page_title %}
+{% set title = "Hosts by local user" %}
+{% block page_title %} Hosts by local user {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Host List {% endblock menu_l2 %}
 
@@ -17,7 +17,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.full) }}
+                    {{ render_submit_field(form.download) }}
                 </div>
                 <!-- /.card-footer -->
     </form>
@@ -61,7 +61,7 @@
                         <td> {{ h.Domain }} </td>
                         <td> {{ h.OSName }} </td>
                         <td>
-                        {% for u in h.Users if u.Disabled == "False" %}
+                        {% for u in h.Users if not u.Disabled %}
                             {{ u.Name}}
                             {% if not loop.last %}
                                  {{', '}}<br>

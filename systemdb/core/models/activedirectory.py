@@ -205,6 +205,7 @@ class ADComputer(db.Model):
     SPNs = db.relationship('ADSPN', backref='Computer', lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
+
     def __repr__(self):
         return self.SamAccountName
 

@@ -4,9 +4,9 @@ from flask_login import login_required
 from systemdb.webapp.ad import ad_bp
 from systemdb.core.reports import ReportInfo
 from systemdb.core.export.excel.ad_groupmembers import generate_ad_groupmembers_excel
-from systemdb.core.querries.usermgmt import find_domain_admin_groups
-from systemdb.core.querries.usermgmt import find_enterprise_admin_groups
-from systemdb.core.querries.usermgmt import find_schema_admin_groups
+from systemdb.core.querries.ad import find_domain_admin_groups
+from systemdb.core.querries.ad import find_enterprise_admin_groups
+from systemdb.core.querries.ad import find_schema_admin_groups
 
 ####################################################################
 # Members in Domain Admins groups

@@ -71,3 +71,6 @@ RE_AD_USER_GIVENNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_SURNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_DISPLAYNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
+
+RE_AD_SPN = "^([a-zA-Z0-9 \\\.\-\_]+)?$"
+

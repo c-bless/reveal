@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField
-from wtforms.validators import Regexp
+from wtforms.validators import Regexp, Optional
 
 class HostSearchForm(FlaskForm):
     Hostname = StringField('Hostname', validators=[Regexp(regex="^([a-zA-Z0-9 \.\-\_]+)?$", message="Invalid input")] )
@@ -27,8 +27,9 @@ class HostSearchForm(FlaskForm):
 
 
 class HostByLocalUserSearchForm(FlaskForm):
-    Name = StringField('Local User', validators=[Regexp(regex="^[a-zA-Z0-9 \.\-\_]+$", message="Invalid input")] )
+    Name = StringField('Local User', validators=[Optional(),
+                                                 Regexp(regex="^[a-zA-Z0-9 \.\-\_]+$", message="Invalid input")] )
 
     search = SubmitField('Search')
-    full = SubmitField('Download Excel (Full)')
+    download = SubmitField('Download Excel (Full)')
 

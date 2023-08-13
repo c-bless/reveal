@@ -62,28 +62,49 @@ def report_hosts_by_localuser_list():
     form = HostByLocalUserSearchForm()
 
     if request.method == 'POST':
-        user_filter = form.Name.data
-        users = User.query.filter(and_(
-            User.LocalAccount == True,
-            User.Name.ilike("%"+user_filter+"%"),
-            User.Disabled == False
-        )).all()
-        hosts = [u.Host for u in users]
+        if form.validate_on_submit():
+            user_filter = form.Name.data
+            if len(user_filter) > 0:
+                users = User.query.filter(and_(
+                    User.LocalAccount == True,
+                    User.Name.ilike("%"+user_filter+"%"),
+                    User.Disabled == False
+                )).all()
+            else:
+                users = User.query.filter(and_(
+                    User.LocalAccount == True,
+                    User.Disabled == False
+                )).all()
+            hosts = [u.Host for u in users]
+            hosts_unique = []
+            host_ids = []
+            for h in hosts:
+                if h.id not in host_ids:
+                    host_ids.append(h.id)
+                    hosts_unique.append(h)
 
-        if 'full' in request.form:
-            output = generate_hosts_excel(hosts)
-            return Response(output, mimetype="text/xslx",
-                            headers={"Content-disposition": "attachment; filename=hosts-by-localuser.xlsx",
-                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-
+            if 'download' in request.form:
+                output = generate_hosts_excel(hosts_unique)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=hosts-by-localuser.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            return render_template('report_host_by_local_user.html', form=form, hosts=hosts_unique)
+        else:
+            return render_template('report_host_by_local_user.html', form=form, hosts=[])
     else:
         users = User.query.filter(and_(
             User.LocalAccount == True,
             User.Disabled == False
         )).all()
         hosts = [u.Host for u in users]
+        hosts_unique = []
+        host_ids = []
+        for h in hosts:
+            if h.id not in host_ids:
+                host_ids.append(h.id)
+                hosts_unique.append(h)
 
-    return render_template('host_search_by_user_list.html',form=form, hosts=hosts)
+    return render_template('report_host_by_local_user.html',form=form, hosts=hosts_unique)
 
 
 

@@ -8,6 +8,7 @@ from wtforms.validators import NumberRange
 
 from systemdb.core.regex import RE_AD_HOSTNAME
 from systemdb.core.regex import RE_AD_OS
+from systemdb.core.regex import RE_AD_SPN
 from systemdb.core.regex import RE_AD_DOMAINNAME
 from systemdb.core.regex import RE_AD_SAMACCOUNT
 from systemdb.core.regex import RE_AD_DISTINGUISHED_NAME
@@ -80,6 +81,26 @@ class DCSearchForm(FlaskForm):
     InvertSSL_port = BooleanField('Invert SSL port')
 
     search = SubmitField('Search')
+
     download = SubmitField('Download (Excel)')
 
+
+class ADComputerBySPNSearchForm(FlaskForm):
+    SPN = StringField('SPN', validators=[Regexp(regex=RE_AD_SPN, message="Invalid input")])
+    Domain = StringField('Domain', validators=[Regexp(regex=RE_AD_DOMAINNAME, message="Invalid input")])
+
+    Enabled = BooleanField('Enabled Account')
+    Disabled = BooleanField('Disabled Account')
+
+    InvertSPN = BooleanField('Invert SPN')
+    InvertDomain = BooleanField('Invert Domain')
+
+    LDAP = BooleanField('LDAP enabled')
+    NOT_LDAP = BooleanField('Not LDAP')
+
+    HOST = BooleanField('HOST enabled')
+    NOT_HOST = BooleanField('Not HOST')
+
+    search = SubmitField('Search')
+    download = SubmitField('Download (Excel)')
 

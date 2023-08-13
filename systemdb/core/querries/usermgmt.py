@@ -4,7 +4,6 @@ from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 from systemdb.core.sids import SID_BUILTIN_REMOTE_DESKTOP_USERS
 from systemdb.core.models.sysinfo import Group
 from systemdb.core.models.sysinfo import Host
-from systemdb.core.models.activedirectory import ADGroup
 
 
 def get_direct_domainuser_assignments() -> list[tuple]:
@@ -32,7 +31,7 @@ def find_hosts_by_autologon_admin() -> list[Host]:
 
 
 def find_hosts_where_domadm_is_localadmin() -> list[Host]:
-    groups = Group.query.filter(Group.SID == "S-1-5-32-544").all()
+    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
     host_ids = []
     for g in groups:
         for m in g.Members:
@@ -52,18 +51,3 @@ def find_rdp_groups() -> list[Group]:
 def find_SIMATIC_groups() -> list[Group]:
     return Group.query.filter(Group.Name.ilike("%SIMATIC%")).all()
 
-
-def find_domain_admin_groups() -> list[ADGroup]:
-    return ADGroup.query.filter(ADGroup.SID.ilike("%-512")).all()
-
-
-def find_domain_admin_groups_by_domain_id(domain_id: int) -> list[ADGroup]:
-    return ADGroup.query.filter(and_(ADGroup.SID.ilike("%-512"), ADGroup.Domain_id == int(domain_id))).all()
-
-
-def find_enterprise_admin_groups() -> list[ADGroup]:
-    return ADGroup.query.filter(ADGroup.SID.ilike("%-519")).all()
-
-
-def find_schema_admin_groups() -> list[ADGroup]:
-    return ADGroup.query.filter(ADGroup.SID.ilike("%-518")).all()

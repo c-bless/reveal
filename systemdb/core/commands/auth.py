@@ -32,10 +32,10 @@ def create_user(name):
         print("[-] Couldn't create user.")
 
 
-@user_cli.command('reset-pw')
+@user_cli.command('reset')
 @click.argument('name')
 def create_user(name):
-    print("[*] Creating user: {0}".format(name))
+    print("[*] Resetting user: {0}".format(name))
     initial_pw = gen_initial_pw()
     token = gen_api_token()
     try:

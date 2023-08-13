@@ -83,4 +83,4 @@ clear-data:
 	docker-compose exec webapp flask -e webapp.env db clear
 
 reset-admin:
-	docker-compose exec webapp flask -e webapp.env user reset-pw admin
+	docker-compose exec webapp flask -e webapp.env user reset admin

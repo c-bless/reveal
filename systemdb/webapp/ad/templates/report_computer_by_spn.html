@@ -1,8 +1,8 @@
 {% extends "layout/search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
 
-{% set title = "Computer List" %}
-{% block page_title %} Computer List {% endblock page_title %}
+{% set title = "Computer By SPN List" %}
+{% block page_title %} Computer By SPN List {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
 {% block menu_l2 %} Computer List {% endblock menu_l2 %}
 
@@ -13,34 +13,14 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.DNSHostName) }}
-                            {{ render_check_field_sm2(form.InvertDNSHostName) }}
+                            {{ render_field_sm2(form.SPN) }}
+                            {{ render_check_field_sm2(form.InvertSPN) }}
 
-                            {{ render_field_sm2(form.SamAccountName) }}
-                            {{ render_check_field_sm2(form.InvertSamAccountName) }}
-
-                            {{ render_field_sm2(form.SID) }}
-                            {{ render_check_field_sm2(form.InvertSID) }}
-
-                            {{ render_field_sm2(form.OperatingSystem) }}
-                            {{ render_check_field_sm2(form.InvertOperatingSystem) }}
-
-                            {{ render_field_sm2(form.IPv4Address) }}
-                            {{ render_check_field_sm2(form.InvertIPv4Address) }}
-
-                            {{ render_field_sm2(form.IPv6Address) }}
-                            {{ render_check_field_sm2(form.InvertIPv6Address) }}
                         </div>
                         <div class="col-sm-6">
 
                             {{ render_field_sm2(form.Domain) }}
                             {{ render_check_field_sm2(form.InvertDomain) }}
-
-                            {{ render_field_sm2(form.DistinguishedName) }}
-                            {{ render_check_field_sm2(form.InvertDistinguishedName) }}
-
-                            {{ render_check_field_sm2(form.Enabled) }}
-                            {{ render_check_field_sm2(form.Disabled) }}
 
                         </div>
                     </div>
@@ -64,9 +44,9 @@
                         <th width="15%"> DNSHostName</th>
                         <th width="5%"> Enabled </th>
                         <th width="10%"> IPv4Address </th>
-                        <th width="20%"> SID </th>
+                        <th width="15%"> SID </th>
                         <th width="20">OS</th>
-                        <th width="15">OS Version</th>
+                        <th width="20">SPN</th>
                         <th width="5">Actions</th>
                     </tr>
                 </thead>
@@ -80,7 +60,10 @@
                             <td> {{ c.IPv4Address }} </td>
                             <td> {{ c.SID }} </td>
                             <td> {{ c.OperatingSystem }} </td>
-                            <td> {{ c.OperatingSystemVersion }} </td>
+                            <td> {% for spn in c.SPNs %}
+                                {{ spn.Name }} <br />
+                                 {% endfor %}
+                            </td>
                             <td class="actions">
                                 <a href="{{url_for('ad.computer_detail',id=c.id)}}" class="btn btn-default btn-xs">
                                     <i class="fa fa-eye"></i> View
