@@ -50,7 +50,7 @@ def get_host_by_id(host_id):
     return Host.query.get_or_404(host_id)
 
 
-@bp.post("/hosts/by-name/<string:name>")
+@bp.post("/hosts/by-name/")
 @bp.auth_required(auth)
 @bp.input(schema=HostByNameSearchSchema, location='json')
 @bp.output(status_code=HTTPStatus.OK, schema=HostSchema(many=True))
@@ -61,7 +61,7 @@ def get_host_by_name(search_data):
     return Host.query.filter(Host.Hostname.like("%"+search_data['name']+ "%" )).all()
 
 
-@bp.post("/hosts/by-ip/<string:ip>")
+@bp.post("/hosts/by-ip/")
 @bp.auth_required(auth)
 @bp.input(schema=HostByIPSearchSchema)
 @bp.output(status_code=HTTPStatus.OK,
@@ -70,11 +70,8 @@ def get_host_by_name(search_data):
         summary="Find a host by hostname",
         security='ApiKeyAuth')
 def get_host_by_ip(search_data):
-    ips = NetIPAddress.query.filter(NetIPAddress.IP.like("%"+search_data['ip']+"%")).all()
-    ip_ids = []
-    for ip in ips:
-        ip_ids.append(ip.id)
-    hosts = Host.query.filter(Host.id.in_(ip_ids)).all()
+    ips = NetIPAddress.query.filter(NetIPAddress.IP.ilike("%"+search_data['ip']+"%")).all()
+    hosts = [i.Host for i in ips]
     return hosts
 
 

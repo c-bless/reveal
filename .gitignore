@@ -92,3 +92,5 @@ target/
 /.obsidian/
 /todos.txt
 
+/services/nginx/static/dist/
+/services/nginx/static/plugins/
