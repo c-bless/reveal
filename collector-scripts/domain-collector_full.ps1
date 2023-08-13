@@ -7,7 +7,7 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (bitbucket@cbless.de)
-    Version:    0.3.1
+    Version:    0.3.2
     License:    GPL
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of

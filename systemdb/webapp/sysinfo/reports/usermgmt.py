@@ -249,7 +249,8 @@ class ReportSIMATICUsers(ReportInfo):
         super().initWithParams(
             name="List members of SIMATIC* groups",
             category="User Management",
-            tags=["User Management", "Siemens", "SIMATIC", "SIMATIC HMI", "SIMATIC HMI Viewer", "GroupMembers"],
+            tags=["User Management", "Siemens", "SIMATIC", "SIMATIC HMI", "SIMATIC HMI Viewer",
+                  "OT", "ICS", "PCS7", "WinCC", "GroupMembers"],
             description='Report all members of Siemens SIMATIC groups.',
             views=[("view", url_for("sysinfo.local_SIMATIC_users_list"))]
         )

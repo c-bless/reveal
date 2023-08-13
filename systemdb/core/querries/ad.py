@@ -2,7 +2,7 @@ from sqlalchemy import and_
 
 from systemdb.core.models.activedirectory import ADGroup
 from systemdb.core.models.activedirectory import ADSPN
-
+from systemdb.core.models.activedirectory import ADComputer
 
 def find_domain_admin_groups() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-512")).all()
@@ -22,3 +22,7 @@ def find_schema_admin_groups() -> list[ADGroup]:
 
 def find_computer_by_SPN(spn):
     return ADSPN.query.filter(ADSPN.Name.ilike("%" +spn + "%")).all()
+
+
+def find_computer_with_Unconstraint_Delegation():
+    return ADComputer.query.filter(ADComputer.TrustedForDelegation == True ).all()
