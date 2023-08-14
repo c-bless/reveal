@@ -14,6 +14,7 @@ from systemdb.core.querries.usermgmt import find_hosts_by_autologon_admin
 
 from systemdb.webapi.sysinfo.schemas.responses.usermgmt import GroupMembershipSchema
 from systemdb.core.querries.usermgmt import find_local_admins
+from systemdb.core.querries.usermgmt import find_rdp_groups
 
 @report_bp.get("/usermgmt/assignments/domainusers/")
 @report_bp.auth_required(auth)
@@ -70,6 +71,29 @@ def report_hosts_with_autologon_admin():
 @report_bp.output(status_code=HTTPStatus.OK,
                   schema=GroupMembershipSchema(many=True))
 def report_members_rdp():
+    results = []
+    groups = find_rdp_groups()
+    for g in groups:
+        membership = GroupMembershipSchema()
+        membership.Host = g.Host
+        membership.Group = g
+        membership.Members = g.Members
+        results.append(membership)
+    return results
+
+
+#####################################################################################
+# Local Admin users
+#####################################################################################
+@report_bp.get("/usermgmt/members/admins/")
+@report_bp.auth_required(auth)
+@report_bp.doc( description="Returns a list of memberships for the local administrators group for all hosts.",
+                summary="Find all memberships for the local administrators group for all hosts.",
+                security='ApiKeyAuth',
+                tags=[T_REPORT_SYSINFO, T_GENERAL_HARDENING, T_USERMGMT])
+@report_bp.output(status_code=HTTPStatus.OK,
+                  schema=GroupMembershipSchema(many=True))
+def report_members_local_admins():
     results = []
     groups = find_local_admins()
     for g in groups:
