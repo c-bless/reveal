@@ -54,6 +54,7 @@ RE_AD_GROUP_CN = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
 # Active Directory
 RE_AD_DOMAINNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_AD_DOMAIN_NETBIOSNAME = "^([a-zA-Z0-9\-]+)?$"
 RE_AD_GROUPNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_FORESTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_DISTINGUISHED_NAME = "^([a-zA-Z0-9 \\\(\)\=\,\.\-\_]+)?$"
