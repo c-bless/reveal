@@ -10,3 +10,5 @@ T_GENERAL_HARDENING = 'General Hardening'
 T_USERMGMT = 'User Management'
 T_PATCH_LIFECYCLE_MGMT = 'Patch / Lifecycle Management'
 T_HMI_HARDENING = 'HMI Hardening'
+T_SIEMENS = "SIEMENS"
+T_OT = "OT"
