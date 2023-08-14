@@ -10,6 +10,8 @@ from systemdb.core.querries.usermgmt import find_rdp_groups
 from systemdb.core.querries.usermgmt import find_SIMATIC_groups
 from systemdb.core.querries.usermgmt import find_RemoteMgmtUser_groups
 from systemdb.core.querries.usermgmt import find_DCOM_user_groups
+from systemdb.core.querries.usermgmt import find_PerformanceMonitorUser_groups
+
 
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
@@ -353,7 +355,7 @@ def local_dcom_users_excel_full():
     output = generate_group_members_excel(groups)
 
     return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_remote_mgmt_users.xlsx",
+                 headers={"Content-disposition": "attachment; filename=groupmembers_DCOM_users.xlsx",
                               "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
@@ -366,4 +368,40 @@ class ReportDCOMUsers(ReportInfo):
             tags=["User Management", "Distributed COM Users", "GroupMembers"],
             description='Report all members of "Distributed COM Users',
             views=[("view", url_for("sysinfo.local_dcom_users_list"))]
+        )
+
+
+
+####################################################################
+# Members in local Performance Monitor Users groups
+####################################################################
+
+@sysinfo_bp.route('/reports/usermgmt/performancemonitor/', methods=['GET'])
+@login_required
+def local_performance_monitor_users_list():
+    groups = find_PerformanceMonitorUser_groups()
+    return render_template('group_members_list.html', groups=groups,
+                           download_url=url_for("sysinfo.local_performance_monitor_users_excel_full"))
+
+
+@sysinfo_bp.route('/report/usermgmt/performancemonitor/excel/full', methods=['GET'])
+@login_required
+def local_performance_monitor_users_excel_full():
+    groups = find_PerformanceMonitorUser_groups()
+    output = generate_group_members_excel(groups)
+
+    return Response(output, mimetype="text/xlsx",
+                 headers={"Content-disposition": "attachment; filename=groupmembers_PerformanceMonitorUsers.xlsx",
+                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+class ReportPerformanceMonitorUsers(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List members of "Performance Monitor Users" groups',
+            category="User Management",
+            tags=["User Management", "Performance Monitor Users", "GroupMembers"],
+            description='Report all members of "Performance Monitor Users',
+            views=[("view", url_for("sysinfo.local_performance_monitor_users_list"))]
         )
