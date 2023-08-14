@@ -9,6 +9,7 @@ from systemdb.core.querries.usermgmt import find_local_admins
 from systemdb.core.querries.usermgmt import find_rdp_groups
 from systemdb.core.querries.usermgmt import find_SIMATIC_groups
 from systemdb.core.querries.usermgmt import find_RemoteMgmtUser_groups
+from systemdb.core.querries.usermgmt import find_DCOM_user_groups
 
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
@@ -298,7 +299,7 @@ class ReportRDPUsers(ReportInfo):
 
 
 ####################################################################
-# Members in local SIMATIC groups
+# Members in local "Remote Management Users" groups
 ####################################################################
 
 @sysinfo_bp.route('/reports/usermgmt/remotemgmtuser/', methods=['GET'])
@@ -329,4 +330,40 @@ class ReportRemoteManagementUsers(ReportInfo):
             tags=["User Management", "Remote Management Users", "GroupMembers"],
             description='Report all members of "Remote Management Users" groups',
             views=[("view", url_for("sysinfo.local_remote_mgmt_users_list"))]
+        )
+
+
+
+####################################################################
+# Members in local DCOM Users groups
+####################################################################
+
+@sysinfo_bp.route('/reports/usermgmt/dcom/', methods=['GET'])
+@login_required
+def local_dcom_users_list():
+    groups = find_DCOM_user_groups()
+    return render_template('group_members_list.html', groups=groups,
+                           download_url=url_for("sysinfo.local_dcom_users_excel_full"))
+
+
+@sysinfo_bp.route('/report/usermgmt/dcom/excel/full', methods=['GET'])
+@login_required
+def local_dcom_users_excel_full():
+    groups = find_DCOM_user_groups()
+    output = generate_group_members_excel(groups)
+
+    return Response(output, mimetype="text/xlsx",
+                 headers={"Content-disposition": "attachment; filename=groupmembers_remote_mgmt_users.xlsx",
+                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
+
+class ReportDCOMUsers(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List members of "Distributed COM Users" groups',
+            category="User Management",
+            tags=["User Management", "Distributed COM Users", "GroupMembers"],
+            description='Report all members of "Distributed COM Users',
+            views=[("view", url_for("sysinfo.local_dcom_users_list"))]
         )
