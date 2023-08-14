@@ -16,6 +16,7 @@ from systemdb.webapi.sysinfo.schemas.responses.usermgmt import GroupMembershipSc
 from systemdb.core.querries.usermgmt import find_local_admins
 from systemdb.core.querries.usermgmt import find_rdp_groups
 from systemdb.core.querries.usermgmt import find_PerformanceMonitorUser_groups
+from systemdb.core.querries.usermgmt import find_DCOM_user_groups
 
 @report_bp.get("/usermgmt/assignments/domainusers/")
 @report_bp.auth_required(auth)
@@ -130,3 +131,25 @@ def report_members_performance_monitor_users():
     return results
 
 
+
+#####################################################################################
+# Performance Monitor Users
+#####################################################################################
+@report_bp.get("/usermgmt/members/DCOM/")
+@report_bp.auth_required(auth)
+@report_bp.doc( description='Returns a list of memberships for the "Distributed COM Users" group for all hosts.',
+                summary='Find all memberships of the "Distributed COM Users" group for all hosts.',
+                security='ApiKeyAuth',
+                tags=[T_REPORT_SYSINFO, T_GENERAL_HARDENING, T_USERMGMT])
+@report_bp.output(status_code=HTTPStatus.OK,
+                  schema=GroupMembershipSchema(many=True))
+def report_members_dcom():
+    results = []
+    groups = find_DCOM_user_groups()
+    for g in groups:
+        membership = GroupMembershipSchema()
+        membership.Host = g.Host
+        membership.Group = g
+        membership.Members = g.Members
+        results.append(membership)
+    return results
