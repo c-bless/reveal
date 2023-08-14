@@ -2,6 +2,8 @@ from sqlalchemy import and_
 
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 from systemdb.core.sids import SID_BUILTIN_REMOTE_DESKTOP_USERS
+from systemdb.core.sids import SID_BUILTIN_REMOTE_MANAGEMENT_USERS
+
 from systemdb.core.models.sysinfo import Group
 from systemdb.core.models.sysinfo import Host
 
@@ -50,4 +52,8 @@ def find_rdp_groups() -> list[Group]:
 
 def find_SIMATIC_groups() -> list[Group]:
     return Group.query.filter(Group.Name.ilike("%SIMATIC%")).all()
+
+
+def find_RemoteMgmtUser_groups() -> list[Group]:
+    return Group.query.filter(Group.SID == SID_BUILTIN_REMOTE_MANAGEMENT_USERS).all()
 

@@ -11,6 +11,7 @@ from systemdb.webapp.sysinfo.reports.usermgmt import ReportLocalAdmins
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportHostsByLocalAdmin
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportSIMATICUsers
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportRDPUsers
+from systemdb.webapp.sysinfo.reports.usermgmt import ReportRemoteManagementUsers
 
 from systemdb.webapp.sysinfo.reports.updates import ReportLastUpdate
 from systemdb.webapp.sysinfo.reports.updates import ReportEOL
@@ -38,6 +39,7 @@ def get_usermgmt_report_list():
     report_plugin_list.append(ReportLocalAdmins())
     report_plugin_list.append(ReportSIMATICUsers())
     report_plugin_list.append(ReportRDPUsers())
+    report_plugin_list.append(ReportRemoteManagementUsers())
 
     return report_plugin_list
 

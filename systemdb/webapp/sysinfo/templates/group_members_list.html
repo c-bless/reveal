@@ -11,9 +11,11 @@
 
 {% block download_links %}
     {{ super() }}
-    <a href="{{url_for('sysinfo.local_admin_assignment_excel_full')}}" class="btn btn-block btn-secondary btn-sm">
-        <i class="fas fa-download">Excel</i>
+    {% if download_url %}
+    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Brief (Excel)</i>
     </a>
+    {% endif %}
 {% endblock download_links %}
 
 {% block datatable %}
