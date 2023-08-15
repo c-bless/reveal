@@ -1,0 +1,82 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Hosts" %}
+{% block page_title %} Hosts {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Host List {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+    <a href="{{url_for('sysinfo.report_wsus_http_excel_wsus')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> WSUS (Excel)</i>
+    </a>
+    <a href="{{url_for('sysinfo.report_wsus_http_excel_hosts_brief')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Brief (Excel)</i>
+    </a>
+    <a href="{{url_for('sysinfo.report_wsus_http_excel_hosts_full')}}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Full (Excel)</i>
+    </a>
+
+{% endblock download_links %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+                <thead>
+                <tr>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Domain" width="15%">Domain
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="OSName" width="20%">OS Name
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="SystemGroup">SystemGroup
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Location">Location
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="LastUpdate">Last update
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="OSBuildNumber">WSUS URI
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="LastUpdate">Last update
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Details">Details
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if hosts %}
+                    {% for h in hosts %}
+                      <tr>
+                        <td> {{ h.Hostname }} </td>
+                        <td> {{ h.Domain }} </td>
+                        <td> {{ h.OSName }} </td>
+                        <td> {{ h.SystemGroup }} </td>
+                        <td> {{ h.Location }} </td>
+                        <td> {{ h.WUServer }} </td>
+                        <td> {% if h.LastUpdate %} {{ h.LastUpdate.strftime('%d-%m-%Y')}} {% endif %}</td>
+                        <td class="actions">
+                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="10">No hosts found!</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+{% endblock datatable %}
