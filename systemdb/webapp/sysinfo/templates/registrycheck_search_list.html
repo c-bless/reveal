@@ -76,7 +76,7 @@
                     aria-sort="ascending" aria-label="Name" width="15%">Name
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">Category
+                    aria-label="DisplayName" width="10%">Category
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Path" width="30%">Path
@@ -91,10 +91,13 @@
                     aria-label="ValueMatch" width="5%">ValueMatch
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="ValueMatch" width="5%">CurrentValue
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Host" width="10%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Actions" width="10%">Actions
+                    aria-label="Actions" width="5%">Actions
                 </th>
             </tr>
             </thead>
@@ -108,6 +111,7 @@
                     <td> {{ c.Key }} </td>
                     <td> {{ c.KeyExists }} </td>
                     <td> {{ c.ValueMatch }} </td>
+                    <td> {{ c.CurrentValue }} </td>
                     <td> {{ c.Host }} </td>
                     <td class="actions">
                         <a href="{{ url_for('sysinfo.registrycheck_detail', id=c.id) }}" class="btn btn-default btn-xs">
