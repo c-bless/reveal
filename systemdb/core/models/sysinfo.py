@@ -45,10 +45,10 @@ class Host(db.Model):
     AcceptTrustedPublisherCerts = db.Column(db.String(5), unique=False, nullable=True)
     DisableWindowsUpdateAccess = db.Column(db.String(5), unique=False, nullable=True)
     ElevateNonAdmins = db.Column(db.String(5), unique=False, nullable=True)
-    TargetGroup = db.Column(db.String(256), unique=False, nullable=True)
+    TargetGroup = db.Column(db.String(), unique=False, nullable=True)
     TargetGroupEnabled = db.Column(db.String(5), unique=False, nullable=True)
-    WUServer = db.Column(db.String(1024), unique=False, nullable=True)
-    WUStatusServer = db.Column(db.String(1024), unique=False, nullable=True)
+    WUServer = db.Column(db.String(), unique=False, nullable=True)
+    WUStatusServer = db.Column(db.String(), unique=False, nullable=True)
     # SMB Settings
     SMBv1Enabled = db.Column(db.Boolean(), nullable=True)
     SMBv2Enabled = db.Column(db.Boolean(), nullable=True)
@@ -198,10 +198,10 @@ class Printer(db.Model):
 class NetAdapter(db.Model):
     __tablename__ = "NetAdapter"
     id = db.Column(db.Integer, primary_key=True)
-    MacAddress = db.Column(db.String(50), unique=False, nullable=True)
-    Status = db.Column(db.String(10), unique=False, nullable=True)
-    Name = db.Column(db.String(256), unique=False, nullable=True)
-    InterfaceDescription = db.Column(db.String(2048), unique=False, nullable=True)
+    MacAddress = db.Column(db.String(), unique=False, nullable=True)
+    Status = db.Column(db.String(), unique=False, nullable=True)
+    Name = db.Column(db.String(), unique=False, nullable=True)
+    InterfaceDescription = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="NetAdapters")
 
@@ -219,7 +219,7 @@ class NetIPAddress(db.Model):
     Prefix = db.Column(db.String(4), unique=False, nullable=True)
     IP = db.Column(db.String(150), unique=False, nullable=True)
     Type = db.Column(db.String(256), unique=False, nullable=True)
-    InterfaceAlias = db.Column(db.String(256), unique=False, nullable=True)
+    InterfaceAlias = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="NetIPAddresses")
 
@@ -233,21 +233,21 @@ class NetIPAddress(db.Model):
 class Service(db.Model):
     __tablename__ = "Service"
     id = db.Column(db.Integer, primary_key=True)
-    Caption = db.Column(db.String(2048), unique=False, nullable=True)
+    Caption = db.Column(db.String(), unique=False, nullable=True)
     Description = db.Column(db.String(), unique=False, nullable=True)
-    Name = db.Column(db.String(1024), unique=False, nullable=True)
+    Name = db.Column(db.String(), unique=False, nullable=True)
     StartMode = db.Column(db.String(20), unique=False, nullable=True)
-    PathName = db.Column(db.String(2048), unique=False, nullable=True)
+    PathName = db.Column(db.String(), unique=False, nullable=True)
     Started = db.Column(db.String(10), unique=False, nullable=True)
     StartName = db.Column(db.String(256), unique=False, nullable=True)
     SystemName = db.Column(db.String(256), unique=False, nullable=True)
-    DisplayName = db.Column(db.String(1024), unique=False, nullable=True)
+    DisplayName = db.Column(db.String(), unique=False, nullable=True)
     Running = db.Column(db.String(256), unique=False, nullable=True)
     AcceptStop = db.Column(db.String(10), unique=False, nullable=True)
     AcceptPause = db.Column(db.String(10), unique=False, nullable=True)
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
     DelayedAutoStart = db.Column(db.String(10), unique=False, nullable=True)
-    BinaryPermissionsStr = db.Column(db.String(4096), unique=False, nullable=True)
+    BinaryPermissionsStr = db.Column(db.String(), unique=False, nullable=True)
     BinaryPermissions = db.relationship('ServiceACL', backref='Service', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="Services")
@@ -364,7 +364,7 @@ class GroupMember(db.Model):
 class Product(db.Model):
     __tablename__ = "Product"
     id = db.Column(db.Integer, primary_key=True)
-    Caption = db.Column(db.String(150), unique=False, nullable=True)
+    Caption = db.Column(db.String(), unique=False, nullable=True)
     InstallDate = db.Column(db.String(150), unique=False, nullable=True)
     Description = db.Column(db.String(), unique=False, nullable=True)
     Vendor = db.Column(db.String(256), unique=False, nullable=True)
