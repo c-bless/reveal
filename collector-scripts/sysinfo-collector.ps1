@@ -6,7 +6,7 @@
     This PowerShell script is to fetch system information. The collector script is published as part of "systemdb".
     https://github.com/c-bless/systemdb
 
-    Author:     Christoph Bless (bitbucket@cbless.de)
+    Author:     Christoph Bless (github@cbless.de)
     Version:    0.3.2
     License:    GPL
 

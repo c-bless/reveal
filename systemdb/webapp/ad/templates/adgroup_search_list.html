@@ -17,19 +17,18 @@
                             {{ render_field_sm2(form.SID) }}
                             {{ render_check_field_sm2(form.InvertSID) }}
 
+                            {{ render_field_sm2(form.Domain) }}
+                            {{ render_check_field_sm2(form.InvertDomain) }}
+
+                        </div>
+                        <div class="col-sm-6">
+
                             {{ render_field_sm2(form.GroupCategory) }}
                             {{ render_check_field_sm2(form.InvertGroupCategory) }}
 
                             {{ render_field_sm2(form.GroupScope) }}
                             {{ render_check_field_sm2(form.InvertGroupScope) }}
-                        </div>
-                        <div class="col-sm-6">
 
-                            {{ render_field_sm2(form.Domain) }}
-                            {{ render_check_field_sm2(form.InvertDomain) }}
-
-                            {{ render_field_sm2(form.CN) }}
-                            {{ render_check_field_sm2(form.InvertCN) }}
 
                         </div>
                     </div>
@@ -67,7 +66,11 @@
                             <td> {{ u.GroupCategory }} </td>
                             <td> {{ u.GroupScope }} </td>
                             <td> {{ u.SID }} </td>
-                            <td> {{ u.CN }} </td>
+                            <td>
+                                {% for m in u.Members %}
+                                  {{ m.Name }} <br />
+                                {% endfor %}
+                            </td>
                             <td> {{ u.Description }} </td>
                             <td class="actions">
                                 <a href="{{url_for('ad.group_detail',id=u.id)}}" class="btn btn-default btn-xs">

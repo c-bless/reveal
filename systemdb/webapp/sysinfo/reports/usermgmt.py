@@ -170,6 +170,7 @@ def report_localadmin_list():
                 filters.append(GroupMember.Name.notilike("%" + username + "%"))
         filters.append(GroupMember.Group_id.in_(group_ids))
         members = GroupMember.query.filter(and_(*filters)).all()
+        print(members)
     else:
         local_admin_groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
         group_ids = [g.id for g in local_admin_groups]

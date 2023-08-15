@@ -60,5 +60,10 @@ class ApiConfig(object):
     # one of swagger-ui(default), redoc, elements, rapidoc, and rapipdf
     DOCS_UI = "swagger-ui"
 
+    # links https://cdnjs.com/libraries/swagger-ui
+    SWAGGER_UI_CSS = "/static/swagger-ui.min.css"
+    SWAGGER_UI_BUNDLE_JS = "/static/swagger-ui-bundle.min.js"
+    SWAGGER_UI_STANDALONE_PRESET_JS  = "/static/swagger-ui-standalone-preset.min.js"
+
     USE_PROXY = True
 

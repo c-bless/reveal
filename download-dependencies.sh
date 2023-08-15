@@ -23,3 +23,7 @@ cd AdminLTE*
 cp -r "dist" $STATIC_DIR
 cp -r "plugins" $STATIC_DIR
 
+cd $STATIC_DIR
+wget -O "swagger-ui.min.css" "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.3.2/swagger-ui.min.css"
+wget -O "swagger-ui-bundle.min.js" "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.3.2/swagger-ui-bundle.min.js"
+wget -O "swagger-ui-standalone-preset.min.js" "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.3.2/swagger-ui-standalone-preset.min.js"
