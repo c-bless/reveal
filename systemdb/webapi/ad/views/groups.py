@@ -32,7 +32,7 @@ def get_domain_admins_for_domain(domain_id: int):
         return HTTPError(404, "Domain/Group not found.")
 
 
-@bp.post("/domain/groups/by-name/")
+@bp.post("/groups/by-name/")
 @bp.auth_required(auth)
 @bp.input(schema=GroupNameSearchSchema, location="json")
 @bp.output(status_code=HTTPStatus.OK,
@@ -46,11 +46,11 @@ def get_domain_admins_for_domain(domain_id: int):
 def get_group_by_name(search_data):
     if "id" in search_data:
         groups = ADGroup.query.filter(
-            and_(ADGroup.SamAccountName.like("%" + search_data['name'] + "%"),
+            and_(ADGroup.SamAccountName.ilike("%" + search_data['name'] + "%"),
                  ADGroup.Domain_id == search_data['id'])).all()
         return groups
     else:
-        return ADGroup.query.filter(ADGroup.SamAccountName.like("%" + search_data['name'] + "%")).all()
+        return ADGroup.query.filter(ADGroup.SamAccountName.ilike("%" + search_data['name'] + "%")).all()
 
 
 @bp.get("/domain/<int:domain_id>/groups/")
