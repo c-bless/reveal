@@ -2,7 +2,7 @@ from systemdb.webapi.extentions import ma
 from flask_marshmallow.fields import fields
 
 from systemdb.core.models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions, \
-    NetAdapter, DefenderSettings, Printer, ConfigCheck
+    NetAdapter, DefenderSettings, Printer, ConfigCheck, Share, ShareACL, ShareACLNTFS
 
 
 class PSInstalledVersionsSchema(ma.SQLAlchemyAutoSchema):
@@ -112,3 +112,31 @@ class PrinterMatchSchema(ma.Schema):
 
     Printer = fields.String(allow_none=False)
     Hosts = ma.Nested(HostNestedSchema, many=True, allow_none=True)
+
+
+
+class ShareACLSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ShareACL
+        include_fk = True
+
+
+class ShareACLNTFSSchema(ma.SQLAlchemyAutoSchema):
+
+    class Meta:
+        model = ShareACLNTFS
+        include_fk = True
+
+
+class ShareSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Share
+        include_fk = True
+
+
+class ShareDetailSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Share
+
+    ShareACLNTFS = ma.Nested(ShareACLSchema, many=True, allow_none=True)
+    NTFSPermissions = ma.Nested(ShareACLNTFSSchema, many=True, allow_none=True)
