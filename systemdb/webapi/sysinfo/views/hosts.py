@@ -8,7 +8,6 @@ from systemdb.core.models.sysinfo import Hotfix
 from systemdb.core.models.sysinfo import NetIPAddress
 from systemdb.core.models.sysinfo import NetAdapter
 from systemdb.core.models.sysinfo import Printer
-from systemdb.core.models.sysinfo import ConfigCheck
 from systemdb.core.models.sysinfo import PSInstalledVersions
 
 from systemdb.webapi.sysinfo.views import bp
@@ -21,7 +20,6 @@ from systemdb.webapi.sysinfo.schemas.responses.products import ProductSchema
 from systemdb.webapi.sysinfo.schemas.responses.hosts import HotfixSchema
 from systemdb.webapi.sysinfo.schemas.responses.hosts import NetIPAddressSchema
 from systemdb.webapi.sysinfo.schemas.responses.hosts import NetAdapterSchema
-from systemdb.webapi.sysinfo.schemas.responses.hosts import ConfigCheckSchema
 from systemdb.webapi.sysinfo.schemas.responses.hosts import PrinterSchema
 from systemdb.webapi.sysinfo.schemas.responses.hosts import PSInstalledVersionsSchema
 from systemdb.webapi.sysinfo.schemas.arguments.hosts import HostByNameSearchSchema
@@ -139,16 +137,6 @@ def get_netadapter_by_host(host_id):
 def get_ips_by_host(host_id):
     return NetIPAddress.query.filter(NetIPAddress.Host_id == host_id).all()
 
-
-@bp.get("/hosts/<int:host_id>/configchecks/")
-@bp.auth_required(auth)
-@bp.output(status_code=HTTPStatus.OK,
-           schema=ConfigCheckSchema(many=True))
-@bp.doc(description="Return a list of performed config checks of a specific host.",
-        summary="Find all performed config checks on a specific host",
-        security='ApiKeyAuth')
-def get_configchecks_by_host(host_id):
-    return ConfigCheck.query.filter(ConfigCheck.Host_id == host_id).all()
 
 
 @bp.get("/hosts/<int:host_id>/psversions/")
