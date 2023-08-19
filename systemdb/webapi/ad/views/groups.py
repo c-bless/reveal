@@ -15,6 +15,20 @@ from systemdb.webapi.ad.schemas.responses.domain import ADGroupWithMembersSchema
 from systemdb.webapi.ad.schemas.responses.domain import ADGroupSchema
 
 
+
+@bp.get("/groups/<int:group_id>")
+@bp.auth_required(auth)
+@bp.output(status_code=HTTPStatus.OK,
+           schema=ADGroupWithMembersSchema,
+           description="Group Details")
+@bp.doc(description="Returns the details for the specified group including memberships.",
+        summary="Find the details for the specified group including memberships",
+        security='ApiKeyAuth'
+        )
+def get_group_details(group_id: int):
+    return ADGroup.query.get_or_404(group_id)
+
+
 @bp.get("/domain/<int:domain_id>/groups/domainadmins/")
 @bp.auth_required(auth)
 @bp.output(status_code=HTTPStatus.OK,
