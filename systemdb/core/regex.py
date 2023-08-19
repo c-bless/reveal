@@ -62,6 +62,9 @@ RE_AD_TRUSTS_SOURCE = "^([a-zA-Z0-9 \\\(\)\=\,\.\-\_]+)?$"
 RE_AD_TRUSTS_TARGET = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_TRUSTS_DIRECTION = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
+RE_AD_SPN = "^([a-zA-Z0-9 \\\,\.\-\_]+)?$"
+
+
 RE_AD_HOSTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_OS = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
