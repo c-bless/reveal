@@ -13,6 +13,7 @@ from systemdb.webapi.extentions import auth
 from systemdb.webapi.ad.schemas.responses.domain import ADComputerSchema
 from systemdb.webapi.ad.schemas.arguments.computer import ADComputerBySPNSchema
 from systemdb.webapi.ad.schemas.arguments.computer import ADComputerSearchSchema
+from systemdb.webapi.ad.schemas.arguments.computer import ADComputerByDomainSearchSchema
 from systemdb.webapi.ad.schemas.responses.domain import ADDomainControllerSchema
 
 
@@ -109,7 +110,7 @@ def get_ad_computer_by_spn_list(search_data):
         summary="Find a list of Active Directory computer matching specified filters",
         security='ApiKeyAuth'
              )
-def get_ad_computer_search(search_data):
+def post_ad_computer_search(search_data):
 
     filters = []
 
@@ -167,3 +168,47 @@ def get_ad_computer_search(search_data):
 
     return computer_list
 
+
+
+
+
+@bp.post("/computer/by-domain/")
+@bp.auth_required(auth)
+@bp.input(schema=ADComputerByDomainSearchSchema)
+@bp.output(status_code=HTTPStatus.OK,
+           schema=ADComputerSchema(many=True),
+           description="List of Active Directory computer with specified Domain")
+@bp.doc(description="Returns a list of Active Directory computer with specified Domain",
+        summary="Find a list of Active Directory computer with specified Domain",
+        security='ApiKeyAuth'
+             )
+def post_ad_computer_by_domain(search_data):
+
+    filters = []
+
+    if "NETBIOS" in search_data:
+        if len(search_data['NETBIOS']) > 0:
+            if "InvertNETBIOS" in search_data and search_data["InvertNETBIOS"] == True:
+                filters.append(ADDomain.NetBIOSName.notilike("%" + search_data['NETBIOS'] + "%"))
+            else:
+                filters.append(ADDomain.NetBIOSName.ilike("%" + search_data['NETBIOS'] + "%"))
+    if "Domain" in search_data:
+        if len(search_data['Domain']) > 0:
+            if "InvertDomain" in search_data and search_data["InvertDomain"] == True:
+                filters.append(ADDomain.Name.notilike("%" + search_data['Domain'] + "%"))
+            else:
+                filters.append(ADDomain.Name.ilike("%" + search_data['Domain'] + "%"))
+    if "DomainId" in search_data:
+        if len(search_data['DomainId']) > 0:
+            if "InvertDomainId" in search_data and search_data["InvertDomainId"] == True:
+                filters.append(ADDomain.id != int(search_data['DomainId']))
+            else:
+                filters.append(ADDomain.id == int(search_data['DomainId']))
+
+    domains = ADDomain.query.filter(and_(*filters)).all()
+
+    result = []
+    for d in domains:
+        for c in d.ComputerList:
+            result.append(c)
+    return result

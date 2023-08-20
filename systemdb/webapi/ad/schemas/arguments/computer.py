@@ -42,8 +42,8 @@ class ADComputerSearchSchema(Schema):
 
 class ADComputerByDomainSearchSchema(Schema):
     DomainId = Integer(required=False)
-    NOT_DomainId = Integer(required=False)
+    InvertDomainId = Boolean(required=False)
     Domain = String(required=False, validate=Regexp(regex=RE_AD_DOMAINNAME))
-    NOT_Domain = String(required=False, validate=Regexp(regex=RE_AD_DOMAINNAME))
+    InvertDomain = Boolean(required=False)
     NETBIOS = String(required=False, validate=Regexp(regex=RE_AD_DOMAIN_NETBIOSNAME))
-    NOT_NETBIOS = String(required=False, validate=Regexp(regex=RE_AD_DOMAIN_NETBIOSNAME))
+    InvertNETBIOS = Boolean(required=False)
