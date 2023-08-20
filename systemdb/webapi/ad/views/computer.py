@@ -12,6 +12,7 @@ from systemdb.webapi.extentions import auth
 
 from systemdb.webapi.ad.schemas.responses.domain import ADComputerSchema
 from systemdb.webapi.ad.schemas.arguments.computer import ADComputerBySPNSchema
+from systemdb.webapi.ad.schemas.arguments.computer import ADComputerSearchSchema
 from systemdb.webapi.ad.schemas.responses.domain import ADDomainControllerSchema
 
 
@@ -94,4 +95,75 @@ def get_ad_computer_by_spn_list(search_data):
 
     result = [c.Computer for c in spns]
     return result
+
+
+
+
+@bp.post("/computer/search/")
+@bp.auth_required(auth)
+@bp.input(schema=ADComputerSearchSchema)
+@bp.output(status_code=HTTPStatus.OK,
+           schema=ADComputerSchema(many=True),
+           description="List of Active Directory computer matching specified filters")
+@bp.doc(description="Returns a list of Active Directory computer matching specified filters",
+        summary="Find a list of Active Directory computer matching specified filters",
+        security='ApiKeyAuth'
+             )
+def get_ad_computer_search(search_data):
+
+    filters = []
+
+    if "Description" in search_data:
+        if len(search_data['Description']) > 0:
+            filters.append(ADComputer.Description.ilike("%" + search_data['Description'] + "%"))
+    if "DNSHostName" in search_data:
+        if len(search_data['DNSHostName']) > 0:
+            filters.append(ADComputer.DNSHostName.ilike("%" + search_data['DNSHostName'] + "%"))
+    if "DistinguishedName" in search_data:
+        if len(search_data['DistinguishedName']) > 0:
+            filters.append(ADComputer.DistinguishedName.ilike("%" + search_data['DistinguishedName'] + "%"))
+    if "OperatingSystem" in search_data:
+        if len(search_data['OperatingSystem']) > 0:
+            filters.append(ADComputer.OperatingSystem.ilike("%" + search_data['OperatingSystem'] + "%"))
+    if "PrimaryGroup" in search_data:
+        if len(search_data['PrimaryGroup']) > 0:
+            filters.append(ADComputer.PrimaryGroup.ilike("%" + search_data['PrimaryGroup'] + "%"))
+    if "SID" in search_data:
+        if len(search_data['SID']) > 0:
+            filters.append(ADComputer.SID.ilike("%" + search_data['SID'] + "%"))
+    if "SamAccountName" in search_data:
+        if len(search_data['SamAccountName']) > 0:
+            filters.append(ADComputer.SamAccountName.ilike("%" + search_data['SamAccountName'] + "%"))
+    if "IPv4Address" in search_data:
+        if len(search_data['IPv4Address']) > 0:
+            filters.append(ADComputer.IPv4Address.ilike("%" + search_data['IPv4Address'] + "%"))
+    if "IPv6Address" in search_data:
+        if len(search_data['IPv6Address']) > 0:
+            filters.append(ADComputer.IPv6Address.ilike("%" + search_data['IPv6Address'] + "%"))
+    if "Id" in search_data:
+        if len(search_data['Id']) > 0:
+            filters.append(ADComputer.id == int(search_data['Id']))
+    if "Enabled" in search_data:
+        if search_data["Enabled"]:
+            filters.append(ADComputer.Enabled == True)
+        else:
+            filters.append(ADComputer.Enabled == False)
+    if "TrustedForDelegation" in search_data:
+        if search_data["TrustedForDelegation"]:
+            filters.append(ADComputer.TrustedForDelegation == True)
+        else:
+            filters.append(ADComputer.TrustedForDelegation == False)
+    if "TrustedToAuthForDelegation" in search_data:
+        if search_data["TrustedToAuthForDelegation"]:
+            filters.append(ADComputer.TrustedToAuthForDelegation == True)
+        else:
+            filters.append(ADComputer.TrustedToAuthForDelegation == False)
+    if "Domain" in search_data:
+        if len (search_data["Domain"]) > 0:
+            computer_list = ADComputer.query.filter(and_(*filters)).join(
+                ADDomain).filter(ADDomain.Name.ilike("%" + search_data["Domain"] + "%")).all()
+    else:
+        computer_list = ADComputer.query.filter(and_(*filters)).all()
+
+    return computer_list
 

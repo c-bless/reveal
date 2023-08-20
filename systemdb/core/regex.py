@@ -1,4 +1,7 @@
 RE_AUTH_TOKEN = "^([0-9a-zA-Z]+)$"
+RE_SID_ALLOWED_CHARS = "([S\-0-9]+)?$}"
+RE_IP4_ALLOWED_CHARS = "([0-9\.]+)?$}"
+RE_IP6_ALLOWED_CHARS = "([0-9a-fA-F\:]+)?$}"
 
 RE_SYSINFO_BUILDNUMBER = "[0-9]{0,2}[\.]{1}[0-9]{0,2}[\.]{1}[0-9]{0,5}"
 RE_SYSINFO_HOSTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
@@ -61,12 +64,11 @@ RE_AD_DISTINGUISHED_NAME = "^([a-zA-Z0-9 \\\(\)\=\,\.\-\_]+)?$"
 RE_AD_TRUSTS_SOURCE = "^([a-zA-Z0-9 \\\(\)\=\,\.\-\_]+)?$"
 RE_AD_TRUSTS_TARGET = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_TRUSTS_DIRECTION = "^([a-zA-Z0-9 \.\-\_]+)?$"
-
 RE_AD_SPN = "^([a-zA-Z0-9 \\\,\.\-\_]+)?$"
-
-
 RE_AD_HOSTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_OS = "^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_AD_DESCRIPTION = "^([a-zA-Z0-9 \\\(\)\=\,\.\-\_]+)?$"
+RE_AD_COMPUTER_GROUPNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
 RE_SID_USER_ACCOUNTS = "^S-1-5-((32-\d*)|(21-\d*-\d*-\d*-\d*))$"
 RE_AD_USER_NAME = "^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
@@ -74,7 +76,6 @@ RE_AD_SAMACCOUNT = "^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
 RE_AD_USER_GIVENNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_SURNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_DISPLAYNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
-
 
 RE_AD_SPN = "^([a-zA-Z0-9 \\\.\-\_]+)?$"
 
