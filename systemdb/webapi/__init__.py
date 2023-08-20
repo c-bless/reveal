@@ -60,8 +60,8 @@ def config_api(app: Flask, config_class:ApiConfig) -> None:
     # openapi.info.contact
     app.config['CONTACT'] = {
         'name': 'API Support',
-        'url': 'https://bitbucket.org/cbless/systemdb/src/master/',
-        'email': 'bitbucket@cbless.de'
+        'url': 'https://github.com/c-bless/systemdb',
+        'email': 'github@cbless.de'
     }
 
     # openapi.info.license
