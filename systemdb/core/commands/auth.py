@@ -34,7 +34,7 @@ def create_user(name):
 
 @user_cli.command('reset')
 @click.argument('name')
-def create_user(name):
+def reset_user(name):
     print("[*] Resetting user: {0}".format(name))
     initial_pw = gen_initial_pw()
     token = gen_api_token()
@@ -53,7 +53,7 @@ def create_user(name):
 
 @user_cli.command('delete')
 @click.argument('name')
-def create_user(name):
+def delete_user(name):
     print("[*] Deleting user: {0}".format(name))
     try:
         user = AuthUser.find_by_username(name)
@@ -65,7 +65,7 @@ def create_user(name):
 
 
 @user_cli.command('list')
-def create_user():
+def list_user():
     print("[*] Created user accounts:")
     for u in AuthUser.find_all():
         print ("UUID: {0} , username: {1}".format(u.UUID, u.Username))
