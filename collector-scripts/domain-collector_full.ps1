@@ -318,7 +318,7 @@ try{
                     # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
                     # new XML Element
                     $basic_properties = @(
-                        'DistinguishedName', 'SID', 'SamAccountName', 'displayName', ''Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
+                        'DistinguishedName', 'SID', 'SamAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
                         'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate', 
                         'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
                     )
