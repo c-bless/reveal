@@ -34,6 +34,7 @@ TMP_ADMIN_LTE_PLUGINS = "$(TMP_DIR)/AdminLTE-3.2.0/plugins"
 
 tmp:
 	@$(shell mkdir -p $(TMP_ADMIN_LTE_DIR) )
+	@$(shell mkdir -p $(UPLOAD_DIR) )
 	./download-dependencies.sh
 
 
