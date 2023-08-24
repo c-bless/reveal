@@ -26,3 +26,8 @@ def find_computer_by_SPN(spn):
 
 def find_computer_with_Unconstraint_Delegation():
     return ADComputer.query.filter(ADComputer.TrustedForDelegation == True ).all()
+
+
+def find_protected_users() -> list[ADGroup]:
+    return ADGroup.query.filter(ADGroup.SID.ilike("%-525")).all()
+

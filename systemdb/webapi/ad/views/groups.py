@@ -6,6 +6,7 @@ from systemdb.core.models.activedirectory import ADGroup
 from systemdb.core.models.activedirectory import ADForest
 from systemdb.core.models.activedirectory import ADDomain
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
+from systemdb.core.querries.ad import find_protected_users
 
 from systemdb.webapi.ad import bp
 from systemdb.webapi.extentions import auth
@@ -101,3 +102,18 @@ def get_ad_enterpriseadmin_group(forest_id):
             and_(ADGroup.SamAccountName == "Enterprise Admins", ADDomain.id.in_(ids))).first()
     except:
         return HTTPError(404, "Domain/Group not found.")
+
+
+
+@bp.get("/groups/protectedusers/")
+@bp.auth_required(auth)
+@bp.output(status_code=HTTPStatus.OK,
+           schema=ADGroupWithMembersSchema(many=True),
+           description="List of members of the 'protected users' groups across all imported domains / forest.")
+@bp.doc(description="Returns a list of members of the 'protected users' groups across all imported domains / forest.",
+        summary="Find a list of members of the 'protected users' groups across all imported domains / forest.",
+        security='ApiKeyAuth')
+def get_protected_users_group_list():
+    groups = find_protected_users()
+    print(groups)
+    return groups
