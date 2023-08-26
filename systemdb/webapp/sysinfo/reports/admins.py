@@ -4,10 +4,13 @@ from sqlalchemy import and_
 from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
+from systemdb.core.export.excel.usermgmt import generate_group_members_excel
+
 from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 
 from systemdb.core.models.sysinfo import Host, Group
 from systemdb.core.reports import ReportInfo
+from systemdb.core.querries.usermgmt import find_groups_where_domadm_is_localadmin
 
 
 ####################################################################
@@ -31,7 +34,7 @@ def hosts_report_domainadmin_excel_full():
 
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-domnadmin.xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-domadmin.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 @sysinfo_bp.route('/report/domainadmin/excel/brief', methods=['GET'])
@@ -41,16 +44,26 @@ def hosts_report_domainadmin_excel_brief():
 
     output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-domnadmin-brief.xlsx",
+                    headers={"Content-disposition": "attachment; filename=hosts-with-domadmin-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
+
+@sysinfo_bp.route('/report/domainadmin/excel/memberships', methods=['GET'])
+@login_required
+def hosts_report_domainadmin_excel_memberships():
+    groups = find_groups_where_domadm_is_localadmin()
+    output = generate_group_members_excel(groups)
+    return Response(output, mimetype="text/xlsx",
+                    headers={"Content-disposition": "attachment; filename=groups-with-domnadmin-brief.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 @sysinfo_bp.route('/report/domainadmin', methods=['GET'])
 @login_required
 def hosts_report_domainadmin():
-    hosts = get_domadmin_memberof_local_admin()
-    return render_template('host_list.html', hosts=hosts,
+    groups = find_groups_where_domadm_is_localadmin()
+    return render_template('group_members_list.html', groups=groups,
                            download_brief_url=url_for("sysinfo.hosts_report_domainadmin_excel_brief"),
+                           download_membership_url=url_for("sysinfo.hosts_report_domainadmin_excel_memberships"),
                            download_url=url_for("sysinfo.hosts_report_domainadmin_excel_full"))
 
 

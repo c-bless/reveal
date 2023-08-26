@@ -7,7 +7,9 @@ from systemdb.core.sids import SID_BUILTIN_DCOM_USERS
 from systemdb.core.sids import SID_BUILTIN_PERFORMANCE_MONITOR_USERS
 
 from systemdb.core.models.sysinfo import Group
+from systemdb.core.models.sysinfo import GroupMember
 from systemdb.core.models.sysinfo import Host
+
 
 
 def get_direct_domainuser_assignments() -> list[tuple]:
@@ -44,6 +46,12 @@ def find_hosts_where_domadm_is_localadmin() -> list[Host]:
     return Host.query.filter(Host.id.in_(host_ids)).all()
 
 
+def find_groups_where_domadm_is_localadmin() -> list[Group]:
+    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).\
+        join(GroupMember).filter(GroupMember.SID.endswith("-512")).all()
+    return groups
+
+
 def find_local_admins() -> list[Group]:
     return Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
 
@@ -66,4 +74,3 @@ def find_DCOM_user_groups() -> list[Group]:
 
 def find_PerformanceMonitorUser_groups() -> list[Group]:
     return Group.query.filter(Group.SID == SID_BUILTIN_PERFORMANCE_MONITOR_USERS).all()
-

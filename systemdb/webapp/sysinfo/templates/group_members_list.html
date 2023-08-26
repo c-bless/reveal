@@ -11,9 +11,19 @@
 
 {% block download_links %}
     {{ super() }}
+    {% if download_brief_url %}
+    <a href="{{ download_brief_url }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Full Hosts (Excel)</i>
+    </a>
+    {% endif %}
     {% if download_url %}
     <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-        <i class="fas fa-download"> Brief (Excel)</i>
+        <i class="fas fa-download"> Brief Hosts (Excel)</i>
+    </a>
+    {% endif %}
+    {% if download_membership_url %}
+    <a href="{{ download_membership_url }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Memberships (Excel)</i>
     </a>
     {% endif %}
 {% endblock download_links %}
