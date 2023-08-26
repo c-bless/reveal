@@ -28,6 +28,7 @@ from systemdb.webapp.sysinfo.reports.services import ReportServiceByPermission
 from systemdb.webapp.sysinfo.reports.services import ReportUQSP
 from systemdb.webapp.sysinfo.reports.services import ReportServiceByUsercontext
 from systemdb.webapp.sysinfo.reports.printers import ReportFilePrinterInstalled
+from systemdb.webapp.sysinfo.reports.services import ReportModifiableServices
 
 
 def get_usermgmt_report_list():
@@ -70,6 +71,7 @@ def get_systemhardening_report_list():
     report_plugin_list.append(ReportServiceByPermission())
     report_plugin_list.append(ReportServiceByUsercontext())
     report_plugin_list.append(ReportFilePrinterInstalled())
+    report_plugin_list.append(ReportModifiableServices())
 
     return report_plugin_list
 

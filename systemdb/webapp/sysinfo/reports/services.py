@@ -9,7 +9,10 @@ from systemdb.core.export.excel.services import generate_services_acl_excel
 
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
-from systemdb.webapp.sysinfo.forms.services import ServiceAclSearchForm, ServiceUserContextSearchForm
+from systemdb.webapp.sysinfo.forms.services import ServiceAclSearchForm
+from systemdb.webapp.sysinfo.forms.services import ServiceUserContextSearchForm
+from systemdb.core.querries.hardening import find_modifiable_services
+from systemdb.core.querries.hardening import find_uqsp
 
 from systemdb.core.reports import ReportInfo
 ####################################################################
@@ -18,9 +21,7 @@ from systemdb.core.reports import ReportInfo
 @sysinfo_bp.route('/report/services/uqsp/', methods=['GET'])
 @login_required
 def hosts_report_services_uqsp():
-    services = Service.query.filter(and_(Service.PathName.notlike('"%'),
-                                         Service.PathName.contains(" "),
-                                         Service.PathName.notlike('C:\\Windows%'))).all()
+    services = find_uqsp()
 
     return render_template('service_list.html', services=services,
                            download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
@@ -29,9 +30,7 @@ def hosts_report_services_uqsp():
 @sysinfo_bp.route('/report/services/uqsp/excel', methods=['GET'])
 @login_required
 def hosts_report_services_uqsp_excel():
-    services = Service.query.filter(and_(Service.PathName.notlike('"%'),
-                                         Service.PathName.contains(" "),
-                                         Service.PathName.notlike('C:\\Windows%'))).all()
+    services = find_uqsp()
 
     output = generate_services_excel(services=services)
     return Response(output, mimetype="text/xlsx",
@@ -145,4 +144,28 @@ class ReportServiceByUsercontext(ReportInfo):
             tags=["Systemhardening", "User Context", "User Permissions"],
             description='Report all services executed in context of specified user.',
             views=[("view", url_for("sysinfo.hosts_report_services_by_usercontext"))]
+        )
+
+
+
+####################################################################
+# Services by ACL
+####################################################################
+@sysinfo_bp.route('/report/services/modifiable/', methods=['GET'])
+@login_required
+def hosts_report_modifiable_services():
+    acls = find_modifiable_services()
+    return render_template('report_modifiable_services.html', acls=acls)
+
+
+class ReportModifiableServices(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name="Modifiable services",
+            category="Systemhardening",
+            tags=["Systemhardening", "ACL", "User Permissions", "Modifiable Service"],
+            description="Report all services where the ACLs allow modifications, excluding 'TrustedInstaller', "
+                        "'System' and 'Administrator' account.",
+            views=[("view", url_for("sysinfo.hosts_report_modifiable_services"))]
         )

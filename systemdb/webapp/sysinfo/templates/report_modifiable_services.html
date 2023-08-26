@@ -1,35 +1,14 @@
-{% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field, render_check_field, render_submit_field %}
-{% set title = "Service ACLs" %}
-{% block page_title %} Service ACLs {% endblock page_title %}
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Modifiable Service" %}
+{% block page_title %} Modifiable Services {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} Service ACL List {% endblock menu_l2 %}
+{% block menu_l2 %} Modifiable Service List {% endblock menu_l2 %}
 
 {% block download_links %}
     {{ super() }}
 
 {% endblock download_links %}
-
-
-{% block searchform %}
-    <form class="form-horizontal" method="post">
-                {{ form.hidden_tag() }}
-                <div class="card-body">
-                    {{ render_field(form.User) }}
-                    {{ render_check_field(form.InvertUser) }}
-                    {{ render_field(form.Permission) }}
-                    {{ render_check_field(form.InvertPermission) }}
-
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.download) }}
-                </div>
-                <!-- /.card-footer -->
-    </form>
-
-{% endblock searchform %}
 
 {% block datatable %}
 {{ super() }}
