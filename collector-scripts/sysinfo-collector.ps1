@@ -7,7 +7,7 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.3
+    Version:    0.3.3.1
     License:    GPL
 
     .INPUTS
@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.3.3"
+$version="0.3.3.1"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -92,9 +92,31 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             #######################################################################
             $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
             $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
-            $xmlWriter.WriteElementString("OSVersion",[string] $compInfo.OSVersion);
-            $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.OSBuildNumber);
-            $xmlWriter.WriteElementString("OSName", [string] $compInfo.OSName);
+
+            if ([string]::IsNullOrEmpty($compInfo.OSVersion)){
+                try{
+                    $xmlWriter.WriteElementString("OSVersion",[string] $compInfo.WindowsVersion);
+                }catch{}
+            }else{
+                $xmlWriter.WriteElementString("OSVersion",[string] $compInfo.OSVersion);
+            }
+
+            if ([string]::IsNullOrEmpty($compInfo.OSBuildNumber)){
+                try{
+                    $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.WindowsBuildLabEx);
+                }catch{}
+            }else{
+                $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.OSBuildNumber);
+            }
+
+            if ([string]::IsNullOrEmpty($compInfo.OSName)){
+                try{
+                    $xmlWriter.WriteElementString("OSName",[string] $compInfo.WindowsProductName);
+                }catch{}
+            }else{
+                $xmlWriter.WriteElementString("OSName", [string] $compInfo.OSName);
+            }
+
             $xmlWriter.WriteElementString("OSInstallDate",[string] $compInfo.OSInstallDate);
             $xmlWriter.WriteElementString("OSProductType",[string] $compInfo.OSProductType);
             $xmlWriter.WriteElementString("LogonServer", [string] $compInfo.LogonServer);
@@ -594,8 +616,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name ForceAutoLogon -ErrorAction SilentlyContinue
             $xmlWriter.WriteElementString("ForceAutoLogon", $value.ForceAutoLogon)    
         } 
-        if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultDomain") {
-            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomain -ErrorAction SilentlyContinue
+        if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultDomainName") {
+            $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomainName -ErrorAction SilentlyContinue
             $xmlWriter.WriteElementString("DefaultDomain", $value.DefaultDomain)   
         }
         $xmlWriter.WriteEndElement() # Winlogon
