@@ -66,7 +66,7 @@
                         <th width="20%"> SID </th>
                         <th width="10%"> GivenName </th>
                         <th width="10%"> Surname </th>
-                        <th width="5">lastLogon</th>
+                        <th width="5">DisplayName</th>
                         <th width="20">Description</th>
                         <th width="5">Action</th>
                     </tr>
@@ -81,7 +81,7 @@
                             <td> {{ u.SID }} </td>
                             <td> {{ u.GivenName }} </td>
                             <td> {{ u.Surname }} </td>
-                            <td> {{ u.lastLogon }} </td>
+                            <td> {{ u.DisplayName }} </td>
                             <td> {{ u.Description }} </td>
                             <td class="actions">
                                 <a href="{{url_for('ad.user_detail',id=u.id)}}" class="btn btn-default btn-xs">

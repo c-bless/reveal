@@ -16,7 +16,7 @@ def get_EoLInfo():
         for v in special_os_versions:
             if v in e.OS:
                 in_list = True
-                hosts = Host.query.filter(and_((Host.OSBuildNumber == e.Build),
+                hosts = Host.query.filter(and_((Host.OSBuildNumber.ilike(e.Build +"%")),
                                                (Host.OSName.ilike(f'%{v}%'))
                                                )).all()
                 eol_match.Hosts = hosts

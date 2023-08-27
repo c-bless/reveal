@@ -48,11 +48,15 @@ def generate_hosts_excel(hosts=[]):
             if g.SID == SID_BUILTIN_REMOTE_DESKTOP_USERS:
                 rdp.append("\n".join(members))
 
+        defaultPassword = None
+        if h.DefaultPassword:
+            defaultPassword = "PW IN Registry"
+
         tmp = [h.SystemGroup, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber,
                "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp),
                "\n".join(products), "\n".join(hotfixes), h.LastUpdate, h.OSInstallDate, h.OSProductType, h.LogonServer,
                h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
-               h.AutoAdminLogon, h.ForceAutoLogon, h.DefaultPassword, h.DefaultUserName, h.PS2Installed]
+               h.AutoAdminLogon, h.ForceAutoLogon, defaultPassword, h.DefaultUserName, h.PS2Installed]
         rows.append(tmp)
 
 
