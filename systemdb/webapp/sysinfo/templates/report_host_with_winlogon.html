@@ -1,0 +1,90 @@
+{% extends "layout/list_layout.html" %}
+
+{% set title = "Hosts with WINLOGON" %}
+{% block page_title %} Hosts with WINLOGON {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Hosts with WINLOGON List {% endblock menu_l2 %}
+
+
+
+{% block download_links %}
+    {{ super() }}
+    {% if download_brief_url %}
+    <a href="{{ download_brief_url }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Full Hosts (Excel)</i>
+    </a>
+    {% endif %}
+    {% if download_url %}
+    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Brief Hosts (Excel)</i>
+    </a>
+    {% endif %}
+    {% if download_settings_url %}
+    <a href="{{ download_settings_url }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Values (Excel)</i>
+    </a>
+    {% endif %}
+{% endblock download_links %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
+                       aria-describedby="table1_info">
+                <thead>
+                <tr>
+                    <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="SystemGroup" width="15%">SystemGroup
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Location" width="10%">Location
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Domain" width="5%">AutoAdminLogon
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="OSName" width="5%">ForceAutoLogon
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="User" width="15">DefaultDomain
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="User" width="15">DefaultUserName
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="User" width="15">DefaultPassword
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Details" width="5%">Details
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if hosts %}
+                    {% for h in hosts %}
+                      <tr>
+                        <td> {{ h.Hostname }} </td>
+                        <td> {{ h.SystemGroup }} </td>
+                        <td> {{ h.Location }} </td>
+                        <td> {{ h.AutoAdminLogon }} </td>
+                        <td> {{ h.ForceAutoLogon }} </td>
+                        <td> {{ h.DefaultDomain }} </td>
+                        <td> {{ h.DefaultUserName }} </td>
+                        <td> {{ h.DefaultPassword }} </td>
+                        <td class="actions">
+                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="9">No hosts found!</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+{% endblock datatable %}
