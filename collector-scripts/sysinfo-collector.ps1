@@ -7,7 +7,7 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.2
+    Version:    0.3.3
     License:    GPL
 
     .INPUTS
@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.3"
+$version="0.3.3"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
