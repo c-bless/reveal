@@ -41,9 +41,6 @@
                         aria-label="Location">Location
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="LastUpdate">Last update
-                    </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                         aria-label="OSBuildNumber">WSUS URI
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
@@ -74,7 +71,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="10">No hosts found!</td>
+                        <td colspan="8">No hosts found!</td>
                     </tr>
                 {% endif %}
             </tbody>

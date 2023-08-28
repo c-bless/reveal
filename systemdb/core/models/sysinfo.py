@@ -32,8 +32,8 @@ class Host(db.Model):
     BiosVersion = db.Column(db.String(256), unique=False, nullable=True)
     BiosSerial = db.Column(db.String(256), unique=False, nullable=True)
     # Autologon via Registry
-    AutoAdminLogon = db.Column(db.String(4), unique=False, nullable=True)
-    ForceAutoLogon = db.Column(db.String(4), unique=False, nullable=True)
+    AutoAdminLogon = db.Column(db.Boolean(), unique=False, nullable=True)
+    ForceAutoLogon = db.Column(db.Boolean(), unique=False, nullable=True)
     DefaultPassword = db.Column(db.String(256), unique=False, nullable=True)
     DefaultUserName = db.Column(db.String(256), unique=False, nullable=True)
     DefaultDomain = db.Column(db.String(256), unique=False, nullable=True)

@@ -158,6 +158,16 @@ def hosts_report_modifiable_services():
     return render_template('report_modifiable_services.html', acls=acls)
 
 
+@sysinfo_bp.route('/report/services/modifiable/excel', methods=['GET'])
+@login_required
+def hosts_report_modifiable_services_excel():
+    acls = find_modifiable_services()
+
+    output = generate_services_acl_excel(acls=acls)
+    return Response(output, mimetype="text/xlsx",
+                    headers={"Content-disposition": "attachment; filename=modifiable-services.xlsx",
+                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+
 class ReportModifiableServices(ReportInfo):
 
     def __init__(self):

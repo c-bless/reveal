@@ -7,7 +7,9 @@
 
 {% block download_links %}
     {{ super() }}
-
+    <a href="{{ url_for('sysinfo.hosts_report_modifiable_services_excel') }}" class="btn btn-block btn-secondary btn-sm">
+        <i class="fas fa-download"> Download (Excel)</i>
+    </a>
 {% endblock download_links %}
 
 {% block datatable %}
