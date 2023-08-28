@@ -83,6 +83,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         # Get Systeminformation
         Write-Host "[*] Collecting general computer infos."
 
+        $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
+
         # if Get-ComputerInfo is available this command will be used to collect basic computer information
         if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
             $compInfo = Get-ComputerInfo
@@ -99,14 +101,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 }catch{}
             }else{
                 $xmlWriter.WriteElementString("OSVersion",[string] $compInfo.OSVersion);
-            }
-
-            if ([string]::IsNullOrEmpty($compInfo.OSBuildNumber)){
-                try{
-                    $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.WindowsBuildLabEx);
-                }catch{}
-            }else{
-                $xmlWriter.WriteElementString("OSBuildNumber",[string] $compInfo.OSBuildNumber);
             }
 
             if ([string]::IsNullOrEmpty($compInfo.OSName)){
@@ -141,19 +135,17 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             try{
                 $os = Get-WmiObject Win32_OperatingSystem
                 $xmlWriter.WriteElementString("OSVersion",[string] $os.Version);
-                $xmlWriter.WriteElementString("OSBuildNumber",[string] $os.BuildNumber);
                 $xmlWriter.WriteElementString("OSName", [string] $os.Caption);
             } catch {
                 $xmlWriter.WriteElementString("OSVersion",[string] [System.Environment]::OSVersion.Version);
-                $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
                 $xmlWriter.WriteElementString("OSName", [string] [System.Environment]::OSVersion.VersionString);
             }
             try {
                 $timezone = Get-WmiObject -Class win32_timezone
                 $xmlWriter.WriteElementString("TimeZone", $timezone.Caption);
             }catch{}
-
         }
+
         # user used to collect information
         $xmlWriter.WriteElementString("Whoami", [string] [System.Environment]::UserName);
         try {
