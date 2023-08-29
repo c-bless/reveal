@@ -18,6 +18,7 @@ from systemdb.core.models.activedirectory import ADPasswordPolicy
 from systemdb.core.models.activedirectory import ADTrust
 
 from systemdb.core.importer.converter import str2bool_or_none
+from systemdb.core.importer.converter import ts2datetime_or_none
 
 def import_domain_collector(root):
     if root.tag != "DomainCollector":
@@ -309,7 +310,7 @@ def user2db(xml, domain):
         if "BadPwdCount" == e.tag: user.BadPwdCount = e.text
         if "Created" == e.tag: user.Created = e.text
         if "LastBadPasswordAttempt" == e.tag: user.LastBadPasswordAttempt = e.text
-        if "lastLogon" == e.tag: user.lastLogon = e.text
+        if "lastLogon" == e.tag: user.lastLogon = ts2datetime_or_none(int(e.text))
         if "LastLogonDate" == e.tag: user.LastLogonDate = e.text
         if "logonCount" == e.tag: user.logonCount = e.text
         if "LockedOut" == e.tag: user.LockedOut = str2bool_or_none(e.text)
@@ -317,7 +318,7 @@ def user2db(xml, domain):
         if "PasswordLastSet" == e.tag: user.PasswordLastSet = e.text
         if "PasswordNeverExpires" == e.tag: user.PasswordNeverExpires = str2bool_or_none(e.text)
         if "PasswordNotRequired" == e.tag: user.PasswordNotRequired = str2bool_or_none(e.text)
-        if "pwdLastSet" == e.tag: user.pwdLastSet = e.text
+        if "pwdLastSet" == e.tag: user.pwdLastSet = ts2datetime_or_none(e.text)
         if "Modified" == e.tag: user.Modified = e.text
         if "MemberOfStr" == e.tag: user.MemberOfStr = e.text
     db.session.add(user)

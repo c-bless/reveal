@@ -194,10 +194,10 @@ def host2db(xml_element):
             if "Winlogon" == e.tag:
                 for w in e.getchildren():
                     if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
-                    if "DefaultPassword" == w.tag: host.DefaultPassword = str2bool_or_none(w.text)
+                    if "DefaultPassword" == w.tag: host.DefaultPassword = w.text
                     if "AutoAdminLogon" == w.tag: host.AutoAdminLogon = str2bool_or_none(w.text)
                     if "DefaultDomainName" == w.tag: host.DefaultDomain = w.text
-                    if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = w.text
+                    if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = str2bool_or_none(w.text)
         db.session.add(host)
         db.session.commit()
         db.session.refresh(host)

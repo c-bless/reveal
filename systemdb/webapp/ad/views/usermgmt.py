@@ -192,7 +192,7 @@ def group_search_list():
                     filters.append(ADGroup.GroupScope.ilike("%"+group_scope+"%"))
                 else:
                     filters.append(ADGroup.GroupScope.notilike("%"+group_scope+"%"))
-            if len(cn) > 0:
+            if cn and len(cn) > 0:
                 if invertCN == False:
                     filters.append(ADGroup.CN.ilike("%"+cn+"%"))
                 else:

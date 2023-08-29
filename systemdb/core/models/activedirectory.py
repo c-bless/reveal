@@ -243,7 +243,7 @@ class ADUser(db.Model):
     BadPwdCount = db.Column(db.String(10), unique=False, nullable=True)
     Created = db.Column(db.String(256), unique=False, nullable=True)
     LastBadPasswordAttempt = db.Column(db.String(20), unique=False, nullable=True)
-    lastLogon = db.Column(db.String(20), unique=False, nullable=True)
+    lastLogon = db.Column(db.DateTime(), unique=False, nullable=True)
     logonCount = db.Column(db.String(20), unique=False, nullable=True)
     LockedOut = db.Column(db.Boolean(), nullable=True)
     PasswordExpired = db.Column(db.Boolean(), nullable=True)
