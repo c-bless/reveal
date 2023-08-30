@@ -7,9 +7,9 @@ TMPDIR="${BASEDIR}/tmp/"
 STATIC_DIR="${BASEDIR}/data-directories/static"
 
 
-TMP_ADMIN_LTE_URL = "https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip"
-TMP_ADMIN_LTE_ZIP = "admin-lte.zip"
-TMP_ADMIN_LTE_DIR = "AdminLTE-3.2.0"
+TMP_ADMIN_LTE_URL="https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip"
+TMP_ADMIN_LTE_ZIP="admin-lte.zip"
+TMP_ADMIN_LTE_DIR="AdminLTE-3.2.0"
 
 
 echo "[*] Downloading static dependencies"

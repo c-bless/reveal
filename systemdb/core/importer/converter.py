@@ -21,7 +21,10 @@ def str2bool_or_none(input: str ) -> bool | None:
 
 def ts2datetime_or_none(ts: int) -> datetime.datetime | None:
     if ts != 0:
-        value = datetime.datetime(1601, 1, 1) + datetime.timedelta(seconds=ts / 10000000)
-        return value
+        try:
+            value = datetime.datetime(1601, 1, 1) + datetime.timedelta(seconds=ts / 10000000)
+            return value
+        except:
+            return None
     else:
         return None
