@@ -56,12 +56,11 @@ def generate_registrychecks_excel(checks=[]):
     rows = []
 
     for c in checks:
-
-        tmp = [c.Name, c.Category, c.Tags, c.Path, c.Key, c.Expected, c.Description, c.KeyExists, c.ValueMatch, c.CurrentValue, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location]
+        tmp = [c.Name, c.Category, c.Tags, c.Path, c.Key, c.Expected, c.Description, c.KeyExists, c.ValueMatch, c.CurrentValue, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location, c.Host.Whoami, c.Host.WhoamiIsAdmin]
         rows.append(tmp)
 
 
-    header_data = ["Name", "Category", "Tags", "Path", "Key", "Expected", "Description", "KeyExists", "ValueMatch", "CurrentValue", "Hostname", "Systemgroup", "Location"]
+    header_data = ["Name", "Category", "Tags", "Path", "Key", "Expected", "Description", "KeyExists", "ValueMatch", "CurrentValue", "Hostname", "Systemgroup", "Location", "Whoami", "Whoami is Admin"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,

@@ -87,7 +87,7 @@ def find_windowskeys_enabled() -> list[RegistryCheck]:
     return checks
 
 
-def find_hotkeys_enabled() -> dict[str: RegistryCheck]:
+def find_hotkeys_enabled_dict() -> dict[str: RegistryCheck]:
     sticky_keys = find_stickykeys_enabled()
     toggle_keys = find_togglekeys_enabled()
     filter_keys = find_filterkeys_enabled()
@@ -101,5 +101,22 @@ def find_hotkeys_enabled() -> dict[str: RegistryCheck]:
         "MouseKeys enabled": mouse_keys,
         "Windows Keys enabled": windows_keys
     }
+
+    return result
+
+
+def find_hotkeys_enabled_list() -> list[RegistryCheck]:
+    sticky_keys = find_stickykeys_enabled()
+    toggle_keys = find_togglekeys_enabled()
+    filter_keys = find_filterkeys_enabled()
+    windows_keys = find_windowskeys_enabled()
+    mouse_keys = find_mousekeys_enabled()
+
+    result = []
+    result.extend(sticky_keys)
+    result.extend(toggle_keys)
+    result.extend(filter_keys)
+    result.extend(windows_keys)
+    result.extend(mouse_keys)
 
     return result

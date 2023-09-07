@@ -19,6 +19,7 @@ from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_PATH
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_TAGS
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_KEY
 from systemdb.core.regex import RE_SYSINFO_HOSTNAME
+from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
 
 
 class ConfigCheckSearchForm(FlaskForm):
@@ -57,6 +58,7 @@ class RegistryCheckSearchForm(FlaskForm):
     Expected = StringField('Expected', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_EXPECTED, message="Invalid input")])
     KeyExists = BooleanField('KeyExists')
     ValueMatch = BooleanField('ValueMatch')
+    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
     CurrentValue = StringField('CurrentValue', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_CURRENTVALUE, message="Invalid input")])
 
     Host = StringField('Host', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
@@ -67,6 +69,7 @@ class RegistryCheckSearchForm(FlaskForm):
     InvertTags = BooleanField('Invert Tags')
     InvertPath = BooleanField('Invert Path')
     InvertKey = BooleanField('Invert Key')
+    InvertSystemGroup = BooleanField('Invert SystemGroup')
     InvertExpected = BooleanField('Invert Expected')
     InvertCurrentValue = BooleanField('Invert CurrentValue')
     UseKeyExists = BooleanField('use KeyExists')
