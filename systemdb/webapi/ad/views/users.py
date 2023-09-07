@@ -23,3 +23,14 @@ def get_domain_user_list(domain_id):
     except:
         return HTTPError(404, "Domain not found.")
 
+
+@bp.get("/users/")
+@bp.auth_required(auth)
+@bp.output(status_code=HTTPStatus.OK,
+           schema=ADUserSchema(many=True),
+           description="List of users across all domains. If no users were found an empty list is returned.")
+@bp.doc(description="Returns a list of all domain users across all domains.",
+        summary="Find a list of all domain users across all domains.",
+        security='ApiKeyAuth')
+def get_domain_user_list_all():
+    return ADUser.query.all()
