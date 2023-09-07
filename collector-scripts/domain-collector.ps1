@@ -8,7 +8,7 @@
 
     Author:     Christoph Bless (github@cbless.de)
     Version:    0.3.3
-    License:    GPL
+    License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
     domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer and

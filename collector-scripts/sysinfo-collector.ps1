@@ -7,8 +7,8 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.3.1
-    License:    GPL
+    Version:    0.3.3.2
+    License:    GPLv3
 
     .INPUTS
     None
@@ -85,6 +85,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
 
+        $domain = [System.DirectoryService.ActiveDirectory.Domain]::GetComputerDomain()
+        $xmlWriter.WriteElementString("Domain",[string] $domain.Name);
+        
+
         # if Get-ComputerInfo is available this command will be used to collect basic computer information
         if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
             $compInfo = Get-ComputerInfo
@@ -92,7 +96,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             #######################################################################
             # writing basic system information
             #######################################################################
-            $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
             $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
 
             if ([string]::IsNullOrEmpty($compInfo.OSVersion)){
@@ -122,7 +125,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         }else{
             # No Get-ComputerInfo command. Thus, info must be collected with multiple technics
-            $xmlWriter.WriteElementString("Domain",[string] [System.Environment]::UserDomainName);
             try{
                 $cs = Get-WmiObject -Class win32_ComputerSystem -Property * 
                 $xmlWriter.WriteElementString("DomainRole",[string] $cs.DomainRole);
