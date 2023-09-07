@@ -1,0 +1,71 @@
+{% extends "layout/list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% set title = "RegistryChecks" %}
+{% block page_title %} RegistryChecks {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} RegistryChecks List {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+
+{% endblock download_links %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+
+
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="ValueMatch" width="5%">Expected / Current Value
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Host" width="10%">Host
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Host" width="10%">Systemgroup
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Host" width="10%">Location
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Host" width="10%">User Context
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Actions" width="5%">Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if hotkey_dict %}
+                {% for h in hotkey_dict %}
+                    {% for c in hotkey_dict[h] %}
+
+                      <tr>
+                        <td> {{ c.Name }} </td>
+                        <td> Expected: {{ c.Expected }}</br>Current: {{ c.CurrentValue }}  </td>
+                        <td> {{ c.Host }} </td>
+                        <td> {{ c.Host.SystemGroup }} </td>
+                        <td> {{ c.Host.Location }} </td>
+                        <td> {{ c.Host.Whoami }} </td>
+                        <td class="actions">
+                            <a href="{{ url_for('sysinfo.registrycheck_detail', id=c.id) }}" class="btn btn-default btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                      </tr>
+                        {% endfor %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">No matching registry checks found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

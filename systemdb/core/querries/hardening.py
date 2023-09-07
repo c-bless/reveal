@@ -3,7 +3,7 @@ from sqlalchemy import and_
 
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
-
+from systemdb.core.models.sysinfo import RegistryCheck
 
 def find_uqsp() -> list[Service]:
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
@@ -30,3 +30,76 @@ def find_modifiable_services() -> list[ServiceACL]:
         )
     ).all()
     return acls
+
+
+def find_stickykeys_enabled() -> list[RegistryCheck]:
+    checks = RegistryCheck.query.filter(
+        and_(
+            RegistryCheck.Name == "HKCU:\\Control Panel\\Accessibility\\StickyKeys\\",
+            RegistryCheck.Key == "Flags",
+            RegistryCheck.CurrentValue != "506"
+        )
+    ).all()
+    return checks
+
+
+def find_togglekeys_enabled() -> list[RegistryCheck]:
+    checks = RegistryCheck.query.filter(
+        and_(
+            RegistryCheck.Path == "HKCU:\\Control Panel\\Accessibility\\ToggleKeys\\",
+            RegistryCheck.Key == "Flags",
+            RegistryCheck.CurrentValue != "58"
+        )
+    ).all()
+    return checks
+
+
+def find_filterkeys_enabled() -> list[RegistryCheck]:
+    checks = RegistryCheck.query.filter(
+        and_(
+            RegistryCheck.Path == "HKCU:\\Control Panel\\Accessibility\\Keyboard Response\\",
+            RegistryCheck.Key == "Flags",
+            RegistryCheck.CurrentValue != "122"
+        )
+    ).all()
+    return checks
+
+
+def find_mousekeys_enabled() -> list[RegistryCheck]:
+    checks = RegistryCheck.query.filter(
+        and_(
+            RegistryCheck.Path == "HKCU:\\Control Panel\\Accessibility\\MouseKeys\\",
+            RegistryCheck.Key == "Flags",
+            RegistryCheck.CurrentValue != "59"
+        )
+    ).all()
+    return checks
+
+
+def find_windowskeys_enabled() -> list[RegistryCheck]:
+    checks = RegistryCheck.query.filter(
+        and_(
+            RegistryCheck.Path == "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\",
+            RegistryCheck.Key == "NoWinKeys",
+            RegistryCheck.CurrentValue != "0x1"
+        )
+    ).all()
+    return checks
+
+
+def find_hotkeys_enabled() -> dict[str: RegistryCheck]:
+    sticky_keys = find_stickykeys_enabled()
+    toggle_keys = find_togglekeys_enabled()
+    filter_keys = find_filterkeys_enabled()
+    windows_keys = find_windowskeys_enabled()
+    mouse_keys = find_mousekeys_enabled()
+
+    result = {
+        "StickyKeys enabled": sticky_keys,
+        "ToggleKeys enabled": toggle_keys,
+        "FilterKeys enabled": filter_keys,
+        "MouseKeys enabled": mouse_keys,
+        "Windows Keys enabled": windows_keys
+    }
+
+    return result
