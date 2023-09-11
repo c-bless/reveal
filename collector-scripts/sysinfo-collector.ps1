@@ -7,7 +7,7 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.3.2
+    Version:    0.3.3.3
     License:    GPLv3
 
     .INPUTS
@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.3.3.1"
+$version="0.3.3.3"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -85,10 +85,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
 
-        $domain = [System.DirectoryService.ActiveDirectory.Domain]::GetComputerDomain()
-        $xmlWriter.WriteElementString("Domain",[string] $domain.Name);
-        
-
         # if Get-ComputerInfo is available this command will be used to collect basic computer information
         if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
             $compInfo = Get-ComputerInfo
@@ -96,6 +92,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             #######################################################################
             # writing basic system information
             #######################################################################
+            $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
             $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
 
             if ([string]::IsNullOrEmpty($compInfo.OSVersion)){
@@ -125,6 +122,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         }else{
             # No Get-ComputerInfo command. Thus, info must be collected with multiple technics
+            $xmlWriter.WriteElementString("Domain",[string] [System.Environment]::UserDomainName);
             try{
                 $cs = Get-WmiObject -Class win32_ComputerSystem -Property * 
                 $xmlWriter.WriteElementString("DomainRole",[string] $cs.DomainRole);
@@ -689,7 +687,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Enabled") {
             $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Enabled -ErrorAction SilentlyContinue
             $wsh_enabled = $wsh.Enabled
-            if ($wsh.Enabled == 0){
+            if ($wsh.Enabled -eq 0){
                 $wsh_enabled_result="Disabled (Explicit)"
                 $wsh_enabled_status =  "Disabled"    
             }else{ 
@@ -719,7 +717,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "Remote") {
             $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name Remote -ErrorAction SilentlyContinue
             $wsh_remote = $wsh.Remote
-            if ($wsh.Remote == 0){
+            if ($wsh.Remote -eq 0){
                 $wsh_remote_result="Disabled (Explicit)"
                 $wsh_remote_status =  "Disabled"    
             }else{ 
@@ -752,7 +750,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         
         if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"  -ea SilentlyContinue).Property -contains "EnableScriptBlockLogging") {
             $logging =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -ErrorAction SilentlyContinue
-            if ($logging == 1){
+            if ($logging -eq 1){
                 $xmlWriter.WriteElementString("PSScriptBlockLogging", "Enabled")
             }else{
                 $xmlWriter.WriteElementString("PSScriptBlockLogging", "Disabled")
@@ -784,7 +782,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             # older Windows versions can check the registry.
             if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB1") {
                 $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB1 -ErrorAction SilentlyContinue
-                if ($smb1 == 0){ 
+                if ($smb1 -eq 0){ 
                     $xmlWriter.WriteElementString("SMB1Enabled", "False")
                 } else{
                     $xmlWriter.WriteElementString("SMB1Enabled", "True")   
@@ -797,7 +795,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
             if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB2") {
                 $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB2 -ErrorAction SilentlyContinue
-                if ($smb1 == 0){
+                if ($smb1 -eq 0){
                     $xmlWriter.WriteElementString("SMB2Enabled", "False")  
                 } else{
                     $xmlWriter.WriteElementString("SMB2Enabled", "True")  
@@ -858,20 +856,22 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #######################################################################
         Write-Host "[*] Checking if printers are installed"
         if (Get-Command Get-Printer -ea SilentlyContinue) {
-            $printers = Get-Printer
-            $xmlWriter.WriteStartElement("Printers")
-            foreach ($p in $printers) {
-                $xmlWriter.WriteStartElement("Printer")
-                $xmlWriter.WriteElementString("Name", [string] $p.Name)
-                $xmlWriter.WriteElementString("ShareName", [string] $p.ShareName)
-                $xmlWriter.WriteElementString("Type", [string] $p.Type)
-                $xmlWriter.WriteElementString("DriverName", [string] $p.DriverName)
-                $xmlWriter.WriteElementString("PortName", [string] $p.PortName)
-                $xmlWriter.WriteElementString("Shared", [string] $p.Shared)
-                $xmlWriter.WriteElementString("Published", [string] $p.Published)
-                $xmlWriter.WriteEndElement() # Printer
-            }
-            $xmlWriter.WriteEndElement() # Printers
+            try {
+                $printers = Get-Printer -ea SilentlyContinue
+                $xmlWriter.WriteStartElement("Printers")
+                foreach ($p in $printers) {
+                    $xmlWriter.WriteStartElement("Printer")
+                    $xmlWriter.WriteElementString("Name", [string] $p.Name)
+                    $xmlWriter.WriteElementString("ShareName", [string] $p.ShareName)
+                    $xmlWriter.WriteElementString("Type", [string] $p.Type)
+                    $xmlWriter.WriteElementString("DriverName", [string] $p.DriverName)
+                    $xmlWriter.WriteElementString("PortName", [string] $p.PortName)
+                    $xmlWriter.WriteElementString("Shared", [string] $p.Shared)
+                    $xmlWriter.WriteElementString("Published", [string] $p.Published)
+                    $xmlWriter.WriteEndElement() # Printer
+                }
+                $xmlWriter.WriteEndElement() # Printers
+            }catch{}
         }
         #######################################################################
         # Proxy
