@@ -142,7 +142,7 @@ def import_host(root):
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Printers. Error: {0}".format(str(e.__dict__['orig'])))
-            if "DefenderSettings" == elem.tag:
+            if "Defender" == elem.tag:
                 try:
                     defenderSettings2db(elem, host)
                     db.session.commit()
@@ -177,7 +177,7 @@ def host2db(xml_element):
             if "OSVersion" == e.tag: host.OSVersion = e.text
             if "OSBuildNumber" == e.tag: host.OSBuildNumber = e.text
             if "OSName" == e.tag: host.OSName = e.text
-            if "OSInstallDate" == e.tag: host.OSInstallDate = e.text
+            if "OSInstallDate" == e.tag: host.OSInstallDate = datetime.datetime.strptime(e.text, "%m/%d/%Y %H:%M:%S").date()
             if "OSProductType" == e.tag: host.OSProductType = e.text
             if "LogonServer" == e.tag: host.LogonServer = e.text
             if "TimeZone" == e.tag: host.TimeZone = e.text
@@ -213,7 +213,7 @@ def hotfix2db(xml, host):
         try:
             lastupdate = xml.get("LastUpdate")
             host.LastUpdate = datetime.datetime.strptime(lastupdate, "%m/%d/%Y %H:%M:%S").date()
-        except:
+        except ValueError:
             pass
     for c in xml.getchildren():
         if "Hotfix" == c.tag:
@@ -222,7 +222,7 @@ def hotfix2db(xml, host):
             try:
                 d = c.get("InstalledOn")
                 hf.InstalledOn = datetime.datetime.strptime(d, "%m/%d/%Y %H:%M:%S").date()
-            except:
+            except ValueError:
                 pass
             hf.Description = c.get("Description")
             hf.Host = host
@@ -264,7 +264,7 @@ def printers2db(xml, host):
 def defenderSettings2db(xml, host):
     for i in xml.getchildren():
         setting = DefenderSettings()
-        setting.Name == i.tag
+        setting.Name = str(i.tag)
         setting.Value = i.text
         setting.Host = host
         db.session.add(setting)

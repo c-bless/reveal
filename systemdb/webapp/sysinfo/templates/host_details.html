@@ -158,6 +158,10 @@
           <a class="nav-link" id="tabs-registrychecks-tab" data-toggle="pill" href="#tabs-registrychecks"
              role="tab" aria-controls="tabs-registrychecks" aria-selected="false">RegistryChecks</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-defender-tab" data-toggle="pill" href="#tabs-defender"
+             role="tab" aria-controls="tabs-defender" aria-selected="false">Defender</a>
+        </li>
       </ul>
     </div>
     <div class="card-body">
@@ -252,25 +256,25 @@
             <div class="col-md-6">
               <div class="card card-olive card-outline">
                 <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Firewall Profiles</h3>
+                  <div class="card-header">
+                    <h3 class="card-title">Firewall Profiles</h3>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                     <dl class="row">
+                      <dt class="col-sm-4">Firewall (Domain)</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfileDomain) }}</dd>
+                      <dt class="col-sm-4">Firewall (Private)</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePrivate) }}</dd>
+                      <dt class="col-sm-4">Firewall (Public)</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePublic) }}</dd>
+                    </dl>
+                  </div>
+                  <!-- /.card-body -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                   <dl class="row">
-                    <dt class="col-sm-4">Firewall (Domain)</dt>
-                    <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfileDomain) }}</dd>
-                    <dt class="col-sm-4">Firewall (Private)</dt>
-                    <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePrivate) }}</dd>
-                    <dt class="col-sm-4">Firewall (Public)</dt>
-                    <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePublic) }}</dd>
-                  </dl>
-                </div>
-                <!-- /.card-body -->
               </div>
             </div>
           </div>
-        </div>
         </div>
         <div class="tab-pane fade" id="tabs-software" role="tabpanel" aria-labelledby="tabs-software-tab">
           <div class="row m-1">
@@ -900,7 +904,29 @@
           </div>
         </div>
 
-
+        <div class="tab-pane fade" id="tabs-defender" role="tabpanel" aria-labelledby="tabs-defender-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Defender Settings</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <dl class="row">
+                      {% if host.DefenderSettings %}
+                        {% for d in host.DefenderSettings %}
+                          <dt class="col-sm-4">{{ d.Name }}</dt>
+                          <dd class="col-sm-8">{{ d.Value }}</dd>
+                        {% endfor %}
+                      {% endif %}
+                  </dl>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

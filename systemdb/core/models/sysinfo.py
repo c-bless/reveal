@@ -10,7 +10,7 @@ class Host(db.Model):
     OSVersion = db.Column(db.String(150), unique=False, nullable=True)
     OSBuildNumber = db.Column(db.String(150), unique=False, nullable=True)
     OSName = db.Column(db.String(150), unique=False, nullable=True)
-    OSInstallDate = db.Column(db.String(150), unique=False, nullable=True)
+    OSInstallDate = db.Column(db.DateTime, unique=False, nullable=True)
     OSProductType = db.Column(db.String(150), unique=False, nullable=True)
     LogonServer = db.Column(db.String(150), unique=False, nullable=True)
     TimeZone = db.Column(db.String(150), unique=False, nullable=True)
@@ -163,8 +163,8 @@ class Hotfix(db.Model):
 class DefenderSettings(db.Model):
     __tablename__ = "DefenderSettings"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(512), unique=False, nullable=True)
-    Value = db.Column(db.String(256), unique=False, nullable=True)
+    Name = db.Column(db.String(), unique=False, nullable=True)
+    Value = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="DefenderSettings")
 
@@ -262,7 +262,7 @@ class Service(db.Model):
 class ServiceACL(db.Model):
     __tablename__ = "ServiceACL"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(150), unique=False, nullable=True)
+    Name = db.Column(db.String(), unique=False, nullable=True)
     AccountName = db.Column(db.String(1024), unique=False, nullable=True)
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
     AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
