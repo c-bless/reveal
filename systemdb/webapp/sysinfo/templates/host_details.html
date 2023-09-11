@@ -60,35 +60,37 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card card-olive">
-                  <div class="card-header">
-                    <h3 class="card-title">Operating System</h3>
-                  </div>
+            <div class="row">
+              <div class="card card-olive">
+                    <div class="card-header">
+                      <h3 class="card-title">Operating System</h3>
+                    </div>
 
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                    <dl class="row">
-                      <dt class="col-sm-4">Operating System</dt>
-                      <dd class="col-sm-8">{{ host.OSName }}</dd>
-                      <dt class="col-sm-4">OSVersion</dt>
-                      <dd class="col-sm-8">{{ host.OSVersion }}</dd>
-                      <dt class="col-sm-4">OSBuildNumber</dt>
-                      <dd class="col-sm-8">{{ host.OSBuildNumber }}</dd>
-                      <dt class="col-sm-4">OSInstallDate</dt>
-                      <dd class="col-sm-8">{{ host.OSInstallDate }}</dd>
-                      <dt class="col-sm-4">OSProductType</dt>
-                      <dd class="col-sm-8">{{ host.OSProductType }}</dd>
-                      <dt class="col-sm-4">Last update</dt>
-                      <dd class="col-sm-8">{{ host.LastUpdate }}</dd>
-                      {% if eol %}
-                      <dt class="col-sm-4">EndofSupport (Active)</dt>
-                      <dd class="col-sm-8">{{ e.ActiveSupport }}</dd>
-                      <dt class="col-sm-4">EndofSupport (Security)</dt>
-                      <dd class="col-sm-8">{{ e.SecuritySupport }}</dd>
-                      {% endif %}
-                    </dl>
-                  </div>
-                  <!-- /.card-body -->
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                      <dl class="row">
+                        <dt class="col-sm-4">Operating System</dt>
+                        <dd class="col-sm-8">{{ host.OSName }}</dd>
+                        <dt class="col-sm-4">OSVersion</dt>
+                        <dd class="col-sm-8">{{ host.OSVersion }}</dd>
+                        <dt class="col-sm-4">OSBuildNumber</dt>
+                        <dd class="col-sm-8">{{ host.OSBuildNumber }}</dd>
+                        <dt class="col-sm-4">OSInstallDate</dt>
+                        <dd class="col-sm-8">{{ host.OSInstallDate }}</dd>
+                        <dt class="col-sm-4">OSProductType</dt>
+                        <dd class="col-sm-8">{{ host.OSProductType }}</dd>
+                        <dt class="col-sm-4">Last update</dt>
+                        <dd class="col-sm-8">{{ host.LastUpdate }}</dd>
+                        {% if eol %}
+                        <dt class="col-sm-4">EndofSupport (Active)</dt>
+                        <dd class="col-sm-8">{{ e.ActiveSupport }}</dd>
+                        <dt class="col-sm-4">EndofSupport (Security)</dt>
+                        <dd class="col-sm-8">{{ e.SecuritySupport }}</dd>
+                        {% endif %}
+                      </dl>
+                    </div>
+                    <!-- /.card-body -->
+              </div>
             </div>
         </div>
 </div>
@@ -131,8 +133,8 @@
              role="tab" aria-controls="tabs-smb" aria-selected="false">SMB Settings</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" id="tabs-wsh-tab" data-toggle="pill" href="#tabs-wsh"
-             role="tab" aria-controls="tabs-wsh" aria-selected="false">WSH Settings</a>
+          <a class="nav-link" id="tabs-Scripting-tab" data-toggle="pill" href="#tabs-Scripting"
+             role="tab" aria-controls="tabs-Scripting" aria-selected="false">Scripting</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" id="tabs-bios-tab" data-toggle="pill" href="#tabs-bios"
@@ -141,10 +143,6 @@
         <li class="nav-item">
           <a class="nav-link" id="tabs-wsus-tab" data-toggle="pill" href="#tabs-wsus"
              role="tab" aria-controls="tabs-wsus" aria-selected="false">WSUS Settings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-ps-tab" data-toggle="pill" href="#tabs-ps"
-             role="tab" aria-controls="tabs-ps" aria-selected="false">PS Versions</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" id="tabs-printer-tab" data-toggle="pill" href="#tabs-printer"
@@ -255,7 +253,6 @@
           <div class="row m-1">
             <div class="col-md-6">
               <div class="card card-olive card-outline">
-                <div class="card card-olive card-outline">
                   <div class="card-header">
                     <h3 class="card-title">Firewall Profiles</h3>
                   </div>
@@ -271,7 +268,6 @@
                     </dl>
                   </div>
                   <!-- /.card-body -->
-                </div>
               </div>
             </div>
           </div>
@@ -572,27 +568,19 @@
                   <h3 class="card-title">SMB Settings</h3>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>SMBv1</th>
-                      <th>SMBv2</th>
-                      <th>EncryptData</th>
-                      <th>EnableSecuritySignature</th>
-                      <th>RequireSecuritySignature</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td>{{ host.SMBv1Enabled }}</td>
-                      <td>{{ host.SMBv2Enabled }}</td>
-                      <td>{{ host.SMBEncryptData }}</td>
-                      <td>{{ host.SMBEnableSecuritySignature }}</td>
-                      <td>{{ host.SMBRequireSecuritySignature }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
+                <div class="card-body">
+                  <dl class="row">
+                      <dt class="col-sm-4">SMBv1</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv1Enabled) }}</dd>
+                      <dt class="col-sm-4">SMBv2</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv2Enabled) }}</dd>
+                      <dt class="col-sm-4">EncryptData</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEncryptData) }}</dd>
+                      <dt class="col-sm-4">EnableSecuritySignature</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEnableSecuritySignature) }}</dd>
+                      <dt class="col-sm-4">RequireSecuritySignature</dt>
+                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBRequireSecuritySignature) }}</dd>
+                    </dl>
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -600,79 +588,48 @@
           </div>
         </div>
 
-        <div class="tab-pane fade" id="tabs-wsh" role="tabpanel" aria-labelledby="tabs-wsh-tab">
+        <div class="tab-pane fade" id="tabs-Scripting" role="tabpanel" aria-labelledby="tabs-Scripting-tab">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="card card-olive card-outline">
                 <div class="card-header">
                   <h3 class="card-title">WSH Settings</h3>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Trust Policy</th>
-                      <th>Enabled Status</th>
-                      <th>Remote Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td>{{ host.WSHTrustPolicy }}</td>
-                      <td>{{ host.WSHEnabled }}</td>
-                      <td>{{ host.WSHRemote }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
+                <div class="card-body">
+                  <dl class="row">
+                      <dt class="col-sm-4">Trust Policy</dt>
+                      <dd class="col-sm-8">{{ host.WSHTrustPolicy }}</dd>
+                      <dt class="col-sm-4">Enabled Status</dt>
+                      <dd class="col-sm-8">{{ host.WSHEnabled }}</dd>
+                      <dt class="col-sm-4">Remote Status</dt>
+                      <dd class="col-sm-8">{{ host.WSHRemote }}</dd>
+                    </dl>
                 </div>
                 <!-- /.card-body -->
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-wsus" role="tabpanel" aria-labelledby="tabs-wsus-tab">
-          <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="card card-olive card-outline">
                 <div class="card-header">
-                  <h3 class="card-title">WSUS Settings</h3>
+                  <h3 class="card-title">PowerShell</h3>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>AcceptTrustedPublisherCerts</th>
-                      <th>DisableWindowsUpdateAccess</th>
-                      <th>ElevateNonAdmins</th>
-                      <th>TargetGroup</th>
-                      <th>TargetGroupEnabled</th>
-                      <th>WUServer</th>
-                      <th>WUStatusServer</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td>{{ host.AcceptTrustedPublisherCerts }}</td>
-                      <td>{{ host.DisableWindowsUpdateAccess }}</td>
-                      <td>{{ host.ElevateNonAdmins }}</td>
-                      <td>{{ host.TargetGroup }}</td>
-                      <td>{{ host.TargetGroupEnabled }}</td>
-                      <td>{{ host.WUServer }}</td>
-                      <td>{{ host.WUStatusServer }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
+                <div class="card-body">
+                  <dl class="row">
+                      <dt class="col-sm-4">PowerShell (active Version)</dt>
+                      <dd class="col-sm-8">{{ host.PSVersion }}</dd>
+                      <dt class="col-sm-4">PowerShell 2 Installed</dt>
+                      <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
+                      <dt class="col-sm-4">PowerShell ScriptBlockLogging</dt>
+                      <dd class="col-sm-8">{{ host.PSScriptBlockLogging }}</dd>
+                    </dl>
                 </div>
                 <!-- /.card-body -->
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="tab-pane fade" id="tabs-ps" role="tabpanel" aria-labelledby="tabs-ps-tab">
           <div class="row">
             <div class="col-md-12">
               <div class="card card-olive card-outline">
@@ -718,6 +675,38 @@
           </div>
         </div>
 
+        <div class="tab-pane fade" id="tabs-wsus" role="tabpanel" aria-labelledby="tabs-wsus-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">WSUS Settings</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <dl class="row">
+                    <dt class="col-sm-4">AcceptTrustedPublisherCerts</dt>
+                    <dd class="col-sm-8">{{ host.AcceptTrustedPublisherCerts  }}</dd>
+                    <dt class="col-sm-4">DisableWindowsUpdateAccess</dt>
+                    <dd class="col-sm-8">{{ host.DisableWindowsUpdateAccess }}</dd>
+                    <dt class="col-sm-4">ElevateNonAdmins</dt>
+                    <dd class="col-sm-8">{{ host.ElevateNonAdmins }}</dd>
+                    <dt class="col-sm-4">TargetGroup</dt>
+                    <dd class="col-sm-8">{{ host.TargetGroup }}</dd>
+                    <dt class="col-sm-4">TargetGroupEnabled</dt>
+                    <dd class="col-sm-8">{{ host.TargetGroupEnabled }}</dd>
+                    <dt class="col-sm-4">WUServer</dt>
+                    <dd class="col-sm-8">{{ host.WUServer }}</dd>
+                    <dt class="col-sm-4">WUStatusServer</dt>
+                    <dd class="col-sm-8">{{ host.WUStatusServer }}</dd>
+                  </dl>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         <div class="tab-pane fade" id="tabs-bios" role="tabpanel" aria-labelledby="tabs-bios-tab">
           <div class="row">
@@ -727,25 +716,17 @@
                   <h3 class="card-title">BIOS</h3>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Manufacturer</th>
-                      <th>Name</th>
-                      <th>Version</th>
-                      <th>Serial</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                      <td>{{ host.BiosManufacturer }}</td>
-                      <td>{{ host.BiosName }}</td>
-                      <td>{{ host.BiosVersion }}</td>
-                      <td>{{ host.BiosSerial }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
+                <div class="card-body">
+                          <dl class="row">
+                            <dt class="col-sm-4">Manufacturer</dt>
+                            <dd class="col-sm-8">{{ host.BiosManufacturer  }}</dd>
+                            <dt class="col-sm-4">Name</dt>
+                            <dd class="col-sm-8">{{ host.BiosName }}</dd>
+                            <dt class="col-sm-4">Version</dt>
+                            <dd class="col-sm-8">{{ host.BiosVersion }}</dd>
+                            <dt class="col-sm-4">Serial</dt>
+                            <dd class="col-sm-8">{{ host.BiosSerial }}</dd>
+                          </dl>
                 </div>
                 <!-- /.card-body -->
               </div>
