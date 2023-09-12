@@ -82,7 +82,7 @@ def hosts_report_services_by_acl():
             if 'download' in request.form:
                 output = generate_services_acl_excel(acls)
                 return Response(output, mimetype="text/xslx",
-                                headers={"Content-disposition": "attachment; filename=hosts.xlsx",
+                                headers={"Content-disposition": "attachment; filename=service_by_acl.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
             return render_template('service_acl_search_list.html', form=form, acls=acls)
@@ -117,23 +117,27 @@ def hosts_report_services_by_usercontext():
         if form.validate_on_submit():
             startname = form.Startname.data
             invert = form.Invert.data
-            if invert == False:
+            if not invert:
                 services = Service.query.filter(Service.StartName.ilike("%" + startname + "%")).all()
             else:
                 services = Service.query.filter(Service.StartName.notilike("%" + startname + "%")).all()
-            return render_template('service_search_list.html',
-                                   form=form,
-                                   services=services,
-                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+
+            if 'download' in request.form:
+                output = generate_services_excel(services)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=services_by_usercontext_{0}.xlsx".format(startname),
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            else:
+                return render_template('service_startnamesearch_list.html',
+                                       form=form,
+                                       services=services)
         else:
             print("Invalid input")
-            return render_template('service_search_list.html',
-                                   form=form,
-                                   download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+            return render_template('service_startnamesearch_list.html',
+                                   form=form)
     else:
         return render_template('service_startnamesearch_list.html',
-                               form=form,
-                               download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+                               form=form)
 
 class ReportServiceByUsercontext(ReportInfo):
 

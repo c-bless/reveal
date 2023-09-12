@@ -38,6 +38,7 @@ class ServiceUserContextSearchForm(FlaskForm):
                        )
     Invert = BooleanField('Invert Startname')
     search = SubmitField('Search')
+    download = SubmitField('Download')
 
 
 
