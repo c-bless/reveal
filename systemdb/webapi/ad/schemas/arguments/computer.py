@@ -14,6 +14,7 @@ from systemdb.core.regex import RE_AD_COMPUTER_GROUPNAME
 from systemdb.core.regex import RE_SID_ALLOWED_CHARS
 from systemdb.core.regex import RE_IP4_ALLOWED_CHARS
 from systemdb.core.regex import RE_IP6_ALLOWED_CHARS
+from systemdb.core.regex import RE_AD_OPERATION_MASTERROLE
 
 
 class ADComputerBySPNSchema(Schema):
@@ -47,3 +48,20 @@ class ADComputerByDomainSearchSchema(Schema):
     InvertDomain = Boolean(required=False)
     NETBIOS = String(required=False, validate=Regexp(regex=RE_AD_DOMAIN_NETBIOSNAME))
     InvertNETBIOS = Boolean(required=False)
+
+
+class ADDCSearchSchema(Schema):
+    Name = String(required=False, validate=Regexp(regex=RE_AD_HOSTNAME))
+    InvertName = Boolean(required=False)
+    OperatingSystem = String(required=False, validate=Regexp(regex=RE_AD_OS))
+    InvertOperatingSystem = Boolean(required=False)
+    IPv4Address = String(required=False, validate=Regexp(regex=RE_IP4_ALLOWED_CHARS))
+    InvertIPv4Address = Boolean(required=False)
+    IPv6Address = String(required=False, validate=Regexp(regex=RE_IP6_ALLOWED_CHARS))
+    InvertIPv6Address = Boolean(required=False)
+    Domain = String(required=False, validate=Regexp(regex=RE_AD_DOMAINNAME))
+    InvertDomain = Boolean(required=False)
+    IsGlobalCatalog  = Boolean(required=False)
+    UseIsGlobalCatalog = Boolean(required=False)
+    Enabled = Boolean(required=False)
+    UseEnabled = Boolean(required=False)

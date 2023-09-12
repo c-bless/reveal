@@ -1,7 +1,7 @@
 RE_AUTH_TOKEN = "^([0-9a-zA-Z]+)$"
-RE_SID_ALLOWED_CHARS = "([S\-0-9]+)?$}"
-RE_IP4_ALLOWED_CHARS = "([0-9\.]+)?$}"
-RE_IP6_ALLOWED_CHARS = "([0-9a-fA-F\:]+)?$}"
+RE_SID_ALLOWED_CHARS = "^([S\-0-9]+)?$"
+RE_IP4_ALLOWED_CHARS = "^([0-9\.]+)?$"
+RE_IP6_ALLOWED_CHARS = "^([0-9a-fA-F\:]+)?$"
 
 RE_SYSINFO_BUILDNUMBER = "[0-9]{0,2}[\.]{1}[0-9]{0,2}[\.]{1}[0-9]{0,5}"
 RE_SYSINFO_HOSTNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
@@ -79,4 +79,5 @@ RE_AD_USER_SURNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_DISPLAYNAME = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
 RE_AD_SPN = "^([a-zA-Z0-9 \\\.\-\_]+)?$"
+RE_AD_OPERATION_MASTERROLE = "^([a-zA-Z0-9 \.\-\_]+)?$"
 
