@@ -310,7 +310,7 @@ def user2db(xml, domain):
         if "BadPwdCount" == e.tag: user.BadPwdCount = e.text
         if "Created" == e.tag: user.Created = e.text
         if "LastBadPasswordAttempt" == e.tag: user.LastBadPasswordAttempt = e.text
-        if "lastLogon" == e.tag: user.lastLogon = ts2datetime_or_none(int(e.text))
+        if "lastLogon" == e.tag and e.text: user.lastLogon = ts2datetime_or_none(int(e.text))
         if "LastLogonDate" == e.tag: user.LastLogonDate = e.text
         if "logonCount" == e.tag: user.logonCount = e.text
         if "LockedOut" == e.tag: user.LockedOut = str2bool_or_none(e.text)

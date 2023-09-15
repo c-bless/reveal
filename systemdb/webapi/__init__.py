@@ -23,7 +23,7 @@ def create_app(config_class: ApiConfig) -> Flask:
         docs_ui = config_class.DOCS_UI
     except:
         pass
-    app = APIFlask(__name__, docs_ui=docs_ui, title='SYSTEMDB API', version='v0.3.3')
+    app = APIFlask(__name__, docs_ui=docs_ui, title='SYSTEMDB API', version=config_class.VERSION)
 
     config_api(app=app, config_class=config_class)
     register_extentions(app)

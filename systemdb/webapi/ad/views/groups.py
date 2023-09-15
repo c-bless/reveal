@@ -11,7 +11,8 @@ from systemdb.core.querries.ad import find_protected_users
 from systemdb.webapi.ad import bp
 from systemdb.webapi.extentions import auth
 
-from systemdb.webapi.ad.schemas.arguments.groups import GroupNameSearchSchema
+
+from systemdb.webapi.ad.schemas.arguments.groups import GroupSearchSchema
 from systemdb.webapi.ad.schemas.responses.domain import ADGroupWithMembersSchema
 from systemdb.webapi.ad.schemas.responses.domain import ADGroupSchema
 
@@ -47,9 +48,23 @@ def get_domain_admins_for_domain(domain_id: int):
         return HTTPError(404, "Domain/Group not found.")
 
 
-@bp.post("/groups/by-name/")
+@bp.post("/groups/")
 @bp.auth_required(auth)
-@bp.input(schema=GroupNameSearchSchema, location="json")
+@bp.output(status_code=HTTPStatus.OK,
+           schema=ADGroupWithMembersSchema(many=True),
+           description="Group with nested member objects.")
+@bp.doc(description="Returns all groups from all imported domains.",
+        summary="Find all groups from all imported domains.",
+        security='ApiKeyAuth'
+        )
+def get_groups():
+    return ADGroup.query.all()
+
+
+
+@bp.post("/groups/search/")
+@bp.auth_required(auth)
+@bp.input(schema=GroupSearchSchema, location="json")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADGroupWithMembersSchema(many=True),
            description="Group with nested member objects.")
@@ -58,14 +73,67 @@ def get_domain_admins_for_domain(domain_id: int):
         summary="Find all domains that match the group name.",
         security='ApiKeyAuth'
         )
-def get_group_by_name(search_data):
+def post_group_search(search_data):
+    group_filter = []
+    domain_filter = []
     if "id" in search_data:
-        groups = ADGroup.query.filter(
-            and_(ADGroup.SamAccountName.ilike("%" + search_data['name'] + "%"),
-                 ADGroup.Domain_id == search_data['id'])).all()
-        return groups
-    else:
-        return ADGroup.query.filter(ADGroup.SamAccountName.ilike("%" + search_data['name'] + "%")).all()
+        group_filter.append(ADGroup.id == int(search_data["id"]))
+    if "SamAccountName" in search_data:
+        if len(search_data["SamAccountName"]) > 0:
+            if "InvertSamAccountName" in search_data:
+                if not search_data["InvertSamAccountName"]:
+                    group_filter.append(ADGroup.SamAccountName.ilike("%" + search_data["SamAccountName"] + "%"))
+                else:
+                    group_filter.append(ADGroup.SamAccountName.notilike("%" + search_data["SamAccountName"] + "%"))
+            else:
+                group_filter.append(ADGroup.SamAccountName.ilike("%" + search_data["SamAccountName"] + "%"))
+    if "SID" in search_data:
+        if len(search_data["SID"]) > 0:
+            if "InvertSID" in search_data:
+                if not search_data["InvertSID"]:
+                    group_filter.append(ADGroup.SID.ilike("%" + search_data["SID"] + "%"))
+                else:
+                    group_filter.append(ADGroup.SID.notilike("%" + search_data["SID"] + "%"))
+            else:
+                group_filter.append(ADGroup.SID.ilike("%" + search_data["SID"] + "%"))
+    if "Description" in search_data:
+        if len(search_data["Description"]) > 0:
+            if "InvertDescription" in search_data:
+                if not search_data["InvertDescription"]:
+                    group_filter.append(ADGroup.Description.ilike("%" + search_data["Description"] + "%"))
+                else:
+                    group_filter.append(ADGroup.Description.notilike("%" + search_data["Description"] + "%"))
+            else:
+                group_filter.append(ADGroup.Description.ilike("%" + search_data["Description"] + "%"))
+    if "GroupCategory" in search_data:
+        if len(search_data["GroupCategory"]) > 0:
+            if "InvertGroupCategory" in search_data:
+                if not search_data["InvertGroupCategory"]:
+                    group_filter.append(ADGroup.GroupCategory.ilike("%" + search_data["GroupCategory"] + "%"))
+                else:
+                    group_filter.append(ADGroup.GroupCategory.notilike("%" + search_data["GroupCategory"] + "%"))
+            else:
+                group_filter.append(ADGroup.GroupCategory.ilike("%" + search_data["GroupCategory"] + "%"))
+    if "GroupScope" in search_data:
+        if len(search_data["GroupScope"]) > 0:
+            if "InvertGroupScope" in search_data:
+                if not search_data["InvertGroupScope"]:
+                    group_filter.append(ADGroup.GroupScope.ilike("%" + search_data["GroupScope"] + "%"))
+                else:
+                    group_filter.append(ADGroup.GroupScope.notilike("%" + search_data["GroupScope"] + "%"))
+            else:
+                group_filter.append(ADGroup.GroupScope.ilike("%" + search_data["GroupScope"] + "%"))
+    if "Domain" in search_data:
+        if len(search_data["Domain"]) > 0:
+            if "InvertDomain" in search_data:
+                if not search_data["InvertDomain"]:
+                    group_filter.append(ADDomain.Name.ilike("%" + search_data["Domain"] + "%"))
+                else:
+                    group_filter.append(ADDomain.Name.notilike("%" + search_data["Domain"] + "%"))
+            else:
+                group_filter.append(ADDomain.Name.ilike("%" + search_data["Domain"] + "%"))
+    return ADGroup.query.filter(and_(*group_filter)).join(ADDomain).filter(and_(*domain_filter)).all()
+
 
 
 @bp.get("/domain/<int:domain_id>/groups/")
