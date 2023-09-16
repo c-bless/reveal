@@ -7,7 +7,7 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.3
+    Version:    DEV
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -41,7 +41,7 @@
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.1"
+$version="DEV"
 $script_type ="basic"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
