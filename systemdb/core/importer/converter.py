@@ -28,3 +28,13 @@ def ts2datetime_or_none(ts: int) -> datetime.datetime | None:
             return None
     else:
         return None
+
+
+def str2datetime_or_none(text: str) -> datetime.datetime | None:
+    if not text:
+        return None
+    else:
+        try:
+            return datetime.datetime.strptime(text, "%m/%d/%Y %H:%M:%S").date()
+        except:
+            return None

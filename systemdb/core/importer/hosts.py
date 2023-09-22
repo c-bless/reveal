@@ -22,7 +22,7 @@ from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.core.extentions import db
 
 from systemdb.core.importer.converter import str2bool_or_none
-
+from systemdb.core.importer.converter import str2datetime_or_none
 
 def import_sysinfo_collector(root):
     if root.tag == "SystemInfoCollector":
@@ -177,7 +177,7 @@ def host2db(xml_element):
             if "OSVersion" == e.tag: host.OSVersion = e.text
             if "OSBuildNumber" == e.tag: host.OSBuildNumber = e.text
             if "OSName" == e.tag: host.OSName = e.text
-            if "OSInstallDate" == e.tag: host.OSInstallDate = datetime.datetime.strptime(e.text, "%m/%d/%Y %H:%M:%S").date()
+            if "OSInstallDate" == e.tag: host.OSInstallDate = str2datetime_or_none(e.text)
             if "OSProductType" == e.tag: host.OSProductType = e.text
             if "LogonServer" == e.tag: host.LogonServer = e.text
             if "TimeZone" == e.tag: host.TimeZone = e.text
@@ -212,7 +212,7 @@ def hotfix2db(xml, host):
     if "Hotfixes" == xml.tag:
         try:
             lastupdate = xml.get("LastUpdate")
-            host.LastUpdate = datetime.datetime.strptime(lastupdate, "%m/%d/%Y %H:%M:%S").date()
+            host.LastUpdate = str2datetime_or_none(lastupdate)
         except ValueError:
             pass
     for c in xml.getchildren():
@@ -221,7 +221,7 @@ def hotfix2db(xml, host):
             hf.HotfixId = c.get("id")
             try:
                 d = c.get("InstalledOn")
-                hf.InstalledOn = datetime.datetime.strptime(d, "%m/%d/%Y %H:%M:%S").date()
+                hf.InstalledOn = str2datetime_or_none(d)
             except ValueError:
                 pass
             hf.Description = c.get("Description")
