@@ -133,7 +133,7 @@
                     <td> {{ u.Host.SystemGroup }} </td>
                     <td> {{ u.Host.Location }} </td>
                     <td class="actions">
-                        <a href="#" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.user_detail', id=u.id) }}" class="btn btn-default btn-xs">
                             <i class="fa fa-eye"></i> View
                         </a>
                     </td>

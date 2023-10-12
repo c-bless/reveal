@@ -74,3 +74,9 @@ def find_DCOM_user_groups() -> list[Group]:
 
 def find_PerformanceMonitorUser_groups() -> list[Group]:
     return Group.query.filter(Group.SID == SID_BUILTIN_PERFORMANCE_MONITOR_USERS).all()
+
+
+def find_groups_by_user_sid(sid) -> list[Group]:
+    groups = Group.query.filter().\
+        join(GroupMember).filter(GroupMember.SID == sid).all()
+    return groups

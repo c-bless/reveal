@@ -9,6 +9,7 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Group
 from systemdb.core.models.sysinfo import User
+from systemdb.core.querries.usermgmt import find_groups_by_user_sid
 from systemdb.core.export.excel.usermgmt import generate_localuser_excel
 from systemdb.webapp.sysinfo.forms.users import LocalUserSearchForm
 
@@ -25,7 +26,8 @@ def group_detail(id):
 def user_detail(id):
     user = User.query.get_or_404(id)
     host = Host.query.get_or_404(user.Host_id)
-    return render_template("user_details.html", user=user, host=host)
+    groups = find_groups_by_user_sid(sid=user.SID)
+    return render_template("user_details.html", user=user, host=host, groups=groups)
 
 
 @sysinfo_bp.route('/users/search', methods=['GET', 'POST'])

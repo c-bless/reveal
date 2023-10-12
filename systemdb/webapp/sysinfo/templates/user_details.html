@@ -56,6 +56,44 @@
             </div>
         </div>
 
+
+        <div class="col-md-6">
+            <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">Local groups</h3>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                            <th>Group</th>
+                            <th>SID</th>
+                            <th>Caption</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% if groups %}
+                        {% for g in groups %}
+                        <tr>
+                            <td>{{ g.Name }}</td>
+                            <td>{{ g.SID }}</td>
+                            <td>{{ g.Caption }}</td>
+                        </tr>
+                        {% endfor %}
+                      {% else %}
+                        <tr>
+                          <td>No groups found.</td>
+                        </tr>
+                      {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+
+            </div>
+        </div>
+
     </div>
 
 {% endif %}
