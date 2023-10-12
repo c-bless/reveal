@@ -1,0 +1,149 @@
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% set title = "Local Users" %}
+{% block page_title %} Local Users {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Local users List {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+
+{% endblock download_links %}
+
+
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            {{ render_field_sm2(form.Name) }}
+                            {{ render_check_field_sm2(form.InvertName) }}
+
+                            {{ render_field_sm2(form.FullName) }}
+                            {{ render_check_field_sm2(form.InvertFullName) }}
+
+                            {{ render_field_sm2(form.AccountType) }}
+                            {{ render_check_field_sm2(form.InvertAccountType) }}
+
+                            {{ render_field_sm2(form.SID) }}
+                            {{ render_check_field_sm2(form.InvertSID) }}
+
+
+                        </div>
+                        <div class="col-sm-5">
+
+                            {{ render_field_sm2(form.Host) }}
+                            {{ render_check_field_sm2(form.InvertHost) }}
+
+                            {{ render_field_sm2(form.SystemGroup) }}
+                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+
+
+                            {{ render_field_sm2(form.Description) }}
+                            {{ render_check_field_sm2(form.InvertDescription) }}
+
+                        </div>
+                        <div class="col-sm-2">
+
+                            {{ render_check_field_sm2(form.Lockout) }}
+                            {{ render_check_field_sm2(form.UseLockout) }}
+                            <br />
+                            {{ render_check_field_sm2(form.PasswordChanged) }}
+                            {{ render_check_field_sm2(form.UsePasswordChanged) }}
+                            <br />
+
+                            {{ render_check_field_sm2(form.PasswordRequired) }}
+                            {{ render_check_field_sm2(form.UsePasswordRequired) }}
+                            <br />
+
+                            {{ render_check_field_sm2(form.DescriptionNotEmpty) }}
+                            {{ render_check_field_sm2(form.UseDescriptionNotEmpty) }}
+
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {{ render_submit_field(form.search) }}
+                    {{ render_submit_field(form.download) }}
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="DisplayName" width="15%">FullName
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartMode" width="5%">AccountType
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartName" width="10%">SID
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Started" width="5%">Lockout
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="PathName" width="5%">PW Changed
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="SystemName" width="5%">PW Required
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="PathName" width="20%">Description
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="SystemName" width="5%">Host
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="SystemName" width="5%">Systemgroup
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="SystemName" width="5%">Location
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Details" width="5%">Details
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if users %}
+                {% for u in users %}
+                  <tr>
+                    <td> {{ u.Name }} </td>
+                    <td> {{ u.FullName }} </td>
+                    <td> {{ u.AccountType }} </td>
+                    <td> {{ u.SID }} </td>
+                    <td> {{ u.Lockout }} </td>
+                    <td> {{ u.PasswordChanged }} </td>
+                    <td> {{ u.PasswordRequired }} </td>
+                    <td> {{ u.Description }} </td>
+                    <td> {{ u.Host }} </td>
+                    <td> {{ u.Host.SystemGroup }} </td>
+                    <td> {{ u.Host.Location }} </td>
+                    <td class="actions">
+                        <a href="#" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye"></i> View
+                        </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="12">No services found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

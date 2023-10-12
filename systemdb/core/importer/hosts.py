@@ -24,6 +24,7 @@ from systemdb.core.extentions import db
 from systemdb.core.importer.converter import str2bool_or_none
 from systemdb.core.importer.converter import str2datetime_or_none
 
+
 def import_sysinfo_collector(root):
     if root.tag == "SystemInfoCollector":
         for h in root.getchildren():

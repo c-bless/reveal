@@ -11,6 +11,10 @@ RE_SYSINFO_HOSTNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_PRINTERNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_SYSTEMGROUP = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 
+RE_SYSINFO_USER_NAME = r"^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
+RE_SYSINFO_USER_DESCRIPTION = r""
+RE_SYSINFO_USER_FULLNAME = r"^([a-zA-Z0-9 \.\-\_]+[\$]?)?$"
+
 # Product related keys
 RE_SYSINFO_PRODUCT_NAME = r'^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
 RE_SYSINFO_PRODUCT_CAPTION = r'^([a-zA-Z0-9 \.\-\(\)\_]+)?$'

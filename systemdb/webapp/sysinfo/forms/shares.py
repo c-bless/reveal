@@ -2,19 +2,19 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField
 from wtforms.validators import Regexp
 
-from systemdb.core.regex import RE_SYSINFO_Share_NAME
-from systemdb.core.regex import RE_SYSINFO_Share_PATH
-from systemdb.core.regex import RE_SYSINFO_Share_DESCRIPTION
+from systemdb.core.regex import RE_SYSINFO_SHARE_NAME
+from systemdb.core.regex import RE_SYSINFO_SHARE_PATH
+from systemdb.core.regex import RE_SYSINFO_SHARE_DESCRIPTION
 from systemdb.core.regex import RE_SYSINFO_HOSTNAME
 
 
 class ShareSearchForm(FlaskForm):
-    Name = StringField('Name', validators=[Regexp(regex=RE_SYSINFO_Share_NAME, message="Invalid input")])
+    Name = StringField('Name', validators=[Regexp(regex=RE_SYSINFO_SHARE_NAME, message="Invalid input")])
 
-    Path = StringField('Path', validators=[Regexp(regex=RE_SYSINFO_Share_PATH, message="Invalid input")])
+    Path = StringField('Path', validators=[Regexp(regex=RE_SYSINFO_SHARE_PATH, message="Invalid input")])
     Host = StringField('Host', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
-    Description = StringField('Description', validators=[Regexp(regex=RE_SYSINFO_Share_DESCRIPTION,
-                                                                        message="Invalid input")])
+    Description = StringField('Description', validators=[Regexp(regex=RE_SYSINFO_SHARE_DESCRIPTION,
+                                                                message="Invalid input")])
 
     InvertName = BooleanField('Invert Name')
     InvertPath = BooleanField('Invert Path')
