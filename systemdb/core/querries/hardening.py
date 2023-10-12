@@ -5,10 +5,11 @@ from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
 from systemdb.core.models.sysinfo import RegistryCheck
 
+
 def find_uqsp() -> list[Service]:
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                               Service.PathName.contains(" "),
-                              Service.PathName.notlike('C:\\Windows%'))).all()
+                              Service.PathName.notilike('C:\Windows%'))).all()
     return services
 
 
