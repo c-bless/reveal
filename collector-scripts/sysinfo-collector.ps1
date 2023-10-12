@@ -7,7 +7,7 @@
     https://github.com/c-bless/systemdb
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.4
+    Version:    0.3.5
     License:    GPLv3
 
     .INPUTS
@@ -34,7 +34,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag 
-$version="0.3.4"
+$version="0.3.5"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -93,7 +93,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             # writing basic system information
             #######################################################################
             $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
-            $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
+            $xmlWriter.WriteElementStDomain
+ring("DomainRole",[string] $compInfo.CsDomainRole);
 
             if ([string]::IsNullOrEmpty($compInfo.OSVersion)){
                 try{
