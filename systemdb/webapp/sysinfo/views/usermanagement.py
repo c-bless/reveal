@@ -9,8 +9,8 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Group
 from systemdb.core.models.sysinfo import User
+from systemdb.core.export.excel.usermgmt import generate_localuser_excel
 from systemdb.webapp.sysinfo.forms.users import LocalUserSearchForm
-
 
 @sysinfo_bp.route('/groups/<int:id>', methods=['GET'])
 @login_required
@@ -116,6 +116,11 @@ def user_search_list():
 
             users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
 
+            if 'download' in request.form:
+                output = generate_localuser_excel(users=users)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=local-users.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
     else:
         users = []
