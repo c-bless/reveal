@@ -15,7 +15,7 @@ def generate_ad_groupmembers_excel(groups=[]):
     for g in groups:
         members = []
         for m in g.Members:
-            members.append("{0}\{1}".format(m.Group.Domain, m.SamAccountName))
+            members.append(r"{0}\\{1}".format(m.Group.Domain, m.SamAccountName))
 
         tmp = [g.SamAccountName, g.Domain, g.GroupCategory, g.GroupScope, g.SID, "\n".join(members)]
         rows.append(tmp)

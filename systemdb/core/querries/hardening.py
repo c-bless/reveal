@@ -9,7 +9,7 @@ from systemdb.core.models.sysinfo import RegistryCheck
 def find_uqsp() -> list[Service]:
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                               Service.PathName.contains(" "),
-                              Service.PathName.notilike('C:\Windows%'))).all()
+                              Service.PathName.notilike(r'C:\\Windows%'))).all()
     return services
 
 
