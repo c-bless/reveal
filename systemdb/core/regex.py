@@ -10,10 +10,15 @@ RE_SYSINFO_BUILDNUMBER = r"[0-9]{0,2}[\.]{1}[0-9]{0,2}[\.]{1}[0-9]{0,5}"
 RE_SYSINFO_HOSTNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_PRINTERNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_SYSTEMGROUP = r"^([a-zA-Z0-9 \.\-\_]+)?$"
-
+RE_SYSINFO_DOMAIN = r"^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_DOMAINROLE = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_USER_NAME = r"^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
-RE_SYSINFO_USER_DESCRIPTION = r""
+RE_SYSINFO_USER_DESCRIPTION = r"^([a-zA-Z0-9 \.\-\_]+[\$]?)?$"
 RE_SYSINFO_USER_FULLNAME = r"^([a-zA-Z0-9 \.\-\_]+[\$]?)?$"
+RE_SYSINFO_OSVERSION = r"^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_OSBUILDNUMBER_CHARS = r"^([a-zA-Z0-9 \.]+)?$"
+RE_SYSINFO_OSNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_LOCATION = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 
 # Product related keys
 RE_SYSINFO_PRODUCT_NAME = r'^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'

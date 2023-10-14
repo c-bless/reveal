@@ -16,7 +16,6 @@ from systemdb.webapp.extentions import babel
 from systemdb.webapp.extentions import bootstrap
 from systemdb.webapp.extentions import csrf
 from systemdb.webapp.extentions import login_manager
-from systemdb.webapp.extentions import toolbar
 
 
 def create_app(config_class: AppConfig):
