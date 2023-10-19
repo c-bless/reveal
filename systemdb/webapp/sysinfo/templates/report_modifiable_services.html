@@ -25,13 +25,16 @@
                     aria-label="DisplayName" width="15%">AccountName
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartMode" width="20%">AccessControlType
+                    aria-label="StartMode" width="5%">AccessControlType
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="StartName" width="5%">AccessRight
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Started" width="5%">SystemName
+                    aria-label="Started" width="40%">PathName
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Started" width="5%">Hostname
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Started" width="5%">Location
@@ -52,6 +55,7 @@
                     <td> {{ a.AccountName }} </td>
                     <td> {{ a.AccessControlType }} </td>
                     <td> {{ a.AccessRight }} </td>
+                    <td> {{ a.Service.PathName }} </td>
                     <td> {{ a.Service.SystemName }} </td>
                     <td> {{ a.Service.Host.Location }} </td>
                     <td> {{ a.Service.Host.SystemGroup }} </td>
@@ -64,7 +68,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="8">No service ACLs found!</td>
+                    <td colspan="9">No service ACLs found!</td>
                 </tr>
             {% endif %}
         </tbody>

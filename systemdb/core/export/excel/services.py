@@ -63,11 +63,13 @@ def generate_services_acl_excel(acls=[]):
 
     for a in acls:
         h = a.Service.Host
-        tmp = [h.Hostname, h.SystemGroup, h.Location, a.Name, a.AccountName, a.AccessControlType, a.AccessRight]
+        tmp = [h.Hostname, h.SystemGroup, h.Location, a.Name, a.AccountName, a.AccessControlType, a.AccessRight,
+               a.Service.StartName, a.Service.PathName, a.Service.StartMode ]
         rows.append(tmp)
 
 
-    header_data = ["Hostname", "SystemGroup", "Location", "Name", "AccountName", "AccessControlType", "AccessRight"]
+    header_data = ["Hostname", "SystemGroup", "Location", "Name", "AccountName", "AccessControlType", "AccessRight",
+                   "StartName", "Path", "Startmode" ]
 
     header_format = workbook.add_format({'bold': True,
                                          'bottom': 2,
