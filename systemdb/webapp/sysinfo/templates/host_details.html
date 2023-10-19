@@ -10,6 +10,37 @@
 {% block content %}
 {% if host %}
 <div class="row m-1">
+  <div class="col-md-12">
+      <div class="card card-olive">
+            <div class="card-header">
+              <h3 class="card-title">Environment</h3>
+            </div>
+
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                          <dl class="row">
+                            <dt class="col-sm-4">Systemgroup</dt>
+                            <dd class="col-sm-8">{{ host.SystemGroup }}</dd>
+                            <dt class="col-sm-4">Location</dt>
+                            <dd class="col-sm-8">{{ host.Location }}</dd>
+                          </dl>
+                    </div>
+                    <div class="col-md-6">
+                            <dl>
+                              <dt class="col-sm-4">Asset Tag (Hostname / System group / Location)</dt>
+                              <dd class="col-sm-8">{{ host.Hostname }} / {{ host.SystemGroup }} / {{ host.Location }}</dd>
+                            </dl>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+      </div>
+  </div>
+</div>
+
+<div class="row m-1">
         <div class="col-md-6">
             <div class="card card-olive">
                   <div class="card-header">
@@ -92,11 +123,12 @@
                     <!-- /.card-body -->
               </div>
             </div>
+
         </div>
 </div>
 
 <div class="row m-1">
-  <div calss="col-md-12">
+  <div class="col-md-12">
   <div class="card card-olive card-tabs">
     <div class="card-header p-0 pt-1">
       <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
@@ -398,44 +430,45 @@
                 <!-- /.card-body -->
               </div>
             </div>
-
-            <!-- /.card -->
-            <div class="card card-olive card-outline">
-              <div class="card-header">
-                <h3 class="card-title">Groups</h3>
+            <div class="col-md-6">
+              <!-- /.card -->
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Groups</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if host.Groups %}
+                    {% for g in host.Groups %}
+                    <tr>
+                      <td>{{ g.Name }}</td>
+                      <td class="actions">
+                        <a href="{{ url_for('sysinfo.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
+                          <i class="fa fa-eye"></i> View
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="2">No groups found.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
               </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                <table class="table table-striped">
-                  <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Details</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% if host.Groups %}
-                  {% for g in host.Groups %}
-                  <tr>
-                    <td>{{ g.Name }}</td>
-                    <td class="actions">
-                      <a href="{{ url_for('sysinfo.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
-                        <i class="fa fa-eye"></i> View
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                  {% else %}
-                  <tr>
-                    <td colspan="2">No groups found.</td>
-                  </tr>
-                  {% endif %}
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
+              <!-- /.card -->
             </div>
-            <!-- /.card -->
           </div>
         </div>
         <div class="tab-pane fade" id="tabs-services" role="tabpanel" aria-labelledby="tabs-services-tab">
