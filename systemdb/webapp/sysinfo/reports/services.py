@@ -34,7 +34,7 @@ def hosts_report_services_uqsp_excel():
 
     output = generate_services_excel(services=services)
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=usqp.xlsx",
+                    headers={"Content-disposition": "attachment; filename=uqsp.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
