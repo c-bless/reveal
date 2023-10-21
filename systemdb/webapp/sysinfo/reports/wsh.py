@@ -14,7 +14,7 @@ from systemdb.core.reports import ReportInfo
 @login_required
 def hosts_report_wsh():
     hosts = Host.query.filter(Host.WSHEnabled == True).all()
-    return render_template('host_list.html', hosts=hosts,
+    return render_template('sysinfo/host/host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_wsh_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_wsh_excel_full"))
 
@@ -58,7 +58,7 @@ class ReportWSHEnabled(ReportInfo):
 @login_required
 def hosts_report_wshremote():
     hosts = Host.query.filter(Host.WSHRemote == True).all()
-    return render_template('host_list.html', hosts=hosts,
+    return render_template('sysinfo/host/host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_wshremote_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_wshremote_excel_full"))
 

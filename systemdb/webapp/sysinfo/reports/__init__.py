@@ -97,14 +97,14 @@ def get_report_list_by_tag(tag):
 @login_required
 def report_list():
     report_list = get_report_list()
-    return render_template('report_list.html', report_plugins=report_list)
+    return render_template('sysinfo/reports/report_list.html', report_plugins=report_list)
 
 
 @sysinfo_bp.route('/reports/updates-eol/', methods=['GET'])
 @login_required
 def update_eol_report_list():
     report_list = get_patch_and_lifecyle_report_list()
-    return render_template('report_list.html', report_plugins=report_list)
+    return render_template('sysinfo/reports/report_list.html', report_plugins=report_list)
 
 
 @sysinfo_bp.route('/reports/systemhardening/', methods=['GET'])
@@ -118,5 +118,5 @@ def syshardening_report_list():
 @login_required
 def usermgmt_report_list():
     report_list = get_usermgmt_report_list()
-    return render_template('report_list.html', report_plugins=report_list)
+    return render_template('sysinfo/reports/report_list.html', report_plugins=report_list)
 

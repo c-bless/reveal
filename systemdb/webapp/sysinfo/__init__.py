@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-sysinfo_bp = Blueprint('sysinfo', __name__, template_folder="templates", url_prefix='/sysinfo')
+sysinfo_bp = Blueprint('sysinfo', __name__, url_prefix='/sysinfo')
 
 from systemdb.webapp.sysinfo.views.export_views import *
 

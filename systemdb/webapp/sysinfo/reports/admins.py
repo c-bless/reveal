@@ -61,7 +61,7 @@ def hosts_report_domainadmin_excel_memberships():
 @login_required
 def hosts_report_domainadmin():
     groups = find_groups_where_domadm_is_localadmin()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_brief_url=url_for("sysinfo.hosts_report_domainadmin_excel_brief"),
                            download_membership_url=url_for("sysinfo.hosts_report_domainadmin_excel_memberships"),
                            download_url=url_for("sysinfo.hosts_report_domainadmin_excel_full"))
@@ -123,7 +123,7 @@ def hosts_report_autologonadmin_excel_brief():
 def hosts_report_autologonadmin():
     hosts = get_autologon_admin()
 
-    return render_template('host_list.html', hosts=hosts,
+    return render_template('sysinfo/host/host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_autologonadmin_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_autologonadmin_excel_full"))
 

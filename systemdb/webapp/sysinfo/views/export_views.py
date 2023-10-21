@@ -28,7 +28,7 @@ from systemdb.core.export.excel.products import generate_products_excel
 def template_list():
     template_dir = "{0}/templates/hosts/".format(current_app.config.get(('REPORT_DIR')))
     templates = os.listdir(template_dir)
-    return render_template('template_list.html', templates=templates, title="Available templates")
+    return render_template('sysinfo/template_list.html', templates=templates, title="Available templates")
 
 
 @sysinfo_bp.route('/hosts/export/word/<template>', methods=['GET'])

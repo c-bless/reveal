@@ -13,7 +13,7 @@ from systemdb.core.export.excel.services import generate_services_excel
 @login_required
 def service_list():
     services = Service.query.all()
-    return render_template('service_list.html', services=services)
+    return render_template('sysinfo/service/service_list.html', services=services)
 
 
 @sysinfo_bp.route('/services/search/', methods=['GET', 'POST'])
@@ -80,11 +80,11 @@ def service_search_list():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:
-            return render_template('service_search_list.html', form=form)
+            return render_template('sysinfo/service/service_search_list.html', form=form)
     else:
         services = []
 
-    return render_template('service_search_list.html', form=form, services=services)
+    return render_template('sysinfo/service/service_search_list.html', form=form, services=services)
 
 
 @sysinfo_bp.route('/services/<int:id>', methods=['GET'])
@@ -93,4 +93,4 @@ def service_detail(id):
     service = Service.query.get_or_404(id)
     host = Host.query.get_or_404(service.Host_id)
     permissionStr = service.BinaryPermissionsStr.split("\n")if service.BinaryPermissionsStr is not None else ""
-    return render_template("service_details.html", service=service, host=host, binaryPermissionStr=permissionStr)
+    return render_template("sysinfo/service/service_details.html", service=service, host=host, binaryPermissionStr=permissionStr)

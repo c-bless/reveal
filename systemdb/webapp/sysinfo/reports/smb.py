@@ -34,7 +34,7 @@ def hosts_report_smbv1_excel_brief():
 @login_required
 def hosts_report_smbv1():
     hosts = Host.query.filter(Host.SMBv1Enabled == True).all()
-    return render_template('host_list.html', hosts=hosts,
+    return render_template('sysinfo/host/host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_smbv1_excel_brief"),
                            download_url=url_for("sysinfo.hosts_report_smbv1_excel_full"))
 

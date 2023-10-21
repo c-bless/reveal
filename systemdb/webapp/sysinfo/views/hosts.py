@@ -15,7 +15,7 @@ from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 @login_required
 def host_list():
     hosts = Host.query.all()
-    return render_template('host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_export_excel"))
+    return render_template('sysinfo/host/host_list.html', hosts=hosts, download_url=url_for("sysinfo.hosts_export_excel"))
 
 
 @sysinfo_bp.route('/hosts/search/', methods=['GET', 'POST'])
@@ -98,22 +98,22 @@ def host_search_list():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
 
-            return render_template('host_search_list.html', form=form)
+            return render_template('sysinfo/host/host_search_list.html', form=form)
     else:
         hosts = Host.query.all()
 
-    return render_template('host_search_list.html', form=form, hosts=hosts)
+    return render_template('sysinfo/host/host_search_list.html', form=form, hosts=hosts)
 
 
 @sysinfo_bp.route('/hosts/<int:id>', methods=['GET'])
 @login_required
 def host_detail(id):
     host = Host.query.get_or_404(id)
-    return render_template('host_details.html', host=host)
+    return render_template('sysinfo/host/host_details.html', host=host)
 
 
 @sysinfo_bp.route('/hosts/<int:id>/services/', methods=['GET'])
 @login_required
 def host_service_list(id):
     services = Service.query.filter(Service.Host_id == id).all()
-    return render_template('service_list.html', services=services)
+    return render_template('sysinfo/service/service_list.html', services=services)

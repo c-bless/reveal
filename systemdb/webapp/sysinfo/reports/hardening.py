@@ -15,7 +15,7 @@ from systemdb.core.reports import ReportInfo
 @login_required
 def report_hotkeys_enabled():
     hotkeys = find_hotkeys_enabled_dict()
-    return render_template('report_registrycheck_hotkeys.html', hotkey_dict=hotkeys,
+    return render_template('sysinfo/reports/registrycheck_hotkeys.html', hotkey_dict=hotkeys,
                            download_url=url_for("sysinfo.report_hotkeys_enabled_download"))
 
 

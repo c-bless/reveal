@@ -15,7 +15,7 @@ from systemdb.core.export.excel.shares import generate_shares_excel
 def share_detail(id):
     share = Share.query.get_or_404(id)
     host = Host.query.get_or_404(share.Host_id)
-    return render_template("share_details.html", share=share, host=host)
+    return render_template("sysinfo/share/share_details.html", share=share, host=host)
 
 
 @sysinfo_bp.route('/shares/', methods=['GET', 'POST'])
@@ -78,8 +78,8 @@ def share_search_list():
                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:
-            return render_template('share_search_list.html', form=form)
+            return render_template('sysinfo/share/share_search_list.html', form=form)
     else:
         shares = []
 
-    return render_template('share_search_list.html', form=form, shares=shares)
+    return render_template('sysinfo/share/share_search_list.html', form=form, shares=shares)

@@ -19,7 +19,7 @@ from systemdb.webapp.sysinfo.forms.checks import RegistryCheckSearchForm
 @login_required
 def configcheck_detail(id):
     check = ConfigCheck.query.get_or_404(id)
-    return render_template("configcheck_details.html",check=check)
+    return render_template("sysinfo/checks/configcheck_details.html",check=check)
 
 
 @sysinfo_bp.route('/checks/config', methods=['GET', 'POST'])
@@ -100,17 +100,17 @@ def configcheck_search_list():
         else:
             checks = ConfigCheck.query.all()
 
-        return render_template('configcheck_search_list.html', form=form, checks=checks)
+        return render_template('sysinfo/checks/configcheck_search_list.html', form=form, checks=checks)
     else:
         checks = ConfigCheck.query.all()
-        return render_template('configcheck_search_list.html', form=form, checks=checks)
+        return render_template('sysinfo/checks/configcheck_search_list.html', form=form, checks=checks)
 
 
 @sysinfo_bp.route('/checks/registry/<int:id>', methods=['GET'])
 @login_required
 def registrycheck_detail(id):
     check = RegistryCheck.query.get_or_404(id)
-    return render_template("registrycheck_details.html",check=check)
+    return render_template("sysinfo/checks/registrycheck_details.html",check=check)
 
 
 @sysinfo_bp.route('/checks/registry', methods=['GET', 'POST'])
@@ -204,8 +204,8 @@ def registrycheck_search_list():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
             checks = RegistryCheck.query.all()
-        return render_template('registrycheck_search_list.html', form=form, checks=checks)
+        return render_template('sysinfo/checks/registrycheck_search_list.html', form=form, checks=checks)
     else:
         print('GET')
         checks = RegistryCheck.query.all()
-        return render_template('registrycheck_search_list.html', form=form, checks=checks)
+        return render_template('sysinfo/checks/registrycheck_search_list.html', form=form, checks=checks)

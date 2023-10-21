@@ -14,7 +14,7 @@ from systemdb.core.reports import ReportInfo
 @login_required
 def hosts_report_ps2():
     hosts = Host.query.filter(Host.PS2Installed == True).all()
-    return render_template('report_PS2_list.html', hosts=hosts)
+    return render_template('sysinfo/reports/PS2_list.html', hosts=hosts)
 
 
 @sysinfo_bp.route('/report/ps2/excel', methods=['GET'])

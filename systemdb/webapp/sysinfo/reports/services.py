@@ -23,7 +23,7 @@ from systemdb.core.reports import ReportInfo
 def hosts_report_services_uqsp():
     services = find_uqsp()
 
-    return render_template('service_list.html', services=services,
+    return render_template('sysinfo/service/service_list.html', services=services,
                            download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
 
 
@@ -85,12 +85,12 @@ def hosts_report_services_by_acl():
                                 headers={"Content-disposition": "attachment; filename=service_by_acl.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-            return render_template('service_acl_search_list.html', form=form, acls=acls)
+            return render_template('sysinfo/reports/service_acl_search_list.html', form=form, acls=acls)
         else:
             print("Invalid input")
-            return render_template('service_acl_search_list.html', form=form)
+            return render_template('sysinfo/reports/service_acl_search_list.html', form=form)
     else:
-        return render_template('service_acl_search_list.html', form=form)
+        return render_template('sysinfo/reports/service_acl_search_list.html', form=form)
 
 
 class ReportServiceByPermission(ReportInfo):
@@ -128,15 +128,15 @@ def hosts_report_services_by_usercontext():
                                 headers={"Content-disposition": "attachment; filename=services_by_usercontext_{0}.xlsx".format(startname),
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
             else:
-                return render_template('service_startnamesearch_list.html',
+                return render_template('sysinfo/reports/service_startnamesearch_list.html',
                                        form=form,
                                        services=services)
         else:
             print("Invalid input")
-            return render_template('service_startnamesearch_list.html',
+            return render_template('sysinfo/reports/service_startnamesearch_list.html',
                                    form=form)
     else:
-        return render_template('service_startnamesearch_list.html',
+        return render_template('sysinfo/reports/service_startnamesearch_list.html',
                                form=form)
 
 class ReportServiceByUsercontext(ReportInfo):
@@ -159,7 +159,7 @@ class ReportServiceByUsercontext(ReportInfo):
 @login_required
 def hosts_report_modifiable_services():
     acls = find_modifiable_services()
-    return render_template('report_modifiable_services.html', acls=acls)
+    return render_template('sysinfo/reports/modifiable_services.html', acls=acls)
 
 
 @sysinfo_bp.route('/report/services/modifiable/excel', methods=['GET'])

@@ -13,7 +13,7 @@ from systemdb.core.models.sysinfo import Host
 @login_required
 def product_list():
     products = Product.query.all()
-    return render_template('product_list.html', products=products)
+    return render_template('sysinfo/product/product_list.html', products=products)
 
 
 @sysinfo_bp.route('/products/search/', methods=['GET', 'POST'])
@@ -72,8 +72,8 @@ def product_search_list():
                                 headers={"Content-disposition": "attachment; filename=products.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
-            return render_template('product_search_list.html', form=form)
+            return render_template('sysinfo/product/product_search_list.html', form=form)
     else:
         products = []
 
-    return render_template('product_search_list.html', form=form, products=products)
+    return render_template('sysinfo/product/product_search_list.html', form=form, products=products)

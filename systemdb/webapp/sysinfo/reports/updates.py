@@ -23,7 +23,7 @@ def hosts_report_lastupdate(days):
     now = datetime.datetime.now()
     delta = now - datetime.timedelta(days=days)
     hosts = Host.query.filter(Host.LastUpdate <= delta).all()
-    return render_template('host_list.html', hosts=hosts,
+    return render_template('sysinfo/host/host_list.html', hosts=hosts,
                            download_brief_url=url_for("sysinfo.hosts_report_lastupdate_excel_brief", days=days),
                            download_url=url_for("sysinfo.hosts_report_lastupdate_excel_full", days=days))
 
@@ -74,7 +74,7 @@ class ReportLastUpdate(ReportInfo):
 @login_required
 def hosts_report_eol():
     eol_matches = get_EoLInfo()
-    return render_template('eol_list.html', eol_matches=eol_matches)
+    return render_template('sysinfo/reports/eol_list.html', eol_matches=eol_matches)
 
 @sysinfo_bp.route('/hosts/report/eol/excel/brief', methods=['GET'])
 @login_required

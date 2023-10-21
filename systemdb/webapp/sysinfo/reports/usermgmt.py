@@ -32,7 +32,7 @@ from systemdb.webapp.sysinfo.forms.groups import LocalAdminSearchForm
 @login_required
 def usermgmt_assignment_list():
     members = get_direct_domainuser_assignments()
-    return render_template('userassignment_list.html',members=members)
+    return render_template('sysinfo/reports/userassignment_list.html',members=members)
 
 
 @sysinfo_bp.route('/report/usermgmt/assignment/excel/full', methods=['GET'])
@@ -93,9 +93,9 @@ def report_hosts_by_localuser_list():
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=hosts-by-localuser.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-            return render_template('report_host_by_local_user.html', form=form, hosts=hosts_unique)
+            return render_template('sysinfo/reports/host_by_local_user.html', form=form, hosts=hosts_unique)
         else:
-            return render_template('report_host_by_local_user.html', form=form, hosts=[])
+            return render_template('sysinfo/reports/host_by_local_user.html', form=form, hosts=[])
     else:
         users = User.query.filter(and_(
             User.LocalAccount == True,
@@ -109,7 +109,7 @@ def report_hosts_by_localuser_list():
                 host_ids.append(h.id)
                 hosts_unique.append(h)
 
-    return render_template('report_host_by_local_user.html',form=form, hosts=hosts_unique)
+    return render_template('sysinfo/reports/host_by_local_user.html',form=form, hosts=hosts_unique)
 
 
 
@@ -177,7 +177,7 @@ def report_localadmin_list():
 
         members = GroupMember.query.all()
 
-    return render_template('local_admin_list.html',form=form, members=members)
+    return render_template('sysinfo/group/local_admin_list.html',form=form, members=members)
 
 
 class ReportHostsByLocalAdmin(ReportInfo):
@@ -200,7 +200,7 @@ class ReportHostsByLocalAdmin(ReportInfo):
 @login_required
 def local_admin_assignment_list():
     groups = find_local_admins()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_membership_url=url_for("sysinfo.local_admin_assignment_excel_full"))
 
 
@@ -235,7 +235,7 @@ class ReportLocalAdmins(ReportInfo):
 @login_required
 def local_SIMATIC_users_list():
     groups = find_SIMATIC_groups()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_membership_url=url_for("sysinfo.local_SIMATIC_users_excel_full"))
 
 
@@ -271,7 +271,7 @@ class ReportSIMATICUsers(ReportInfo):
 @login_required
 def local_rdp_users_list():
     groups = find_rdp_groups()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_membership_url=url_for("sysinfo.local_rdp_users_excel_full"))
 
 
@@ -308,7 +308,7 @@ class ReportRDPUsers(ReportInfo):
 @login_required
 def local_remote_mgmt_users_list():
     groups = find_RemoteMgmtUser_groups()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_membership_url=url_for("sysinfo.local_remote_mgmt_users_excel_full"))
 
 
@@ -344,7 +344,7 @@ class ReportRemoteManagementUsers(ReportInfo):
 @login_required
 def local_dcom_users_list():
     groups = find_DCOM_user_groups()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_membership_url=url_for("sysinfo.local_dcom_users_excel_full"))
 
 
@@ -380,7 +380,7 @@ class ReportDCOMUsers(ReportInfo):
 @login_required
 def local_performance_monitor_users_list():
     groups = find_PerformanceMonitorUser_groups()
-    return render_template('group_members_list.html', groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', groups=groups,
                            download_membership_url=url_for("sysinfo.local_performance_monitor_users_excel_full"))
 
 

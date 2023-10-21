@@ -46,7 +46,7 @@ def report_wsus_http_excel_wsus():
 @login_required
 def report_wsus_http():
     hosts = Host.query.filter(Host.WUServer.like('http://%'))
-    return render_template('report_wsus_list.html', hosts=hosts)
+    return render_template('sysinfo/reports/wsus_list.html', hosts=hosts)
 
 
 

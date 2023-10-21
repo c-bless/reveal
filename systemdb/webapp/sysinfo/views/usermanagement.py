@@ -18,7 +18,7 @@ from systemdb.webapp.sysinfo.forms.users import LocalUserSearchForm
 def group_detail(id):
     group = Group.query.get_or_404(id)
     host = Host.query.get_or_404(group.Host_id)
-    return render_template("group_details.html", group=group, host=host)
+    return render_template("sysinfo/group/group_details.html", group=group, host=host)
 
 
 @sysinfo_bp.route('/users/<int:id>', methods=['GET'])
@@ -27,7 +27,7 @@ def user_detail(id):
     user = User.query.get_or_404(id)
     host = Host.query.get_or_404(user.Host_id)
     groups = find_groups_by_user_sid(sid=user.SID)
-    return render_template("user_details.html", user=user, host=host, groups=groups)
+    return render_template("sysinfo/user/user_details.html", user=user, host=host, groups=groups)
 
 
 @sysinfo_bp.route('/users/search', methods=['GET', 'POST'])
@@ -127,4 +127,4 @@ def user_search_list():
     else:
         users = []
 
-    return render_template('user_search_list.html', form=form, users=users)
+    return render_template('sysinfo/user/user_search_list.html', form=form, users=users)

@@ -16,7 +16,7 @@ from systemdb.core.reports import ReportInfo
 def hosts_report_fileprinter():
     filters = FILE_PRINTER_LIST
     printer_matches = get_hosts_by_printers(filters=filters)
-    return render_template('printer_hosts_list.html', printer_matches=printer_matches)
+    return render_template('sysinfo/reports/printer_hosts_list.html', printer_matches=printer_matches)
 
 
 @sysinfo_bp.route('/report/filerprinter/excel/brief', methods=['GET'])
