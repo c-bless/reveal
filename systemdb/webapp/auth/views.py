@@ -15,14 +15,14 @@ def is_url_allowed(url, host):
 @auth_bp.route('/', methods=['GET'])
 @login_required
 def index():
-    return render_template('index.html')
+    return render_template('auth/index.html')
 
 
 @auth_bp.route("/profile")
 @login_required
 def profile():
     form = ChangePasswordForm()
-    return render_template('profile.html', form=form, user=current_user)
+    return render_template('auth/profile.html', form=form, user=current_user)
 
 
 @auth_bp.route("/renew-token")
@@ -32,7 +32,7 @@ def renew_token():
     user.API_TOKEN = gen_api_token()
     db.session.add(user)
     db.session.commit()
-    return render_template('profile.html', user=user)
+    return render_template('auth/profile.html', user=user)
 
 @auth_bp.route("/change-pw", methods=['POST'])
 @login_required
@@ -48,13 +48,13 @@ def change_pw_post():
     else:
         flash("Password not changed.")
 
-    return render_template('profile.html', form=form, user=current_user)
+    return render_template('auth/profile.html', form=form, user=current_user)
 
 
 @auth_bp.route("/login", methods=['GET'])
 def login():
     form = LoginForm()
-    return render_template('login.html', form=form)
+    return render_template('auth/login.html', form=form)
 
 
 @auth_bp.route("/login", methods=['POST'])
@@ -68,7 +68,7 @@ def login_post():
         login_user(user)
         return redirect(url_for('auth.index'))
 
-    return render_template('login.html', form=form)
+    return render_template('auth/login.html', form=form)
 
 
 @auth_bp.route("/logout")
