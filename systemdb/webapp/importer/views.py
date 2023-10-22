@@ -18,7 +18,7 @@ from systemdb.core.models.files import UploadedFile
 @login_required
 def upload():
     form = UploadFileForm()
-    return render_template("upload.html", title="Upload", form=form)
+    return render_template("importer/upload.html", title="Upload", form=form)
 
 
 @import_bp.route('/files/uploads/', methods=['POST'])
@@ -55,7 +55,7 @@ def upload_post():
                     #print("Error while uploading file. Error: {0}".format(str(e.__dict__['orig'])))
                     os.remove(fullpath)
 
-    return render_template("upload.html", title="Upload", form=form)
+    return render_template("importer/upload.html", title="Upload", form=form)
 
 
 @import_bp.route('/files/uploads/', methods=['GET'])
@@ -64,7 +64,7 @@ def list_uploaded_files():
     uploaded_files = UploadedFile.query.all()
 
     form = ImportAllForm()
-    return render_template('file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
+    return render_template('importer/file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
 
 
 @import_bp.route("/files/import/<uid>", methods=['GET'])
@@ -90,7 +90,7 @@ def import_file_by_uid(uid):
     uploaded_files = UploadedFile.query.all()
 
     form = ImportAllForm()
-    return render_template('file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
+    return render_template('importer/file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
 
 
 @import_bp.route("/files/delete/<uid>", methods=['GET'])
@@ -115,7 +115,7 @@ def delete_file_by_uid(uid):
     uploaded_files = UploadedFile.query.all()
 
     form = ImportAllForm()
-    return render_template('file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
+    return render_template('importer/file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
 
 
 @import_bp.route('/files/import/all/', methods=['POST'])
@@ -142,4 +142,4 @@ def import_all():
                     #print("Error while importing file. Error: {0}".format(str(e.__dict__['orig'])))
     uploaded_files = UploadedFile.query.all()
 
-    return render_template('file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
+    return render_template('importer/file_list.html', uploaded_files=uploaded_files, form=form, title="Importable Files")
