@@ -35,12 +35,12 @@ def get_report_delegation_list():
 @login_required
 def report_list():
     report_list = get_report_list()
-    return render_template('report_list.html', report_plugins=report_list)
+    return render_template('ad/reports/report_list.html', report_plugins=report_list)
 
 
 @ad_bp.route('/reports/groupmembers/', methods=['GET'])
 @login_required
 def usermgmt_report_list():
     report_list = get_report_usermgmt_list()
-    return render_template('report_list.html', report_plugins=report_list)
+    return render_template('ad/reports/report_list.html', report_plugins=report_list)
 

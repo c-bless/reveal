@@ -19,21 +19,21 @@ from systemdb.webapp.ad import ad_bp
 @login_required
 def user_list():
     users = ADUser.query.all()
-    return render_template('aduser_list.html', users=users)
+    return render_template('ad/user/aduser_list.html', users=users)
 
 
 @ad_bp.route('/ad/domain/<int:id>/users', methods=['GET'])
 @login_required
 def user_by_domain_list(id):
     users = ADUser.query.filter(ADUser.Domain_id == id)
-    return render_template('aduser_list.html', users=users)
+    return render_template('ad/user/aduser_list.html', users=users)
 
 
 @ad_bp.route('/ad/user/<int:id>', methods=['GET'])
 @login_required
 def user_detail(id):
     user = ADUser.query.get_or_404(id)
-    return render_template('aduser_details.html', user=user)
+    return render_template('ad/user/aduser_details.html', user=user)
 
 
 @ad_bp.route('/ad/user/search/', methods=['GET', 'POST'])
@@ -120,26 +120,26 @@ def user_search_list():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:
-            return render_template('aduser_search_list.html', form=form)
+            return render_template('ad/user/aduser_search_list.html', form=form)
     else:
         # users = ADUser.query.all()
         users = []
 
-    return render_template('aduser_search_list.html', form=form, users=users)
+    return render_template('ad/user/aduser_search_list.html', form=form, users=users)
 
 
 @ad_bp.route('/ad/groups', methods=['GET'])
 @login_required
 def groups_list():
     groups = ADGroup.query.all()
-    return render_template('adgroup_list.html', groups=groups)
+    return render_template('ad/group/adgroup_list.html', groups=groups)
 
 
 @ad_bp.route('/ad/views/<int:id>/groups', methods=['GET'])
 @login_required
 def groups_by_domain_list(id):
     groups = ADGroup.query.filter(ADGroup.Domain_id==id).all()
-    return render_template('adgroup_list.html', groups=groups)
+    return render_template('ad/group/adgroup_list.html', groups=groups)
 
 
 @ad_bp.route('/ad/group/<int:id>', methods=['GET'])
@@ -147,7 +147,7 @@ def groups_by_domain_list(id):
 def group_detail(id):
     group = ADGroup.query.get_or_404(id)
     domain = ADDomain.query.filter(ADDomain.id == group.Domain_id).first()
-    return render_template('adgroup_details.html', group=group, domain=domain)
+    return render_template('ad/group/adgroup_details.html', group=group, domain=domain)
 
 
 @ad_bp.route('/ad/group/search/', methods=['GET', 'POST'])
@@ -213,8 +213,8 @@ def group_search_list():
                                 headers={"Content-disposition": "attachment; filename=domain-groups.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
-            return render_template('adgroup_search_list.html', form=form)
+            return render_template('ad/group/adgroup_search_list.html', form=form)
     else:
         groups = []
 
-    return render_template('adgroup_search_list.html', form=form, groups=groups)
+    return render_template('ad/group/adgroup_search_list.html', form=form, groups=groups)

@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-ad_bp = Blueprint('ad', __name__, template_folder="templates")
+ad_bp = Blueprint('ad', __name__)
 
 from systemdb.webapp.ad.reports import report_list, get_report_usermgmt_list
 

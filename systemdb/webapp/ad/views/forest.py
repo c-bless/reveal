@@ -11,7 +11,7 @@ from systemdb.core.models.activedirectory import ADForestSite
 @login_required
 def forest_list():
     forests = ADForest.query.all()
-    return render_template('adforest_list.html', forests=forests)
+    return render_template('ad/forest/adforest_list.html', forests=forests)
 
 @ad_bp.route('/ad/forest/<int:id>', methods=['GET'])
 @login_required
@@ -19,4 +19,4 @@ def forest_detail(id):
     forest = ADForest.query.get_or_404(id)
     site_list = ADForestSite.query.filter(ADForestSite.Forest_id == id).all()
     gc_list = ADForestGlobalCatalog.query.filter(ADForestGlobalCatalog.Forest_id == id).all()
-    return render_template('adforest_details.html', forest=forest, site_list=site_list, gc_list=gc_list)
+    return render_template('ad/forest/adforest_details.html', forest=forest, site_list=site_list, gc_list=gc_list)

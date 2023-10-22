@@ -16,7 +16,7 @@ from systemdb.core.querries.ad import find_schema_admin_groups
 @login_required
 def groupmembers_domain_admins():
     groups = find_domain_admin_groups()
-    return render_template('report_groupmembers_list.html', groups=groups,
+    return render_template('ad/reports/groupmembers_list.html', groups=groups,
                            download_url= url_for("ad.groupmembers_domain_admins_excel_full"),
                            report_name= 'GroupMembers "Domain Admins"')
 
@@ -53,7 +53,7 @@ class ReportDomainAdminGroups(ReportInfo):
 @login_required
 def groupmembers_enterprise_admins():
     groups = find_enterprise_admin_groups()
-    return render_template('report_groupmembers_list.html', groups=groups,
+    return render_template('ad/reports/groupmembers_list.html', groups=groups,
                            download_url= url_for("ad.groupmembers_enterprise_admins_excel_full"),
                            report_name= 'GroupMembers "Enterprise Admins"')
 
@@ -90,7 +90,7 @@ class ReportEnterpriseAdminGroups(ReportInfo):
 @login_required
 def groupmembers_schema_admins():
     groups = find_schema_admin_groups()
-    return render_template('report_groupmembers_list.html', groups=groups,
+    return render_template('ad/reports/groupmembers_list.html', groups=groups,
                            download_url= url_for("ad.groupmembers_schema_admins_excel_full"),
                            report_name= 'GroupMembers "Schema Admins"')
 

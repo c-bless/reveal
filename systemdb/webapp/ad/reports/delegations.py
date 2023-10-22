@@ -25,7 +25,7 @@ def computer_by_delegation():
                         headers={"Content-disposition": "attachment; filename=computer_by_delegation.xlsx",
                                  "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-    return render_template('report_computer_by_delegation.html', computer_list=computer_list,
+    return render_template('ad/reports/computer_by_delegation.html', computer_list=computer_list,
                            form=form, report_name= 'Computer by Delegation')
 
 

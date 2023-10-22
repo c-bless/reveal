@@ -59,7 +59,7 @@ def computer_by_spn():
                                 headers={"Content-disposition": "attachment; filename=computer_by_spn.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-    return render_template('report_computer_by_spn.html', computer_list=computer_list,
+    return render_template('ad/reports/computer_by_spn.html', computer_list=computer_list,
                            form=form, report_name= 'Computer by SPN')
 
 

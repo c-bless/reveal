@@ -17,7 +17,7 @@ from systemdb.webapp.ad import ad_bp
 @login_required
 def trust_list():
     trusts = ADTrust.query.all()
-    return render_template('adtrust_list.html', trusts=trusts)
+    return render_template('ad/trust/adtrust_list.html', trusts=trusts)
 
 
 @ad_bp.route('/ad/trusts/search/', methods=['GET', 'POST'])
@@ -77,15 +77,15 @@ def trust_search_list():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
         else:
-            return render_template('adtrust_search_list.html', form=form)
+            return render_template('ad/trust/adtrust_search_list.html', form=form)
     else:
         trusts = ADTrust.query.all()
 
-    return render_template('adtrust_search_list.html', form=form, trusts=trusts)
+    return render_template('ad/trust/adtrust_search_list.html', form=form, trusts=trusts)
 
 
 @ad_bp.route('/ad/trusts/<int:id>', methods=['GET'])
 @login_required
 def trust_detail(id):
     trust = ADTrust.query.get_or_404(id)
-    return render_template('adtrust_details.html', trust=trust)
+    return render_template('ad/trust/adtrust_details.html', trust=trust)

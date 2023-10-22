@@ -11,7 +11,7 @@ from systemdb.webapp.ad import ad_bp
 @login_required
 def domain_list():
     domains = ADDomain.query.all()
-    return render_template('addomain_list.html', domains=domains)
+    return render_template('ad/domain/addomain_list.html', domains=domains)
 
 
 @ad_bp.route('/ad/domains/<int:id>', methods=['GET'])
@@ -31,7 +31,7 @@ def domain_detail(id):
     else:
         num_domadmins = 0
     trusts = ADTrust.query.filter(ADTrust.Domain_id == domain.id).all()
-    return render_template('addomain_details.html', domain=domain, dc_list=dc_list, policy_list=policy_list,
+    return render_template('ad/domain/addomain_details.html', domain=domain, dc_list=dc_list, policy_list=policy_list,
                            num_comp=num_comp, num_groups=num_groups, num_users=num_users, trusts=trusts,
                            num_domadmins=num_domadmins, domadmin_id=domadmins_id)
 
