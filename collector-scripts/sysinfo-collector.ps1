@@ -938,16 +938,15 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 [void]$file_checks_results.Add($result)
             } catch {}
         }
-
         #######################################################################
         # Adding FileExistence Checks 
         #######################################################################
         $xmlWriter.WriteStartElement("FileExistChecks")
         foreach ($c in $file_checks_results){
             $xmlWriter.WriteStartElement("FileExistCheck")
-            $xmlWriter.WriteAttributeString("Name",[string] $c.Name)
-            $xmlWriter.WriteAttributeString("File", [string] $c.File)
-            $xmlWriter.WriteAttributeString("ExpectedHASH", [string] $c.ExpectedHASH)
+            $xmlWriter.WriteElementString("Name",[string] $c.Name)
+            $xmlWriter.WriteElementString("File", [string] $c.File)
+            $xmlWriter.WriteElementString("ExpectedHASH", [string] $c.ExpectedHASH)
             $xmlWriter.WriteElementString("FileExist", [string] $c.FileExist)
             $xmlWriter.WriteElementString("HashMatch", [string] $c.HashMatch)
             $xmlWriter.WriteElementString("HashChecked", [string] $c.HashChecked)
@@ -957,6 +956,43 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # FileExistChecks
     
         
+
+        #######################################################################
+        # Path ACLs
+        #######################################################################
+        Write-Host "[*] Checking ACLs for specified pathes"
+        # ArrayList of pathes that should be checked 
+        $acl_path_checks = New-Object System.Collections.ArrayList
+
+        [void]$acl_path_checks.Add('C:\')
+        [void]$acl_path_checks.Add('C:\Program Files\')
+        [void]$acl_path_checks.Add('C:\Program Files (x86)\')
+        
+        $xmlWriter.WriteStartElement("PathACLChecks")
+        foreach ($c in $acl_path_checks){
+            $path = [string] $c
+            if (Test-Path $path){
+                $acl = get-acl -Path $path -ErrorAction SilentlyContinue
+                $xmlWriter.WriteStartElement("PathACL");
+                $xmlWriter.WriteElementString("Path", [string] $path);
+                $xmlWriter.WriteStartElement("ACLs")
+                foreach ($a in $acl.Access) {
+                    try{
+                        $xmlWriter.WriteStartElement("ACL");
+                        $xmlWriter.WriteAttributeString("path", [string] $path);
+                        $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference);
+                        $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                        $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights);
+                        $xmlWriter.WriteEndElement() # ACL
+                    }catch{}
+                }
+                $xmlWriter.WriteEndElement() # ACLs
+                $xmlWriter.WriteEndElement() # PathACL
+            }
+        }
+        $xmlWriter.WriteEndElement() # PathACLChecks
+
+       
         #######################################################################
         # Additional checks for entries in Windows Registry
         #######################################################################
