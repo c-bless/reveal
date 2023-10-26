@@ -51,7 +51,7 @@ $settings.IndentChars = $(" "*4)
 $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
 $xmlWriter.WriteStartDocument()
 
-# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags add the end of the
+# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags at the end of the
 # XML file between a ConfigChecks-Tag. All Custom objects that are added should follow the following structure
 # $result = [PSCustomObject]@{
 #     Component = 'AFFECT COMPONENT'
@@ -62,9 +62,7 @@ $xmlWriter.WriteStartDocument()
 #     Result = 'RESULT'
 #     Message = 'MESSAGE'
 # }
-$config_checks = New-Object System.Collections.ArrayList            
-
- 
+$config_checks = New-Object System.Collections.ArrayList 
 
 $xmlWriter.WriteStartElement("SystemInfoCollector")
     $xmlWriter.WriteAttributeString("version", "$script_version")
@@ -93,8 +91,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             # writing basic system information
             #######################################################################
             $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
-            $xmlWriter.WriteElementStDomain
-ring("DomainRole",[string] $compInfo.CsDomainRole);
+            $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
 
             if ([string]::IsNullOrEmpty($compInfo.OSVersion)){
                 try{
@@ -307,8 +304,6 @@ ring("DomainRole",[string] $compInfo.CsDomainRole);
                 $xmlWriter.WriteEndElement() # NetIPAddress
             }catch{}
         }
-
-
 
 
         #######################################################################
@@ -881,6 +876,88 @@ ring("DomainRole",[string] $compInfo.CsDomainRole);
 
         
         #######################################################################
+        # File Existence Checks
+        #######################################################################
+        Write-Host "[*] Checking for existence of specified files"
+        # ArrayList to store results from file existence checks. Those will be added as FileExistence-Tags.
+        # All Custom objects that are added should follow the following structure
+        # $result = [PSCustomObject]@{
+        #     Name = 'NAME of the check'
+        #     File   = 'Pathname'
+        #     ExpectedHASH  = 'HASH'
+        # }
+        $file_checks = New-Object System.Collections.ArrayList
+        $file_checks_results = New-Object System.Collections.ArrayList
+
+        # Template for file checks
+        # generate expected hash via: Get-FileHash -Path C:\temp\testfile.txt -Algorithm SHA256
+        #[void]$file_checks.Add(
+        #    [PSCustomObject]@{
+        #        Name = 'Testfile'
+        #        File   =  'C:\temp\testfile.txt'
+        #        ExpectedHASH  = 'D37B9395C2BAF168F977CE9FF9EC007D7270FC84CBF1549324BFC8DFC34333A9'
+        #    }
+        #)
+
+        [void]$file_checks.Add(
+            [PSCustomObject]@{
+                Name = 'Testfile'
+                File   =  'C:\temp\testfile.txt'
+                ExpectedHASH  = 'D37B9395C2BAF168F977CE9FF9EC007D7270FC84CBF1549324BFC8DFC34333A9'
+            }
+        )
+        
+        foreach ($c in $file_checks){
+            $result = [PSCustomObject]@{
+                Name = $c.Name
+                File   = $c.File
+                ExpectedHASH  = $c.ExpectedHASH
+                FileExist = $false
+                HashMatch = $false
+                HashChecked = $false
+                CurrentHash= ''
+            }
+            try{ 
+                $path = [string] $c.File
+                if (Test-Path $path){
+                    write-host "[!] Found file: "$path
+                    $result.FileExist = $true
+                    if (Get-Command Get-FileHash -ErrorAction SilentlyContinue){
+                        $expectedHash = [string] $c.ExpectedHASH
+                        $hash = Get-FileHash -Path $path -Algorithm SHA256
+                        if ($expectedHash -eq $hash.HASH){ 
+                            $result.HashMatch = $true
+                        } else{
+                            $result.HashMatch = $false
+                        }
+                        $result.CurrentHash = $hash.Hash
+                    }
+                }else{
+                    $result.FileExist = $false
+                }
+                [void]$file_checks_results.Add($result)
+            } catch {}
+        }
+
+        #######################################################################
+        # Adding FileExistence Checks 
+        #######################################################################
+        $xmlWriter.WriteStartElement("FileExistChecks")
+        foreach ($c in $file_checks_results){
+            $xmlWriter.WriteStartElement("FileExistCheck")
+            $xmlWriter.WriteAttributeString("Name",[string] $c.Name)
+            $xmlWriter.WriteAttributeString("File", [string] $c.File)
+            $xmlWriter.WriteAttributeString("ExpectedHASH", [string] $c.ExpectedHASH)
+            $xmlWriter.WriteElementString("FileExist", [string] $c.FileExist)
+            $xmlWriter.WriteElementString("HashMatch", [string] $c.HashMatch)
+            $xmlWriter.WriteElementString("HashChecked", [string] $c.HashChecked)
+            $xmlWriter.WriteElementString("CurrentHash", [string] $c.CurrentHash)
+            $xmlWriter.WriteEndElement() # FileExistCheck
+        }
+        $xmlWriter.WriteEndElement() # FileExistChecks
+    
+        
+        #######################################################################
         # Additional checks for entries in Windows Registry
         #######################################################################
         Write-Host "[*] Checking additional entries in Windows Registry"
@@ -1044,29 +1121,6 @@ ring("DomainRole",[string] $compInfo.CsDomainRole);
                 [void]$registry_check_results.Add($result)
             } catch {}
         }
-        
-        #########################
-        # Add results to XML
-        ######################### 
-
-        $xmlWriter.WriteStartElement("AdditionalRegistryChecks")
-        foreach ($c in $registry_check_results){
-            $xmlWriter.WriteStartElement("RegistryCheck")
-            $xmlWriter.WriteAttributeString("Category",[string] $c.Category)
-            $xmlWriter.WriteAttributeString("Name", [string] $c.Name)
-            $xmlWriter.WriteElementString("Description", [string] $c.Description)
-            try {
-                $xmlWriter.WriteElementString("Tags", [string] $c.Tags)
-            }catch{}
-            $xmlWriter.WriteElementString("Path", [string] $c.Path)
-            $xmlWriter.WriteElementString("Key", [string] $c.Key)
-            $xmlWriter.WriteElementString("Expected", [string] $c.Expected)
-            $xmlWriter.WriteElementString("KeyExists", [string] $c.KeyExists)
-            $xmlWriter.WriteElementString("ValueMatch", [string] $c.ValueMatch)
-            $xmlWriter.WriteElementString("CurrentValue", [string] $c.CurrentValue)
-            $xmlWriter.WriteEndElement() # RegistryCheck
-        }
-        $xmlWriter.WriteEndElement() # AdditionalRegistryChecks
 
         #######################################################################
         # Adding ConfigChecks 
