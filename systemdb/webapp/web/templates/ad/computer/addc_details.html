@@ -62,6 +62,7 @@
 
         <div class="col-md-6">
           <div class="row">
+            <div class="col-md-6">
               <div class="card card-olive">
                 <div class="card-header">
                   <h3 class="card-title">Server Roles</h3>
@@ -91,41 +92,44 @@
                 </div>
                 <!-- /.card-body -->
               </div>
+            </div>
           </div>
           <div class="row">
-            <div class="card card-olive">
-                <div class="card-header">
-                  <h3 class="card-title">OperationMasterRoleRoles</h3>
+            <div class="col-md-6">
+              <div class="card card-olive">
+                  <div class="card-header">
+                    <h3 class="card-title">OperationMasterRoleRoles</h3>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body p-0">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Role</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% if dc.OperationMasterRoleRoles %}
+                        {% for r in dc.OperationMasterRoleRoles %}
+                        <tr>
+                          <td>{{ r.Role }}</td>
+                        </tr>
+                        {% endfor %}
+                      {% else %}
+                        <tr>
+                          <td>No roles found.</td>
+                        </tr>
+                      {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Role</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% if dc.OperationMasterRoleRoles %}
-                      {% for r in dc.OperationMasterRoleRoles %}
-                      <tr>
-                        <td>{{ r.Role }}</td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td>No roles found.</td>
-                      </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
               </div>
             </div>
 
             <!-- /.card -->
-          </div>
+        </div>
     </div>
 
 {% endif %}
