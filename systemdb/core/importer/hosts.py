@@ -20,6 +20,8 @@ from systemdb.core.models.sysinfo import DefenderSettings
 from systemdb.core.models.sysinfo import ConfigCheck
 from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.core.models.sysinfo import FileExistCheck
+from systemdb.core.models.sysinfo import PathACLCheck
+from systemdb.core.models.sysinfo import PathACL
 from systemdb.core.extentions import db
 
 from systemdb.core.importer.converter import str2bool_or_none
@@ -172,6 +174,13 @@ def import_host(root):
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating FileExistChecks. Error: {0}".format(str(e.__dict__['orig'])))
+            if "PathACLChecks" == elem.tag:
+                try:
+                    path_acl_check2db(elem, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating PathACLChecks. Error: {0}".format(str(e.__dict__['orig'])))
         return host
 
 
@@ -572,3 +581,33 @@ def file_exist_checks2db(xml, host):
                 if "CurrentHash" == c.tag: check.CurrentHash = c.text
             check.Host = host
             db.session.add(check)
+
+
+def path_acl_check2db(xml, host):
+    for e in xml.getchildren():
+        if "PathACL" == e.tag:
+            check = PathACLCheck()
+            for i in e.getchildren():
+                if "Path"== i.tag: check.Path = i.text
+            check.Host = host
+            db.session.add(check)
+            for i in e.getchildren():
+                if "ACLs" == i.tag:
+                    childs = i.getchildren()
+                    if len(childs) > 0:
+                        perm_str =[]
+                        for a in childs:
+                            if "ACL" == a.tag:
+                                acl = PathACL()
+                                acl.Name = a.get("path")
+                                acl.AccountName = a.get("AccountName")
+                                acl.AccessControlType = a.get("AccessControlType")
+                                acl.AccessRight = a.get("AccessRight")
+                                acl.PathACLCheck = check
+                                db.session.add(acl)
+                                o = "{0}{1}{2}{3}".format(acl.Name, acl.AccountName, acl.AccessControlType, acl.AccessRight)
+                                perm_str.append(o)
+                        check.ACLStr = "\n".join(perm_str)
+                    else:
+                        check.ACLStr = i.text
+                    db.session.add(check)

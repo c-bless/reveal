@@ -74,6 +74,7 @@ class Host(db.Model):
     ConfigChecks = db.relationship('ConfigCheck', back_populates='Host', lazy='dynamic')
     RegistryChecks = db.relationship('RegistryCheck', back_populates='Host', lazy='dynamic')
     FileExistChecks = db.relationship('FileExistCheck', back_populates='Host', lazy='dynamic')
+    PathACLChecks = db.relationship('PathACLCheck', back_populates='Host', lazy='dynamic')
     Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
 
     def __repr__(self):
@@ -533,6 +534,38 @@ class FileExistCheck(db.Model):
     CurrentHash = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="FileExistChecks")
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name
+
+
+class PathACLCheck(db.Model):
+    __tablename__ = "PathACLCheck"
+    id = db.Column(db.Integer, primary_key=True)
+    Path = db.Column(db.String(), unique=False, nullable=True)
+    ACLStr = db.Column(db.String(), unique=False, nullable=True)
+    ACLs = db.relationship('PathACL', backref='PathACLCheck', lazy='dynamic')
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="PathACLChecks")
+
+    def __repr__(self):
+        return self.Path
+
+    def __str__(self):
+        return self.Path
+
+
+class PathACL(db.Model):
+    __tablename__ = "PathACL"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(), unique=False, nullable=True)
+    AccountName = db.Column(db.String(1024), unique=False, nullable=True)
+    AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
+    AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
+    PathACLCheck_id = db.Column(db.Integer, db.ForeignKey('PathACLCheck.id'), nullable=False)
 
     def __repr__(self):
         return self.Name
