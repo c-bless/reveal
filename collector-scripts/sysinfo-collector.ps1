@@ -1158,6 +1158,29 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 [void]$registry_check_results.Add($result)
             } catch {}
         }
+               
+        #########################
+        # Add results to XML
+        ######################### 
+
+        $xmlWriter.WriteStartElement("AdditionalRegistryChecks")
+        foreach ($c in $registry_check_results){
+            $xmlWriter.WriteStartElement("RegistryCheck")
+            $xmlWriter.WriteAttributeString("Category",[string] $c.Category)
+            $xmlWriter.WriteAttributeString("Name", [string] $c.Name)
+            $xmlWriter.WriteElementString("Description", [string] $c.Description)
+            try {
+                $xmlWriter.WriteElementString("Tags", [string] $c.Tags)
+            }catch{}
+            $xmlWriter.WriteElementString("Path", [string] $c.Path)
+            $xmlWriter.WriteElementString("Key", [string] $c.Key)
+            $xmlWriter.WriteElementString("Expected", [string] $c.Expected)
+            $xmlWriter.WriteElementString("KeyExists", [string] $c.KeyExists)
+            $xmlWriter.WriteElementString("ValueMatch", [string] $c.ValueMatch)
+            $xmlWriter.WriteElementString("CurrentValue", [string] $c.CurrentValue)
+            $xmlWriter.WriteEndElement() # RegistryCheck
+        }
+        $xmlWriter.WriteEndElement() # AdditionalRegistryChecks
 
         #######################################################################
         # Adding ConfigChecks 
