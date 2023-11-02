@@ -927,6 +927,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                         $hash = Get-FileHash -Path $path -Algorithm SHA256
                         if ($expectedHash -eq $hash.HASH){ 
                             $result.HashMatch = $true
+                            $result.HashChecked = $true
                         } else{
                             $result.HashMatch = $false
                         }

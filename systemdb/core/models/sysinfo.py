@@ -73,6 +73,7 @@ class Host(db.Model):
     Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
     ConfigChecks = db.relationship('ConfigCheck', back_populates='Host', lazy='dynamic')
     RegistryChecks = db.relationship('RegistryCheck', back_populates='Host', lazy='dynamic')
+    FileExistChecks = db.relationship('FileExistCheck', back_populates='Host', lazy='dynamic')
     Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
 
     def __repr__(self):
@@ -518,3 +519,23 @@ class RegistryCheck(db.Model):
     @staticmethod
     def find_by_valuematch(match=True):
         return RegistryCheck.query.filter(RegistryCheck.ValueMatch == match).all()
+
+
+class FileExistCheck(db.Model):
+    __tablename__ = "FileExistCheck"
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(), unique=False, nullable=True)
+    File = db.Column(db.String(), unique=False, nullable=True)
+    ExpectedHASH = db.Column(db.String(), unique=False, nullable=True)
+    FileExist = db.Column(db.Boolean())
+    HashMatch = db.Column(db.Boolean())
+    HashChecked = db.Column(db.Boolean())
+    CurrentHash = db.Column(db.String(), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="FileExistChecks")
+
+    def __repr__(self):
+        return self.Name
+
+    def __str__(self):
+        return self.Name

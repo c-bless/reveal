@@ -19,6 +19,7 @@ from systemdb.core.models.sysinfo import PSInstalledVersions
 from systemdb.core.models.sysinfo import DefenderSettings
 from systemdb.core.models.sysinfo import ConfigCheck
 from systemdb.core.models.sysinfo import RegistryCheck
+from systemdb.core.models.sysinfo import FileExistCheck
 from systemdb.core.extentions import db
 
 from systemdb.core.importer.converter import str2bool_or_none
@@ -164,6 +165,13 @@ def import_host(root):
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating AdditionalRegistryChecks. Error: {0}".format(str(e.__dict__['orig'])))
+            if "FileExistChecks" == elem.tag:
+                try:
+                    file_exist_checks2db(elem, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating FileExistChecks. Error: {0}".format(str(e.__dict__['orig'])))
         return host
 
 
@@ -513,7 +521,7 @@ def psversions2db(xml, host):
             v.RuntimeVersion = e.get("RuntimeVersion")
             v.Host = host
             db.session.add(v)
-
+512
 
 def configchecks2db(xml, host):
     for e in xml.getchildren():
@@ -546,5 +554,21 @@ def registrychecks2db(xml, host):
                 if "KeyExists" == c.tag: check.KeyExists = str2bool_or_none(c.text)
                 if "ValueMatch" == c.tag: check.ValueMatch = str2bool_or_none(c.text)
                 if "CurrentValue" == c.tag: check.CurrentValue = c.text
+            check.Host = host
+            db.session.add(check)
+
+
+def file_exist_checks2db(xml, host):
+    for e in xml.getchildren():
+        if "FileExistCheck" == e.tag:
+            check = FileExistCheck()
+            for c in e.getchildren():
+                if "Name" == c.tag: check.Name = c.text
+                if "File" == c.tag: check.File = c.text
+                if "ExpectedHASH" == c.tag: check.ExpectedHASH = c.text
+                if "FileExist" == c.tag: check.FileExist = str2bool_or_none(c.text)
+                if "HashMatch" == c.tag: check.HashMatch = str2bool_or_none(c.text)
+                if "HashChecked" == c.tag: check.HashChecked = str2bool_or_none(c.text)
+                if "CurrentHash" == c.tag: check.CurrentHash = c.text
             check.Host = host
             db.session.add(check)

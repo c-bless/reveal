@@ -189,6 +189,10 @@
              role="tab" aria-controls="tabs-registrychecks" aria-selected="false">RegistryChecks</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" id="tabs-filechecks-tab" data-toggle="pill" href="#tabs-filechecks"
+             role="tab" aria-controls="tabs-filechecks" aria-selected="false">FileExistChecks</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" id="tabs-defender-tab" data-toggle="pill" href="#tabs-defender"
              role="tab" aria-controls="tabs-defender" aria-selected="false">Defender</a>
         </li>
@@ -853,7 +857,7 @@
                       {% endfor %}
                     {% else %}
                     <tr>
-                      <td colspan="7">No printers found!</td>
+                      <td colspan="7">No config checks performed!</td>
                     </tr>
                     {% endif %}
                     </tbody>
@@ -906,7 +910,55 @@
                       {% endfor %}
                     {% else %}
                     <tr>
-                      <td colspan="7">No printers found!</td>
+                      <td colspan="7">No RegistryChecks performed!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-filechecks" role="tabpanel" aria-labelledby="tabs-filechecks-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">FileExistChecks</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>File</th>
+                      <th>FileExist</th>
+                      <th>HashMatch</th>
+                      <th>HashChecked</th>
+                      <th>ExpectedHASH</th>
+                      <th>CurrentHash</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if host.FileExistChecks %}
+                      {% for c in host.FileExistChecks %}
+                      <tr>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.File }}</td>
+                        <td>{{ c.FileExist }}</td>
+                        <td>{{ c.HashMatch }}</td>
+                        <td>{{ c.HashChecked }}</td>
+                        <td>{{ c.ExpectedHASH }}</td>
+                        <td>{{ c.CurrentHash }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="7">No file checks performed!</td>
                     </tr>
                     {% endif %}
                     </tbody>
