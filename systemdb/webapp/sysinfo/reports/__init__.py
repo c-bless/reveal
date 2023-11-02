@@ -111,7 +111,7 @@ def update_eol_report_list():
 @login_required
 def syshardening_report_list():
     report_list = get_systemhardening_report_list()
-    return render_template('report_list.html', report_plugins=report_list)
+    return render_template('sysinfo/reports/report_list.html', report_plugins=report_list)
 
 
 @sysinfo_bp.route('/reports/usermgmt/', methods=['GET'])
