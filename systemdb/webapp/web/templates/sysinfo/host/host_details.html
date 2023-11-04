@@ -193,6 +193,10 @@
              role="tab" aria-controls="tabs-filechecks" aria-selected="false">FileExistChecks</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" id="tabs-pathaclchecks-tab" data-toggle="pill" href="#tabs-pathaclchecks"
+             role="tab" aria-controls="tabs-pathaclchecks" aria-selected="false">Path ACL Checks</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" id="tabs-defender-tab" data-toggle="pill" href="#tabs-defender"
              role="tab" aria-controls="tabs-defender" aria-selected="false">Defender</a>
         </li>
@@ -969,6 +973,49 @@
             </div>
           </div>
         </div>
+
+        <div class="tab-pane fade" id="tabs-pathaclchecks" role="tabpanel" aria-labelledby="tabs-pathaclchecks-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">Path ACL Checks</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>Path</th>
+                      <th>ACL</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if host.PathACLChecks %}
+                      {% for c in host.PathACLChecks %}
+                      <tr>
+                        <td>{{ c.Path }}</td>
+                        <td>
+                          {% for p in c.ACLs %}
+                            {{ p.Name }} {{ p.AccountName }} {{ p.AccessControlType }} {{ p.AccessRight }} <br />
+                          {% endfor %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="7">No path ACL checks performed!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         <div class="tab-pane fade" id="tabs-defender" role="tabpanel" aria-labelledby="tabs-defender-tab">
           <div class="row">
