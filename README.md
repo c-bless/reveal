@@ -2,9 +2,10 @@
 
 The scripts in the directory collector-scripts can be used to collect system information or information from the Active Directory. The Flask based applicaton "systemdb" can be used to import the scripts into a (sqlite/PostgreSQL) database, analyse the information and to generate reports based on provided templates.
 
+I used those collector scripts already in several assessments collecting information from IT and OT systems. This includes DCS systems (e.g., PCS7, 800xA, DeltaV), MES systems (e.g., PASX, SIMATIC IT, Opcenter), Historians (e.g., IP21), several HMIs as well as systems in laboratories operating measuring devices or HPLCs.  
+
 ## License ##
 This TOOL is licensed under the GNU General Public License in version 3. See http://www.gnu.org/licenses/ for further details.
-
 
 
 ## Usage with docker ##
