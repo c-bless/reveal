@@ -13,6 +13,7 @@ from systemdb.core.querries.usermgmt import find_groups_by_user_sid
 from systemdb.core.export.excel.usermgmt import generate_localuser_excel
 from systemdb.webapp.sysinfo.forms.users import LocalUserSearchForm
 
+
 @sysinfo_bp.route('/groups/<int:id>', methods=['GET'])
 @login_required
 def group_detail(id):
@@ -43,9 +44,9 @@ def user_search_list():
             name = form.Name.data
             fullName = form.FullName.data
             try:
-                accountType = int(form.AccountType.data)
+                accountType = str(form.AccountType.data)
             except:
-                accountType = 512
+                accountType = str(512)
             sid = form.SID.data
             description = form.Description.data
             host = form.Host.data
@@ -78,7 +79,7 @@ def user_search_list():
                     user_filter.append(User.FullName.ilike("%"+fullName+"%"))
                 else:
                     user_filter.append(User.FullName.notilike("%"+fullName+"%"))
-            if accountType > 0:
+            if len(accountType):
                 if not invertAccountType:
                     user_filter.append(User.AccountType == accountType)
                 else:

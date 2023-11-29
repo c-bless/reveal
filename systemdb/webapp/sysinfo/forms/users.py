@@ -13,10 +13,9 @@ from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
 class LocalUserSearchForm(FlaskForm):
     Name = StringField('Name', validators=[Regexp(regex=RE_SYSINFO_USER_NAME, message="Invalid input")])
     AccountType = IntegerField('AccountType',default=512, description="512 = LocalAccount")
-    SID = StringField('SID', validators=[Regexp(regex=RE_SID_ALLOWED_CHARS, message="Invalid input")] )
+    SID = StringField('SID', validators=[Regexp(regex=RE_SID_ALLOWED_CHARS, message="Invalid input")])
     Description = StringField('Description', validators=[Regexp(regex=RE_SYSINFO_USER_DESCRIPTION, message="Invalid input")])
-    FullName = StringField('FullName',
-                              validators=[Regexp(regex=RE_SYSINFO_USER_FULLNAME, message="Invalid input")])
+    FullName = StringField('FullName', validators=[Regexp(regex=RE_SYSINFO_USER_FULLNAME, message="Invalid input")])
     Host = StringField('Host',
                        validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
     SystemGroup = StringField('Systemgroup',

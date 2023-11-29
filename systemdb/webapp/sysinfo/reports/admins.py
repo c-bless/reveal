@@ -11,26 +11,16 @@ from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
 from systemdb.core.models.sysinfo import Host, Group
 from systemdb.core.reports import ReportInfo
 from systemdb.core.querries.usermgmt import find_groups_where_domadm_is_localadmin
+from systemdb.core.querries.usermgmt import find_hosts_where_domadm_is_localadmin
 
 
 ####################################################################
 # Hosts with Domain Admins in local admin group
 ####################################################################
-def get_domadmin_memberof_local_admin():
-    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
-    host_ids = []
-    for g in groups:
-        for m in g.Members:
-            if m.SID.endswith("-512"):
-                host_ids.append(g.Host_id)
-    hosts = Host.query.filter(Host.id.in_(host_ids)).all()
-    return hosts
-
-
 @sysinfo_bp.route('/report/domainadmin/excel/full', methods=['GET'])
 @login_required
 def hosts_report_domainadmin_excel_full():
-    hosts = get_domadmin_memberof_local_admin()
+    hosts = find_hosts_where_domadm_is_localadmin()
 
     output = generate_hosts_excel(hosts)
     return Response(output, mimetype="text/xlsx",
@@ -40,7 +30,7 @@ def hosts_report_domainadmin_excel_full():
 @sysinfo_bp.route('/report/domainadmin/excel/brief', methods=['GET'])
 @login_required
 def hosts_report_domainadmin_excel_brief():
-    hosts = get_domadmin_memberof_local_admin()
+    hosts = find_hosts_where_domadm_is_localadmin()
 
     output = generate_hosts_excel_brief(hosts)
     return Response(output, mimetype="text/xlsx",
@@ -54,7 +44,7 @@ def hosts_report_domainadmin_excel_memberships():
     groups = find_groups_where_domadm_is_localadmin()
     output = generate_group_members_excel(groups)
     return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=groups-with-domnadmin-brief.xlsx",
+                    headers={"Content-disposition": "attachment; filename=groups-with-domainadmin-brief.xlsx",
                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 @sysinfo_bp.route('/report/domainadmin', methods=['GET'])
