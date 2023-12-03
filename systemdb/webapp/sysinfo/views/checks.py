@@ -7,12 +7,15 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 
 from systemdb.core.models.sysinfo import ConfigCheck
 from systemdb.core.models.sysinfo import RegistryCheck
+from systemdb.core.models.sysinfo import FileExistCheck
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.export.excel.checks import generate_configchecks_excel
 from systemdb.core.export.excel.checks import generate_registrychecks_excel
+from systemdb.core.export.excel.checks import generate_fileexistchecks_excel
 
 from systemdb.webapp.sysinfo.forms.checks import ConfigCheckSearchForm
 from systemdb.webapp.sysinfo.forms.checks import RegistryCheckSearchForm
+from systemdb.webapp.sysinfo.forms.checks import FileExistCheckSearchForm
 
 
 @sysinfo_bp.route('/checks/config/<int:id>', methods=['GET'])
@@ -209,3 +212,70 @@ def registrycheck_search_list():
         print('GET')
         checks = RegistryCheck.query.all()
         return render_template('sysinfo/checks/registrycheck_search_list.html', form=form, checks=checks)
+
+
+
+
+
+@sysinfo_bp.route('/fileexist/search', methods=['GET', 'POST'])
+@login_required
+def file_exist_search_list():
+    form = FileExistCheckSearchForm()
+
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            name = form.Name.data
+            filename = form.File.data
+            fileExist = form.FileExist.data
+            hashMatch = form.HashMatch.data
+            host = form.Host.data
+
+            invertName = form.InvertName.data
+            useFileExist = form.UseFileExist.data
+            useHashMatch = form.UseHashMatch.data
+            invertFile = form.InvertFile.data
+            invertHost = form.InvertHost.data
+
+            if len(name) > 0:
+                if not invertName:
+                    filters.append(FileExistCheck.Name.ilike("%" + name + "%"))
+                else:
+                    filters.append(FileExistCheck.Name.notilike("%" + name + "%"))
+            if len(filename) > 0:
+                if not invertFile:
+                    filters.append(FileExistCheck.File.ilike("%" + filename + "%"))
+                else:
+                    filters.append(FileExistCheck.File.notilike("%" + filename + "%"))
+            if useFileExist:
+                if not fileExist:
+                    filters.append(FileExistCheck.FileExist == False)
+                else:
+                    filters.append(FileExistCheck.FileExist == True)
+            if useHashMatch:
+                if not hashMatch:
+                    filters.append(FileExistCheck.HashMatch == False)
+                else:
+                    filters.append(FileExistCheck.HashMatch == True)
+            if len(host) > 0:
+                hosts = Host.query.filter(Host.Hostname.ilike("%" + host + "%")).all()
+                ids = [h.id for h in hosts]
+                if not invertHost:
+                    filters.append(FileExistCheck.Host_id.in_(ids))
+                else:
+                    filters.append(FileExistCheck.Host_id.notin_(ids))
+
+            checks = FileExistCheck.query.filter(*filters).all()
+
+            if 'download' in request.form:
+                output = generate_fileexistchecks_excel(checks=checks)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=fileexistcheck.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        else:
+            checks = FileExistCheck.query.all()
+
+        return render_template('sysinfo/checks/fileexistcheck_search_list.html', form=form, checks=checks)
+    else:
+        checks = FileExistCheck.query.all()
+        return render_template('sysinfo/checks/fileexistcheck_search_list.html', form=form, checks=checks)

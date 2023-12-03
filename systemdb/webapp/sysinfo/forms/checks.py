@@ -9,6 +9,7 @@ from systemdb.core.regex import RE_SYSINFO_CONFIGCHECK_KEY
 from systemdb.core.regex import RE_SYSINFO_CONFIGCHECK_VALUE
 from systemdb.core.regex import RE_SYSINFO_CONFIGCHECK_RESULT
 from systemdb.core.regex import RE_SYSINFO_CONFIGCHECK_MESSAGE
+from systemdb.core.regex import RE_SYSINFO_FILENAME
 
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_EXPECTED
 from systemdb.core.regex import RE_SYSINFO_REGISTRYCHECK_NAME
@@ -74,6 +75,24 @@ class RegistryCheckSearchForm(FlaskForm):
     InvertCurrentValue = BooleanField('Invert CurrentValue')
     UseKeyExists = BooleanField('use KeyExists')
     UseValueMatch = BooleanField('use ValueMatch')
+    InvertHost = BooleanField('Invert Host')
+
+    search = SubmitField('Search')
+    download = SubmitField('Download Excel')
+
+
+class FileExistCheckSearchForm(FlaskForm):
+    Name = StringField('Name', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_NAME, message="Invalid input")])
+    File = StringField('File', validators=[Regexp(regex=RE_SYSINFO_FILENAME, message="Invalid input")])
+    FileExist = BooleanField('FileExists')
+    HashMatch = BooleanField('HashMatch')
+
+    Host = StringField('Host', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
+
+    InvertName = BooleanField('Invert Name')
+    InvertFile = BooleanField('Invert Category')
+    UseFileExist = BooleanField('use FileExist')
+    UseHashMatch = BooleanField('use HashMatch')
     InvertHost = BooleanField('Invert Host')
 
     search = SubmitField('Search')

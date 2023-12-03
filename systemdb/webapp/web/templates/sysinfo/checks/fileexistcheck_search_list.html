@@ -1,0 +1,109 @@
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% set title = "FileExist Checks" %}
+{% block page_title %} FileExistChecks {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} FileExistCheck List {% endblock menu_l2 %}
+
+{% block download_links %}
+    {{ super() }}
+
+{% endblock download_links %}
+
+
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.Name) }}
+                            {{ render_check_field_sm2(form.InvertName) }}
+
+                            {{ render_field_sm2(form.File) }}
+                            {{ render_check_field_sm2(form.InvertFile) }}
+                        </div>
+                        <div class="col-sm-6">
+
+                            {{ render_field_sm2(form.Host) }}
+                            {{ render_check_field_sm2(form.InvertHost) }}
+                            <br />
+                            {{ render_check_field_sm2(form.FileExist) }}
+                            {{ render_check_field_sm2(form.UseFileExist) }}
+                            <br />
+
+                            {{ render_check_field_sm2(form.HashMatch) }}
+                            {{ render_check_field_sm2(form.UseHashMatch) }}
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {{ render_submit_field(form.search) }}
+                    {{ render_submit_field(form.download) }}
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+
+
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="File" width="15%">File
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="FileExist" width="10%">FileExist
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="ExpectedHash" width="15%">ExpectedHash
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="HashMatch" width="15%">HashMatch
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="CurrentHash" width="5%">CurrentHash
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Host" width="10%">Host
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Systemgroup" width="10%">Systemgroup
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if checks %}
+                {% for c in checks %}
+                  <tr>
+                    <td> {{ c.Name }} </td>
+                    <td> {{ c.File }} </td>
+                    <td> {{ c.FileExist }} </td>
+                    <td> {{ c.ExpectedHASH }} </td>
+                    <td> {{ c.HashMatch }} </td>
+                    <td> {{ c.CurrentHash }} </td>
+                    <td> {{ c.Host }} </td>
+                    <td> {{ c.Host.SystemGroup }} </td>
+                    <td class="actions">
+                        <a href="{{ url_for('sysinfo.host_detail', id=c.Host.id) }}" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye"></i> View Host
+                        </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="9">No performed file checks found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}
