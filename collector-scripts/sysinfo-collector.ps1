@@ -305,6 +305,34 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }catch{}
         }
 
+        #######################################################################
+        # Collecting information about available routes (routing table)
+        #######################################################################
+    
+        Write-Host "[*] Collecting routing table"
+       
+        if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
+            try{
+                $routes = Get-NetRoute
+                $xmlWriter.WriteStartElement("Routes")
+                foreach ($r in $routes ) {
+                    try{
+                        $xmlWriter.WriteStartElement("Route")
+                        $xmlWriter.WriteElementString("AddressFamily", [string] $r.AddressFamily);
+                        $xmlWriter.WriteElementString("DestinationPrefix", [string]$r.DestinationPrefix);
+                        $xmlWriter.WriteElementString("InterfaceAlias", [string]$r.InterfaceAlias);
+                        $xmlWriter.WriteElementString("NextHop", [string]$r.NextHop);
+                        $xmlWriter.WriteElementString("RouteMetric", [string]$r.RouteMetric);
+                        $xmlWriter.WriteElementString("ifIndex", [string]$r.ifIndex);
+                        $xmlWriter.WriteElementString("InterfaceMetric", [string]$r.InterfaceMetric);
+                        $xmlWriter.WriteElementString("IsStatic", [string]$r.IsStatic);
+                        $xmlWriter.WriteElementString("AdminDistance", [string]$r.AdminDistance);
+                        $xmlWriter.WriteEndElement() # Route
+                    }catch{}
+                }
+            }catch{}
+        }
+        $xmlWriter.WriteEndElement() # Routes
 
         #######################################################################
         # Collecting information about services
