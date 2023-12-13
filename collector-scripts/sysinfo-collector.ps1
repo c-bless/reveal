@@ -330,9 +330,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                         $xmlWriter.WriteEndElement() # Route
                     }catch{}
                 }
+                $xmlWriter.WriteEndElement() # Routes
             }catch{}
         }
-        $xmlWriter.WriteEndElement() # Routes
 
         #######################################################################
         # Collecting information about services
@@ -919,6 +919,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         # Template for file checks
         # generate expected hash via: Get-FileHash -Path C:\temp\testfile.txt -Algorithm SHA256
+
         #[void]$file_checks.Add(
         #    [PSCustomObject]@{
         #        Name = 'Testfile'
@@ -927,14 +928,6 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #    }
         #)
 
-        [void]$file_checks.Add(
-            [PSCustomObject]@{
-                Name = 'Testfile'
-                File   =  'C:\temp\testfile.txt'
-                ExpectedHASH  = 'D37B9395C2BAF168F977CE9FF9EC007D7270FC84CBF1549324BFC8DFC34333A9'
-            }
-        )
-        
         foreach ($c in $file_checks){
             $result = [PSCustomObject]@{
                 Name = $c.Name
