@@ -25,8 +25,15 @@ from systemdb.core.export.excel.products import generate_products_excel
 
 @sysinfo_bp.route('/export/templates', methods=['GET'])
 @login_required
-def template_list():
+def template_list_hosts():
     template_dir = "{0}/templates/hosts/".format(current_app.config.get(('REPORT_DIR')))
+    templates = os.listdir(template_dir)
+    return render_template('sysinfo/template_list.html', templates=templates, title="Available templates")
+
+@sysinfo_bp.route('/export/templates', methods=['GET'])
+@login_required
+def template_list_HostReport():
+    template_dir = "{0}/templates/reports/HostReports/".format(current_app.config.get(('REPORT_DIR')))
     templates = os.listdir(template_dir)
     return render_template('sysinfo/template_list.html', templates=templates, title="Available templates")
 
