@@ -30,9 +30,17 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    {{ render_submit_field(form.word) }}
-                    {{ render_submit_field(form.brief) }}
-                    {{ render_submit_field(form.full) }}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_submit_field(form.search) }}
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Download:</strong>
+                            {{ render_submit_field(form.word) }}
+                            {{ render_submit_field(form.brief) }}
+                            {{ render_submit_field(form.full) }}
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-footer -->
     </form>

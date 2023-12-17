@@ -5,7 +5,8 @@ from wtforms.validators import Regexp, Optional
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
 from systemdb.core.regex import RE_SYSINFO_LOCATION
 
-class DomAdminReportForm(FlaskForm):
+
+class PS2ReportForm(FlaskForm):
     SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
     Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")] )
 
@@ -13,7 +14,6 @@ class DomAdminReportForm(FlaskForm):
     InvertLocation = BooleanField('Invert Location')
 
     search = SubmitField('Search')
+
     word = SubmitField('Word')
-    brief = SubmitField('Excel Hosts (Brief)')
-    full = SubmitField('Excel Hosts (Full)')
-    memberships = SubmitField('Excel Memberships')
+    excel = SubmitField('Excel')

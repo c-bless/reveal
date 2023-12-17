@@ -21,47 +21,6 @@ from systemdb.webapp.sysinfo.forms.report.DomAdminReport import DomAdminReportFo
 ####################################################################
 # Hosts with Domain Admins in local admin group
 ####################################################################
-@sysinfo_bp.route('/report/domainadmin/excel/full', methods=['GET', 'POST'])
-@login_required
-def hosts_report_domainadmin_excel_full():
-    hosts = find_hosts_where_domadm_is_localadmin()
-
-    output = generate_hosts_excel(hosts)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-domadmin.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-@sysinfo_bp.route('/report/domainadmin/excel/brief', methods=['GET', 'POST'])
-@login_required
-def hosts_report_domainadmin_excel_brief():
-    hosts = find_hosts_where_domadm_is_localadmin()
-
-    output = generate_hosts_excel_brief(hosts)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-domadmin-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-@sysinfo_bp.route('/report/domainadmin/word/', methods=['GET', 'POST'])
-@login_required
-def hosts_report_domainadmin_word():
-    hosts = find_hosts_where_domadm_is_localadmin()
-
-    output = generate_hosts_excel_brief(hosts)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-domadmin-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
-@sysinfo_bp.route('/report/domainadmin/excel/memberships', methods=['GET'])
-@login_required
-def hosts_report_domainadmin_excel_memberships():
-    groups = find_groups_where_domadm_is_localadmin()
-    output = generate_group_members_excel(groups)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=groups-with-domainadmin-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
 @sysinfo_bp.route('/report/domainadmin', methods=['GET', 'POST'])
 @login_required
 def hosts_report_domainadmin():
@@ -102,6 +61,12 @@ def hosts_report_domainadmin():
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=hosts-domadmin.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'memberships' in request.form:
+                output = generate_group_members_excel(groups=groups)
+                return Response(output, mimetype="text/xlsx",
+                                headers={
+                                    "Content-disposition": "attachment; filename=groups-with-domainadmin-brief.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
             groups = find_groups_where_domadm_is_localadmin()
 
