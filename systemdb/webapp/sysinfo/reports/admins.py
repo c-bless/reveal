@@ -14,8 +14,10 @@ from systemdb.core.querries.usermgmt import find_groups_where_domadm_is_localadm
 from systemdb.core.querries.usermgmt import find_hosts_where_domadm_is_localadmin
 from systemdb.core.querries.usermgmt import find_groups_where_domadm_is_localadmin_with_host_filter
 from systemdb.core.querries.usermgmt import find_hosts_where_domadm_is_localadmin_with_host_filter
+from systemdb.core.querries.usermgmt import get_autologon_admin
 
 from systemdb.webapp.sysinfo.forms.report.DomAdminReport import DomAdminReportForm
+from systemdb.webapp.sysinfo.forms.report.AutoAdminReport import AutoAdminReportForm
 
 
 ####################################################################
@@ -28,7 +30,7 @@ def hosts_report_domainadmin():
     form = DomAdminReportForm()
 
     if request.method == 'POST':
-        filters = []
+        host_filter = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
@@ -38,25 +40,25 @@ def hosts_report_domainadmin():
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
-                    filters.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
                 else:
-                    filters.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
             if len(location) > 0:
                 if not invertLocation:
-                    filters.append(Host.Location.ilike("%" + location + "%"))
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
-                    filters.append(Host.Location.notilike("%" + location + "%"))
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
 
-            groups = find_groups_where_domadm_is_localadmin_with_host_filter(host_filter=filters)
+            groups = find_groups_where_domadm_is_localadmin_with_host_filter(host_filter=host_filter)
 
             if 'brief' in request.form:
-                hosts = find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter=filters)
+                hosts = find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter=host_filter)
                 output = generate_hosts_excel_brief(hosts)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=hosts_brief-domadmin.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
             if 'full' in request.form:
-                hosts = find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter=filters)
+                hosts = find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter=host_filter)
                 output = generate_hosts_excel(hosts)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=hosts-domadmin.xlsx",
@@ -95,50 +97,50 @@ class ReportDomAdminMemberOfLocalAdmin(ReportInfo):
 ####################################################################
 # Hosts with autologon user in local admin group
 ####################################################################
-def get_autologon_admin():
-    result = []
-    autologon_hosts = Host.query.filter(Host.AutoAdminLogon == True).all()
-    for h in autologon_hosts:
-        defaultUser = h.DefaultUserName
-        defaultDomain = h.DefaultDomain
-        admins = Group.query.filter(and_(Group.SID == SID_LOCAL_ADMIN_GROUP, Group.Host_id == h.id)).first()
-        for m in admins.Members:
-            if defaultDomain == m.Domain and defaultUser == m.Name:
-                result.append(h)
-    return result
-
-
-@sysinfo_bp.route('/report/autologonadmin/excel/full', methods=['GET'])
-@login_required
-def hosts_report_autologonadmin_excel_full():
-    hosts = get_autologon_admin()
-
-    output = generate_hosts_excel(hosts)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-autologonadmin-full.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
-@sysinfo_bp.route('/report/autologonadmin/excel/brief', methods=['GET'])
-@login_required
-def hosts_report_autologonadmin_excel_brief():
-    hosts = get_autologon_admin()
-
-    output = generate_hosts_excel_brief(hosts)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-autologonadmin-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
-@sysinfo_bp.route('/report/autologonadmin', methods=['GET'])
+@sysinfo_bp.route('/report/autologonadmin', methods=['GET','POST'])
 @login_required
 def hosts_report_autologonadmin():
-    hosts = get_autologon_admin()
+    form = AutoAdminReportForm()
+    host_filter = []
 
-    return render_template('sysinfo/host/host_list.html', hosts=hosts,
-                           download_brief_url=url_for("sysinfo.hosts_report_autologonadmin_excel_brief"),
-                           download_url=url_for("sysinfo.hosts_report_autologonadmin_excel_full"))
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
 
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            hosts = get_autologon_admin(host_filter=host_filter)
+
+            if 'brief' in request.form:
+                output = generate_hosts_excel_brief(hosts)
+                return Response(output, mimetype="text/xlsx",
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts-with-autologonadmin-brief.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'full' in request.form:
+                output = generate_hosts_excel(hosts)
+                return Response(output, mimetype="text/xlsx",
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts-with-autologonadmin-full.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        hosts = get_autologon_admin()
+
+    return render_template('sysinfo/reports/host_report_list.html', hosts=hosts, form=form)
 
 
 class ReportAutologonIsLocalAdmin(ReportInfo):

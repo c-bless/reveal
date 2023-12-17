@@ -1,19 +1,44 @@
-{% extends "layout/list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+
 {% set title = "RegistryChecks" %}
 {% block page_title %} RegistryChecks {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} RegistryChecks List {% endblock menu_l2 %}
 
 
-{% block download_links %}
-    {{ super() }}
-    {% if download_url %}
-    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-        <i class="fas fa-download"> Download (Excel)</i>
-    </a>
-    {% endif %}
-{% endblock download_links %}
+
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.SystemGroup) }}
+                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.Location) }}
+                            {{ render_check_field_sm2(form.InvertLocation) }}
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_submit_field(form.search) }}
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Download:</strong>
+                            {{ render_submit_field(form.excel) }}
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
 
 {% block datatable %}
 {{ super() }}

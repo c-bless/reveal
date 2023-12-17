@@ -23,6 +23,20 @@ def get_direct_domainuser_assignments() -> list[tuple]:
     return result
 
 
+def get_autologon_admin(host_filter=[]):
+    result = []
+    host_filter.append(Host.AutoAdminLogon == True)
+    autologon_hosts = Host.query.filter(*host_filter).all()
+    for h in autologon_hosts:
+        defaultUser = h.DefaultUserName
+        defaultDomain = h.DefaultDomain
+        admins = Group.query.filter(and_(Group.SID == SID_LOCAL_ADMIN_GROUP, Group.Host_id == h.id)).first()
+        for m in admins.Members:
+            if defaultDomain == m.Domain and defaultUser == m.Name:
+                result.append(h)
+    return result
+
+
 def find_hosts_by_autologon_admin() -> list[Host]:
     result = []
     autologon_hosts = Host.query.filter(Host.AutoAdminLogon == 1).all()

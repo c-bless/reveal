@@ -4,6 +4,7 @@ from sqlalchemy import and_
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
 from systemdb.core.models.sysinfo import RegistryCheck
+from systemdb.core.models.sysinfo import Host
 
 
 def find_uqsp() -> list[Service]:
@@ -33,67 +34,67 @@ def find_modifiable_services() -> list[ServiceACL]:
     return acls
 
 
-def find_stickykeys_enabled() -> list[RegistryCheck]:
+def find_stickykeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(
         and_(
             RegistryCheck.Name == "HKCU:\\Control Panel\\Accessibility\\StickyKeys\\",
             RegistryCheck.Key == "Flags",
             RegistryCheck.CurrentValue != "506"
         )
-    ).all()
+    ).join(Host).filter(*host_filter).all()
     return checks
 
 
-def find_togglekeys_enabled() -> list[RegistryCheck]:
+def find_togglekeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(
         and_(
             RegistryCheck.Path == "HKCU:\\Control Panel\\Accessibility\\ToggleKeys\\",
             RegistryCheck.Key == "Flags",
             RegistryCheck.CurrentValue != "58"
         )
-    ).all()
+    ).join(Host).filter(*host_filter).all()
     return checks
 
 
-def find_filterkeys_enabled() -> list[RegistryCheck]:
+def find_filterkeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(
         and_(
             RegistryCheck.Path == "HKCU:\\Control Panel\\Accessibility\\Keyboard Response\\",
             RegistryCheck.Key == "Flags",
             RegistryCheck.CurrentValue != "122"
         )
-    ).all()
+    ).join(Host).filter(*host_filter).all()
     return checks
 
 
-def find_mousekeys_enabled() -> list[RegistryCheck]:
+def find_mousekeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(
         and_(
             RegistryCheck.Path == "HKCU:\\Control Panel\\Accessibility\\MouseKeys\\",
             RegistryCheck.Key == "Flags",
             RegistryCheck.CurrentValue != "59"
         )
-    ).all()
+    ).join(Host).filter(*host_filter).all()
     return checks
 
 
-def find_windowskeys_enabled() -> list[RegistryCheck]:
+def find_windowskeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(
         and_(
             RegistryCheck.Path == "HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\",
             RegistryCheck.Key == "NoWinKeys",
             RegistryCheck.CurrentValue != "0x1"
         )
-    ).all()
+    ).join(Host).filter(*host_filter).all()
     return checks
 
 
-def find_hotkeys_enabled_dict() -> dict[str: RegistryCheck]:
-    sticky_keys = find_stickykeys_enabled()
-    toggle_keys = find_togglekeys_enabled()
-    filter_keys = find_filterkeys_enabled()
-    windows_keys = find_windowskeys_enabled()
-    mouse_keys = find_mousekeys_enabled()
+def find_hotkeys_enabled_dict(host_filter=[]) -> dict[str: RegistryCheck]:
+    sticky_keys = find_stickykeys_enabled(host_filter=host_filter)
+    toggle_keys = find_togglekeys_enabled(host_filter=host_filter)
+    filter_keys = find_filterkeys_enabled(host_filter=host_filter)
+    windows_keys = find_windowskeys_enabled(host_filter=host_filter)
+    mouse_keys = find_mousekeys_enabled(host_filter=host_filter)
 
     result = {
         "StickyKeys enabled": sticky_keys,
@@ -106,12 +107,12 @@ def find_hotkeys_enabled_dict() -> dict[str: RegistryCheck]:
     return result
 
 
-def find_hotkeys_enabled_list() -> list[RegistryCheck]:
-    sticky_keys = find_stickykeys_enabled()
-    toggle_keys = find_togglekeys_enabled()
-    filter_keys = find_filterkeys_enabled()
-    windows_keys = find_windowskeys_enabled()
-    mouse_keys = find_mousekeys_enabled()
+def find_hotkeys_enabled_list(host_filter=[]) -> list[RegistryCheck]:
+    sticky_keys = find_stickykeys_enabled(host_filter=host_filter)
+    toggle_keys = find_togglekeys_enabled(host_filter=host_filter)
+    filter_keys = find_filterkeys_enabled(host_filter=host_filter)
+    windows_keys = find_windowskeys_enabled(host_filter=host_filter)
+    mouse_keys = find_mousekeys_enabled(host_filter=host_filter)
 
     result = []
     result.extend(sticky_keys)
