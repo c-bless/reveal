@@ -46,9 +46,26 @@ def find_hosts_where_domadm_is_localadmin() -> list[Host]:
     return Host.query.filter(Host.id.in_(host_ids)).all()
 
 
+def find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter) -> list[Host]:
+    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
+    host_ids = []
+    for g in groups:
+        for m in g.Members:
+            if m.SID.endswith("-512"):
+                host_ids.append(g.Host_id)
+    host_filter.append(Host.id.in_(host_ids))
+    return Host.query.filter(*host_filter).all()
+
+
 def find_groups_where_domadm_is_localadmin() -> list[Group]:
     groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).\
         join(GroupMember).filter(GroupMember.SID.endswith("-512")).all()
+    return groups
+
+
+def find_groups_where_domadm_is_localadmin_with_host_filter(host_filter) -> list[Group]:
+    groups = Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).\
+        join(GroupMember).filter(GroupMember.SID.endswith("-512")).join(Host).filter(*host_filter).all()
     return groups
 
 
