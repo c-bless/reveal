@@ -1,5 +1,5 @@
 import datetime
-from flask import render_template, Response, url_for
+from flask import render_template, Response, url_for, request
 from flask_login import login_required
 
 
@@ -11,6 +11,7 @@ from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.export.excel.eol import generate_eol_excel_brief
 from systemdb.core.export.excel.eol import generate_eol_excel_full
+from systemdb.webapp.sysinfo.forms.report.UpdateReports import EOLReportForm
 
 from systemdb.core.reports import ReportInfo
 
@@ -70,30 +71,48 @@ class ReportLastUpdate(ReportInfo):
 # List OS and matching hosts that reached the end of life
 ####################################################################
 
-@sysinfo_bp.route('/hosts/report/eol/', methods=['GET'])
+@sysinfo_bp.route('/hosts/report/eol/', methods=['GET', 'POST'])
 @login_required
 def hosts_report_eol():
-    eol_matches = get_EoLInfo()
-    return render_template('sysinfo/reports/eol_list.html', eol_matches=eol_matches)
+    host_filter = []
 
-@sysinfo_bp.route('/hosts/report/eol/excel/brief', methods=['GET'])
-@login_required
-def hosts_report_eol_excel_brief():
-    eol_matches = get_EoLInfo()
-    output = generate_eol_excel_brief(eol_matches=eol_matches)
-    return Response(output, mimetype="text/docx",
-                    headers={"Content-disposition": "attachment; filename=eol-systems-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    form = EOLReportForm()
 
-@sysinfo_bp.route('/hosts/report/eol/excel/full', methods=['GET'])
-@login_required
-def hosts_report_eol_excel_full():
-    eol_matches = get_EoLInfo()
-    output = generate_eol_excel_full(eol_matches=eol_matches)
-    return Response(output, mimetype="text/docx",
-                    headers={"Content-disposition": "attachment; filename=eol-systems-full.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
 
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            eol_matches = get_EoLInfo(host_filter=host_filter)
+
+            if 'brief' in request.form:
+                output = generate_eol_excel_brief(eol_matches=eol_matches)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename=eol-systems-brief.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'full' in request.form:
+                output = generate_eol_excel_full(eol_matches=eol_matches)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename=eol-systems-full.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        eol_matches = get_EoLInfo(host_filter=host_filter)
+    return render_template('sysinfo/reports/eol_list.html', eol_matches=eol_matches, form=form)
 
 
 class ReportEOL(ReportInfo):

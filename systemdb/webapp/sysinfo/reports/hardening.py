@@ -54,16 +54,6 @@ def report_hotkeys_enabled():
     return render_template('sysinfo/reports/registrycheck_hotkeys.html', hotkey_dict=hotkeys, form=form)
 
 
-@sysinfo_bp.route('/report/hotkeys/excel/', methods=['GET'])
-@login_required
-def report_hotkeys_enabled_download():
-    hotkeys = find_hotkeys_enabled_list()
-    output = generate_registrychecks_excel(hotkeys)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=missing-disabled-hostkeys.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
 class ReportHotkeysEnabled(ReportInfo):
 
     def __init__(self):

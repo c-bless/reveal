@@ -5,7 +5,7 @@ from systemdb.core.models.eol import EoL
 from systemdb.webapi.sysinfo.schemas.responses.eol import EoLMatchSchema
 
 
-def get_EoLInfo():
+def get_EoLInfo(host_filter=[]):
     eols = EoL.query.filter(EoL.EndOfService == True).all()
     eol_matches = []
     special_os_versions = ["Pro", "LTSC", "LTSB"]
@@ -23,7 +23,7 @@ def get_EoLInfo():
         if not in_list:
             for v in special_os_versions:
                 conditions = [Host.OSName.notilike(f'%{v}%')]
-            hosts = Host.query.filter(and_((Host.OSBuildNumber == e.Build), *conditions)).all()
+            hosts = Host.query.filter(and_((Host.OSBuildNumber == e.Build), *conditions, *host_filter)).all()
             eol_match.Hosts = hosts
 
         eol_matches.append(eol_match)
