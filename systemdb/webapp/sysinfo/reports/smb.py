@@ -17,8 +17,8 @@ from systemdb.webapp.sysinfo.forms.report.SMBv1Report import SMBv1ReportForm
 def hosts_report_smbv1():
     form = SMBv1ReportForm()
 
-    filter = []
-    filter.append(Host.SMBv1Enabled == True)
+    host_filter = []
+    host_filter.append(Host.SMBv1Enabled == True)
 
     if request.method == 'POST':
 
@@ -31,16 +31,16 @@ def hosts_report_smbv1():
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
-                    filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
                 else:
-                    filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
             if len(location) > 0:
                 if not invertLocation:
-                    filter.append(Host.Location.ilike("%" + location + "%"))
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
-                    filter.append(Host.Location.notilike("%" + location + "%"))
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
 
-            hosts = Host.query.filter(and_(*filter)).all()
+            hosts = Host.query.filter(and_(*host_filter)).all()
 
             if 'brief' in request.form:
                 output = generate_hosts_excel_brief(hosts)

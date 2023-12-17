@@ -2,11 +2,10 @@
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
-{% set title = "Hosts with WINLOGON" %}
-{% block page_title %} Hosts with WINLOGON {% endblock page_title %}
+{% set title = "Hosts" %}
+{% block page_title %} Hosts (last update report) {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} Hosts with WINLOGON List {% endblock menu_l2 %}
-
+{% block menu_l2 %} Host List {% endblock menu_l2 %}
 
 
 {% block searchform %}
@@ -17,6 +16,7 @@
                         <div class="col-sm-6">
                             {{ render_field_sm2(form.SystemGroup) }}
                             {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                            {{ render_field_sm2(form.Days) }}
                         </div>
                         <div class="col-sm-6">
                             {{ render_field_sm2(form.Location) }}
@@ -35,13 +35,13 @@
                             <strong>Download:</strong>
                             {{ render_submit_field(form.brief) }}
                             {{ render_submit_field(form.full) }}
-                            {{ render_submit_field(form.winlogon) }}
                         </div>
                     </div>
                 </div>
                 <!-- /.card-footer -->
     </form>
 {% endblock searchform %}
+
 
 {% block datatable %}
 {{ super() }}
@@ -53,28 +53,31 @@
                         aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="SystemGroup" width="15%">SystemGroup
+                        aria-label="Domain" width="15%">Domain
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Location" width="10%">Location
+                        aria-label="OSName" width="20%">OS Name
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Domain" width="5%">AutoAdminLogon
+                        aria-label="OSVersion">OS Version
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="OSName" width="5%">ForceAutoLogon
+                        aria-label="OSBuildNumber">OS BuildNumber
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User" width="15">DefaultDomain
+                        aria-label="HyperVisorPresent">HyperVisor Present
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User" width="15">DefaultUserName
+                        aria-label="LastUpdate">Last update
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User" width="15">DefaultPassword
+                        aria-label="SystemGroup">SystemGroup
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Details" width="5%">Details
+                        aria-label="Location">Location
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Details">Details
                     </th>
                 </tr>
                 </thead>
@@ -83,13 +86,14 @@
                     {% for h in hosts %}
                       <tr>
                         <td> {{ h.Hostname }} </td>
+                        <td> {{ h.Domain }} </td>
+                        <td> {{ h.OSName }} </td>
+                        <td> {{ h.OSVersion }} </td>
+                        <td> {{ h.OSBuildNumber }} </td>
+                        <td> {{ h.HyperVisorPresent }} </td>
+                        <td> {% if h.LastUpdate %} {{ h.LastUpdate.strftime('%d-%m-%Y')}} {% endif %}</td>
                         <td> {{ h.SystemGroup }} </td>
                         <td> {{ h.Location }} </td>
-                        <td> {{ h.AutoAdminLogon }} </td>
-                        <td> {{ h.ForceAutoLogon }} </td>
-                        <td> {{ h.DefaultDomain }} </td>
-                        <td> {{ h.DefaultUserName }} </td>
-                        <td> {{ h.DefaultPassword }} </td>
                         <td class="actions">
                             <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
                                 <i class="fa fa-eye"></i> View
@@ -99,7 +103,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="9">No hosts found!</td>
+                        <td colspan="10">No hosts found!</td>
                     </tr>
                 {% endif %}
             </tbody>
