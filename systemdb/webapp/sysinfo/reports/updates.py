@@ -12,46 +12,63 @@ from systemdb.core.export.excel.hosts import generate_hosts_excel_brief
 from systemdb.core.export.excel.eol import generate_eol_excel_brief
 from systemdb.core.export.excel.eol import generate_eol_excel_full
 from systemdb.webapp.sysinfo.forms.report.UpdateReports import EOLReportForm
+from systemdb.webapp.sysinfo.forms.report.UpdateReports import LastUpdateReportForm
 
 from systemdb.core.reports import ReportInfo
 
 ####################################################################
 # Hosts where last update has been installed for more that xxx days
 ####################################################################
-@sysinfo_bp.route('/report/lastupdate/<int:days>', methods=['GET'])
+@sysinfo_bp.route('/report/lastupdate/', methods=['GET', 'POST'])
 @login_required
-def hosts_report_lastupdate(days):
-    now = datetime.datetime.now()
-    delta = now - datetime.timedelta(days=days)
-    hosts = Host.query.filter(Host.LastUpdate <= delta).all()
-    return render_template('sysinfo/host/host_list.html', hosts=hosts,
-                           download_brief_url=url_for("sysinfo.hosts_report_lastupdate_excel_brief", days=days),
-                           download_url=url_for("sysinfo.hosts_report_lastupdate_excel_full", days=days))
+def hosts_report_lastupdate():
 
+    host_filter = []
 
-@sysinfo_bp.route('/report/lastupdate/<int:days>/excel/full', methods=['GET'])
-@login_required
-def hosts_report_lastupdate_excel_full(days):
-    now = datetime.datetime.now()
-    delta = now - datetime.timedelta(days=days)
-    hosts = Host.query.filter(Host.LastUpdate <= delta).all()
-    output = generate_hosts_excel(hosts)
-    return Response(output, mimetype="text/docx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-lastupdate-full.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    form = LastUpdateReportForm()
 
+    if request.method == 'POST':
+        filters = []
+        if form.validate_on_submit():
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
+            nDays = form.Days.data
 
-@sysinfo_bp.route('/report/lastupdate/<int:days>/excel/brief', methods=['GET'])
-@login_required
-def hosts_report_lastupdate_excel_brief(days):
-    now = datetime.datetime.now()
-    delta = now - datetime.timedelta(days=days)
-    hosts = Host.query.filter(Host.LastUpdate <= delta).all()
-    output = generate_hosts_excel_brief(hosts)
-    return Response(output, mimetype="text/docx",
-                    headers={"Content-disposition": "attachment; filename=hosts-with-lastupdate-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
 
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            if nDays > 0:
+                now = datetime.datetime.now()
+                delta = now - datetime.timedelta(days=nDays)
+                host_filter.append(Host.LastUpdate <= delta)
+
+            hosts = Host.query.filter(*host_filter).all()
+
+            if 'brief' in request.form:
+                output = generate_hosts_excel_brief(hosts)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename=hosts-with-lastupdate-brief.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'full' in request.form:
+                output = generate_hosts_excel(hosts)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename=hosts-with-lastupdate-full.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        hosts = []
+
+    return render_template('sysinfo/reports/last_update_list.html', hosts=hosts, form=form)
 
 
 class ReportLastUpdate(ReportInfo):
@@ -62,8 +79,7 @@ class ReportLastUpdate(ReportInfo):
             category="Patch Management",
             tags=["Updates", "Missing Patches", "Windows Updates", "Patch Management"],
             description='Report all hosts where the last update was installed more that "n" days ago.',
-            views=[("180 days", url_for("sysinfo.hosts_report_lastupdate" , days=180) ),
-                  ("365 days", url_for("sysinfo.hosts_report_lastupdate" , days=365) )]
+            views=[("view", url_for("sysinfo.hosts_report_lastupdate" ) )]
         )
 
 
