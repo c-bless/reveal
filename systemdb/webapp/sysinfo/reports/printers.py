@@ -1,44 +1,57 @@
-from flask import render_template, Response, url_for
+from flask import render_template, Response, url_for, request
 from flask_login import login_required
 
 from systemdb.webapp.sysinfo import sysinfo_bp
+from systemdb.core.models.sysinfo import Host
 from systemdb.core.export.excel.printer import generate_printer_excel_brief
-from systemdb.core.export.excel.printer import generate_printer_excel_full
 from systemdb.webapi.querries.printers import get_hosts_by_printers, FILE_PRINTER_LIST
 from systemdb.core.reports import ReportInfo
+from systemdb.webapp.sysinfo.forms.report.PrinterReport import FilePrinterReportForm
+
 
 ####################################################################
 # List printers and corresponding hosts
 ####################################################################
-
-@sysinfo_bp.route('/report/filerprinter/', methods=['GET'])
+@sysinfo_bp.route('/report/filerprinter/', methods=['GET', 'POST'])
 @login_required
 def hosts_report_fileprinter():
-    filters = FILE_PRINTER_LIST
-    printer_matches = get_hosts_by_printers(filters=filters)
-    return render_template('sysinfo/reports/printer_hosts_list.html', printer_matches=printer_matches)
+    printer_filter = FILE_PRINTER_LIST
+    host_filter = []
 
+    form = FilePrinterReportForm()
 
-@sysinfo_bp.route('/report/filerprinter/excel/brief', methods=['GET'])
-@login_required
-def hosts_report_filerprinter_excel_brief():
-    filters = FILE_PRINTER_LIST
-    printer_matches = get_hosts_by_printers(filters=filters)
-    output = generate_printer_excel_brief(printer_matches=printer_matches)
-    return Response(output, mimetype="text/docx",
-                    headers={"Content-disposition": "attachment; filename=printer-hosts-matches-brief.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    if request.method == 'POST':
 
+        if form.validate_on_submit():
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
 
-@sysinfo_bp.route('/report/filerprinter/excel/full', methods=['GET'])
-@login_required
-def hosts_report_filerprinter_excel_full():
-    filters = FILE_PRINTER_LIST
-    printer_matches = get_hosts_by_printers(filters=filters)
-    output = generate_printer_excel_full(printer_matches=printer_matches)
-    return Response(output, mimetype="text/docx",
-                    headers={"Content-disposition": "attachment; filename=printer-hosts-matches-full.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            printer_matches = get_hosts_by_printers(printer_filter=printer_filter, host_filter=host_filter)
+
+            if 'excel' in request.form:
+                output = generate_printer_excel_brief(printer_matches=printer_matches)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename=printer-hosts-matches-brief.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    else:
+        printer_matches = get_hosts_by_printers(printer_filter=printer_filter, host_filter=host_filter)
+    return render_template('sysinfo/reports/printer_hosts_list.html', printer_matches=printer_matches, form=form)
+
 
 
 class ReportFilePrinterInstalled(ReportInfo):
