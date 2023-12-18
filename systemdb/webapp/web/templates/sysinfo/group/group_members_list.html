@@ -1,32 +1,39 @@
-
-{% extends "layout/list_layout.html" %}
-{% import "_tablehelper.html" as helper %}
-
-{% set title = "Local group members" %}
-
-{% block page_title %} Local Group members{% if report_title %} ({{ report_title }}) {% else %}{% endif %} {% endblock page_title %}
-{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} Local Group members {% endblock menu_l2 %}
+{% extends "layout/search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
-{% block download_links %}
-    {{ super() }}
-    {% if download_brief_url %}
-    <a href="{{ download_brief_url }}" class="btn btn-block btn-secondary btn-sm">
-        <i class="fas fa-download"> Full Hosts (Excel)</i>
-    </a>
-    {% endif %}
-    {% if download_url %}
-    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-        <i class="fas fa-download"> Brief Hosts (Excel)</i>
-    </a>
-    {% endif %}
-    {% if download_membership_url %}
-    <a href="{{ download_membership_url }}" class="btn btn-block btn-secondary btn-sm">
-        <i class="fas fa-download"> Memberships (Excel)</i>
-    </a>
-    {% endif %}
-{% endblock download_links %}
+{% block searchform %}
+    <form class="form-horizontal" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.SystemGroup) }}
+                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+
+                            {{ render_field_sm2(form.Domain) }}
+                            {{ render_check_field_sm2(form.InvertDomain) }}
+
+                            {{ render_field_sm2(form.Hostname) }}
+                            {{ render_check_field_sm2(form.InvertHostname) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.Location) }}
+                            {{ render_check_field_sm2(form.InvertLocation) }}
+
+                            {{ render_field_sm2(form.Username) }}
+                            {{ render_check_field_sm2(form.InvertUsername) }}
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {{ render_submit_field(form.search) }}
+                    {{ render_submit_field(form.excel) }}
+                </div>
+                <!-- /.card-footer -->
+    </form>
+{% endblock searchform %}
 
 {% block datatable %}
 {{ super() }}

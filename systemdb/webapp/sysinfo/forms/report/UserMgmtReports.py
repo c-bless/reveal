@@ -51,3 +51,15 @@ class LocalAdminSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Download Excel (Full)')
+
+
+class LocalSIMATICSearchForm(FlaskForm):
+    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
+    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")])
+
+    InvertSystemGroup = BooleanField('Invert SystemGroup')
+    InvertLocation = BooleanField('Invert Location')
+
+
+    search = SubmitField('Search')
+    excel = SubmitField('Download Excel (Full)')

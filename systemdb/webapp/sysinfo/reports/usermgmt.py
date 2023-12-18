@@ -21,9 +21,10 @@ from systemdb.core.export.excel.usermgmt import generate_group_members_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.reports import ReportInfo
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import HostByLocalUserSearchForm
-from systemdb.webapp.sysinfo.forms.groups import LocalGroupMemberSearchForm
+from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalAdminSearchForm
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import DirectAssignmentReportForm
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalAdminSearchForm
+from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalSIMATICSearchForm
 
 ####################################################################
 # Hosts with Domain Admins in local admin group
@@ -207,17 +208,6 @@ def local_admin_assignment_list():
                            report_name="Local Admins")
 
 
-@sysinfo_bp.route('/report/usermgmt/localadmins/excel/full', methods=['GET'])
-@login_required
-def local_admin_assignment_excel_full():
-    groups = find_group_local_admins()
-    output = generate_group_members_excel(groups)
-
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_local_admins.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
 class ReportLocalAdmins(ReportInfo):
 
     def __init__(self):
@@ -233,24 +223,42 @@ class ReportLocalAdmins(ReportInfo):
 ####################################################################
 # Members in local SIMATIC groups
 ####################################################################
-
-@sysinfo_bp.route('/reports/usermgmt/SIMATIC/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/SIMATIC/', methods=['GET', 'POST'])
 @login_required
 def local_SIMATIC_users_list():
-    groups = find_SIMATIC_groups()
-    return render_template('sysinfo/group/group_members_list.html', groups=groups,
-                           download_membership_url=url_for("sysinfo.local_SIMATIC_users_excel_full"))
+    form = LocalSIMATICSearchForm()
 
+    host_filter = []
 
-@sysinfo_bp.route('/report/usermgmt/SIMATIC/excel/full', methods=['GET'])
-@login_required
-def local_SIMATIC_users_excel_full():
-    groups = find_SIMATIC_groups()
-    output = generate_group_members_excel(groups)
+    if request.method == 'POST':
+        systemgroup = form.SystemGroup.data
+        location = form.Location.data
 
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_SIMATIC.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        invertSystemgroup = form.InvertSystemGroup.data
+        invertLocation = form.InvertLocation.data
+
+        if len(systemgroup) > 0:
+            if not invertSystemgroup:
+                host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+            else:
+                host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+        if len(location) > 0:
+            if not invertLocation:
+                host_filter.append(Host.Location.ilike("%" + location + "%"))
+            else:
+                host_filter.append(Host.Location.notilike("%" + location + "%"))
+        groups = find_SIMATIC_groups(host_filter=host_filter)
+
+        if 'excel' in request.form:
+            output = generate_group_members_excel(groups)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=groupmembers_SIMATIC.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        groups = find_SIMATIC_groups(host_filter=host_filter)
+
+    return render_template('sysinfo/reports/group_members_list.html', groups=groups, form=form,
+                           report_name="List members of SIMATIC* groups")
 
 
 class ReportSIMATICUsers(ReportInfo):

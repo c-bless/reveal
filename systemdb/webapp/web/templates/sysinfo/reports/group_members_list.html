@@ -11,18 +11,18 @@
                             {{ render_field_sm2(form.SystemGroup) }}
                             {{ render_check_field_sm2(form.InvertSystemGroup) }}
 
-                            {{ render_field_sm2(form.Domain) }}
-                            {{ render_check_field_sm2(form.InvertDomain) }}
+                            {% if form.Domain %} {{ render_field_sm2(form.Domain) }} {% endif %}
+                            {% if form.InvertDomain %} {{ render_check_field_sm2(form.InvertDomain) }} {% endif %}
 
-                            {{ render_field_sm2(form.Hostname) }}
-                            {{ render_check_field_sm2(form.InvertHostname) }}
+                            {% if form.Hostname %} {{ render_field_sm2(form.Hostname) }} {% endif %}
+                            {% if form.InvertHostname %} {{ render_check_field_sm2(form.InvertHostname) }} {% endif %}
                         </div>
                         <div class="col-sm-6">
                             {{ render_field_sm2(form.Location) }}
                             {{ render_check_field_sm2(form.InvertLocation) }}
 
-                            {{ render_field_sm2(form.Username) }}
-                            {{ render_check_field_sm2(form.InvertUsername) }}
+                            {% if form.Username %}{{ render_field_sm2(form.Username) }} {% endif %}
+                            {% if form.InvertUsername %}{{ render_check_field_sm2(form.InvertUsername) }} {% endif %}
                         </div>
                     </div>
                 </div>

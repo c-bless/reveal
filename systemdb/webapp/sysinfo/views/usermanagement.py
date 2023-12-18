@@ -126,12 +126,11 @@ def user_search_list():
 
             users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
 
-            if 'download' in request.form:
+            if 'excel' in request.form:
                 output = generate_localuser_excel(users=users)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=local-users.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-
     else:
         users = []
 
@@ -200,6 +199,6 @@ def localadmin_search_list():
     else:
         groups = find_group_local_admins(user_filter=user_filter, host_filter=host_filter)
 
-    return render_template('sysinfo/group/local_admin_list.html',form=form, g=members,
+    return render_template('sysinfo/group/group_members_list.html',form=form, groups=groups,
                            report_name="Local Admins")
 
