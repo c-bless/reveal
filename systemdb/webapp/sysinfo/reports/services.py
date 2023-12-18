@@ -11,9 +11,11 @@ from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
 from systemdb.webapp.sysinfo.forms.report.ServiceReports import ServiceAclSearchForm
-from systemdb.webapp.sysinfo.forms.services import ServiceUserContextSearchForm
+from systemdb.webapp.sysinfo.forms.report.ServiceReports import ServiceUserContextSearchForm
+from systemdb.webapp.sysinfo.forms.report.ServiceReports import ModifiableServicesReportForm
 from systemdb.core.querries.hardening import find_modifiable_services
 from systemdb.core.querries.hardening import find_serviceACL_by_filter
+from systemdb.core.querries.hardening import find_service_by_filter
 from systemdb.core.querries.hardening import find_uqsp
 from systemdb.webapp.sysinfo.forms.report.ServiceReports import UQSPReportForm
 from systemdb.core.reports import ReportInfo
@@ -156,32 +158,53 @@ class ReportServiceByPermission(ReportInfo):
 @login_required
 def hosts_report_services_by_usercontext():
     form = ServiceUserContextSearchForm()
-
+    host_filter = []
+    service_filter = []
     if request.method == 'POST':
         if form.validate_on_submit():
-            startname = form.Startname.data
-            invert = form.Invert.data
-            if not invert:
-                services = Service.query.filter(Service.StartName.ilike("%" + startname + "%")).all()
-            else:
-                services = Service.query.filter(Service.StartName.notilike("%" + startname + "%")).all()
 
-            if 'download' in request.form:
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
+
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            startname = form.Startname.data
+            invertStartname = form.InvertStartname.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            if not invertStartname:
+                service_filter.append(Service.StartName.ilike("%" + startname + "%"))
+            else:
+                service_filter.append(Service.StartName.notilike("%" + startname + "%"))
+
+            services = find_service_by_filter(service_filter=service_filter, host_filter=host_filter)
+
+            if 'excel' in request.form:
                 output = generate_services_excel(services)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=services_by_usercontext_{0}.xlsx".format(startname),
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-            else:
-                return render_template('sysinfo/reports/service_startnamesearch_list.html',
-                                       form=form,
-                                       services=services)
+
         else:
-            print("Invalid input")
-            return render_template('sysinfo/reports/service_startnamesearch_list.html',
-                                   form=form)
+            services = []
     else:
-        return render_template('sysinfo/reports/service_startnamesearch_list.html',
-                               form=form)
+        services = []
+    return render_template('sysinfo/reports/service_startnamesearch_list.html',
+                           form=form,
+                           services=services,
+                           report_name="Service by user context (Startname)")
+
 
 class ReportServiceByUsercontext(ReportInfo):
 
@@ -195,15 +218,48 @@ class ReportServiceByUsercontext(ReportInfo):
         )
 
 
-
 ####################################################################
 # Services by ACL
 ####################################################################
-@sysinfo_bp.route('/report/services/modifiable/', methods=['GET'])
+@sysinfo_bp.route('/report/services/modifiable/', methods=['GET', 'POST'])
 @login_required
 def hosts_report_modifiable_services():
-    acls = find_modifiable_services()
-    return render_template('sysinfo/reports/modifiable_services.html', acls=acls)
+
+    form = ModifiableServicesReportForm()
+    host_filter = []
+    if request.method == 'POST':
+        if form.validate_on_submit():
+
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
+
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            acls = find_modifiable_services(host_filter=host_filter)
+
+            if 'excel' in request.form:
+                output = generate_services_acl_excel(acls=acls)
+                return Response(output, mimetype="text/xlsx",
+                                headers={"Content-disposition": "attachment; filename=modifiable-services.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        else:
+            acls = []
+    else:
+        acls =  find_modifiable_services()
+    return render_template('sysinfo/reports/modifiable_services.html', acls=acls, form=form,
+                               report_name="Modifiable services")
 
 
 @sysinfo_bp.route('/report/services/modifiable/excel', methods=['GET'])

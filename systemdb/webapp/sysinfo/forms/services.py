@@ -11,17 +11,6 @@ from systemdb.core.regex import RE_SYSINFO_SERVICE_STARTED
 from systemdb.core.regex import RE_SYSINFO_SERVICE_STARTMODE
 
 
-class ServiceUserContextSearchForm(FlaskForm):
-    Startname = StringField('Startname',
-                            validators=[
-                                DataRequired(message="Data required"),
-                                Regexp(regex=RE_SYSINFO_SERVICE_STARTNAME, message="Invalid input") ]
-                       )
-    Invert = BooleanField('Invert Startname')
-    search = SubmitField('Search')
-    download = SubmitField('Download')
-
-
 
 class ServiceSearchForm(FlaskForm):
     Name = StringField('Name', validators=[Regexp(regex=RE_SYSINFO_SERVICE_NAME, message="Invalid input")])

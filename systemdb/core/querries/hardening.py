@@ -14,7 +14,7 @@ def find_uqsp(host_filter=[]) -> list[Service]:
     return services
 
 
-def find_modifiable_services() -> list[ServiceACL]:
+def find_modifiable_services(host_filter=[])  -> list[ServiceACL]:
     acls = ServiceACL.query.filter(
         or_(
             and_(
@@ -30,13 +30,19 @@ def find_modifiable_services() -> list[ServiceACL]:
                 ServiceACL.AccountName.notilike("%Administra%"),
             )
         )
-    ).all()
+    ).join(Service).join(Host).filter(and_(*host_filter)).all()
     return acls
 
 
 def find_serviceACL_by_filter(service_filter=[], host_filter=[]) -> list[ServiceACL]:
     acls = ServiceACL.query.filter(and_(*service_filter)).join(Service).join(Host).filter(and_(*host_filter)).all()
     return acls
+
+
+def find_service_by_filter(service_filter=[], host_filter=[]) -> list[Service]:
+    services = Service.query.filter(and_(*service_filter)).join(Host).filter(and_(*host_filter)).all()
+    return services
+
 
 def find_stickykeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(
