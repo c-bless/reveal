@@ -60,7 +60,6 @@ def hosts_report_wsh():
                            report_name="WSH Enabled")
 
 
-
 class ReportWSHEnabled(ReportInfo):
 
     def __init__(self):

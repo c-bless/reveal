@@ -54,8 +54,9 @@ def hosts_report_smbv1():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
     else:
-        hosts = Host.query.filter(and_(*filter)).all()
-    return render_template('sysinfo/reports/host_report_list.html', hosts=hosts, form=form)
+        hosts = Host.query.filter(and_(*host_filter)).all()
+    return render_template('sysinfo/reports/host_report_list.html', hosts=hosts, form=form,
+                           report_name="SMBv1 Enabled")
 
 
 

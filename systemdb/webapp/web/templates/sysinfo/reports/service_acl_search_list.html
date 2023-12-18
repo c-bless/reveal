@@ -1,34 +1,40 @@
-{% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field, render_check_field, render_submit_field %}
-{% set title = "Service ACLs" %}
-{% block page_title %} Service ACLs {% endblock page_title %}
-{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} Service ACL List {% endblock menu_l2 %}
-
-{% block download_links %}
-    {{ super() }}
-
-{% endblock download_links %}
-
+{% extends "layout/report_search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 {% block searchform %}
     <form class="form-horizontal" method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
-                    {{ render_field(form.User) }}
-                    {{ render_check_field(form.InvertUser) }}
-                    {{ render_field(form.Permission) }}
-                    {{ render_check_field(form.InvertPermission) }}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.User) }}
+                            {{ render_check_field_sm2(form.InvertUser) }}
+                            {{ render_field_sm2(form.Permission) }}
+                            {{ render_check_field_sm2(form.InvertPermission) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ render_field_sm2(form.SystemGroup) }}
+                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                            {{ render_field_sm2(form.Location) }}
+                            {{ render_check_field_sm2(form.InvertLocation) }}
+                        </div>
+                    </div>
 
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.download) }}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ render_submit_field(form.search) }}
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Download:</strong>
+                            {{ render_submit_field(form.excel) }}
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-footer -->
     </form>
-
 {% endblock searchform %}
 
 {% block datatable %}
@@ -83,7 +89,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="8">No service ACLs found!</td>
+                    <td colspan="8">No service ACLs found or search not started yet!</td>
                 </tr>
             {% endif %}
         </tbody>

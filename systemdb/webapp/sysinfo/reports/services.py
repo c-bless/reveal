@@ -7,35 +7,58 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.export.excel.services import generate_services_excel
 from systemdb.core.export.excel.services import generate_services_acl_excel
 
+from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Service
 from systemdb.core.models.sysinfo import ServiceACL
-from systemdb.webapp.sysinfo.forms.services import ServiceAclSearchForm
+from systemdb.webapp.sysinfo.forms.report.ServiceReports import ServiceAclSearchForm
 from systemdb.webapp.sysinfo.forms.services import ServiceUserContextSearchForm
 from systemdb.core.querries.hardening import find_modifiable_services
+from systemdb.core.querries.hardening import find_serviceACL_by_filter
 from systemdb.core.querries.hardening import find_uqsp
-
+from systemdb.webapp.sysinfo.forms.report.ServiceReports import UQSPReportForm
 from systemdb.core.reports import ReportInfo
 ####################################################################
 # Hosts with UQSP vulnerabilities
 ####################################################################
-@sysinfo_bp.route('/report/services/uqsp/', methods=['GET'])
+@sysinfo_bp.route('/report/services/uqsp/', methods=['GET', 'POST'])
 @login_required
 def hosts_report_services_uqsp():
-    services = find_uqsp()
+    form = UQSPReportForm()
 
-    return render_template('sysinfo/service/service_list.html', services=services,
-                           download_url=url_for("sysinfo.hosts_report_services_uqsp_excel"))
+    host_filter = []
 
+    if request.method == 'POST':
 
-@sysinfo_bp.route('/report/services/uqsp/excel', methods=['GET'])
-@login_required
-def hosts_report_services_uqsp_excel():
-    services = find_uqsp()
+        if form.validate_on_submit():
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
 
-    output = generate_services_excel(services=services)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=uqsp.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            services = find_uqsp(host_filter=host_filter)
+
+            if 'excel' in request.form:
+                output = generate_services_excel(services=services)
+                return Response(output, mimetype="text/xlsx",
+                                headers={"Content-disposition": "attachment; filename=uqsp.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    else:
+        services = []
+    return render_template('sysinfo/reports/report_service_list.html', services=services, form=form,
+                           report_name="Unquoted Service Pathes (UQSP)")
 
 
 
@@ -58,39 +81,60 @@ class ReportUQSP(ReportInfo):
 @login_required
 def hosts_report_services_by_acl():
     form = ServiceAclSearchForm()
-
+    host_filter = []
+    service_filter = []
     if request.method == 'POST':
         if form.validate_on_submit():
             user = form.User.data
             invert_user = form.InvertUser.data
             permission = form.Permission.data
             invert_permission = form.InvertPermission.data
-            filters = []
+
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
+
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
             if len(user) > 0:
                 if not invert_user:
-                    filters.append(ServiceACL.AccountName.ilike("%" + user + "%"))
+                    service_filter.append(ServiceACL.AccountName.ilike("%" + user + "%"))
                 else:
-                    filters.append(ServiceACL.AccountName.notilike("%" + user + "%"))
+                    service_filter.append(ServiceACL.AccountName.notilike("%" + user + "%"))
             if len(permission) > 0:
                 if not invert_permission:
-                    filters.append(ServiceACL.AccessRight.ilike("%" + permission + "%"))
+                    service_filter.append(ServiceACL.AccessRight.ilike("%" + permission + "%"))
                 else:
-                    filters.append(ServiceACL.AccessRight.notilike("%" + permission + "%"))
+                    service_filter.append(ServiceACL.AccessRight.notilike("%" + permission + "%"))
 
-            acls = ServiceACL.query.filter(*filters).all()
+            acls = find_serviceACL_by_filter(service_filter=service_filter, host_filter=host_filter)
 
-            if 'download' in request.form:
+            if 'excel' in request.form:
                 output = generate_services_acl_excel(acls)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=service_by_acl.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-            return render_template('sysinfo/reports/service_acl_search_list.html', form=form, acls=acls)
+            return render_template('sysinfo/reports/service_acl_search_list.html', form=form, acls=acls,
+                               report_name="Service by ACL")
         else:
             print("Invalid input")
-            return render_template('sysinfo/reports/service_acl_search_list.html', form=form)
+            return render_template('sysinfo/reports/service_acl_search_list.html', form=form,
+                               report_name="Service by ACL")
     else:
-        return render_template('sysinfo/reports/service_acl_search_list.html', form=form)
+        return render_template('sysinfo/reports/service_acl_search_list.html', form=form,
+                               report_name="Service by ACL")
 
 
 class ReportServiceByPermission(ReportInfo):

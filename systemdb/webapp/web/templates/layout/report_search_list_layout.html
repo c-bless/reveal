@@ -11,6 +11,9 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 {% endblock stylesheets %}
 
+{% block page_title %} Report: {{ report_name }} {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Reports {% endblock menu_l2 %}
 
 {% block content %}
         <div class="row">

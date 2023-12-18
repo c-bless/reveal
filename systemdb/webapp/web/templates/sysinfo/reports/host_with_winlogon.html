@@ -1,13 +1,5 @@
-{% extends "layout/search_list_layout.html" %}
+{% extends "layout/report_search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
-
-
-{% set title = "Hosts with WINLOGON" %}
-{% block page_title %} Hosts with WINLOGON {% endblock page_title %}
-{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
-{% block menu_l2 %} Hosts with WINLOGON List {% endblock menu_l2 %}
-
-
 
 {% block searchform %}
     <form class="form-horizontal" method="post">

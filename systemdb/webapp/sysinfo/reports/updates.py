@@ -68,7 +68,8 @@ def hosts_report_lastupdate():
     else:
         hosts = []
 
-    return render_template('sysinfo/reports/last_update_list.html', hosts=hosts, form=form)
+    return render_template('sysinfo/reports/last_update_list.html', hosts=hosts, form=form,
+                           report_name='Last update (more than "n" days)')
 
 
 class ReportLastUpdate(ReportInfo):
@@ -128,7 +129,8 @@ def hosts_report_eol():
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
     else:
         eol_matches = get_EoLInfo(host_filter=host_filter)
-    return render_template('sysinfo/reports/eol_list.html', eol_matches=eol_matches, form=form)
+    return render_template('sysinfo/reports/eol_list.html', eol_matches=eol_matches, form=form,
+                           report_name="End-Of-Life - OS")
 
 
 class ReportEOL(ReportInfo):

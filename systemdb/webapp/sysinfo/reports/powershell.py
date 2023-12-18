@@ -9,6 +9,7 @@ from systemdb.core.reports import ReportInfo
 
 from systemdb.webapp.sysinfo.forms.report.PS2Report import PS2ReportForm
 
+
 ####################################################################
 # Hosts with PowerShell 2.0 installed
 ####################################################################
@@ -17,8 +18,8 @@ from systemdb.webapp.sysinfo.forms.report.PS2Report import PS2ReportForm
 def hosts_report_ps2():
     form = PS2ReportForm()
 
-    filter = []
-    filter.append(Host.PS2Installed == True)
+    host_filter = []
+    host_filter.append(Host.PS2Installed == True)
 
     if request.method == 'POST':
 
@@ -31,26 +32,28 @@ def hosts_report_ps2():
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
-                    filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
                 else:
-                    filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
             if len(location) > 0:
                 if not invertLocation:
-                    filter.append(Host.Location.ilike("%" + location + "%"))
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
-                    filter.append(Host.Location.notilike("%" + location + "%"))
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
 
-            hosts = Host.query.filter(and_(*filter)).all()
+            hosts = Host.query.filter(and_(*host_filter)).all()
 
             if 'excel' in request.form:
-                output = generate_ps2_installed(hosts)
+                output = generate_ps2_installed(hosts=hosts)
                 return Response(output, mimetype="text/docx",
                                 headers={"Content-disposition": "attachment; filename=hosts-with-ps2.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
     else:
-        hosts = Host.query.filter(and_(*filter)).all()
-    return render_template('sysinfo/reports/PS2_list.html', hosts=hosts, form=form)
+        hosts = Host.query.filter(and_(*host_filter)).all()
+    return render_template('sysinfo/reports/PS2_list.html', hosts=hosts, form=form,
+                           report_name="PowerShell 2.0 Enabled")
+
 
 class ReportPS2Istalled(ReportInfo):
 

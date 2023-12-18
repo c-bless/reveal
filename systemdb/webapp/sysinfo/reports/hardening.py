@@ -51,7 +51,8 @@ def report_hotkeys_enabled():
     else:
         hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
 
-    return render_template('sysinfo/reports/registrycheck_hotkeys.html', hotkey_dict=hotkeys, form=form)
+    return render_template('sysinfo/reports/registrycheck_hotkeys.html', hotkey_dict=hotkeys, form=form,
+                           report_name="Hotkeys not disabled")
 
 
 class ReportHotkeysEnabled(ReportInfo):

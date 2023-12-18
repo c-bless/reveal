@@ -7,10 +7,10 @@ from systemdb.core.models.sysinfo import RegistryCheck
 from systemdb.core.models.sysinfo import Host
 
 
-def find_uqsp() -> list[Service]:
+def find_uqsp(host_filter=[]) -> list[Service]:
     services = Service.query.filter(and_(Service.PathName.notlike('"%'),
                               Service.PathName.contains(" "),
-                              Service.PathName.notilike(r'C:\\Windows%'))).all()
+                              Service.PathName.notilike(r'C:\\Windows%'))).join(Host).filter(*host_filter).all()
     return services
 
 
@@ -33,6 +33,10 @@ def find_modifiable_services() -> list[ServiceACL]:
     ).all()
     return acls
 
+
+def find_serviceACL_by_filter(service_filter=[], host_filter=[]) -> list[ServiceACL]:
+    acls = ServiceACL.query.filter(and_(*service_filter)).join(Service).join(Host).filter(and_(*host_filter)).all()
+    return acls
 
 def find_stickykeys_enabled(host_filter=[]) -> list[RegistryCheck]:
     checks = RegistryCheck.query.filter(

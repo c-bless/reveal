@@ -61,7 +61,8 @@ def hosts_report_winlogon():
     else:
         hosts = Host.query.filter(*host_filter).all()
 
-    return render_template('sysinfo/reports/host_with_winlogon.html', hosts=hosts, form=form)
+    return render_template('sysinfo/reports/host_with_winlogon.html', hosts=hosts, form=form,
+                           report_name="Password in Winlogon")
 
 
 class ReportPWInWinlogon(ReportInfo):

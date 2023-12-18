@@ -1,5 +1,14 @@
+
 {% extends "layout/report_search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+
+{% import "_tablehelper.html" as helper %}
+
+
+{% block page_title %} Report: {{report_name }} {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Reports {% endblock menu_l2 %}
+
 
 
 {% block searchform %}
@@ -26,6 +35,7 @@
                         </div>
                         <div class="col-sm-6">
                             <strong>Download:</strong>
+                            {{ render_submit_field(form.word) }}
                             {{ render_submit_field(form.brief) }}
                             {{ render_submit_field(form.full) }}
                         </div>
@@ -34,7 +44,7 @@
                 <!-- /.card-footer -->
     </form>
 {% endblock searchform %}
-X
+
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
@@ -42,34 +52,47 @@ X
             <thead>
             <tr>
                 <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-sort="ascending" aria-label="Name" width="55%">OS
+                    aria-sort="ascending" aria-label="Name" width="15%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">Version
+                    aria-label="DisplayName" width="15%">Systemgroup
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">Build
+                    aria-label="StartMode" width="10%">Location
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartMode" width="15%">Host Count
+                    aria-label="StartName" width="20%">Group
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Started" width="15%">SID (Group)
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="PathName" width="25%">Members
                 </th>
             </tr>
             </thead>
             <tbody>
-            {% if eol_matches %}
-                {% for m in eol_matches %}
+            {% if groups %}
+                {% for g in groups %}
                   <tr>
-                    <td> {{ m.Eol.OS }} </td>
-                    <td> {{ m.Eol.Version }} </td>
-                    <td> {{ m.Eol.Build }} </td>
-                    <td> {{ m.Hosts | length }}</td>
+                    <td> {{ g.Host.Hostname }} </td>
+                    <td> {{ g.Host.Location }} </td>
+                    <td> {{ g.Host.SystemGroup }} </td>
+                    <td> {{ g.Name }} </td>
+                    <td> {{ g.SID }} </td>
+                    <td>
+                        {% for m in g.Members %}
+                          {{ m.Caption }} <br />
+                        {% endfor %}
+                    </td>
                   </tr>
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="4">No end of life systems found!</td>
+                    <td colspan="8">No groups found!</td>
                 </tr>
             {% endif %}
         </tbody>
     </table>
 {% endblock datatable %}
+

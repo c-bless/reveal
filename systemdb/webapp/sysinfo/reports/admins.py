@@ -75,8 +75,8 @@ def hosts_report_domainadmin():
     else:
         groups = find_groups_where_domadm_is_localadmin()
 
-    return render_template('sysinfo/group/group_members_list_search.html', groups=groups,
-                               report_title='"Local adminstrators" containing "domain adminstrators"',
+    return render_template('sysinfo/group/group_members_list_search_report.html', groups=groups,
+                               report_name="Domain Admins in local administrators group",
                                form=form)
 
 
@@ -140,7 +140,8 @@ def hosts_report_autologonadmin():
     else:
         hosts = get_autologon_admin()
 
-    return render_template('sysinfo/reports/host_report_list.html', hosts=hosts, form=form)
+    return render_template('sysinfo/reports/host_report_list.html', hosts=hosts, form=form,
+                           report_name="Autologon as admin")
 
 
 class ReportAutologonIsLocalAdmin(ReportInfo):

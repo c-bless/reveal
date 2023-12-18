@@ -50,7 +50,8 @@ def hosts_report_fileprinter():
 
     else:
         printer_matches = get_hosts_by_printers(printer_filter=printer_filter, host_filter=host_filter)
-    return render_template('sysinfo/reports/printer_hosts_list.html', printer_matches=printer_matches, form=form)
+    return render_template('sysinfo/reports/printer_hosts_list.html', printer_matches=printer_matches, form=form,
+                           report_name="File Printer Installed")
 
 
 
