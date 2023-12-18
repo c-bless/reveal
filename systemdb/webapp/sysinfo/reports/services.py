@@ -19,6 +19,8 @@ from systemdb.core.querries.hardening import find_service_by_filter
 from systemdb.core.querries.hardening import find_uqsp
 from systemdb.webapp.sysinfo.forms.report.ServiceReports import UQSPReportForm
 from systemdb.core.reports import ReportInfo
+
+
 ####################################################################
 # Hosts with UQSP vulnerabilities
 ####################################################################
@@ -261,16 +263,6 @@ def hosts_report_modifiable_services():
     return render_template('sysinfo/reports/modifiable_services.html', acls=acls, form=form,
                                report_name="Modifiable services")
 
-
-@sysinfo_bp.route('/report/services/modifiable/excel', methods=['GET'])
-@login_required
-def hosts_report_modifiable_services_excel():
-    acls = find_modifiable_services()
-
-    output = generate_services_acl_excel(acls=acls)
-    return Response(output, mimetype="text/xlsx",
-                    headers={"Content-disposition": "attachment; filename=modifiable-services.xlsx",
-                             "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 class ReportModifiableServices(ReportInfo):
 

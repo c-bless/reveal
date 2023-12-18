@@ -11,14 +11,19 @@ from systemdb.core.models.sysinfo import GroupMember
 from systemdb.core.models.sysinfo import Host
 
 
+def get_direct_domainuser_assignments(host_filter=[]) -> list[tuple]:
+    """
+    Returns a list of tuples with Host, Group and GroupMember objects.
 
-def get_direct_domainuser_assignments() -> list[tuple]:
+    :param host_filter: list of filter to apply to Host obeject in SQL query
+    :return: list of tuple (Host object, Group object, GroupMember object)
+    """
     result = []
-    groups = Group.query.all()
+    groups = Group.query.join(Host).filter(and_(*host_filter)).all()
     for g in groups:
         for m in g.Members:
             if (m.AccountType == "512") and (str(m.Domain).lower() !=  str(g.Host).lower()):
-                result.append((g.Host, g.Name, m.Caption))
+                result.append((g.Host, g, m))
 
     return result
 
@@ -26,7 +31,7 @@ def get_direct_domainuser_assignments() -> list[tuple]:
 def get_autologon_admin(host_filter=[]):
     result = []
     host_filter.append(Host.AutoAdminLogon == True)
-    autologon_hosts = Host.query.filter(*host_filter).all()
+    autologon_hosts = Host.query.filter(and_(*host_filter)).all()
     for h in autologon_hosts:
         defaultUser = h.DefaultUserName
         defaultDomain = h.DefaultDomain

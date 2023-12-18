@@ -2,7 +2,7 @@ from systemdb.webapi.extentions import ma
 from flask_marshmallow.fields import fields
 
 from systemdb.core.models.sysinfo import Host, NetIPAddress, Hotfix, User, Group, PSInstalledVersions, \
-    NetAdapter, DefenderSettings, Printer, ConfigCheck, Share, ShareACL, ShareACLNTFS
+    NetAdapter, DefenderSettings, Printer, ConfigCheck, Share, ShareACL, ShareACLNTFS, GroupMember
 
 
 class PSInstalledVersionsSchema(ma.SQLAlchemyAutoSchema):
@@ -86,6 +86,11 @@ class GroupNestedSchema(ma.SQLAlchemyAutoSchema):
         include_fk = False
         fields = ("id", "Caption", "Name", "SID")
 
+class GroupMemberNestedSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = GroupMember
+        include_fk = False
+        fields = ("id", "Caption", "Name", "SID", "Domain", "AccountType")
 
 class HostSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

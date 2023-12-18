@@ -20,6 +20,7 @@ from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.reports import ReportInfo
 from systemdb.webapp.sysinfo.forms.hosts import HostByLocalUserSearchForm
 from systemdb.webapp.sysinfo.forms.groups import LocalAdminSearchForm
+from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import DirectAssignmentReportForm
 
 
 ####################################################################
@@ -28,11 +29,44 @@ from systemdb.webapp.sysinfo.forms.groups import LocalAdminSearchForm
 
 
 
-@sysinfo_bp.route('/reports/usermgmt/assigment/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/assigment/', methods=['GET', 'POST'])
 @login_required
 def usermgmt_assignment_list():
-    members = get_direct_domainuser_assignments()
-    return render_template('sysinfo/reports/userassignment_list.html',members=members)
+    form = DirectAssignmentReportForm()
+    host_filter = []
+
+    if request.method == 'POST':
+
+        if form.validate_on_submit():
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
+
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            members = get_direct_domainuser_assignments(host_filter=host_filter)
+
+            if 'excel' in request.form:
+                output = generate_userassignment_excel(members)
+
+                return Response(output, mimetype="text/xlsx",
+                                headers={"Content-disposition": "attachment; filename=direct-assigned-domainusers.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        members = []
+    return render_template('sysinfo/reports/userassignment_list.html',members=members, form=form,
+                           report_name="Direct user assignments")
 
 
 @sysinfo_bp.route('/report/usermgmt/assignment/excel/full', methods=['GET'])
