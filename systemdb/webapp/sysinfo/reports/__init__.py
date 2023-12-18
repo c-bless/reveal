@@ -8,7 +8,6 @@ from systemdb.webapp.sysinfo.reports.admins import ReportAutologonIsLocalAdmin
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportDirectDomainUserAssignment
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportHostsByLocaluser
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportLocalAdmins
-from systemdb.webapp.sysinfo.reports.usermgmt import ReportHostsByLocalAdmin
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportSIMATICUsers
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportRDPUsers
 from systemdb.webapp.sysinfo.reports.usermgmt import ReportRemoteManagementUsers
@@ -39,7 +38,6 @@ def get_usermgmt_report_list():
     report_plugin_list.append(ReportAutologonIsLocalAdmin())
     report_plugin_list.append(ReportDirectDomainUserAssignment())
     report_plugin_list.append(ReportHostsByLocaluser())
-    report_plugin_list.append(ReportHostsByLocalAdmin())
     report_plugin_list.append(ReportLocalAdmins())
     report_plugin_list.append(ReportSIMATICUsers())
     report_plugin_list.append(ReportRDPUsers())

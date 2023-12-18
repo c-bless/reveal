@@ -8,10 +8,17 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.models.sysinfo import Group
+from systemdb.core.models.sysinfo import GroupMember
 from systemdb.core.models.sysinfo import User
 from systemdb.core.querries.usermgmt import find_groups_by_user_sid
 from systemdb.core.export.excel.usermgmt import generate_localuser_excel
 from systemdb.webapp.sysinfo.forms.users import LocalUserSearchForm
+
+from systemdb.webapp.sysinfo.forms.groups import LocalGroupMemberSearchForm
+from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
+from systemdb.core.querries.usermgmt import find_local_admins_group_member
+from systemdb.core.querries.usermgmt import find_group_local_admins
+from systemdb.core.export.excel.usermgmt import generate_group_members_excel
 
 
 @sysinfo_bp.route('/groups/<int:id>', methods=['GET'])
@@ -129,3 +136,70 @@ def user_search_list():
         users = []
 
     return render_template('sysinfo/user/user_search_list.html', form=form, users=users)
+
+
+
+
+#####################################################################################
+# Get local admins
+#####################################################################################
+@sysinfo_bp.route('/groups/localadmins/', methods=['GET','POST'])
+@login_required
+def localadmin_search_list():
+    form = LocalGroupMemberSearchForm()
+
+    host_filter = []
+    user_filter = []
+
+    if request.method == 'POST':
+        username = form.Username.data
+        domain = form.Domain.data
+        hostname = form.Hostname.data
+        invertUsername = form.InvertUsername.data
+        invertDomain = form.InvertDomain.data
+        invertHostname = form.InvertHostname.data
+
+        systemgroup = form.SystemGroup.data
+        location = form.Location.data
+
+        invertSystemgroup = form.InvertSystemGroup.data
+        invertLocation = form.InvertLocation.data
+
+        if len(systemgroup) > 0:
+            if not invertSystemgroup:
+                host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+            else:
+                host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+        if len(location) > 0:
+            if not invertLocation:
+                host_filter.append(Host.Location.ilike("%" + location + "%"))
+            else:
+                host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(hostname) > 0 :
+            if invertHostname == False:
+                host_filter.append(Host.Hostname.ilike("%"+hostname+"%"))
+            else:
+                host_filter.append(Host.Hostname.notilike("%"+hostname+"%"))
+        if len(domain) > 0 :
+            if invertDomain == False:
+                user_filter.append(GroupMember.Domain.ilike("%"+domain+"%"))
+            else:
+                user_filter.append(GroupMember.Domain.notilike("%"+domain+"%"))
+        if len(username) > 0:
+            if invertUsername == False:
+                user_filter.append(GroupMember.Name.ilike("%" + username + "%"))
+            else:
+                user_filter.append(GroupMember.Name.notilike("%" + username + "%"))
+        groups = find_group_local_admins(user_filter=user_filter, host_filter=host_filter)
+
+        if 'excel' in request.form:
+            output = generate_group_members_excel(groups=groups)
+            return Response(output, mimetype="text/xlsx",
+                        headers={"Content-disposition": "attachment; filename=groupmembers_local_admins.xlsx",
+                                 "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        groups = find_group_local_admins(user_filter=user_filter, host_filter=host_filter)
+
+    return render_template('sysinfo/group/local_admin_list.html',form=form, g=members,
+                           report_name="Local Admins")
+

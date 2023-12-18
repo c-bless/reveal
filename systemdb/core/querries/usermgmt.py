@@ -29,7 +29,6 @@ def get_direct_domainuser_assignments(host_filter=[]) -> list[tuple]:
     return result
 
 
-
 def find_hosts_by_local_user(username = "", host_filter=[]) -> list[Host]:
     user_filter = []
     user_filter.append(User.LocalAccount == True)
@@ -107,31 +106,51 @@ def find_groups_where_domadm_is_localadmin_with_host_filter(host_filter) -> list
     return groups
 
 
-def find_local_admins() -> list[Group]:
-    return Group.query.filter(Group.SID == SID_LOCAL_ADMIN_GROUP).all()
+def find_group_local_admins(user_filter=[], host_filter=[])  -> list[Group]:
+    group_filter = [Group.SID == SID_LOCAL_ADMIN_GROUP]
+    return find_group_by_filter(group_filter=group_filter, user_filter=user_filter, host_filter=host_filter)
 
 
-def find_rdp_groups() -> list[Group]:
-    return Group.query.filter(Group.SID == SID_BUILTIN_REMOTE_DESKTOP_USERS).all()
+def find_group_by_filter(group_filter=[], user_filter=[], host_filter=[]) -> list[Group]:
+    groups = Group.query.filter(and_(*group_filter)). \
+        join(GroupMember).filter(and_(*user_filter)). \
+        join(Host).filter(and_(*host_filter)).all()
+    return groups
 
 
-def find_SIMATIC_groups() -> list[Group]:
-    return Group.query.filter(Group.Name.ilike("%SIMATIC%")).all()
+def find_rdp_groups(host_filter=[]) -> list[Group]:
+    group_filter = [Group.SID == SID_BUILTIN_REMOTE_DESKTOP_USERS]
+    return find_group_by_filter(group_filter=group_filter, host_filter=host_filter)
 
 
-def find_RemoteMgmtUser_groups() -> list[Group]:
-    return Group.query.filter(Group.SID == SID_BUILTIN_REMOTE_MANAGEMENT_USERS).all()
+def find_SIMATIC_groups(host_filter=[])-> list[Group]:
+    group_filter = [Group.Name.ilike("%SIMATIC%")]
+    return find_group_by_filter(group_filter=group_filter, host_filter=host_filter)
 
 
-def find_DCOM_user_groups() -> list[Group]:
-    return Group.query.filter(Group.SID == SID_BUILTIN_DCOM_USERS).all()
+def find_RemoteMgmtUser_groups(host_filter=[])-> list[Group]:
+    group_filter = [Group.SID == SID_BUILTIN_REMOTE_MANAGEMENT_USERS]
+    return find_group_by_filter(group_filter=group_filter, host_filter=host_filter)
 
 
-def find_PerformanceMonitorUser_groups() -> list[Group]:
-    return Group.query.filter(Group.SID == SID_BUILTIN_PERFORMANCE_MONITOR_USERS).all()
+def find_DCOM_user_groups(host_filter=[]) -> list[Group]:
+    group_filter = [Group.SID == SID_BUILTIN_DCOM_USERS]
+    return find_group_by_filter(group_filter=group_filter, host_filter=host_filter)
+
+
+def find_PerformanceMonitorUser_groups(host_filter=[]) -> list[Group]:
+    group_filter = [Group.SID == SID_BUILTIN_PERFORMANCE_MONITOR_USERS]
+    return find_group_by_filter(group_filter=group_filter, host_filter=host_filter)
 
 
 def find_groups_by_user_sid(sid) -> list[Group]:
     groups = Group.query.filter().\
         join(GroupMember).filter(GroupMember.SID == sid).all()
     return groups
+
+
+def find_local_admins_group_member(user_filter=[], host_filter=[]) -> list[GroupMember]:
+    members = GroupMember.query.filter(and_(*user_filter)).\
+        join(Group).filter(Group.SID == SID_LOCAL_ADMIN_GROUP).\
+        join(Host).filter(and_(*host_filter)).all()
+    return members

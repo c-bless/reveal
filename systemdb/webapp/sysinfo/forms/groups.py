@@ -6,9 +6,11 @@ from systemdb.core.regex import RE_SYSINFO_DOMAIN
 from systemdb.core.regex import RE_SYSINFO_HOSTNAME
 from systemdb.core.regex import RE_SYSINFO_USER_NAME
 
+from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
+from systemdb.core.regex import RE_SYSINFO_LOCATION
 
 
-class LocalAdminSearchForm(FlaskForm):
+class LocalGroupMemberSearchForm(FlaskForm):
     Hostname = StringField('Hostname', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
     Domain = StringField('Domain', validators=[Regexp(regex=RE_SYSINFO_DOMAIN, message="Invalid input")])
     Username = StringField('Username', validators=[Regexp(regex=RE_SYSINFO_USER_NAME, message="Invalid input")] )
@@ -17,5 +19,12 @@ class LocalAdminSearchForm(FlaskForm):
     InvertDomain = BooleanField('Invert Domain')
     InvertUsername = BooleanField('Invert Username')
 
+    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
+    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")])
+
+    InvertSystemGroup = BooleanField('Invert SystemGroup')
+    InvertLocation = BooleanField('Invert Location')
+
+
     search = SubmitField('Search')
-    full = SubmitField('Download Excel (Full)')
+    excel = SubmitField('Download Excel (Full)')
