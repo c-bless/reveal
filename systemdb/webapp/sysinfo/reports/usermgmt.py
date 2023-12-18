@@ -24,7 +24,7 @@ from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import HostByLocalUser
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalAdminSearchForm
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import DirectAssignmentReportForm
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalAdminSearchForm
-from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalSIMATICSearchForm
+from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalGroupMemberSearchForm
 
 ####################################################################
 # Hosts with Domain Admins in local admin group
@@ -226,7 +226,7 @@ class ReportLocalAdmins(ReportInfo):
 @sysinfo_bp.route('/reports/usermgmt/SIMATIC/', methods=['GET', 'POST'])
 @login_required
 def local_SIMATIC_users_list():
-    form = LocalSIMATICSearchForm()
+    form = LocalGroupMemberSearchForm()
 
     host_filter = []
 
@@ -278,23 +278,44 @@ class ReportSIMATICUsers(ReportInfo):
 # Members in local SIMATIC groups
 ####################################################################
 
-@sysinfo_bp.route('/reports/usermgmt/RDP/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/RDP/', methods=['GET', 'POST'])
 @login_required
 def local_rdp_users_list():
-    groups = find_rdp_groups()
-    return render_template('sysinfo/group/group_members_list.html', groups=groups,
-                           download_membership_url=url_for("sysinfo.local_rdp_users_excel_full"))
+    form = LocalGroupMemberSearchForm()
 
+    host_filter = []
 
-@sysinfo_bp.route('/report/usermgmt/RDP/excel/full', methods=['GET'])
-@login_required
-def local_rdp_users_excel_full():
-    groups = find_rdp_groups()
-    output = generate_group_members_excel(groups)
+    if request.method == 'POST':
+        systemgroup = form.SystemGroup.data
+        location = form.Location.data
 
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_RDP.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        invertSystemgroup = form.InvertSystemGroup.data
+        invertLocation = form.InvertLocation.data
+
+        if len(systemgroup) > 0:
+            if not invertSystemgroup:
+                host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+            else:
+                host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+        if len(location) > 0:
+            if not invertLocation:
+                host_filter.append(Host.Location.ilike("%" + location + "%"))
+            else:
+                host_filter.append(Host.Location.notilike("%" + location + "%"))
+        groups = find_rdp_groups(host_filter=host_filter)
+
+        if 'excel' in request.form:
+            output = generate_group_members_excel(groups)
+
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=groupmembers_RDP.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        groups = find_rdp_groups(host_filter=host_filter)
+
+    return render_template('sysinfo/reports/group_members_list.html', groups=groups, form=form,
+                           report_name='List members of local "Remote Desktop Users" groups')
+
 
 
 class ReportRDPUsers(ReportInfo):
@@ -315,23 +336,43 @@ class ReportRDPUsers(ReportInfo):
 # Members in local "Remote Management Users" groups
 ####################################################################
 
-@sysinfo_bp.route('/reports/usermgmt/remotemgmtuser/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/remotemgmtuser/', methods=['GET', 'POST'])
 @login_required
 def local_remote_mgmt_users_list():
-    groups = find_RemoteMgmtUser_groups()
-    return render_template('sysinfo/group/group_members_list.html', groups=groups,
-                           download_membership_url=url_for("sysinfo.local_remote_mgmt_users_excel_full"))
+    form = LocalGroupMemberSearchForm()
 
+    host_filter = []
 
-@sysinfo_bp.route('/report/usermgmt/remotemgmtuser/excel/full', methods=['GET'])
-@login_required
-def local_remote_mgmt_users_excel_full():
-    groups = find_RemoteMgmtUser_groups()
-    output = generate_group_members_excel(groups)
+    if request.method == 'POST':
+        systemgroup = form.SystemGroup.data
+        location = form.Location.data
 
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_remote_mgmt_users.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        invertSystemgroup = form.InvertSystemGroup.data
+        invertLocation = form.InvertLocation.data
+
+        if len(systemgroup) > 0:
+            if not invertSystemgroup:
+                host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+            else:
+                host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+        if len(location) > 0:
+            if not invertLocation:
+                host_filter.append(Host.Location.ilike("%" + location + "%"))
+            else:
+                host_filter.append(Host.Location.notilike("%" + location + "%"))
+        groups = find_RemoteMgmtUser_groups(host_filter=host_filter)
+
+        if 'excel' in request.form:
+            output = generate_group_members_excel(groups)
+
+            return Response(output, mimetype="text/xlsx",
+                         headers={"Content-disposition": "attachment; filename=groupmembers_remote_mgmt_users.xlsx",
+                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+    else:
+        groups = find_RemoteMgmtUser_groups(host_filter=host_filter)
+
+    return render_template('sysinfo/reports/group_members_list.html', groups=groups, form=form,
+                           report_name='List members of "Remote Management Users" groups')
 
 
 class ReportRemoteManagementUsers(ReportInfo):
@@ -351,24 +392,43 @@ class ReportRemoteManagementUsers(ReportInfo):
 # Members in local DCOM Users groups
 ####################################################################
 
-@sysinfo_bp.route('/reports/usermgmt/dcom/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/dcom/', methods=['GET', 'POST'])
 @login_required
 def local_dcom_users_list():
-    groups = find_DCOM_user_groups()
-    return render_template('sysinfo/group/group_members_list.html', groups=groups,
-                           download_membership_url=url_for("sysinfo.local_dcom_users_excel_full"))
+    form = LocalGroupMemberSearchForm()
 
+    host_filter = []
 
-@sysinfo_bp.route('/report/usermgmt/dcom/excel/full', methods=['GET'])
-@login_required
-def local_dcom_users_excel_full():
-    groups = find_DCOM_user_groups()
-    output = generate_group_members_excel(groups)
+    if request.method == 'POST':
+        systemgroup = form.SystemGroup.data
+        location = form.Location.data
 
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_DCOM_users.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        invertSystemgroup = form.InvertSystemGroup.data
+        invertLocation = form.InvertLocation.data
 
+        if len(systemgroup) > 0:
+            if not invertSystemgroup:
+                host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+            else:
+                host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+        if len(location) > 0:
+            if not invertLocation:
+                host_filter.append(Host.Location.ilike("%" + location + "%"))
+            else:
+                host_filter.append(Host.Location.notilike("%" + location + "%"))
+        groups = find_DCOM_user_groups(host_filter=host_filter)
+
+        if 'excel' in request.form:
+            output = generate_group_members_excel(groups)
+
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=groupmembers_DCOM_users.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        groups = find_DCOM_user_groups(host_filter=host_filter)
+
+    return render_template('sysinfo/reports/group_members_list.html', groups=groups, form=form,
+                           report_name='List members of "Distributed COM Users" groups')
 
 class ReportDCOMUsers(ReportInfo):
 
@@ -386,24 +446,44 @@ class ReportDCOMUsers(ReportInfo):
 ####################################################################
 # Members in local Performance Monitor Users groups
 ####################################################################
-
-@sysinfo_bp.route('/reports/usermgmt/performancemonitor/', methods=['GET'])
+@sysinfo_bp.route('/reports/usermgmt/performancemonitor/', methods=['GET', 'POST'])
 @login_required
 def local_performance_monitor_users_list():
-    groups = find_PerformanceMonitorUser_groups()
-    return render_template('sysinfo/group/group_members_list.html', groups=groups,
-                           download_membership_url=url_for("sysinfo.local_performance_monitor_users_excel_full"))
+    form = LocalGroupMemberSearchForm()
 
+    host_filter = []
 
-@sysinfo_bp.route('/report/usermgmt/performancemonitor/excel/full', methods=['GET'])
-@login_required
-def local_performance_monitor_users_excel_full():
-    groups = find_PerformanceMonitorUser_groups()
-    output = generate_group_members_excel(groups)
+    if request.method == 'POST':
+        systemgroup = form.SystemGroup.data
+        location = form.Location.data
 
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_PerformanceMonitorUsers.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        invertSystemgroup = form.InvertSystemGroup.data
+        invertLocation = form.InvertLocation.data
+
+        if len(systemgroup) > 0:
+            if not invertSystemgroup:
+                host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+            else:
+                host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+        if len(location) > 0:
+            if not invertLocation:
+                host_filter.append(Host.Location.ilike("%" + location + "%"))
+            else:
+                host_filter.append(Host.Location.notilike("%" + location + "%"))
+        groups = find_PerformanceMonitorUser_groups(host_filter=host_filter)
+
+        if 'excel' in request.form:
+            output = generate_group_members_excel(groups)
+
+            return Response(output, mimetype="text/xlsx",
+                            headers={
+                                "Content-disposition": "attachment; filename=groupmembers_PerformanceMonitorUsers.xlsx",
+                                "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    else:
+        groups = find_PerformanceMonitorUser_groups(host_filter=host_filter)
+
+    return render_template('sysinfo/reports/group_members_list.html', groups=groups, form=form,
+                           report_name='List members of "Performance Monitor Users" groups')
 
 
 class ReportPerformanceMonitorUsers(ReportInfo):
