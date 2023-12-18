@@ -9,6 +9,7 @@ from systemdb.core.sids import SID_BUILTIN_PERFORMANCE_MONITOR_USERS
 from systemdb.core.models.sysinfo import Group
 from systemdb.core.models.sysinfo import GroupMember
 from systemdb.core.models.sysinfo import Host
+from systemdb.core.models.sysinfo import User
 
 
 def get_direct_domainuser_assignments(host_filter=[]) -> list[tuple]:
@@ -26,6 +27,24 @@ def get_direct_domainuser_assignments(host_filter=[]) -> list[tuple]:
                 result.append((g.Host, g, m))
 
     return result
+
+
+
+def find_hosts_by_local_user(username = "", host_filter=[]) -> list[Host]:
+    user_filter = []
+    user_filter.append(User.LocalAccount == True)
+    user_filter.append(User.Disabled == False)
+    if len(user_filter) > 0:
+        user_filter.append(User.Name.ilike("%" + username + "%"))
+    users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
+    hosts = [u.Host for u in users]
+    hosts_unique = []
+    host_ids = []
+    for h in hosts:
+        if h.id not in host_ids:
+            host_ids.append(h.id)
+            hosts_unique.append(h)
+    return hosts
 
 
 def get_autologon_admin(host_filter=[]):

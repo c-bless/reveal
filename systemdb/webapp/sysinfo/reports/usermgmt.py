@@ -11,6 +11,7 @@ from systemdb.core.querries.usermgmt import find_SIMATIC_groups
 from systemdb.core.querries.usermgmt import find_RemoteMgmtUser_groups
 from systemdb.core.querries.usermgmt import find_DCOM_user_groups
 from systemdb.core.querries.usermgmt import find_PerformanceMonitorUser_groups
+from systemdb.core.querries.usermgmt import find_hosts_by_local_user
 
 
 from systemdb.webapp.sysinfo import sysinfo_bp
@@ -18,7 +19,7 @@ from systemdb.core.export.excel.usermgmt import generate_userassignment_excel
 from systemdb.core.export.excel.usermgmt import generate_group_members_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.reports import ReportInfo
-from systemdb.webapp.sysinfo.forms.hosts import HostByLocalUserSearchForm
+from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import HostByLocalUserSearchForm
 from systemdb.webapp.sysinfo.forms.groups import LocalAdminSearchForm
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import DirectAssignmentReportForm
 
@@ -26,9 +27,6 @@ from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import DirectAssignmen
 ####################################################################
 # Hosts with Domain Admins in local admin group
 ####################################################################
-
-
-
 @sysinfo_bp.route('/reports/usermgmt/assigment/', methods=['GET', 'POST'])
 @login_required
 def usermgmt_assignment_list():
@@ -69,17 +67,6 @@ def usermgmt_assignment_list():
                            report_name="Direct user assignments")
 
 
-@sysinfo_bp.route('/report/usermgmt/assignment/excel/full', methods=['GET'])
-@login_required
-def usermgmt_assignment_excel_full():
-    members = get_direct_domainuser_assignments()
-    output = generate_userassignment_excel(members)
-
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=direct-assigned-domainusers.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
-
-
 class ReportDirectDomainUserAssignment(ReportInfo):
 
     def __init__(self):
@@ -99,51 +86,43 @@ class ReportDirectDomainUserAssignment(ReportInfo):
 @login_required
 def report_hosts_by_localuser_list():
     form = HostByLocalUserSearchForm()
+    host_filter = []
 
     if request.method == 'POST':
         if form.validate_on_submit():
             user_filter = form.Name.data
-            if len(user_filter) > 0:
-                users = User.query.filter(and_(
-                    User.LocalAccount == True,
-                    User.Name.ilike("%"+user_filter+"%"),
-                    User.Disabled == False
-                )).all()
-            else:
-                users = User.query.filter(and_(
-                    User.LocalAccount == True,
-                    User.Disabled == False
-                )).all()
-            hosts = [u.Host for u in users]
-            hosts_unique = []
-            host_ids = []
-            for h in hosts:
-                if h.id not in host_ids:
-                    host_ids.append(h.id)
-                    hosts_unique.append(h)
 
-            if 'download' in request.form:
-                output = generate_hosts_excel(hosts_unique)
+            systemgroup = form.SystemGroup.data
+            location = form.Location.data
+
+            invertSystemgroup = form.InvertSystemGroup.data
+            invertLocation = form.InvertLocation.data
+
+            if len(systemgroup) > 0:
+                if not invertSystemgroup:
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
+                else:
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
+            if len(location) > 0:
+                if not invertLocation:
+                    host_filter.append(Host.Location.ilike("%" + location + "%"))
+                else:
+                    host_filter.append(Host.Location.notilike("%" + location + "%"))
+
+            hosts = find_hosts_by_local_user(username=user_filter, host_filter=host_filter)
+
+            if 'excel' in request.form:
+                output = generate_hosts_excel(hosts)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=hosts-by-localuser.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-            return render_template('sysinfo/reports/host_by_local_user.html', form=form, hosts=hosts_unique)
         else:
-            return render_template('sysinfo/reports/host_by_local_user.html', form=form, hosts=[])
+            hosts = []
     else:
-        users = User.query.filter(and_(
-            User.LocalAccount == True,
-            User.Disabled == False
-        )).all()
-        hosts = [u.Host for u in users]
-        hosts_unique = []
-        host_ids = []
-        for h in hosts:
-            if h.id not in host_ids:
-                host_ids.append(h.id)
-                hosts_unique.append(h)
+        hosts = find_hosts_by_local_user()
 
-    return render_template('sysinfo/reports/host_by_local_user.html',form=form, hosts=hosts_unique)
+    return render_template('sysinfo/reports/host_by_local_user.html',form=form, hosts=hosts,
+                           report_name="Hosts By Localuser")
 
 
 
