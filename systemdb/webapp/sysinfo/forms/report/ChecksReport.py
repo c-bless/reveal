@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
 from systemdb.core.regex import RE_SYSINFO_LOCATION
+
 
 class RegistryCheckReportForm(FlaskForm):
     SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
@@ -12,5 +13,8 @@ class RegistryCheckReportForm(FlaskForm):
     InvertSystemGroup = BooleanField('Invert SystemGroup')
     InvertLocation = BooleanField('Invert Location')
 
+    TemplateFile = SelectField('Template (Word)')
+
     search = SubmitField('Search')
     excel = SubmitField('Excel')
+    word = SubmitField('Word')

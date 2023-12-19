@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
@@ -17,3 +17,5 @@ class PS2ReportForm(FlaskForm):
 
     word = SubmitField('Word')
     excel = SubmitField('Excel')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')

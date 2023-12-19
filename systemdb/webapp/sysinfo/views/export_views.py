@@ -31,13 +31,6 @@ def template_list_hosts():
     templates = os.listdir(template_dir)
     return render_template('sysinfo/template_list.html', templates=templates, title="Available templates")
 
-@sysinfo_bp.route('/export/reort/templates', methods=['GET'])
-@login_required
-def template_list_HostReport():
-    template_dir = "{0}/templates/reports/HostReports/".format(current_app.config.get(('REPORT_DIR')))
-    templates = os.listdir(template_dir)
-    return render_template('sysinfo/template_list.html', templates=templates, title="Available templates")
-
 
 @sysinfo_bp.route('/hosts/export/word/<template>', methods=['GET'])
 @login_required

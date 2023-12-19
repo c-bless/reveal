@@ -9,6 +9,9 @@ from systemdb.core.export.excel.hosts import generate_wsus
 from systemdb.core.models.sysinfo import Host
 from systemdb.core.reports import ReportInfo
 
+from systemdb.core.export.word.util import get_host_report_templates
+from systemdb.core.export.word.util import get_host_report_directory
+from systemdb.core.export.word.hosts import generate_hosts_report_docx
 from systemdb.webapp.sysinfo.forms.report.WSUSReport import WSUSReportForm
 
 ####################################################################
@@ -22,11 +25,16 @@ def report_wsus_http():
     host_filter = []
     host_filter.append(Host.WUServer.like('http://%'))
 
+    templates = get_host_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
 
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -59,6 +67,14 @@ def report_wsus_http():
                 return Response(output, mimetype="text/xlsx",
                                 headers={"Content-disposition": "attachment; filename=wsus-via-http.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_host_report_directory()
+                    report = ReportWSUSHttp()
+                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
+
 
     else:
         hosts = Host.query.filter(and_(*host_filter)).all()

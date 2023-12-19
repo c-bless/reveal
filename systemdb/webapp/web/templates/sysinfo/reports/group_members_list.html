@@ -2,37 +2,28 @@
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
-{% block searchform %}
-    <form class="form-horizontal" method="post">
-                {{ form.hidden_tag() }}
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.SystemGroup) }}
-                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+{% block searchform_input %}
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.SystemGroup) }}
+                {{ render_check_field_sm2(form.InvertSystemGroup) }}
 
-                            {% if form.Domain %} {{ render_field_sm2(form.Domain) }} {% endif %}
-                            {% if form.InvertDomain %} {{ render_check_field_sm2(form.InvertDomain) }} {% endif %}
+                {% if form.Domain %} {{ render_field_sm2(form.Domain) }} {% endif %}
+                {% if form.InvertDomain %} {{ render_check_field_sm2(form.InvertDomain) }} {% endif %}
 
-                            {% if form.Hostname %} {{ render_field_sm2(form.Hostname) }} {% endif %}
-                            {% if form.InvertHostname %} {{ render_check_field_sm2(form.InvertHostname) }} {% endif %}
-                        </div>
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.Location) }}
-                            {{ render_check_field_sm2(form.InvertLocation) }}
+                {% if form.Hostname %} {{ render_field_sm2(form.Hostname) }} {% endif %}
+                {% if form.InvertHostname %} {{ render_check_field_sm2(form.InvertHostname) }} {% endif %}
+            </div>
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.Location) }}
+                {{ render_check_field_sm2(form.InvertLocation) }}
 
-                            {% if form.Username %}{{ render_field_sm2(form.Username) }} {% endif %}
-                            {% if form.InvertUsername %}{{ render_check_field_sm2(form.InvertUsername) }} {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.excel) }}
-                </div>
-                <!-- /.card-footer -->
-    </form>
+                {% if form.Username %}{{ render_field_sm2(form.Username) }} {% endif %}
+                {% if form.InvertUsername %}{{ render_check_field_sm2(form.InvertUsername) }} {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock searchform %}
 
 {% block datatable %}

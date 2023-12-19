@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
@@ -17,6 +17,8 @@ class DirectAssignmentReportForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class HostByLocalUserSearchForm(FlaskForm):
@@ -31,6 +33,8 @@ class HostByLocalUserSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel (Hosts)')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class LocalAdminSearchForm(FlaskForm):
@@ -51,6 +55,8 @@ class LocalAdminSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Download Excel (Full)')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class LocalGroupMemberSearchForm(FlaskForm):
@@ -63,3 +69,5 @@ class LocalGroupMemberSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Download Excel (Full)')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')

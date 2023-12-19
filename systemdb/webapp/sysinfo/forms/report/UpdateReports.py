@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, SubmitField, BooleanField, IntegerField, SelectField
 from wtforms.validators import Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
@@ -15,7 +15,8 @@ class EOLReportForm(FlaskForm):
     search = SubmitField('Search')
     brief = SubmitField('Excel Hosts (Brief)')
     full = SubmitField('Excel Hosts (Full)')
-
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 class LastUpdateReportForm(FlaskForm):
     SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
@@ -29,3 +30,5 @@ class LastUpdateReportForm(FlaskForm):
     search = SubmitField('Search')
     brief = SubmitField('Excel Hosts (Brief)')
     full = SubmitField('Excel Hosts (Full)')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')

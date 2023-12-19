@@ -17,6 +17,11 @@ def generate_hosts_docx(template, hosts=[]):
     return generate_docx(template=template, context=context)
 
 
+def generate_hosts_report_docx(template, report, hosts=[]):
+    context = {'hosts': hosts, 'report': report}
+    return generate_docx(template=template, context=context)
+
+
 def generate_single_host_docx(template, host=None):
     context = {'host': host}
     return generate_docx(template=template, context=context)

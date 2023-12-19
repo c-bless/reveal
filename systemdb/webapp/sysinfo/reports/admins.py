@@ -19,6 +19,10 @@ from systemdb.core.querries.usermgmt import get_autologon_admin
 from systemdb.webapp.sysinfo.forms.report.DomAdminReport import DomAdminReportForm
 from systemdb.webapp.sysinfo.forms.report.AutoAdminReport import AutoAdminReportForm
 
+from systemdb.core.export.word.util import get_host_report_templates
+from systemdb.core.export.word.util import get_host_report_directory
+from systemdb.core.export.word.hosts import generate_hosts_report_docx
+
 
 ####################################################################
 # Hosts with Domain Admins in local admin group
@@ -26,9 +30,7 @@ from systemdb.webapp.sysinfo.forms.report.AutoAdminReport import AutoAdminReport
 @sysinfo_bp.route('/report/domainadmin', methods=['GET', 'POST'])
 @login_required
 def hosts_report_domainadmin():
-
     form = DomAdminReportForm()
-
     if request.method == 'POST':
         host_filter = []
         if form.validate_on_submit():
@@ -75,7 +77,7 @@ def hosts_report_domainadmin():
     else:
         groups = find_groups_where_domadm_is_localadmin()
 
-    return render_template('sysinfo/group/group_members_list_search_report.html', groups=groups,
+    return render_template('sysinfo/reports/group_members_list_search_report.html', groups=groups,
                                report_name="Domain Admins in local administrators group",
                                form=form)
 
@@ -103,11 +105,15 @@ def hosts_report_autologonadmin():
     form = AutoAdminReportForm()
     host_filter = []
 
+    templates = get_host_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         filters = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -137,6 +143,13 @@ def hosts_report_autologonadmin():
                                 headers={
                                     "Content-disposition": "attachment; filename=hosts-with-autologonadmin-full.xlsx",
                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_host_report_directory()
+                    report = ReportAutologonIsLocalAdmin()
+                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         hosts = get_autologon_admin()
 

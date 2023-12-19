@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp, Optional, DataRequired
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
@@ -18,6 +18,8 @@ class UQSPReportForm(FlaskForm):
     search = SubmitField('Search')
 
     excel = SubmitField('Excel')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class ServiceAclSearchForm(FlaskForm):
@@ -42,6 +44,8 @@ class ServiceAclSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 
@@ -61,6 +65,8 @@ class ServiceUserContextSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class ModifiableServicesReportForm(FlaskForm):
@@ -73,3 +79,5 @@ class ModifiableServicesReportForm(FlaskForm):
     search = SubmitField('Search')
 
     excel = SubmitField('Excel')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')

@@ -7,31 +7,23 @@
 {% block menu_l2 %} Host List {% endblock menu_l2 %}
 
 
-{% block searchform %}
-    <form class="form-horizontal" method="post">
-                {{ form.hidden_tag() }}
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.SystemGroup) }}
-                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
-                            {{ render_field_sm2(form.Name) }}
-                        </div>
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.Location) }}
-                            {{ render_check_field_sm2(form.InvertLocation) }}
-                        </div>
-                    </div>
 
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.excel) }}
-                </div>
-                <!-- /.card-footer -->
-    </form>
-{% endblock searchform %}
+{% block searchform_input %}
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.SystemGroup) }}
+                {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                {{ render_field_sm2(form.Name) }}
+            </div>
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.Location) }}
+                {{ render_check_field_sm2(form.InvertLocation) }}
+            </div>
+        </div>
+
+    </div>
+{% endblock searchform_input %}
 
 
 {% block datatable %}

@@ -2,38 +2,30 @@
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
-{% block searchform %}
-    <form class="form-horizontal" method="post">
-                {{ form.hidden_tag() }}
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.SystemGroup) }}
-                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+{% block searchform_input %}
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.SystemGroup) }}
+                {{ render_check_field_sm2(form.InvertSystemGroup) }}
 
-                            {{ render_field_sm2(form.Domain) }}
-                            {{ render_check_field_sm2(form.InvertDomain) }}
+                {{ render_field_sm2(form.Domain) }}
+                {{ render_check_field_sm2(form.InvertDomain) }}
 
-                            {{ render_field_sm2(form.Hostname) }}
-                            {{ render_check_field_sm2(form.InvertHostname) }}
-                        </div>
-                        <div class="col-sm-6">
-                            {{ render_field_sm2(form.Location) }}
-                            {{ render_check_field_sm2(form.InvertLocation) }}
+                {{ render_field_sm2(form.Hostname) }}
+                {{ render_check_field_sm2(form.InvertHostname) }}
+            </div>
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.Location) }}
+                {{ render_check_field_sm2(form.InvertLocation) }}
 
-                            {{ render_field_sm2(form.Username) }}
-                            {{ render_check_field_sm2(form.InvertUsername) }}
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    {{ render_submit_field(form.search) }}
-                    {{ render_submit_field(form.excel) }}
-                </div>
-                <!-- /.card-footer -->
-    </form>
-{% endblock searchform %}
+                {{ render_field_sm2(form.Username) }}
+                {{ render_check_field_sm2(form.InvertUsername) }}
+            </div>
+        </div>
+    </div>
+    <!-- /.card-body -->
+{% endblock searchform_input %}
 
 
 {% block datatable %}

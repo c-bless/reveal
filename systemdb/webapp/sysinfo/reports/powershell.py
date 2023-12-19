@@ -9,6 +9,10 @@ from systemdb.core.reports import ReportInfo
 
 from systemdb.webapp.sysinfo.forms.report.PS2Report import PS2ReportForm
 
+from systemdb.core.export.word.util import get_host_report_templates
+from systemdb.core.export.word.util import get_host_report_directory
+from systemdb.core.export.word.hosts import generate_hosts_report_docx
+
 
 ####################################################################
 # Hosts with PowerShell 2.0 installed
@@ -21,11 +25,15 @@ def hosts_report_ps2():
     host_filter = []
     host_filter.append(Host.PS2Installed == True)
 
+    templates = get_host_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
 
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -48,6 +56,13 @@ def hosts_report_ps2():
                 return Response(output, mimetype="text/docx",
                                 headers={"Content-disposition": "attachment; filename=hosts-with-ps2.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_host_report_directory()
+                    report = ReportPS2Istalled()
+                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
 
     else:
         hosts = Host.query.filter(and_(*host_filter)).all()

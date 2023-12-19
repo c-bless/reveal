@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
@@ -13,7 +13,10 @@ class WSUSReportForm(FlaskForm):
     InvertSystemGroup = BooleanField('Invert SystemGroup')
     InvertLocation = BooleanField('Invert Location')
 
+    TemplateFile = SelectField('Template (Word)')
+
     search = SubmitField('Search')
+    word = SubmitField('Word')
 
     brief = SubmitField('Excel Hosts (brief)')
     full = SubmitField('Excel Hosts (full)')

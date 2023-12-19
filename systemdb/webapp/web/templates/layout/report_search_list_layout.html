@@ -24,7 +24,54 @@
                             <strong class="card-title">Search Form - {{ report_name }} </strong>
                         </div>
                         <div class="card-body">
-                            {%block searchform %} {% endblock searchform %}
+                            {%block searchform %}
+                                    <form class="form-horizontal" method="post">
+                                            {% if form %}{{ form.hidden_tag() }} {% endif %}
+                                            {%block searchform_input %}
+
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        {% if form.SystemGroup %}{{ render_field_sm2(form.SystemGroup) }}{% endif %}
+                                                        {% if form.InvertSystemGroup %}{{ render_check_field_sm2(form.InvertSystemGroup) }}{% endif %}
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        {% if form.Location %}{{ render_field_sm2(form.Location) }}{% endif %}
+                                                        {% if form.InvertLocation %}{{ render_check_field_sm2(form.InvertLocation) }}{% endif %}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            {%endblock searchform_input %}
+                                            <!-- /.card-body -->
+                                            <div class="card-footer">
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        {%block searchform_footer_left %}  {%endblock searchform_footer_left %}
+                                                        {% if form.search %}{{ render_submit_field(form.search) }}{% endif %}
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="row">
+                                                            {%block searchform_footer_middle %}  {%endblock searchform_footer_middle %}
+                                                            <strong>Download:</strong>
+                                                            {% if form.brief %}{{ render_submit_field(form.brief) }}{% endif %}
+                                                            {% if form.full %}{{ render_submit_field(form.full) }}{% endif %}
+                                                            {% if form.excel %}{{ render_submit_field(form.excel) }}{% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        {%block searchform_footer_right %}  {%endblock searchform_footer_right %}
+                                                        <div class="row">
+                                                            {%if form.word %}<div class="col-sm-2"><strong>Download:</strong>{{ render_submit_field(form.word) }}</div>{% endif %}
+                                                            {%if form.TemplateFile %}<div class="col-sm-4">{{ form.TemplateFile(class="form-control") }}</div>{% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- /.card-footer -->
+                                    </form>
+                            {% endblock searchform %}
                         </div>
                     </div>
                 </div>

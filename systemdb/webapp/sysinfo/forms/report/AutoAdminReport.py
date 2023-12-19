@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField,SelectField
 from wtforms.validators import Regexp, Optional
 
 from systemdb.core.regex import RE_SYSINFO_SYSTEMGROUP
@@ -15,3 +15,5 @@ class AutoAdminReportForm(FlaskForm):
     search = SubmitField('Search')
     brief = SubmitField('Excel Hosts (Brief)')
     full = SubmitField('Excel Hosts (Full)')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')

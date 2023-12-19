@@ -8,6 +8,7 @@ from systemdb.core.export.excel.checks import generate_registrychecks_excel
 from systemdb.core.models.sysinfo import Host
 from systemdb.webapp.sysinfo.forms.report.ChecksReport import RegistryCheckReportForm
 
+from systemdb.core.export.word.util import get_host_report_templates
 from systemdb.core.reports import ReportInfo
 
 
@@ -18,13 +19,16 @@ from systemdb.core.reports import ReportInfo
 @login_required
 def report_hotkeys_enabled():
     form = RegistryCheckReportForm()
+    templates = get_host_report_templates()
     host_filter = []
+    form.TemplateFile.choices = [(template, template) for template in templates]
 
     if request.method == 'POST':
         filters = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -46,12 +50,12 @@ def report_hotkeys_enabled():
                 return Response(output, mimetype="text/xlsx",
                                 headers={"Content-disposition": "attachment; filename=missing-disabled-hostkeys.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-            else:
-                hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
+            hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
     else:
         hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
 
     return render_template('sysinfo/reports/registrycheck_hotkeys.html', hotkey_dict=hotkeys, form=form,
+                           templates=templates,
                            report_name="Hotkeys not disabled")
 
 
