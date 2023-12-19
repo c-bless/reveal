@@ -8,3 +8,12 @@ def get_host_report_directory()->str:
 def get_host_report_templates()-> list[str]:
     template_dir = get_host_report_directory()
     return os.listdir(template_dir)
+
+
+
+def get_registryCheckDict_directory()->str:
+    return "{0}/templates/reports/RegistryCheckDictReports/".format(current_app.config.get(('REPORT_DIR')))
+
+def get_registryCheckDict_report_templates()-> list[str]:
+    template_dir = get_registryCheckDict_directory()
+    return os.listdir(template_dir)

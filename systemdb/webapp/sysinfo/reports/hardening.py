@@ -8,9 +8,11 @@ from systemdb.core.export.excel.checks import generate_registrychecks_excel
 from systemdb.core.models.sysinfo import Host
 from systemdb.webapp.sysinfo.forms.report.ChecksReport import RegistryCheckReportForm
 
-from systemdb.core.export.word.util import get_host_report_templates
+from systemdb.core.export.word.util import get_registryCheckDict_report_templates
+from systemdb.core.export.word.util import get_registryCheckDict_directory
 from systemdb.core.reports import ReportInfo
 
+from systemdb.core.export.word.hosts import generate_hotkey_docx
 
 ####################################################################
 # None Disabled Hotkeys and corresponding hosts
@@ -21,7 +23,7 @@ def report_hotkeys_enabled():
     form = RegistryCheckReportForm()
     host_filter = []
 
-    templates = get_host_report_templates()
+    templates = get_registryCheckDict_report_templates()
     form.TemplateFile.choices = [(template, template) for template in templates]
 
     if request.method == 'POST':
@@ -51,7 +53,17 @@ def report_hotkeys_enabled():
                 return Response(output, mimetype="text/xlsx",
                                 headers={"Content-disposition": "attachment; filename=missing-disabled-hostkeys.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
             hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
+
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_registryCheckDict_directory()
+                    report = ReportHotkeysEnabled()
+                    output = generate_hotkey_docx(f"{template_dir}/{selectedTemplate}", report, hotkey_dict=hotkeys)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
+
     else:
         hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
 

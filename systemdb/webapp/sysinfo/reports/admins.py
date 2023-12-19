@@ -109,7 +109,6 @@ def hosts_report_autologonadmin():
     form.TemplateFile.choices = [(template, template) for template in templates]
 
     if request.method == 'POST':
-        filters = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
