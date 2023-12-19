@@ -9,6 +9,11 @@ from systemdb.core.models.sysinfo import Host
 from systemdb.core.reports import ReportInfo
 from systemdb.webapp.sysinfo.forms.report.SMBv1Report import SMBv1ReportForm
 
+from systemdb.core.export.word.util import get_host_report_templates
+from systemdb.core.export.word.util import get_host_report_directory
+from systemdb.core.export.word.hosts import generate_hosts_report_docx
+
+
 ####################################################################
 # Hosts with enabled SMBv1
 ####################################################################
@@ -20,11 +25,15 @@ def hosts_report_smbv1():
     host_filter = []
     host_filter.append(Host.SMBv1Enabled == True)
 
+    templates = get_host_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
 
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -52,7 +61,13 @@ def hosts_report_smbv1():
                 return Response(output, mimetype="text/xlsx",
                                 headers={"Content-disposition": "attachment; filename=hosts-with-smbv1-full.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_host_report_directory()
+                    report = ReportSMBv1()
+                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         hosts = Host.query.filter(and_(*host_filter)).all()
     return render_template('sysinfo/reports/host_report_list.html', hosts=hosts, form=form,

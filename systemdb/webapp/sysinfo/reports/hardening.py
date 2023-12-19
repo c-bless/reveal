@@ -19,8 +19,9 @@ from systemdb.core.reports import ReportInfo
 @login_required
 def report_hotkeys_enabled():
     form = RegistryCheckReportForm()
-    templates = get_host_report_templates()
     host_filter = []
+
+    templates = get_host_report_templates()
     form.TemplateFile.choices = [(template, template) for template in templates]
 
     if request.method == 'POST':
@@ -55,8 +56,7 @@ def report_hotkeys_enabled():
         hotkeys = find_hotkeys_enabled_dict(host_filter=host_filter)
 
     return render_template('sysinfo/reports/registrycheck_hotkeys.html', hotkey_dict=hotkeys, form=form,
-                           templates=templates,
-                           report_name="Hotkeys not disabled")
+                           templates=templates, report_name="Hotkeys not disabled")
 
 
 class ReportHotkeysEnabled(ReportInfo):

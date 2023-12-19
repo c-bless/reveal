@@ -140,7 +140,6 @@ def hosts_report_wshremote():
                     output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
                     return Response(output, mimetype="text/docx",
                                     headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
-
     else:
         hosts = Host.query.filter(*host_filter).all()
 

@@ -16,6 +16,11 @@ from systemdb.webapp.sysinfo.forms.report.UpdateReports import LastUpdateReportF
 
 from systemdb.core.reports import ReportInfo
 
+from systemdb.core.export.word.util import get_host_report_templates
+from systemdb.core.export.word.util import get_host_report_directory
+from systemdb.core.export.word.hosts import generate_hosts_report_docx
+
+
 ####################################################################
 # Hosts where last update has been installed for more that xxx days
 ####################################################################
@@ -27,12 +32,16 @@ def hosts_report_lastupdate():
 
     form = LastUpdateReportForm()
 
+    templates = get_host_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         filters = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             nDays = form.Days.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -65,6 +74,13 @@ def hosts_report_lastupdate():
                 return Response(output, mimetype="text/docx",
                                 headers={"Content-disposition": "attachment; filename=hosts-with-lastupdate-full.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_host_report_directory()
+                    report = ReportLastUpdate()
+                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         hosts = []
 
