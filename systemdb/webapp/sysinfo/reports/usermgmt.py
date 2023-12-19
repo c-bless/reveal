@@ -26,6 +26,11 @@ from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import DirectAssignmen
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalAdminSearchForm
 from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalGroupMemberSearchForm
 
+from systemdb.core.export.word.util import get_group_report_templates
+from systemdb.core.export.word.util import get_group_report_directory
+from systemdb.core.export.word.hosts import generate_group_report_docx
+
+
 ####################################################################
 # Hosts with Domain Admins in local admin group
 ####################################################################
@@ -154,6 +159,9 @@ def local_admin_assignment_list():
     host_filter = []
     user_filter = []
 
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         username = form.Username.data
         domain = form.Domain.data
@@ -161,6 +169,7 @@ def local_admin_assignment_list():
         invertUsername = form.InvertUsername.data
         invertDomain = form.InvertDomain.data
         invertHostname = form.InvertHostname.data
+        selectedTemplate = form.TemplateFile.data
 
         systemgroup = form.SystemGroup.data
         location = form.Location.data
@@ -201,6 +210,13 @@ def local_admin_assignment_list():
             return Response(output, mimetype="text/xlsx",
                             headers={"Content-disposition": "attachment; filename=groupmembers_local_admins.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        if 'word' in request.form:
+            if selectedTemplate in templates:
+                template_dir = get_group_report_directory()
+                report = ReportLocalAdmins()
+                output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         groups = find_group_local_admins()
 
@@ -230,9 +246,13 @@ def local_SIMATIC_users_list():
 
     host_filter = []
 
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         systemgroup = form.SystemGroup.data
         location = form.Location.data
+        selectedTemplate = form.TemplateFile.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
@@ -254,6 +274,13 @@ def local_SIMATIC_users_list():
             return Response(output, mimetype="text/xlsx",
                             headers={"Content-disposition": "attachment; filename=groupmembers_SIMATIC.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        if 'word' in request.form:
+            if selectedTemplate in templates:
+                template_dir = get_group_report_directory()
+                report = ReportSIMATICUsers()
+                output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         groups = find_SIMATIC_groups(host_filter=host_filter)
 
@@ -285,9 +312,13 @@ def local_rdp_users_list():
 
     host_filter = []
 
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         systemgroup = form.SystemGroup.data
         location = form.Location.data
+        selectedTemplate = form.TemplateFile.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
@@ -310,6 +341,13 @@ def local_rdp_users_list():
             return Response(output, mimetype="text/xlsx",
                             headers={"Content-disposition": "attachment; filename=groupmembers_RDP.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        if 'word' in request.form:
+            if selectedTemplate in templates:
+                template_dir = get_group_report_directory()
+                report = ReportRDPUsers()
+                output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         groups = find_rdp_groups(host_filter=host_filter)
 
@@ -343,9 +381,13 @@ def local_remote_mgmt_users_list():
 
     host_filter = []
 
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         systemgroup = form.SystemGroup.data
         location = form.Location.data
+        selectedTemplate = form.TemplateFile.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
@@ -368,6 +410,13 @@ def local_remote_mgmt_users_list():
             return Response(output, mimetype="text/xlsx",
                          headers={"Content-disposition": "attachment; filename=groupmembers_remote_mgmt_users.xlsx",
                                       "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+        if 'word' in request.form:
+            if selectedTemplate in templates:
+                template_dir = get_group_report_directory()
+                report = ReportRemoteManagementUsers()
+                output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         groups = find_RemoteMgmtUser_groups(host_filter=host_filter)
 
@@ -399,9 +448,13 @@ def local_dcom_users_list():
 
     host_filter = []
 
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         systemgroup = form.SystemGroup.data
         location = form.Location.data
+        selectedTemplate = form.TemplateFile.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
@@ -424,6 +477,13 @@ def local_dcom_users_list():
             return Response(output, mimetype="text/xlsx",
                             headers={"Content-disposition": "attachment; filename=groupmembers_DCOM_users.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        if 'word' in request.form:
+            if selectedTemplate in templates:
+                template_dir = get_group_report_directory()
+                report = ReportDCOMUsers()
+                output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         groups = find_DCOM_user_groups(host_filter=host_filter)
 
@@ -453,9 +513,13 @@ def local_performance_monitor_users_list():
 
     host_filter = []
 
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         systemgroup = form.SystemGroup.data
         location = form.Location.data
+        selectedTemplate = form.TemplateFile.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
@@ -479,6 +543,13 @@ def local_performance_monitor_users_list():
                             headers={
                                 "Content-disposition": "attachment; filename=groupmembers_PerformanceMonitorUsers.xlsx",
                                 "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+        if 'word' in request.form:
+            if selectedTemplate in templates:
+                template_dir = get_group_report_directory()
+                report = ReportPerformanceMonitorUsers()
+                output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                return Response(output, mimetype="text/docx",
+                                headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         groups = find_PerformanceMonitorUser_groups(host_filter=host_filter)
 

@@ -21,7 +21,10 @@ from systemdb.webapp.sysinfo.forms.report.AutoAdminReport import AutoAdminReport
 
 from systemdb.core.export.word.util import get_host_report_templates
 from systemdb.core.export.word.util import get_host_report_directory
+from systemdb.core.export.word.util import get_group_report_templates
+from systemdb.core.export.word.util import get_group_report_directory
 from systemdb.core.export.word.hosts import generate_hosts_report_docx
+from systemdb.core.export.word.hosts import generate_group_report_docx
 
 
 ####################################################################
@@ -31,11 +34,16 @@ from systemdb.core.export.word.hosts import generate_hosts_report_docx
 @login_required
 def hosts_report_domainadmin():
     form = DomAdminReportForm()
+
+    templates = get_group_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
         host_filter = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -71,6 +79,13 @@ def hosts_report_domainadmin():
                                 headers={
                                     "Content-disposition": "attachment; filename=groups-with-domainadmin-brief.xlsx",
                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_group_report_directory()
+                    report = ReportDomAdminMemberOfLocalAdmin()
+                    output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
         else:
             groups = find_groups_where_domadm_is_localadmin()
 

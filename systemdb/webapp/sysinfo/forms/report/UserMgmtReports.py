@@ -17,8 +17,8 @@ class DirectAssignmentReportForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel')
-    TemplateFile = SelectField('Template (Word)')
-    word = SubmitField('Word')
+    #TemplateFile = SelectField('Template (Word)')
+    #word = SubmitField('Word')
 
 
 class HostByLocalUserSearchForm(FlaskForm):

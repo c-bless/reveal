@@ -1,25 +1,6 @@
 {% extends "layout/report_search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
-{% block searchform_input %}
-    <div class="card-body">
-        <div class="row">
-                <div class="col-sm-6">
-                    {{ render_field_sm2(form.Startname) }}
-                    {{ render_check_field_sm2(form.InvertStartname) }}
-                </div>
-                <div class="col-sm-6">
-                    {{ render_field_sm2(form.SystemGroup) }}
-                    {{ render_check_field_sm2(form.InvertSystemGroup) }}
-                    {{ render_field_sm2(form.Location) }}
-                    {{ render_check_field_sm2(form.InvertLocation) }}
-                </div>
-        </div>
-
-    </div>
-    <!-- /.card-body -->
-{% endblock searchform_input %}
-X
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
@@ -56,7 +37,7 @@ X
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="3">No direct domain user assingments found!</td>
+                    <td colspan="5">No direct domain user assingments found!</td>
                 </tr>
             {% endif %}
         </tbody>

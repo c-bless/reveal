@@ -30,3 +30,8 @@ def generate_single_host_docx(template, host=None):
 def generate_hotkey_docx(template, report, hotkey_dict=[]):
     context = {'hotkey_dict': hotkey_dict, 'report': report}
     return generate_docx(template=template, context=context)
+
+
+def generate_group_report_docx(template, report, groups=[]):
+    context = {'groups': groups, 'report': report}
+    return generate_docx(template=template, context=context)
