@@ -17,5 +17,5 @@ class FilePrinterReportForm(FlaskForm):
 
 
     excel = SubmitField('Excel')
-    TemplateFile = SelectField('Template (Word)')
-    word = SubmitField('Word')
+    #TemplateFile = SelectField('Template (Word)')
+    #word = SubmitField('Word')

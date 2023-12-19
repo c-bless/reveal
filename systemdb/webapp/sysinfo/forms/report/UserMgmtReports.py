@@ -33,8 +33,8 @@ class HostByLocalUserSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel (Hosts)')
-    TemplateFile = SelectField('Template (Word)')
-    word = SubmitField('Word')
+    #TemplateFile = SelectField('Template (Word)')
+    #word = SubmitField('Word')
 
 
 class LocalAdminSearchForm(FlaskForm):

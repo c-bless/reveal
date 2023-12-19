@@ -15,8 +15,8 @@ class EOLReportForm(FlaskForm):
     search = SubmitField('Search')
     brief = SubmitField('Excel Hosts (Brief)')
     full = SubmitField('Excel Hosts (Full)')
-    TemplateFile = SelectField('Template (Word)')
-    word = SubmitField('Word')
+    #TemplateFile = SelectField('Template (Word)')
+    #word = SubmitField('Word')
 
 class LastUpdateReportForm(FlaskForm):
     SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
