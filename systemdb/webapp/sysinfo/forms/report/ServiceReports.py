@@ -8,6 +8,7 @@ from systemdb.core.regex import RE_SYSINFO_SERVICE_ACCOUNTNAME
 from systemdb.core.regex import RE_SYSINFO_SERVICE_PERMISSIONSTRING
 from systemdb.core.regex import RE_SYSINFO_SERVICE_STARTNAME
 
+
 class UQSPReportForm(FlaskForm):
     SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
     Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")] )
@@ -18,8 +19,8 @@ class UQSPReportForm(FlaskForm):
     search = SubmitField('Search')
 
     excel = SubmitField('Excel')
-    #TemplateFile = SelectField('Template (Word)')
-    #word = SubmitField('Word')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class ServiceAclSearchForm(FlaskForm):
@@ -44,8 +45,8 @@ class ServiceAclSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel')
-    #TemplateFile = SelectField('Template (Word)')
-    #word = SubmitField('Word')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 
@@ -65,8 +66,8 @@ class ServiceUserContextSearchForm(FlaskForm):
 
     search = SubmitField('Search')
     excel = SubmitField('Excel')
-    #TemplateFile = SelectField('Template (Word)')
-    #word = SubmitField('Word')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')
 
 
 class ModifiableServicesReportForm(FlaskForm):
@@ -79,5 +80,5 @@ class ModifiableServicesReportForm(FlaskForm):
     search = SubmitField('Search')
 
     excel = SubmitField('Excel')
-    #TemplateFile = SelectField('Template (Word)')
-    #word = SubmitField('Word')
+    TemplateFile = SelectField('Template (Word)')
+    word = SubmitField('Word')

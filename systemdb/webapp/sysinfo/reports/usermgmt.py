@@ -28,7 +28,7 @@ from systemdb.webapp.sysinfo.forms.report.UserMgmtReports import LocalGroupMembe
 
 from systemdb.core.export.word.util import get_group_report_templates
 from systemdb.core.export.word.util import get_group_report_directory
-from systemdb.core.export.word.hosts import generate_group_report_docx
+from systemdb.core.export.word.util import generate_group_report_docx
 
 
 ####################################################################

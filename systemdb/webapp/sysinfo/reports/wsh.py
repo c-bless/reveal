@@ -10,7 +10,7 @@ from systemdb.webapp.sysinfo.forms.report.WSHReports import WSHReportForm
 
 from systemdb.core.export.word.util import get_host_report_templates
 from systemdb.core.export.word.util import get_host_report_directory
-from systemdb.core.export.word.hosts import generate_hosts_report_docx
+from systemdb.core.export.word.util import generate_hosts_report_docx
 
 
 ####################################################################

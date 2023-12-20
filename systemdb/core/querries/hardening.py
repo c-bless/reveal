@@ -8,13 +8,16 @@ from systemdb.core.models.sysinfo import Host
 
 
 def find_uqsp(host_filter=[]) -> list[Service]:
-    services = Service.query.filter(and_(Service.PathName.notlike('"%'),
-                              Service.PathName.contains(" "),
-                              Service.PathName.notilike(r'C:\\Windows%'))).join(Host).filter(*host_filter).all()
+    services = Service.query.filter(
+        and_(
+            Service.PathName.notlike('"%'),
+            Service.PathName.contains(" "),
+            Service.PathName.notilike(r'C:\\Windows%'))
+    ).join(Host).filter(*host_filter).all()
     return services
 
 
-def find_modifiable_services(host_filter=[])  -> list[ServiceACL]:
+def find_modifiable_services(host_filter=[]) -> list[ServiceACL]:
     acls = ServiceACL.query.filter(
         or_(
             and_(

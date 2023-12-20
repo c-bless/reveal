@@ -14,8 +14,8 @@ from systemdb.webapp.sysinfo import sysinfo_bp
 from systemdb.core.models.sysinfo import Host, Service, Product, Share
 from systemdb.core.vars import REPORT_TYPES_WORD
 
-from systemdb.core.export.word.hosts import generate_hosts_docx
-from systemdb.core.export.word.hosts import generate_single_host_docx
+from systemdb.core.export.word.util import generate_hosts_docx
+from systemdb.core.export.word.util import generate_single_host_docx
 
 from systemdb.core.export.excel.hosts import generate_hosts_excel
 from systemdb.core.export.excel.hosts import generate_hosts_excel_brief

@@ -20,6 +20,13 @@ from systemdb.core.querries.hardening import find_uqsp
 from systemdb.webapp.sysinfo.forms.report.ServiceReports import UQSPReportForm
 from systemdb.core.reports import ReportInfo
 
+from systemdb.core.export.word.util import get_service_report_directory
+from systemdb.core.export.word.util import generate_service_report_docx
+from systemdb.core.export.word.util import get_service_report_templates
+
+from systemdb.core.export.word.util import get_serviceACL_report_directory
+from systemdb.core.export.word.util import generate_serviceACL_report_docx
+from systemdb.core.export.word.util import get_serviceACL_report_templates
 
 ####################################################################
 # Hosts with UQSP vulnerabilities
@@ -31,11 +38,15 @@ def hosts_report_services_uqsp():
 
     host_filter = []
 
+    templates = get_service_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
+
     if request.method == 'POST':
 
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -58,6 +69,13 @@ def hosts_report_services_uqsp():
                 return Response(output, mimetype="text/xlsx",
                                 headers={"Content-disposition": "attachment; filename=uqsp.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_service_report_directory()
+                    report = ReportUQSP()
+                    output = generate_service_report_docx(f"{template_dir}/{selectedTemplate}", report, services=services)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
 
     else:
         services = []
@@ -87,12 +105,16 @@ def hosts_report_services_by_acl():
     form = ServiceAclSearchForm()
     host_filter = []
     service_filter = []
+
+    templates = get_serviceACL_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
     if request.method == 'POST':
         if form.validate_on_submit():
             user = form.User.data
             invert_user = form.InvertUser.data
             permission = form.Permission.data
             invert_permission = form.InvertPermission.data
+            selectedTemplate = form.TemplateFile.data
 
             systemgroup = form.SystemGroup.data
             location = form.Location.data
@@ -129,6 +151,13 @@ def hosts_report_services_by_acl():
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=service_by_acl.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_serviceACL_report_directory()
+                    report = ReportServiceByPermission()
+                    output = generate_serviceACL_report_docx(f"{template_dir}/{selectedTemplate}", report, acls=acls)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
 
             return render_template('sysinfo/reports/service_acl_search_list.html', form=form, acls=acls,
                                report_name="Service by ACL")
@@ -162,11 +191,15 @@ def hosts_report_services_by_usercontext():
     form = ServiceUserContextSearchForm()
     host_filter = []
     service_filter = []
+
+    templates = get_service_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
     if request.method == 'POST':
         if form.validate_on_submit():
 
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -197,7 +230,13 @@ def hosts_report_services_by_usercontext():
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=services_by_usercontext_{0}.xlsx".format(startname),
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
-
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_service_report_directory()
+                    report = ReportServiceByUsercontext()
+                    output = generate_service_report_docx(f"{template_dir}/{selectedTemplate}", report, services=services)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
         else:
             services = []
     else:
@@ -229,11 +268,15 @@ def hosts_report_modifiable_services():
 
     form = ModifiableServicesReportForm()
     host_filter = []
+
+    templates = get_serviceACL_report_templates()
+    form.TemplateFile.choices = [(template, template) for template in templates]
     if request.method == 'POST':
         if form.validate_on_submit():
 
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            selectedTemplate = form.TemplateFile.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -256,6 +299,13 @@ def hosts_report_modifiable_services():
                 return Response(output, mimetype="text/xlsx",
                                 headers={"Content-disposition": "attachment; filename=modifiable-services.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'word' in request.form:
+                if selectedTemplate in templates:
+                    template_dir = get_serviceACL_report_directory()
+                    report = ReportModifiableServices()
+                    output = generate_serviceACL_report_docx(f"{template_dir}/{selectedTemplate}", report, acls=acls)
+                    return Response(output, mimetype="text/docx",
+                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
         else:
             acls = []
     else:

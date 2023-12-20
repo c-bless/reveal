@@ -12,7 +12,8 @@ from systemdb.core.export.word.util import get_registryCheckDict_report_template
 from systemdb.core.export.word.util import get_registryCheckDict_directory
 from systemdb.core.reports import ReportInfo
 
-from systemdb.core.export.word.hosts import generate_hotkey_docx
+from systemdb.core.export.word.util import generate_hotkey_docx
+
 
 ####################################################################
 # None Disabled Hotkeys and corresponding hosts
@@ -27,7 +28,6 @@ def report_hotkeys_enabled():
     form.TemplateFile.choices = [(template, template) for template in templates]
 
     if request.method == 'POST':
-        filters = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data

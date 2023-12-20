@@ -15,8 +15,6 @@ from systemdb.core.export.excel.usermgmt import generate_localuser_excel
 from systemdb.webapp.sysinfo.forms.users import LocalUserSearchForm
 
 from systemdb.webapp.sysinfo.forms.groups import LocalGroupMemberSearchForm
-from systemdb.core.sids import SID_LOCAL_ADMIN_GROUP
-from systemdb.core.querries.usermgmt import find_local_admins_group_member
 from systemdb.core.querries.usermgmt import find_group_local_admins
 from systemdb.core.export.excel.usermgmt import generate_group_members_excel
 
