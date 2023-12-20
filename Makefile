@@ -1,16 +1,16 @@
 BASEDIR     = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 TMP_DIR      = $(BASEDIR)/tmp
-SYSTEMDB_SRC = $(BASEDIR)/systemdb/
-WEBAPP_SRC  = $(SYSTEMDB_SRC)/webapp/
-WEBAPI_SRC  = $(SYSTEMDB_SRC)/webapi/
+REVEAL_SRC = $(BASEDIR)/reveal/
+WEBAPP_SRC  = $(REVEAL_SRC)/webapp/
+WEBAPI_SRC  = $(REVEAL_SRC)/webapi/
 STATIC_DIR   = $(BASEDIR)/data-directories/static/
 DISTDIR     = $(STATIC_DIR)dist/
 PLUGINDIR   = $(STATIC_DIR)plugins/
 
 
 DOCKER_WEBAPP                   = $(BASEDIR)/services/web/
-DOCKER_WEBAPP_SRC               = $(BASEDIR)/services/web/systemdb/
+DOCKER_WEBAPP_SRC               = $(BASEDIR)/services/web/reveal/
 REPORT_DIR                      = $(BASEDIR)/data-directories/reports/
 DOCKER_REPORT_DIR               = $(BASEDIR)/services/web/reports/
 UPLOAD_DIR                      = $(BASEDIR)/data-directories/uploads/
@@ -23,7 +23,7 @@ DOCKER_NGINX_STATIC_DATA_DIR    = $(BASEDIR)/services/nginx/static/
 DOCKER_NGINX                    = $(BASEDIR)/services/nginx/
 
 DOCKER_WEBAPI                   = $(BASEDIR)/services/api/
-DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/systemdb/
+DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/reveal/
 
 TMP_ADMIN_LTE_URL = https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip
 TMP_ADMIN_LTE_ZIP = "admin-lte.zip"
@@ -66,8 +66,8 @@ build: tmp
 	@$(shell cp -r $(UPDATE_DATA_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(STATIC_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(STATIC_DIR) $(DOCKER_NGINX))
-	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPP))
-	@$(shell cp -r $(SYSTEMDB_SRC) $(DOCKER_WEBAPI))
+	@$(shell cp -r $(REVEAL_SRC) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(REVEAL_SRC) $(DOCKER_WEBAPI))
 	docker-compose build
 
 run:

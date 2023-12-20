@@ -3,7 +3,7 @@ version: '3.8'
 services:
   webapp:
     build: ./services/web
-    command: gunicorn --bind 0.0.0.0:8000 systemdb.app:app
+    command: gunicorn --bind 0.0.0.0:8000 reveal.app:app
     volumes:
       - ./services/web/:/app
       - static_volume:/app/static/
@@ -16,7 +16,7 @@ services:
       - db
   webapi:
     build: ./services/api
-    command: gunicorn --bind 0.0.0.0:8001 systemdb.api:app
+    command: gunicorn --bind 0.0.0.0:8001 reveal.api:app
     volumes:
       - ./services/api/:/app
     env_file:

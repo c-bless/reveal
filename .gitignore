@@ -78,6 +78,9 @@ target/
 /systemdb/webapp/web/static/*
 /systemdb/webapp/web/static/dist/
 /systemdb/webapp/web/static/plugins/
+/reveal/webapp/web/static/*
+/reveal/webapp/web/static/dist/
+/reveal/webapp/web/static/plugins/
 
 /tmp/
 # Docker
@@ -87,6 +90,8 @@ target/
 /services/web/static/*
 /services/api/systemdb/
 /services/web/systemdb/
+/services/api/reveal/
+/services/web/reveal/
 
 # OBSIDIAN Cache
 /.obsidian/

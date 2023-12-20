@@ -1,0 +1,67 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout/base_layout.html" %}
+
+{% block body %}
+<body class="hold-transition login-page">
+<div class="login-box">
+  <!-- /.login-logo -->
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="{{ url_for('auth.index') }}" class="h1"><b>REVEAL</b></a>
+    </div>
+    <div class="card-body">
+
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p class="login-box-msg">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+
+      <form action="{{ url_for('auth.login_post') }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="input-group mb-3">
+          {{ form.username(class="form-control", placeholder="Username") }}
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+
+        </div>
+        <div class="input-group mb-3">
+          {{ form.password(class="form-control", type="password", placeholder="Password") }}
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+
+          <!-- /.col -->
+          <div class="col-4">
+            {{ form.signIn(class="btn btn-primary btn-block") }}
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+</body>
+
+{% endblock body %}

@@ -3,11 +3,11 @@
     This PowerShell script is to fetch domain information.
 
     .DESCRIPTION
-    This PowerShell script is to fetch domain information. The collector script is published as part of "systemdb".
-    https://github.com/c-bless/systemdb
+    This PowerShell script is to fetch domain information. The collector script is published as part of "REVEAL".
+    https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.3.5
+    Version:    0.4
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -40,7 +40,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.3.5"
+$version="0.4"
 $script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"

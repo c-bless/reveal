@@ -1,6 +1,6 @@
 # README #
 
-The scripts in the directory collector-scripts can be used to collect system information or information from the Active Directory. The Flask based applicaton "systemdb" can be used to import the scripts into a (sqlite/PostgreSQL) database, analyse the information and to generate reports based on provided templates.
+The scripts in the directory collector-scripts can be used to collect system information or information from the Active Directory. The Flask based applicaton "REVEAL" can be used to import the scripts into a (sqlite/PostgreSQL) database, analyse the information and to generate reports based on provided templates.
 
 I used those collector scripts already in several assessments collecting information from IT and OT systems. This includes DCS systems (e.g., PCS7, 800xA, DeltaV), MES systems (e.g., PASX, SIMATIC IT, Opcenter), Historians (e.g., IP21), several HMIs as well as systems in laboratories operating measuring devices or HPLCs.  
 
@@ -58,13 +58,13 @@ The base directory of the repository contains an installation file called *downl
 
 #### Manually install 3rd party dependencies ###
 1. Download Admin-LTE (e.g., https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip )
-2. extract the zip file and copy *dist* and *plugins* folders to directory *systemdb/systemdb/web/static/*
+2. extract the zip file and copy *dist* and *plugins* folders to directory *reveal/web/static/*
 
 #### Install python dependencies ####
-1. clone repository: `git clone https://github.com/c-bless/systemdb.git`
+1. clone repository: `git clone https://github.com/c-bless/reveal.git`
 2. create virtual environment for webapp and webapi (requirement.txt files can be found under 'services/api' and 'services/web')
 ```
-cd systemdb
+cd reveal
 python -m venv venv
 ```
 3. activate virtual environment `source venv\bin\activate`
@@ -134,7 +134,7 @@ Files can be uploaded and imported via web interface:
 
 ### Import Data (without Docker) ###
 
-Needs to be run from root directory of this repository and `FLASK_APP=systemdb.app:app` must be set
+Needs to be run from root directory of this repository and `FLASK_APP=reveal.app:app` must be set
 
 
 Data can be imported via `flask import file <file>` or  `flask import dir <dir>`. The *import file* command can be used to import data collected via *sysinfo-collector.ps1* or *domain-collector* scripts. The *import file* command can import multiple outputs within a directory.
@@ -158,8 +158,8 @@ flask import dir /path/to/result/folder/
 ### Start application (after import) ####
 
 Before Running the Webapplication or API you need to set the FLASK_APP environment variable to the corresponding app.
-- For Webapp: `FLASK_APP=systemdb.app:app`
-- For Webapi: `FLASK_APP=systemdb.api:app`
+- For Webapp: `FLASK_APP=reveal.app:app`
+- For Webapi: `FLASK_APP=reveal.api:app`
 
 ```
 flask run

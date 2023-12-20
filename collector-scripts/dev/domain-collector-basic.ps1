@@ -3,8 +3,8 @@
     This PowerShell script is to fetch domain information.
 
     .DESCRIPTION
-    This PowerShell script is to fetch domain information. The collector script is published as part of "systemdb".
-    https://github.com/c-bless/systemdb
+    This PowerShell script is to fetch domain information. The collector script is published as part of "REVEAL".
+    https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
     Version:    DEV

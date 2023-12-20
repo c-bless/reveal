@@ -13,7 +13,7 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY /systemdb /app/systemdb
+COPY /reveal /app/reveal
 COPY /update-data /app/update-data
 COPY /uploads /app/uploads
 COPY /reports /app/reports
