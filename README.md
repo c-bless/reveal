@@ -1,4 +1,4 @@
-# README #
+#  System **REV**i**E**w and **A**nalsis too**L** (REVEAL) #
 
 The scripts in the directory collector-scripts can be used to collect system information or information from the Active Directory. The Flask based applicaton "REVEAL" can be used to import the scripts into a (sqlite/PostgreSQL) database, analyse the information and to generate reports based on provided templates.
 
