@@ -200,6 +200,10 @@
           <a class="nav-link" id="tabs-defender-tab" data-toggle="pill" href="#tabs-defender"
              role="tab" aria-controls="tabs-defender" aria-selected="false">Defender</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-route-tab" data-toggle="pill" href="#tabs-routes"
+             role="tab" aria-controls="tabs-routes" aria-selected="false">Routes</a>
+        </li>
       </ul>
     </div>
     <div class="card-body">
@@ -288,6 +292,9 @@
                 </div>
                 </div>
         </div>
+
+
+
 
         <div class="tab-pane fade" id="tabs-firewall" role="tabpanel" aria-labelledby="tabs-firewall-tab">
           <div class="row m-1">
@@ -1040,6 +1047,58 @@
             </div>
           </div>
         </div>
+
+        <div class="tab-pane fade" id="tabs-routes" role="tabpanel" aria-labelledby="tabs-route-tab">
+          <div class="row m-1">
+                      <div class="col-md-6">
+                        <div class="card card-olive card-outline">
+                          <div class="card-header">
+                            <h3 class="card-title">Routes</h3>
+                          </div>
+                          <!-- /.card-header -->
+                          <div class="card-body p-0">
+                            <table class="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>AddressFamily</th>
+                                  <th>DestinationPrefix</th>
+                                  <th>NextHop</th>
+                                  <th>RouteMetric</th>
+                                  <th>IfIndex</th>
+                                  <th>InterfaceMetric</th>
+                                  <th>AdminDistance</th>
+                                  <th>AdminDistance</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {% if host.Routes %}
+                                {% for r in host.Routes %}
+                                <tr>
+                                  <td>{{ r.AddressFamily }}</td>
+                                  <td>{{ r.DestinationPrefix}}</td>
+                                  <td>{{ r.NextHop }}</td>
+                                  <td>{{ r.RouteMetric }}</td>
+                                  <td>{{ r.IfIndex }}</td>
+                                  <td>{{ r.InterfaceMetric }}</td>
+                                  <td>{{ r.AdminDistance }}</td>
+                                  <td>{{ r.AdminDistance }}</td>
+                                </tr>
+                                {% endfor %}
+                              {% else %}
+                                <tr>
+                                  <td colspan="4">No routes found.</td>
+                                </tr>
+                              {% endif %}
+                              </tbody>
+                            </table>
+                          </div>
+                          <!-- /.card-body -->
+                        </div>
+                    </div>
+                  <!-- /.card -->
+                </div>
+        </div>
+
       </div>
     </div>
 

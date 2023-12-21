@@ -23,6 +23,7 @@ from reveal.core.models.sysinfo import RegistryCheck
 from reveal.core.models.sysinfo import FileExistCheck
 from reveal.core.models.sysinfo import PathACLCheck
 from reveal.core.models.sysinfo import PathACL
+from reveal.core.models.sysinfo import Route
 from reveal.core.extentions import db
 
 from reveal.core.importer.converter import str2bool_or_none
@@ -212,6 +213,7 @@ def host2db(xml_element):
             if "Whoami" == e.tag : host.Whoami = e.text
             if "WhoamiIsAdmin" == e.tag : host.WhoamiIsAdmin = str2bool_or_none(e.text)
             if "Winlogon" == e.tag:  winlogon2db(e, host=host)
+            if "Routes" == e.tag:  routes2db(e, host=host)
         db.session.add(host)
         db.session.commit()
         db.session.refresh(host)
@@ -220,6 +222,23 @@ def host2db(xml_element):
         db.session.rollback()
         print("Error while creating Host. Error: {0}".format(str(e.__dict__['orig'])))
         return None
+
+
+def routes2db(xml, host):
+    if "Routes" == xml.tag:
+        for route_elem in xml.getchildren():
+            r = Route()
+            for w in route_elem.getchildren():
+                if "AddressFamily" == w.tag: r.AddressFamily = w.text
+                if "DestinationPrefix" == w.tag: r.DestinationPrefix = w.text
+                if "NextHop" == w.tag: r.NextHop = w.text
+                if "RouteMetric" == w.tag: r.RouteMetric = w.text
+                if "IfIndex" == w.tag: r.IfIndex = w.text
+                if "InterfaceMetric" == w.tag: r.InterfaceMetric = w.text
+                if "IsStatic" == w.tag: r.IsStatic = str2bool_or_none(w.text)
+                if "AdminDistance" == w.tag: r.AdminDistance = w.text
+            r.Host = host
+            db.session.add(r)
 
 
 def winlogon2db(xml, host):

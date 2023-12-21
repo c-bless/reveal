@@ -23,8 +23,7 @@ from reveal.core.util import decrypt
 @login_required
 def hosts_report_winlogon():
 
-    host_filter = []
-    host_filter.append(Host.DefaultPassword != "")
+    host_filter = [ Host.DefaultPassword != "" ]
 
     form = WinlogonReportForm()
 
@@ -69,25 +68,31 @@ def hosts_report_winlogon():
             if 'brief' in request.form:
                 output = generate_hosts_excel_brief(hosts)
                 return Response(output, mimetype="text/docx",
-                                headers={"Content-disposition": "attachment; filename=hosts-with-winlogon-brief.xlsx",
-                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts-with-winlogon-brief.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'full' in request.form:
                 output = generate_hosts_excel(hosts)
                 return Response(output, mimetype="text/docx",
-                                headers={"Content-disposition": "attachment; filename=hosts-with-winlogon-full.xlsx",
-                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts-with-winlogon-full.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'winlogon' in request.form:
                 output = generate_winlogon_excel(hosts)
                 return Response(output, mimetype="text/docx",
-                                headers={"Content-disposition": "attachment; filename=hosts-with-winlogon-values.xlsx",
-                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts-with-winlogon-values.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'word' in request.form:
                 if selectedTemplate in templates:
                     template_dir = get_host_report_directory()
                     report = ReportPWInWinlogon()
                     output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
-                    return Response(output, mimetype="text/docx",
-                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
+                    return Response(output, mimetype="text/docx", headers={
+                        "Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
         hosts = Host.query.filter(*host_filter).all()
 

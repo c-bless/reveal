@@ -76,6 +76,7 @@ class Host(db.Model):
     FileExistChecks = db.relationship('FileExistCheck', back_populates='Host', lazy='dynamic')
     PathACLChecks = db.relationship('PathACLCheck', back_populates='Host', lazy='dynamic')
     Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
+    Routes = db.relationship('Route', back_populates='Host', lazy='dynamic')
 
     def __repr__(self):
         return self.Hostname
@@ -125,6 +126,28 @@ class Host(db.Model):
             return Host.query.filter(Host.SystemGroup == name).all()
         else:
             return Host.query.filter(Host.SystemGroup.ilike('%' + name + '%')).all()
+
+
+class Route(db.Model):
+    __tablename__ = "Route"
+    id = db.Column(db.Integer, primary_key=True)
+    AddressFamily = db.Column(db.String(10), unique=False, nullable=True)
+    DestinationPrefix = db.Column(db.String(), unique=False, nullable=True)
+    InterfaceAlias = db.Column(db.String(), unique=False, nullable=True)
+    NextHop = db.Column(db.String(), unique=False, nullable=True)
+    RouteMetric = db.Column(db.String(), unique=False, nullable=True)
+    IfIndex = db.Column(db.Integer, unique=False, nullable=True)
+    InterfaceMetric = db.Column(db.Integer, unique=False, nullable=True)
+    IsStatic = db.Column(db.Boolean, unique=False, nullable=True)
+    AdminDistance = db.Column(db.Integer, unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="Routes")
+
+    def __repr__(self):
+        return f"{self.InterfaceAlias} {self.DestinationPrefix}"
+
+    def __str__(self):
+        return f"{self.InterfaceAlias} {self.DestinationPrefix}"
 
 
 class PSInstalledVersions(db.Model):
