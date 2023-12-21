@@ -10,6 +10,9 @@ class AppConfig(object):
     # secrets.token_hex(32)
     SECRET_KEY = os.environ.get('SECRET_KEY') or \
                  '632761b4a7ffb045d2fe95b255bf834fedeacd083b86aea12817c440db4c2440' # change me!
+    # AES_KEY for WEB and API must be same
+    AES_KEY = os.environ.get('SECRET_KEY') or \
+                 '45699b8984f599ca33ffe424e0f51a349b5c63a15963fca72f37d6699834ba0a' # change me!
     SITE_NAME = 'REVEAL'
     SITE_ROOT_URL = 'http://127.0.0.1:8000'
     LOG_LEVEL = logging.DEBUG
@@ -51,6 +54,10 @@ class ApiConfig(object):
     VERSION = "v0.4"
     SECRET_KEY = os.environ.get('SECRET_KEY') or \
                  'e2c943e09c7af7282229cd32c32971bba9b6a2a26abbd7f2c0f8b42a856f02af' # change me!
+
+    # AES_KEY for WEB and API must be same
+    AES_KEY = os.environ.get('SECRET_KEY') or \
+                 '45699b8984f599ca33ffe424e0f51a349b5c63a15963fca72f37d6699834ba0a' # change me!
     LOG_LEVEL = logging.DEBUG
     DEBUG=False
 
