@@ -1,6 +1,24 @@
 {% extends "layout/report_search_list_layout.html" %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
+{% block searchform_input %}
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.SystemGroup) }}
+                {{ render_check_field_sm2(form.InvertSystemGroup) }}
+
+            </div>
+            <div class="col-sm-6">
+                {{ render_field_sm2(form.Location) }}
+                {{ render_check_field_sm2(form.InvertLocation) }}
+
+                {{ render_check_field_sm2(form.Decrypt) }}
+            </div>
+        </div>
+    </div>
+    <!-- /.card-body -->
+{% endblock searchform_input %}
 
 {% block searchform_footer_middle %}
     {{ super() }}

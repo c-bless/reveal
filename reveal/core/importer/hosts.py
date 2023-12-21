@@ -1,4 +1,5 @@
 import datetime
+from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 
 from reveal.core.models.sysinfo import Hotfix
@@ -26,6 +27,7 @@ from reveal.core.extentions import db
 
 from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import str2datetime_or_none
+from reveal.core.util import encrypt
 
 
 def import_sysinfo_collector(root):
@@ -209,13 +211,7 @@ def host2db(xml_element):
             if "Location" == e.tag: host.Location = e.text
             if "Whoami" == e.tag : host.Whoami = e.text
             if "WhoamiIsAdmin" == e.tag : host.WhoamiIsAdmin = str2bool_or_none(e.text)
-            if "Winlogon" == e.tag:
-                for w in e.getchildren():
-                    if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
-                    if "DefaultPassword" == w.tag: host.DefaultPassword = w.text
-                    if "AutoAdminLogon" == w.tag: host.AutoAdminLogon = str2bool_or_none(w.text)
-                    if "DefaultDomainName" == w.tag: host.DefaultDomain = w.text
-                    if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = str2bool_or_none(w.text)
+            if "Winlogon" == e.tag:  winlogon2db(e, host=host)
         db.session.add(host)
         db.session.commit()
         db.session.refresh(host)
@@ -224,6 +220,24 @@ def host2db(xml_element):
         db.session.rollback()
         print("Error while creating Host. Error: {0}".format(str(e.__dict__['orig'])))
         return None
+
+
+def winlogon2db(xml, host):
+    if "Winlogon" == xml.tag:
+        for w in xml.getchildren():
+            if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
+            if "DefaultPassword" == w.tag:
+                if w.text and len(w.text) > 0:
+                    try:
+                        key = current_app.config.get("AES_KEY")
+                        host.DefaultPassword = encrypt(plain_text=w.text, key=key)
+                    except:
+                        host.DefaultPassword = None
+                else:
+                    host.DefaultPassword = None
+            if "AutoAdminLogon" == w.tag: host.AutoAdminLogon = str2bool_or_none(w.text)
+            if "DefaultDomainName" == w.tag: host.DefaultDomain = w.text
+            if "ForceAutoLogon" == w.tag: host.ForceAutoLogon = str2bool_or_none(w.text)
 
 
 def hotfix2db(xml, host):

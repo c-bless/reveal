@@ -12,6 +12,8 @@ class WinlogonReportForm(FlaskForm):
     InvertSystemGroup = BooleanField('Invert SystemGroup')
     InvertLocation = BooleanField('Invert Location')
 
+    Decrypt = BooleanField('Decrypt Password')
+
     search = SubmitField('Search')
 
     brief = SubmitField('Hosts (brief)')

@@ -1,4 +1,4 @@
-from flask import render_template, Response, url_for, request
+from flask import render_template, Response, url_for, request, current_app
 from flask_login import login_required
 
 from reveal.webapp.sysinfo import sysinfo_bp
@@ -12,6 +12,8 @@ from reveal.core.reports import ReportInfo
 from reveal.core.export.word.util import get_host_report_templates
 from reveal.core.export.word.util import get_host_report_directory
 from reveal.core.export.word.util import generate_hosts_report_docx
+
+from reveal.core.util import decrypt
 
 
 ####################################################################
@@ -35,6 +37,7 @@ def hosts_report_winlogon():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
+            decrypt_pw = form.Decrypt.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
@@ -51,6 +54,17 @@ def hosts_report_winlogon():
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
 
             hosts = Host.query.filter(*host_filter).all()
+
+            key = current_app.config.get("AES_KEY")
+
+            for h in hosts:
+                if decrypt_pw:
+                    try:
+                        h.DefaultPassword = decrypt(cipher_text_b64=h.DefaultPassword, key=key).decode("utf-8")
+                    except:
+                        pass
+                else:
+                    h.DefaultPassword = "<REMOVED>"
 
             if 'brief' in request.form:
                 output = generate_hosts_excel_brief(hosts)
