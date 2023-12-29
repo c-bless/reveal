@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.4-dev
+    Version:    0.4
     License:    GPLv3
 
     .INPUTS
@@ -29,7 +29,11 @@ param (
     
     # name of the location
     [Parameter(Mandatory=$false)]
-    [string]$Location = "N/A"
+    [string]$Location = "N/A",
+
+    # option for additional label
+    [Parameter(Mandatory=$false)]
+    [string]$Label = "N/A"
 )
 
 
@@ -39,6 +43,9 @@ $version="0.4"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 $hostname = $env:COMPUTERNAME
+
+# can be generated with helper script ./genkey.py
+$encKey = (7, 16, 166, 10, 141, 23, 37, 94, 240, 162, 206, 168, 181, 97, 19, 170)
 
 $path = Get-Location
 
@@ -65,7 +72,7 @@ $xmlWriter.WriteStartDocument()
 $config_checks = New-Object System.Collections.ArrayList 
 
 $xmlWriter.WriteStartElement("SystemInfoCollector")
-    $xmlWriter.WriteAttributeString("version", "$script_version")
+    $xmlWriter.WriteAttributeString("version", "$version")
     
     $xmlWriter.WriteStartElement("Host")
 
@@ -73,6 +80,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         
         $xmlWriter.WriteElementString("SystemGroup", $Systemgroup)
         $xmlWriter.WriteElementString("Location", $Location)
+        $xmlWriter.WriteElementString("Label", $Label)
         
         
         # Adding Hostname to XML
@@ -83,13 +91,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         $xmlWriter.WriteElementString("OSBuildNumber",[string] [System.Environment]::OSVersion.Version.Build);
 
-        # if Get-ComputerInfo is available this command will be used to collect basic computer information
+
+        ###############################################################################################################
+        # Collecting basic information about the system 
+        # This includes OS Name, OS Version)
+        ###############################################################################################################
+
+        # if Get-ComputerInfo is available this command will be used to collect basic computer information. 
+        # This cmdlet was introduced in Windows PowerShell 5.1. Thus, for older versions a combination of WMI querries is used.
         if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
+            # we have at least PowerShell 5.1
             $compInfo = Get-ComputerInfo
 
-            #######################################################################
             # writing basic system information
-            #######################################################################
             $xmlWriter.WriteElementString("Domain",[string] $compInfo.CsDomain)
             $xmlWriter.WriteElementString("DomainRole",[string] $compInfo.CsDomainRole);
 
@@ -119,7 +133,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $compInfo.CSPrimaryOwnerName);
 
         }else{
-            # No Get-ComputerInfo command. Thus, info must be collected with multiple technics
+            # No Get-ComputerInfo command. Thus, info must be collected using multiple technics
             $xmlWriter.WriteElementString("Domain",[string] [System.Environment]::UserDomainName);
             try{
                 $cs = Get-WmiObject -Class win32_ComputerSystem -Property * 
@@ -144,15 +158,28 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }catch{}
         }
 
+
+        ###############################################################################################################
+        # Collecting information about the current user
+        ###############################################################################################################
         # user used to collect information
         $xmlWriter.WriteElementString("Whoami", [string] [System.Environment]::UserName);
         try {
+            # check if user is admin
             $elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator);
             $xmlWriter.WriteElementString("WhoamiIsAdmin", [string] $elevated);
         }catch{}
 
-        # active PowerShell version
+
+        ###############################################################################################################
+        # Collecting information about active PowerShell version
+        ###############################################################################################################
         $xmlWriter.WriteElementString("PSVersion",[string]$PSVersionTable.PSVersion);
+                
+        
+        ###############################################################################################################
+        # Collecting information about the BIOS
+        ###############################################################################################################
         try{
             $xmlWriter.WriteStartElement("BIOS")
             $bios = Get-WmiObject -Class win32_bios
@@ -163,10 +190,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement() # BIOS
         }catch{}
 
-        #######################################################################
+
+        ###############################################################################################################
         # Collecting information about installed hotfixes / patches
-        #######################################################################
-        
+        ###############################################################################################################
         Write-Host "[*] Collecting installed hotfixes"
         $xmlWriter.WriteStartElement("Hotfixes")
             
@@ -214,9 +241,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # hotfixes
 
 
-        #######################################################################
+        ###############################################################################################################
         # Collecting information about installed products / applications
-        #######################################################################
+        ###############################################################################################################
     
         Write-Host "[*] Collecting installed products"
         $products = Get-WmiObject  -class win32_product 
@@ -236,9 +263,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # products
 
         
-        #######################################################################
+        ###############################################################################################################
         # Collecting information about network adapters
-        #######################################################################
+        ###############################################################################################################
         
         if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
             Write-Host "[*] Collecting available network adapters"
@@ -269,9 +296,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }catch{}
         }
         
-        #######################################################################
+        ###############################################################################################################
         # Collecting information about ip addresses
-        #######################################################################
+        ###############################################################################################################
+        
         if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
             Write-Host "[*] Collecting IP addresses"
             $netips = Get-NetIPAddress
@@ -305,10 +333,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }catch{}
         }
 
-        #######################################################################
+
+        ###############################################################################################################
         # Collecting information about available routes (routing table)
-        #######################################################################
-    
+        ###############################################################################################################
         Write-Host "[*] Collecting routing table"
        
         if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
@@ -334,10 +362,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }catch{}
         }
 
-        #######################################################################
+
+        ###############################################################################################################
         # Collecting information about services
-        #######################################################################
-    
+        ###############################################################################################################
+        
         Write-Host "[*] Collecting service information"
         $services = Get-WmiObject  -class win32_service
 
@@ -397,10 +426,12 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
         $xmlWriter.WriteEndElement() # services
 
-        #######################################################################
+
+        ###############################################################################################################
         # Collecting information about local user accounts
-        #######################################################################
+        ###############################################################################################################
     
+        # using WMI to be compatible with older PS versions
         Write-Host "[*] Collecting local user accounts"
         $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True" 
 
@@ -424,9 +455,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
 
 
-        #######################################################################
+        ###############################################################################################################
         # Collecting information about local groups
-        #######################################################################
+        ###############################################################################################################
     
         Write-Host "[*] Collecting local groups"
         $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
@@ -461,9 +492,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # groups
 
 
-        #######################################################################
+        ###############################################################################################################
         # Collecting information about shares on the system
-        #######################################################################
+        ###############################################################################################################
     
         $shares = Get-WmiObject -class win32_share 
         # $shares = Get-CimInstance -ClassName Win32_Share
@@ -527,9 +558,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # shares
 
 
-        #######################################################################
-        # WSUS Settings in Registry
-        #######################################################################
+        ###############################################################################################################
+        # Collecting WSUS Settings in Registry
+        ###############################################################################################################
         # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
 
         Write-Host "[*] Checking WSUS configuration"
@@ -564,9 +595,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
         $xmlWriter.WriteEndElement() # WSUS
 
-        #######################################################################
+        ###############################################################################################################
         # Collecting firewall status
-        #######################################################################
+        ###############################################################################################################
         if (Get-Command Get-NetFirewallProfile -ea SilentlyContinue) {
             Write-Host "[*] Collecting local firewall state" 
             $xmlWriter.WriteStartElement("NetFirewallProfiles");
@@ -599,9 +630,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement(); # NetFirewallProfiles
         }
 
-        #######################################################################
+        ###############################################################################################################
         # Collecting WinLogon Settings
-        #######################################################################
+        ###############################################################################################################
 
         Write-Host "[*] Checking autologon configuration"           
         $xmlWriter.WriteStartElement("Winlogon")
@@ -611,14 +642,41 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         } 
         if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultPassword") {
             $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultPassword -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("DefaultPassword", $value.DefaultPassword)
+            $base64 = $false
+            $encrypted = $false
+            try {
+                $aesManaged = New-Object "System.Security.Cryptography.AesManaged"
+                $aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CBC
+                $aesManaged.Padding = [System.Security.Cryptography.PaddingMode]::PKCS7
+                $aesManaged.BlockSize = 128
+                $aesManaged.KeySize = 256
+                $aesManaged.Key = $encKey
+                $plainBytes = [Text.Encoding]::UTF8.GetBytes($value.DefaultPassword)
+                $encryptor = $aesManaged.CreateEncryptor()
+                $encryptedText = $encryptor.TransformFinalBlock($plainBytes,0,$plainBytes.Length)
+                
+                $encrypted = $true
+                $base64 = $true
+                [byte[]] $fullData = $aesManaged.IV + $encryptedText
+                $aesManaged.Dispose()
+                $defaultPassword = [Convert]::ToBase64String($fullData)
+            } catch {
+                # .NET library for Cryptography not available. 
+                $defaultPassword = [convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($value.DefaultPassword))
+                $base64 = $true
+            }
+            $xmlWriter.WriteStartElement("DefaultPassword")
+                $xmlWriter.WriteAttributeString("base64", [string] $base64)
+                $xmlWriter.WriteAttributeString("encrypted", [string] $encrypted)
+                $xmlWriter.WriteString($defaultPassword)
+            $xmlWriter.WriteEndElement()
             # add additional entry to config_checks
             $result = [PSCustomObject]@{
                 Component = 'Winlogon'
                 Name = 'WinlogonDefaultPassword'
                 Method       = 'Registry'
                 Key   = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\DefaultPassword'
-                Value      = $value.DefaultPassword
+                Value      = $defaultPassword
                 Result = 'DefaultPassword set'
                 Message = 'Password for autologon user stored in Registry'
             }
@@ -639,9 +697,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # Winlogon
 
         
-        #######################################################################
-        # Installed PS Versions / Check if Version 2 is enabled 
-        #######################################################################
+        ###############################################################################################################
+        # Collecting information about Installed PS Versions / Check if Version 2 is enabled 
+        ###############################################################################################################
+        
         Write-Host "[*] Checking installed PS versions"
         $xmlWriter.WriteStartElement("PSVersions")
         $v2installed = $false
@@ -677,9 +736,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         
         $xmlWriter.WriteElementString("PSVersion2Installed", $v2installed) 
         
-        #######################################################################
-        # Windows Scripting Host 
-        #######################################################################
+        ###############################################################################################################
+        # Collecting information about Windows Scripting Host 
+        ###############################################################################################################
+        
         Write-Host "[*] Checking settings for Windows Scripting Host"
         
         $xmlWriter.WriteStartElement("WSH")
@@ -766,9 +826,36 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         [void]$config_checks.Add($result)
         
         $xmlWriter.WriteEndElement()
-        #######################################################################
-        # PS Logging enabled ? 
-        #######################################################################
+        
+        ###############################################################################################################
+        # Collecting information about NTP settings
+        ###############################################################################################################
+        # https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings?tabs=config
+        Write-Host "[*] Checking NTP configuration"
+        
+        $xmlWriter.WriteStartElement("NTP")
+        if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "NtpServer") {
+            $ntpServer =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name NtpServer -ErrorAction SilentlyContinue
+            $xmlWriter.WriteElementString("Server", [string] $ntpServer)
+        }
+        if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "Type") {
+            $ntpType =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name Type -ErrorAction SilentlyContinue
+            # NT5DS - Used for domain-joined computers
+            # NTP - Used for non-domain-joined computers
+            $xmlWriter.WriteElementString("Type", [string] $ntpType)
+        }
+        if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config"  -ea SilentlyContinue).Property -contains "UpdateInterval") {
+            $interval =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config" -Name UpdateInterval -ErrorAction SilentlyContinue
+            # default is 30000 for domain-joined computers
+            # default is 360000 for non-domain-joined computers
+            $xmlWriter.WriteElementString("UpdateInterval", [string] $interval)
+        }
+        $xmlWriter.WriteEndElement() 
+
+        ###############################################################################################################
+        # Collecting information about PowerShell (PS Logging enabled ?)
+        ###############################################################################################################
+        
         # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging?view=powershell-5.1
         Write-Host "[*] Checking PS Logging is enabled"
         
@@ -781,9 +868,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }
         }
         
-        #######################################################################
-        # Check if SMBv1 is enabled  
-        #######################################################################
+        
+        ###############################################################################################################
+        # Collecting information about SMB (Check if SMBv1 is enabled)
+        ###############################################################################################################
+        
         # https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3?tabs=server
         Write-Host "[*] Checking if SMBv1 is enabled"
         
@@ -844,9 +933,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
 
         $xmlWriter.WriteEndElement() 
         
-        #######################################################################
-        # Defender Status / Settings
-        #######################################################################
+
+        ###############################################################################################################
+        # Collecting information about Defender (Status / Settings)
+        ###############################################################################################################
+        
         Write-Host "[*] Checking Defender settings"
         # Get-MpPreference
         # Get-MpComputerStatus
@@ -875,9 +966,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteEndElement() # Defender
         }
 
-        #######################################################################
-        # Printers
-        #######################################################################
+        ###############################################################################################################
+        # Collecting information about Printer
+        ###############################################################################################################
+        
         Write-Host "[*] Checking if printers are installed"
         if (Get-Command Get-Printer -ea SilentlyContinue) {
             try {
@@ -897,15 +989,14 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteEndElement() # Printers
             }catch{}
         }
-        #######################################################################
-        # Proxy
-        #######################################################################
-        # [System.Net.WebProxy]::GetDefaultProxy()
-
         
-        #######################################################################
-        # File Existence Checks
-        #######################################################################
+        
+        ###############################################################################################################
+        # Perform: File Existence Checks
+        # This will check if specified files exist on the system and if they are matching a predefined hash. 
+        # The matching of HASH is only performed in recent PowerShell versions by using Get-FileHash
+        ###############################################################################################################
+        
         Write-Host "[*] Checking for existence of specified files"
         # ArrayList to store results from file existence checks. Those will be added as FileExistence-Tags.
         # All Custom objects that are added should follow the following structure
@@ -960,9 +1051,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 [void]$file_checks_results.Add($result)
             } catch {}
         }
-        #######################################################################
-        # Adding FileExistence Checks 
-        #######################################################################
+
+
+        # Perform: FileExistence Checks 
+        
         $xmlWriter.WriteStartElement("FileExistChecks")
         foreach ($c in $file_checks_results){
             $xmlWriter.WriteStartElement("FileExistCheck")
@@ -979,9 +1071,10 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
     
         
 
-        #######################################################################
-        # Path ACLs
-        #######################################################################
+        ###############################################################################################################
+        # Perform: Path ACL Checks
+        ###############################################################################################################
+        
         Write-Host "[*] Checking ACLs for specified pathes"
         # ArrayList of pathes that should be checked 
         $acl_path_checks = New-Object System.Collections.ArrayList
@@ -1015,8 +1108,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteEndElement() # PathACLChecks
 
        
-        #######################################################################
-        # Additional checks for entries in Windows Registry
+        ###############################################################################################################
+        # Perform: Additional checks for entries in Windows Registry
         #######################################################################
         Write-Host "[*] Checking additional entries in Windows Registry"
         $registry_checks = New-Object System.Collections.ArrayList  
@@ -1138,10 +1231,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }
         )
 
-        #########################
-        # Perform Registry Checks
-        ######################### 
-
+        
+        # Perform the above specified Registry Checks
+        
         $registry_check_results = New-Object System.Collections.ArrayList  
         foreach ($c in $registry_checks){
             $result = [PSCustomObject]@{
@@ -1180,9 +1272,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             } catch {}
         }
                
-        #########################
         # Add results to XML
-        ######################### 
 
         $xmlWriter.WriteStartElement("AdditionalRegistryChecks")
         foreach ($c in $registry_check_results){
@@ -1203,9 +1293,11 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         }
         $xmlWriter.WriteEndElement() # AdditionalRegistryChecks
 
-        #######################################################################
-        # Adding ConfigChecks 
-        #######################################################################
+        ###############################################################################################################
+        # Adding ConfigChecks to xml. 
+        # This in done at the end of the document, cause checks can be added from each performed check in the script. 
+        ###############################################################################################################
+        
         $xmlWriter.WriteStartElement("ConfigChecks")
         foreach ($c in $config_checks){
             $xmlWriter.WriteStartElement("ConfigCheck")

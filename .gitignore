@@ -102,3 +102,4 @@ target/
 /services/nginx/static/swagger-ui.min.css
 /services/nginx/static/swagger-ui-bundle.min.js
 /services/nginx/static/swagger-ui-standalone-preset.min.js
+/testdata/
