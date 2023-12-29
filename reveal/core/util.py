@@ -2,6 +2,7 @@ import base64
 import hashlib
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import unpad
 
 
 def encrypt(plain_text: str, key: str) -> bytes:
@@ -23,4 +24,13 @@ def decrypt(cipher_text_b64: str, key: str):
     ciphertext = decoded[32:]
     cipher = AES.new(hashed_key, AES.MODE_EAX, nonce=nonce)
     data = cipher.decrypt_and_verify(ciphertext, tag)
+    return data
+
+
+def decrypt_ps(cipher_text_b64: str, key: str):
+    decoded = base64.b64decode(cipher_text_b64.encode('utf-8'))
+    iv = decoded[:16]
+    ciphertext = decoded[16:]
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    data = unpad(cipher.decrypt(ciphertext), block_size=16, style='pkcs7')
     return data
