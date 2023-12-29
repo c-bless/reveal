@@ -22,6 +22,7 @@ class Host(db.Model):
     DeviceGuardSmartStatus = db.Column(db.String(150), unique=False, nullable=True)
     SystemGroup = db.Column(db.String(256), unique=False, nullable=True)
     Location = db.Column(db.String(256), unique=False, nullable=True)
+    Label = db.Column(db.String(256), unique=False, nullable=True)
     LastUpdate = db.Column(db.DateTime, unique=False, nullable=True)
     Whoami = db.Column(db.String(256), unique=False, nullable=True)
     WhoamiIsAdmin = db.Column(db.Boolean(), nullable=True)
