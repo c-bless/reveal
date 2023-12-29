@@ -210,6 +210,7 @@ def host2db(xml_element):
             if "PSScriptBlockLogging" == e.tag: host.PSScriptBlockLogging = e.text
             if "SystemGroup" == e.tag: host.SystemGroup = e.text
             if "Location" == e.tag: host.Location = e.text
+            if "Label" == e.tag: host.Label = e.text
             if "Whoami" == e.tag : host.Whoami = e.text
             if "WhoamiIsAdmin" == e.tag : host.WhoamiIsAdmin = str2bool_or_none(e.text)
             if "Winlogon" == e.tag:  winlogon2db(e, host=host)
