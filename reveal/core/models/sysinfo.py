@@ -2,14 +2,17 @@ from reveal.core.extentions import db
 
 
 class Host(db.Model):
+    """
+    Database model for Hosts imported from results of sysinfo-collector.
+    """
     __tablename__ = "Host"
     id = db.Column(db.Integer, primary_key=True)
-    Hostname = db.Column(db.String(150), unique=False, nullable=False)
-    Domain = db.Column(db.String(150), unique=False, nullable=True)
+    Hostname = db.Column(db.String(), unique=False, nullable=False)
+    Domain = db.Column(db.String(), unique=False, nullable=True)
     DomainRole = db.Column(db.String(150), unique=False, nullable=True)
     OSVersion = db.Column(db.String(150), unique=False, nullable=True)
     OSBuildNumber = db.Column(db.String(150), unique=False, nullable=True)
-    OSName = db.Column(db.String(150), unique=False, nullable=True)
+    OSName = db.Column(db.String(), unique=False, nullable=True)
     OSInstallDate = db.Column(db.DateTime, unique=False, nullable=True)
     OSProductType = db.Column(db.String(150), unique=False, nullable=True)
     LogonServer = db.Column(db.String(150), unique=False, nullable=True)
@@ -34,7 +37,7 @@ class Host(db.Model):
     # Autologon via Registry
     AutoAdminLogon = db.Column(db.Boolean(), unique=False, nullable=True)
     ForceAutoLogon = db.Column(db.Boolean(), unique=False, nullable=True)
-    DefaultPassword = db.Column(db.String(256), unique=False, nullable=True)
+    DefaultPassword = db.Column(db.String(), unique=False, nullable=True)
     DefaultUserName = db.Column(db.String(256), unique=False, nullable=True)
     DefaultDomain = db.Column(db.String(256), unique=False, nullable=True)
     # Firewall Profiles
@@ -75,8 +78,8 @@ class Host(db.Model):
     RegistryChecks = db.relationship('RegistryCheck', back_populates='Host', lazy='dynamic')
     FileExistChecks = db.relationship('FileExistCheck', back_populates='Host', lazy='dynamic')
     PathACLChecks = db.relationship('PathACLCheck', back_populates='Host', lazy='dynamic')
-    Products = db.relationship('Product', back_populates='Host', lazy='dynamic')
     Routes = db.relationship('Route', back_populates='Host', lazy='dynamic')
+    NTPSettings = db.relationship('NTP', back_populates='Host', lazy='dynamic')
 
     def __repr__(self):
         return self.Hostname
@@ -85,47 +88,48 @@ class Host(db.Model):
         return self.Hostname
 
     @staticmethod
-    def find_by_hostname(name, exact_match=False):
+    def find_by_hostname(name: str, exact_match=False):
+        """
+        Finds a list of Host objects.
+
+        :param name: hostname to search for
+        :param exact_match: If True the hostname must match exactly. If False the hostname is taken as substring.
+        :return: list of Host objects
+        """
         if exact_match:
             return Host.query.filter(Host.Hostname == name).all()
-        else:
-            return Host.query.filter(Host.Hostname.ilike('%' + name + '%')).all()
+        return Host.query.filter(Host.Hostname.ilike('%' + name + '%')).all()
 
 
     @staticmethod
     def find_by_domain(name, exact_match=False):
         if exact_match:
             return Host.query.filter(Host.Domain == name).all()
-        else:
-            return Host.query.filter(Host.Domain.ilike('%' + name + '%')).all()
+        return Host.query.filter(Host.Domain.ilike('%' + name + '%')).all()
 
     @staticmethod
     def find_by_os_name(name, exact_match=False):
         if exact_match:
             return Host.query.filter(Host.OSName == name).all()
-        else:
-            return Host.query.filter(Host.OSName.ilike('%' + name + '%')).all()
+        return Host.query.filter(Host.OSName.ilike('%' + name + '%')).all()
 
     @staticmethod
     def find_by_os_buildnumber(buildnumber, exact_match=False):
         if exact_match:
             return Host.query.filter(Host.OSBuildNumber == buildnumber).all()
-        else:
-            return Host.query.filter(Host.OSBuildNumber.ilike('%' + buildnumber + '%')).all()
+        return Host.query.filter(Host.OSBuildNumber.ilike('%' + buildnumber + '%')).all()
 
     @staticmethod
     def find_by_location(name, exact_match=False):
         if exact_match:
             return Host.query.filter(Host.Location == name).all()
-        else:
-            return Host.query.filter(Host.Location.ilike('%' + name + '%')).all()
+        return Host.query.filter(Host.Location.ilike('%' + name + '%')).all()
 
     @staticmethod
     def find_by_systemgroup(name, exact_match=False):
         if exact_match:
             return Host.query.filter(Host.SystemGroup == name).all()
-        else:
-            return Host.query.filter(Host.SystemGroup.ilike('%' + name + '%')).all()
+        return Host.query.filter(Host.SystemGroup.ilike('%' + name + '%')).all()
 
 
 class Route(db.Model):
@@ -148,6 +152,22 @@ class Route(db.Model):
 
     def __str__(self):
         return f"{self.InterfaceAlias} {self.DestinationPrefix}"
+
+
+class NTP(db.Model):
+    __tablename__ = "NTP"
+    id = db.Column(db.Integer, primary_key=True)
+    Server = db.Column(db.String(), unique=False, nullable=True)
+    Type = db.Column(db.String(), unique=False, nullable=True)
+    UpdateInterval = db.Column(db.Integer, unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="NTPSettings")
+
+    def __repr__(self):
+        return f"{self.Server}"
+
+    def __str__(self):
+        return f"{self.Server}"
 
 
 class PSInstalledVersions(db.Model):
@@ -327,15 +347,13 @@ class User(db.Model):
     def find_by_name(name: str, exact_match=False):
         if not exact_match:
             return User.query.filter(User.Name.ilike("%" + name + "%")).all()
-        else:
-            return User.query.filter(User.Name == name).all()
+        return User.query.filter(User.Name == name).all()
 
     @staticmethod
     def find_by_SID(sid: str, exact_match=False):
         if not exact_match:
             return User.query.filter(User.SID.ilike("%"+ sid + "%")).all()
-        else:
-            return User.query.filter(User.SID == sid).all()
+        return User.query.filter(User.SID == sid).all()
 
     @staticmethod
     def find_disabled():
@@ -483,22 +501,19 @@ class ConfigCheck(db.Model):
     def find_by_name(name, exact_match=False):
         if exact_match:
             return ConfigCheck.query.filter(ConfigCheck.Name == name).all()
-        else:
-            return ConfigCheck.query.filter(ConfigCheck.Name.ilike('%'+name+'%')).all()
+        return ConfigCheck.query.filter(ConfigCheck.Name.ilike('%'+name+'%')).all()
 
     @staticmethod
     def find_by_component(name, exact_match=False):
         if exact_match:
             return ConfigCheck.query.filter(ConfigCheck.Component == name).all()
-        else:
-            return ConfigCheck.query.filter(ConfigCheck.Component.ilike('%' + name + '%')).all()
+        return ConfigCheck.query.filter(ConfigCheck.Component.ilike('%' + name + '%')).all()
 
     @staticmethod
     def find_by_method(name, exact_match=False):
         if exact_match:
             return ConfigCheck.query.filter(ConfigCheck.Method == name).all()
-        else:
-            return ConfigCheck.query.filter(ConfigCheck.Method.ilike('%' + name + '%')).all()
+        return ConfigCheck.query.filter(ConfigCheck.Method.ilike('%' + name + '%')).all()
 
 class RegistryCheck(db.Model):
     __tablename__ = "RegistryCheck"
@@ -526,15 +541,13 @@ class RegistryCheck(db.Model):
     def find_by_name(name, exact_match=False):
         if exact_match:
             return RegistryCheck.query.filter(RegistryCheck.Name == name).all()
-        else:
-            return RegistryCheck.query.filter(RegistryCheck.Name.ilike('%'+name+'%')).all()
+        return RegistryCheck.query.filter(RegistryCheck.Name.ilike('%'+name+'%')).all()
 
     @staticmethod
     def find_by_category(name, exact_match=False):
         if exact_match:
             return RegistryCheck.query.filter(RegistryCheck.Category == name).all()
-        else:
-            return RegistryCheck.query.filter(RegistryCheck.Category.ilike('%' + name + '%')).all()
+        return RegistryCheck.query.filter(RegistryCheck.Category.ilike('%' + name + '%')).all()
 
     @staticmethod
     def find_by_tag(tag):
