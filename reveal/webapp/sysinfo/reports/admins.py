@@ -9,7 +9,6 @@ from reveal.core.export.excel.usermgmt import generate_group_members_excel
 from reveal.core.models.sysinfo import Host, Group
 from reveal.core.reports import ReportInfo
 from reveal.core.querries.usermgmt import find_groups_where_domadm_is_localadmin
-from reveal.core.querries.usermgmt import find_hosts_where_domadm_is_localadmin
 from reveal.core.querries.usermgmt import find_groups_where_domadm_is_localadmin_with_host_filter
 from reveal.core.querries.usermgmt import find_hosts_where_domadm_is_localadmin_with_host_filter
 from reveal.core.querries.usermgmt import get_autologon_admin
@@ -42,9 +41,11 @@ def hosts_report_domainadmin():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -56,6 +57,11 @@ def hosts_report_domainadmin():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             groups = find_groups_where_domadm_is_localadmin_with_host_filter(host_filter=host_filter)
 
@@ -126,9 +132,11 @@ def hosts_report_autologonadmin():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -140,6 +148,11 @@ def hosts_report_autologonadmin():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             hosts = get_autologon_admin(host_filter=host_filter)
 

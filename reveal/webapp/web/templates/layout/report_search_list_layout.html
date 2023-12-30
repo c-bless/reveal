@@ -31,13 +31,17 @@
 
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-4">
                                                         {% if form.SystemGroup %}{{ render_field_sm2(form.SystemGroup) }}{% endif %}
                                                         {% if form.InvertSystemGroup %}{{ render_check_field_sm2(form.InvertSystemGroup) }}{% endif %}
                                                     </div>
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-4">
                                                         {% if form.Location %}{{ render_field_sm2(form.Location) }}{% endif %}
                                                         {% if form.InvertLocation %}{{ render_check_field_sm2(form.InvertLocation) }}{% endif %}
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
+                                                        {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
                                                     </div>
                                                 </div>
 

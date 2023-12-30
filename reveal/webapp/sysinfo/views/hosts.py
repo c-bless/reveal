@@ -24,7 +24,7 @@ def host_search_list():
     form = HostSearchForm()
 
     if request.method == 'POST':
-        filters = []
+        host_filter = []
         if form.validate_on_submit():
             hostname = form.Hostname.data
             domain = form.Domain.data
@@ -48,50 +48,50 @@ def host_search_list():
 
             if len(hostname) > 0 :
                 if not invertHostname:
-                    filters.append(Host.Hostname.ilike("%"+hostname+"%"))
+                    host_filter.append(Host.Hostname.ilike("%"+hostname+"%"))
                 else:
-                    filters.append(Host.Hostname.notilike("%"+hostname+"%"))
+                    host_filter.append(Host.Hostname.notilike("%"+hostname+"%"))
             if len(domain) > 0:
                 if not invertDomain:
-                    filters.append(Host.Domain.ilike("%"+domain+"%"))
+                    host_filter.append(Host.Domain.ilike("%"+domain+"%"))
                 else:
-                    filters.append(Host.Domain.notilike("%"+domain+"%"))
+                    host_filter.append(Host.Domain.notilike("%"+domain+"%"))
             if len(domainRole) > 0:
                 if not invertDomainRole:
-                    filters.append(Host.DomainRole.ilike("%"+domainRole+"%"))
+                    host_filter.append(Host.DomainRole.ilike("%"+domainRole+"%"))
                 else:
-                    filters.append(Host.DomainRole.notilike("%"+domainRole+"%"))
+                    host_filter.append(Host.DomainRole.notilike("%"+domainRole+"%"))
             if len(osVersion) > 0:
                 if not invertOsVersion:
-                    filters.append(Host.OSVersion.ilike("%"+osVersion+"%"))
+                    host_filter.append(Host.OSVersion.ilike("%"+osVersion+"%"))
                 else:
-                    filters.append(Host.OSVersion.notilike("%"+osVersion+"%"))
+                    host_filter.append(Host.OSVersion.notilike("%"+osVersion+"%"))
             if len(osBuildNumber) > 0:
                 if not invertOsBuildNumber:
-                    filters.append(Host.OSBuildNumber.ilike("%"+osBuildNumber+"%"))
+                    host_filter.append(Host.OSBuildNumber.ilike("%"+osBuildNumber+"%"))
                 else:
-                    filters.append(Host.OSBuildNumber.notilike("%"+osBuildNumber+"%"))
+                    host_filter.append(Host.OSBuildNumber.notilike("%"+osBuildNumber+"%"))
             if len(osName) > 0:
                 if not invertOsName:
-                    filters.append(Host.OSName.ilike("%"+osName+"%"))
+                    host_filter.append(Host.OSName.ilike("%"+osName+"%"))
                 else:
-                    filters.append(Host.OSName.notilike("%"+osName+"%"))
+                    host_filter.append(Host.OSName.notilike("%"+osName+"%"))
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
-                    filters.append(Host.SystemGroup.ilike("%"+systemgroup+"%"))
+                    host_filter.append(Host.SystemGroup.ilike("%"+systemgroup+"%"))
                 else:
-                    filters.append(Host.SystemGroup.notilike("%"+systemgroup+"%"))
+                    host_filter.append(Host.SystemGroup.notilike("%"+systemgroup+"%"))
             if len(location) > 0:
                 if not invertLocation:
-                    filters.append(Host.Location.ilike("%"+location+"%"))
+                    host_filter.append(Host.Location.ilike("%"+location+"%"))
                 else:
-                    filters.append(Host.Location.notilike("%"+location+"%"))
+                    host_filter.append(Host.Location.notilike("%"+location+"%"))
             if len(label) > 0:
                 if not invertLabel:
-                    filters.append(Host.Label.ilike("%"+label+"%"))
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
                 else:
-                    filters.append(Host.Label.notilike("%"+label+"%"))
-            hosts = Host.query.filter(and_(*filters)).all()
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
+            hosts = Host.query.filter(and_(*host_filter)).all()
 
             if 'brief' in request.form:
                 output = generate_hosts_excel_brief(hosts)
