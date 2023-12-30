@@ -1,4 +1,5 @@
 import datetime
+import base64
 from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -24,11 +25,14 @@ from reveal.core.models.sysinfo import FileExistCheck
 from reveal.core.models.sysinfo import PathACLCheck
 from reveal.core.models.sysinfo import PathACL
 from reveal.core.models.sysinfo import Route
+from reveal.core.models.sysinfo import NTP
 from reveal.core.extentions import db
 
+from reveal.core.importer.converter import str2bool
 from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import str2datetime_or_none
 from reveal.core.util import encrypt
+from reveal.core.util import decrypt_ps
 
 
 def import_sysinfo_collector(root):
@@ -225,6 +229,18 @@ def host2db(xml_element):
         return None
 
 
+def ntp2db(xml, host):
+    if "NTP" == xml.tag:
+        for elem in xml.getchildren():
+            ntp = NTP()
+            for w in elem.getchildren():
+                if "Server" == elem.tag: ntp.Server = elem.text
+                if "Type" == elem.tag: ntp.Type = elem.text
+                if "UpdateInterval" == elem.tag: ntp.UpdateInterval = int(elem.text)
+            ntp.Host = host
+            db.session.add(ntp)
+
+
 def routes2db(xml, host):
     if "Routes" == xml.tag:
         for route_elem in xml.getchildren():
@@ -248,9 +264,33 @@ def winlogon2db(xml, host):
             if "DefaultUserName" == w.tag: host.DefaultUserName = w.text
             if "DefaultPassword" == w.tag:
                 if w.text and len(w.text) > 0:
+                    b64 = False
+                    encrypted = False
+                    try:
+                        b64 = str2bool(w.get('base64'))
+                    except:
+                        pass
+                    try:
+                        encrypted = str2bool(w.get('encrypted'))
+                    except:
+                        pass
+                    plaintext = ""
+                    # decrypt AES encrypted via PowerShell
+                    if encrypted:
+                        try:
+                            decrypted = decrypt_ps(w.text, key=current_app.config.get("IMPORT_KEY"))
+                            plaintext = decrypted.decode("UTF-8")
+                        except:
+                            pass
+                    else:
+                        if b64:
+                            plaintext = base64.b64decode(w.text.encode('utf-8'))
+                        else:
+                            plaintext = w.text
+                    # reencrypt with different key and store in pw in database
                     try:
                         key = current_app.config.get("AES_KEY")
-                        host.DefaultPassword = encrypt(plain_text=w.text, key=key)
+                        host.DefaultPassword = encrypt(plain_text=plaintext, key=key)
                     except:
                         host.DefaultPassword = None
                 else:

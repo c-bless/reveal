@@ -13,6 +13,7 @@ class AppConfig(object):
     # AES_KEY for WEB and API must be same
     AES_KEY = os.environ.get('SECRET_KEY') or \
                  '45699b8984f599ca33ffe424e0f51a349b5c63a15963fca72f37d6699834ba0a' # change me!
+    IMPORT_KEY = b'\x07\x10\xa6\x0a\x8d\x17\x25\x5e\xf0\xa2\xce\xa8\xb5\x61\x13\xaa'
     SITE_NAME = 'REVEAL'
     SITE_ROOT_URL = 'http://127.0.0.1:8000'
     LOG_LEVEL = logging.DEBUG
