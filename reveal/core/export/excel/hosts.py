@@ -52,7 +52,7 @@ def generate_hosts_excel(hosts=[]):
         if h.DefaultPassword:
             defaultPassword = "PW IN Registry"
 
-        tmp = [h.SystemGroup, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber,
+        tmp = [h.SystemGroup, h.Location, h.Label, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber,
                "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp),
                "\n".join(products), "\n".join(hotfixes), h.LastUpdate, h.OSInstallDate, h.OSProductType, h.LogonServer,
                h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
@@ -60,7 +60,7 @@ def generate_hosts_excel(hosts=[]):
         rows.append(tmp)
 
 
-    header_data = ["Systemgroup", "Location", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
+    header_data = ["Systemgroup", "Location", "Label", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
                    "OSBuildNumber", "IPs", "Users", "Groups with members", "Admins", "RDP Users", "Products",
                    "hotfixes", "last update", "OSInstallDate", "OSProductType", "LogonServer", "TimeZone",
                    "KeyboardLayout", "HyperVisorPresent", "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon",
@@ -80,7 +80,7 @@ def generate_hosts_excel(hosts=[]):
     # Iterate over the data and write it out row by row.
     for host in rows:
         for c in host:
-            if ( col > 7) and (col <= 14):
+            if ( col > 8) and (col <= 15):
                 worksheet.write(row, col, str(c), wrap_format)
             else:
                 worksheet.write(row, col, str(c))
@@ -88,7 +88,7 @@ def generate_hosts_excel(hosts=[]):
         col = 0
         row += 1
 
-    worksheet.autofilter("A1:X1")
+    worksheet.autofilter("A1:Y1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
@@ -106,11 +106,11 @@ def generate_hosts_excel_brief(hosts=[]):
     rows = []
 
     for h in hosts:
-        tmp = [h.SystemGroup, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber]
+        tmp = [h.SystemGroup, h.Label, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber]
         rows.append(tmp)
 
 
-    header_data = ["Systemgroup", "Location", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
+    header_data = ["Systemgroup", "Location", "label", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
                    "OSBuildNumber"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
@@ -132,7 +132,7 @@ def generate_hosts_excel_brief(hosts=[]):
         col = 0
         row += 1
 
-    worksheet.autofilter("A1:H1")
+    worksheet.autofilter("A1:I1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()

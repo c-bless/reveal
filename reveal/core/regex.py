@@ -19,6 +19,7 @@ RE_SYSINFO_OSVERSION = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_OSBUILDNUMBER_CHARS = r"^([a-zA-Z0-9 \.]+)?$"
 RE_SYSINFO_OSNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_LOCATION = r"^([a-zA-Z0-9 \.\-\_]+)?$"
+RE_SYSINFO_LABEL = r'^([a-zA-Z0-9\,\!\?\.\-\_\@\%\(\)]+)?$'
 
 # Product related keys
 RE_SYSINFO_PRODUCT_NAME = r'^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'

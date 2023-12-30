@@ -219,6 +219,7 @@ def host2db(xml_element):
             if "WhoamiIsAdmin" == e.tag : host.WhoamiIsAdmin = str2bool_or_none(e.text)
             if "Winlogon" == e.tag:  winlogon2db(e, host=host)
             if "Routes" == e.tag:  routes2db(e, host=host)
+            if "NTP" == e.tag:  ntp2db(e, host=host)
         db.session.add(host)
         db.session.commit()
         db.session.refresh(host)
@@ -231,14 +232,13 @@ def host2db(xml_element):
 
 def ntp2db(xml, host):
     if "NTP" == xml.tag:
+        ntp = NTP()
         for elem in xml.getchildren():
-            ntp = NTP()
-            for w in elem.getchildren():
-                if "Server" == elem.tag: ntp.Server = elem.text
-                if "Type" == elem.tag: ntp.Type = elem.text
-                if "UpdateInterval" == elem.tag: ntp.UpdateInterval = int(elem.text)
-            ntp.Host = host
-            db.session.add(ntp)
+            if "Server" == elem.tag: ntp.Server = elem.text
+            if "Type" == elem.tag: ntp.Type = elem.text
+            if "UpdateInterval" == elem.tag: ntp.UpdateInterval = int(elem.text)
+        ntp.Host = host
+        db.session.add(ntp)
 
 
 def routes2db(xml, host):

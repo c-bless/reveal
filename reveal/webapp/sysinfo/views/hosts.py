@@ -34,6 +34,7 @@ def host_search_list():
             osName = form.OSName.data
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            label = form.Label.data
 
             invertHostname = form.InvertHostname.data
             invertDomain = form.InvertDomain.data
@@ -43,6 +44,7 @@ def host_search_list():
             invertOsName = form.InvertOSName.data
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(hostname) > 0 :
                 if not invertHostname:
@@ -84,6 +86,11 @@ def host_search_list():
                     filters.append(Host.Location.ilike("%"+location+"%"))
                 else:
                     filters.append(Host.Location.notilike("%"+location+"%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    filters.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    filters.append(Host.Label.notilike("%"+label+"%"))
             hosts = Host.query.filter(and_(*filters)).all()
 
             if 'brief' in request.form:

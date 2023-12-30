@@ -25,6 +25,8 @@ from reveal.core.models.sysinfo import PathACLCheck
 from reveal.core.models.sysinfo import DefenderSettings
 from reveal.core.models.sysinfo import RegistryCheck
 from reveal.core.models.sysinfo import FileExistCheck
+from reveal.core.models.sysinfo import Route
+from reveal.core.models.sysinfo import NTP
 
 from reveal.core.models.activedirectory import ADDomain
 from reveal.core.models.activedirectory import ADForest
@@ -84,6 +86,8 @@ def clear_db():
     db.session.query(FileExistCheck).delete()
     db.session.query(PathACLCheck).delete()
     db.session.query(PathACL).delete()
+    db.session.query(Route).delete()
+    db.session.query(NTP).delete()
     db.session.query(Host).delete()
 
     db.session.query(PathACLCheck).delete()

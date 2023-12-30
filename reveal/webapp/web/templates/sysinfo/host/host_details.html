@@ -206,6 +206,10 @@
           <a class="nav-link" id="tabs-route-tab" data-toggle="pill" href="#tabs-routes"
              role="tab" aria-controls="tabs-routes" aria-selected="false">Routes</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" id="tabs-ntp-tab" data-toggle="pill" href="#tabs-ntp"
+             role="tab" aria-controls="tabs-ntp" aria-selected="false">NTP</a>
+        </li>
       </ul>
     </div>
     <div class="card-body">
@@ -601,7 +605,7 @@
                   <dt class="col-sm-4">DefaultUserName</dt>
                   <dd class="col-sm-8">{{ host.DefaultUserName }}</dd>
                   <dt class="col-sm-4">DefaultPassword</dt>
-                  <dd class="col-sm-8">{{ host.DefaultPassword }}</dd>
+                  <dd class="col-sm-8">{% if host.DefaultPassword %} <span class="text-danger">NOT EMPTY!</span> {% else %} <span class="text-success">NOT SET</span> {% endif %}</dd>
                 </dl>
               </div>
               <!-- /.card-body -->
@@ -1043,6 +1047,34 @@
                         {% endfor %}
                       {% endif %}
                   </dl>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="tabs-ntp" role="tabpanel" aria-labelledby="tabs-ntp-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-olive card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">NTP Settings</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                      {% if host.NTPSettings %}
+                        {% for n in host.NTPSettings %}
+                        <dl class="row">
+                                <dt class="col-sm-4">Server</dt>
+                                <dd class="col-sm-8">{{ n.Server }}</dd>
+                                <dt class="col-sm-4">Type</dt>
+                                <dd class="col-sm-8">{{ n.Type }}</dd>
+                                <dt class="col-sm-4">UpdateInterval</dt>
+                                <dd class="col-sm-8">{{ n.UpdateInterval }}</dd>
+                        </dl>
+                        {% endfor %}
+                      {% endif %}
                 </div>
                 <!-- /.card-body -->
               </div>

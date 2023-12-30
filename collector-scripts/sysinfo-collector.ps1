@@ -836,19 +836,19 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         $xmlWriter.WriteStartElement("NTP")
         if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "NtpServer") {
             $ntpServer =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name NtpServer -ErrorAction SilentlyContinue
-            $xmlWriter.WriteElementString("Server", [string] $ntpServer)
+            $xmlWriter.WriteElementString("Server", [string] $ntpServer.NtpServer)
         }
         if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "Type") {
             $ntpType =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name Type -ErrorAction SilentlyContinue
             # NT5DS - Used for domain-joined computers
             # NTP - Used for non-domain-joined computers
-            $xmlWriter.WriteElementString("Type", [string] $ntpType)
+            $xmlWriter.WriteElementString("Type", [string] $ntpType.Type)
         }
         if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config"  -ea SilentlyContinue).Property -contains "UpdateInterval") {
             $interval =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config" -Name UpdateInterval -ErrorAction SilentlyContinue
             # default is 30000 for domain-joined computers
             # default is 360000 for non-domain-joined computers
-            $xmlWriter.WriteElementString("UpdateInterval", [string] $interval)
+            $xmlWriter.WriteElementString("UpdateInterval", [string] $interval.UpdateInterval)
         }
         $xmlWriter.WriteEndElement() 
 

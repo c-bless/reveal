@@ -36,6 +36,9 @@
 
                             {{ render_field_sm2(form.OSName) }}
                             {{ render_check_field_sm2(form.InvertOSName) }}
+
+                            {{ render_field_sm2(form.Label) }}
+                            {{ render_check_field_sm2(form.InvertLabel) }}
                         </div>
                     </div>
 
@@ -85,6 +88,9 @@
                         aria-label="Location">Location
                     </th>
                     <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                        aria-label="Label">Label
+                    </th>
+                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                         aria-label="Details">Details
                     </th>
                 </tr>
@@ -102,6 +108,7 @@
                         <td> {% if h.LastUpdate %} {{ h.LastUpdate.strftime('%d-%m-%Y')}} {% endif %}</td>
                         <td> {{ h.SystemGroup }} </td>
                         <td> {{ h.Location }} </td>
+                        <td> {{ h.Label }} </td>
                         <td class="actions">
                             <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
                                 <i class="fa fa-eye"></i> View
@@ -111,7 +118,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="10">No hosts found!</td>
+                        <td colspan="11">No hosts found!</td>
                     </tr>
                 {% endif %}
             </tbody>
