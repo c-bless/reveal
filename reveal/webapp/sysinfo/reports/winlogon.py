@@ -101,7 +101,7 @@ def hosts_report_winlogon():
                     return Response(output, mimetype="text/docx", headers={
                         "Content-disposition": "attachment; filename={0}.docx".format(report.name)})
     else:
-        hosts = Host.query.filter(*host_filter).all()
+        hosts = []
 
     return render_template('sysinfo/reports/host_with_winlogon.html', hosts=hosts, form=form,
                            report_name="Password in Winlogon")
