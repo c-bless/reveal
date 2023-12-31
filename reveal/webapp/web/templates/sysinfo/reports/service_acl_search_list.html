@@ -16,6 +16,8 @@
                     {{ render_check_field_sm2(form.InvertSystemGroup) }}
                     {{ render_field_sm2(form.Location) }}
                     {{ render_check_field_sm2(form.InvertLocation) }}
+                    {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
+                {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
                 </div>
         </div>
 

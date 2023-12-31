@@ -45,9 +45,11 @@ def usermgmt_assignment_list():
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -59,6 +61,11 @@ def usermgmt_assignment_list():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             members = get_direct_domainuser_assignments(host_filter=host_filter)
 
@@ -101,9 +108,11 @@ def report_hosts_by_localuser_list():
 
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -115,6 +124,11 @@ def report_hosts_by_localuser_list():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             hosts = find_hosts_by_local_user(username=user_filter, host_filter=host_filter)
 
@@ -173,9 +187,11 @@ def local_admin_assignment_list():
 
         systemgroup = form.SystemGroup.data
         location = form.Location.data
+        label = form.Label.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
+        invertLabel = form.InvertLabel.data
 
         if len(systemgroup) > 0:
             if not invertSystemgroup:
@@ -187,6 +203,11 @@ def local_admin_assignment_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(label) > 0:
+            if not invertLabel:
+                host_filter.append(Host.Label.ilike("%"+label+"%"))
+            else:
+                host_filter.append(Host.Label.notilike("%"+label+"%"))
         if len(hostname) > 0:
             if invertHostname == False:
                 host_filter.append(Host.Hostname.ilike("%" + hostname + "%"))
@@ -253,9 +274,11 @@ def local_SIMATIC_users_list():
         systemgroup = form.SystemGroup.data
         location = form.Location.data
         selectedTemplate = form.TemplateFile.data
+        label = form.Label.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
+        invertLabel = form.InvertLabel.data
 
         if len(systemgroup) > 0:
             if not invertSystemgroup:
@@ -267,6 +290,11 @@ def local_SIMATIC_users_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(label) > 0:
+            if not invertLabel:
+                host_filter.append(Host.Label.ilike("%"+label+"%"))
+            else:
+                host_filter.append(Host.Label.notilike("%"+label+"%"))
         groups = find_SIMATIC_groups(host_filter=host_filter)
 
         if 'excel' in request.form:
@@ -319,9 +347,11 @@ def local_rdp_users_list():
         systemgroup = form.SystemGroup.data
         location = form.Location.data
         selectedTemplate = form.TemplateFile.data
+        label = form.Label.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
+        invertLabel = form.InvertLabel.data
 
         if len(systemgroup) > 0:
             if not invertSystemgroup:
@@ -333,6 +363,11 @@ def local_rdp_users_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(label) > 0:
+            if not invertLabel:
+                host_filter.append(Host.Label.ilike("%"+label+"%"))
+            else:
+                host_filter.append(Host.Label.notilike("%"+label+"%"))
         groups = find_rdp_groups(host_filter=host_filter)
 
         if 'excel' in request.form:
@@ -388,9 +423,11 @@ def local_remote_mgmt_users_list():
         systemgroup = form.SystemGroup.data
         location = form.Location.data
         selectedTemplate = form.TemplateFile.data
+        label = form.Label.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
+        invertLabel = form.InvertLabel.data
 
         if len(systemgroup) > 0:
             if not invertSystemgroup:
@@ -402,6 +439,11 @@ def local_remote_mgmt_users_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(label) > 0:
+            if not invertLabel:
+                host_filter.append(Host.Label.ilike("%"+label+"%"))
+            else:
+                host_filter.append(Host.Label.notilike("%"+label+"%"))
         groups = find_RemoteMgmtUser_groups(host_filter=host_filter)
 
         if 'excel' in request.form:
@@ -455,9 +497,11 @@ def local_dcom_users_list():
         systemgroup = form.SystemGroup.data
         location = form.Location.data
         selectedTemplate = form.TemplateFile.data
+        label = form.Label.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
+        invertLabel = form.InvertLabel.data
 
         if len(systemgroup) > 0:
             if not invertSystemgroup:
@@ -469,6 +513,11 @@ def local_dcom_users_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(label) > 0:
+            if not invertLabel:
+                host_filter.append(Host.Label.ilike("%"+label+"%"))
+            else:
+                host_filter.append(Host.Label.notilike("%"+label+"%"))
         groups = find_DCOM_user_groups(host_filter=host_filter)
 
         if 'excel' in request.form:
@@ -520,9 +569,11 @@ def local_performance_monitor_users_list():
         systemgroup = form.SystemGroup.data
         location = form.Location.data
         selectedTemplate = form.TemplateFile.data
+        label = form.Label.data
 
         invertSystemgroup = form.InvertSystemGroup.data
         invertLocation = form.InvertLocation.data
+        invertLabel = form.InvertLabel.data
 
         if len(systemgroup) > 0:
             if not invertSystemgroup:
@@ -534,6 +585,11 @@ def local_performance_monitor_users_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
+        if len(label) > 0:
+            if not invertLabel:
+                host_filter.append(Host.Label.ilike("%"+label+"%"))
+            else:
+                host_filter.append(Host.Label.notilike("%"+label+"%"))
         groups = find_PerformanceMonitorUser_groups(host_filter=host_filter)
 
         if 'excel' in request.form:

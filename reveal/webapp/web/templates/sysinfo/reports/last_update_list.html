@@ -5,14 +5,18 @@
 {% block searchform_input %}
     <div class="card-body">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {{ render_field_sm2(form.SystemGroup) }}
                 {{ render_check_field_sm2(form.InvertSystemGroup) }}
                 {{ render_field_sm2(form.Days) }}
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {{ render_field_sm2(form.Location) }}
                 {{ render_check_field_sm2(form.InvertLocation) }}
+            </div>
+            <div class="col-sm-4">
+                {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
+                {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
             </div>
         </div>
 

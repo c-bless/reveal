@@ -47,9 +47,11 @@ def hosts_report_services_uqsp():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -61,6 +63,11 @@ def hosts_report_services_uqsp():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             services = find_uqsp(host_filter=host_filter)
 
@@ -118,9 +125,11 @@ def hosts_report_services_by_acl():
 
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -132,6 +141,11 @@ def hosts_report_services_by_acl():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             if len(user) > 0:
                 if not invert_user:
@@ -200,9 +214,11 @@ def hosts_report_services_by_usercontext():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             startname = form.Startname.data
             invertStartname = form.InvertStartname.data
@@ -217,6 +233,11 @@ def hosts_report_services_by_usercontext():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             if not invertStartname:
                 service_filter.append(Service.StartName.ilike("%" + startname + "%"))
@@ -277,9 +298,11 @@ def hosts_report_modifiable_services():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -291,6 +314,11 @@ def hosts_report_modifiable_services():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             acls = find_modifiable_services(host_filter=host_filter)
 

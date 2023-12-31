@@ -1,29 +1,22 @@
-from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp, Optional, DataRequired
 
-from reveal.core.regex import RE_SYSINFO_SYSTEMGROUP
-from reveal.core.regex import RE_SYSINFO_LOCATION
+
+from reveal.webapp.sysinfo.forms import RevealReportSearchForm
+
 from reveal.core.regex import RE_SYSINFO_SERVICE_ACCOUNTNAME
 from reveal.core.regex import RE_SYSINFO_SERVICE_PERMISSIONSTRING
 from reveal.core.regex import RE_SYSINFO_SERVICE_STARTNAME
 
 
-class UQSPReportForm(FlaskForm):
-    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
-    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")] )
-
-    InvertSystemGroup = BooleanField('Invert SystemGroup')
-    InvertLocation = BooleanField('Invert Location')
-
-    search = SubmitField('Search')
+class UQSPReportForm(RevealReportSearchForm):
 
     excel = SubmitField('Excel')
     TemplateFile = SelectField('Template (Word)')
     word = SubmitField('Word')
 
 
-class ServiceAclSearchForm(FlaskForm):
+class ServiceAclSearchForm(RevealReportSearchForm):
     User = StringField('User',
                        validators=[
                             Optional(),
@@ -37,48 +30,26 @@ class ServiceAclSearchForm(FlaskForm):
     InvertUser = BooleanField('Invert User')
     InvertPermission = BooleanField('Invert Permission')
 
-    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
-    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")])
-
-    InvertSystemGroup = BooleanField('Invert SystemGroup')
-    InvertLocation = BooleanField('Invert Location')
-
-    search = SubmitField('Search')
     excel = SubmitField('Excel')
     TemplateFile = SelectField('Template (Word)')
     word = SubmitField('Word')
 
 
 
-class ServiceUserContextSearchForm(FlaskForm):
+class ServiceUserContextSearchForm(RevealReportSearchForm):
     Startname = StringField('Startname',
                             validators=[
                                 DataRequired(message="Data required"),
                                 Regexp(regex=RE_SYSINFO_SERVICE_STARTNAME, message="Invalid input") ]
                        )
     InvertStartname = BooleanField('Invert Startname')
-    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
-    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")])
 
-    InvertSystemGroup = BooleanField('Invert SystemGroup')
-    InvertLocation = BooleanField('Invert Location')
-
-
-    search = SubmitField('Search')
     excel = SubmitField('Excel')
     TemplateFile = SelectField('Template (Word)')
     word = SubmitField('Word')
 
 
-class ModifiableServicesReportForm(FlaskForm):
-    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
-    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")] )
-
-    InvertSystemGroup = BooleanField('Invert SystemGroup')
-    InvertLocation = BooleanField('Invert Location')
-
-    search = SubmitField('Search')
-
+class ModifiableServicesReportForm(RevealReportSearchForm):
     excel = SubmitField('Excel')
     TemplateFile = SelectField('Template (Word)')
     word = SubmitField('Word')

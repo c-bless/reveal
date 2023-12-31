@@ -37,9 +37,11 @@ def hosts_report_winlogon():
             location = form.Location.data
             selectedTemplate = form.TemplateFile.data
             decrypt_pw = form.Decrypt.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -51,6 +53,11 @@ def hosts_report_winlogon():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             hosts = Host.query.filter(*host_filter).all()
 

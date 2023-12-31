@@ -1,21 +1,10 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField,SelectField
-from wtforms.validators import Regexp, Optional
+from wtforms import SubmitField, BooleanField,SelectField
 
-from reveal.core.regex import RE_SYSINFO_SYSTEMGROUP
-from reveal.core.regex import RE_SYSINFO_LOCATION
+from reveal.webapp.sysinfo.forms import RevealReportSearchForm
 
-class WinlogonReportForm(FlaskForm):
-    SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")] )
-    Location = StringField('Location', validators=[Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")] )
 
-    InvertSystemGroup = BooleanField('Invert SystemGroup')
-    InvertLocation = BooleanField('Invert Location')
-
+class WinlogonReportForm(RevealReportSearchForm):
     Decrypt = BooleanField('Decrypt Password')
-
-    search = SubmitField('Search')
-
     brief = SubmitField('Hosts (brief)')
     full = SubmitField('Hosts (full)')
     winlogon = SubmitField('Winlogon')

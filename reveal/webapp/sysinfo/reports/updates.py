@@ -36,15 +36,16 @@ def hosts_report_lastupdate():
     form.TemplateFile.choices = [(template, template) for template in templates]
 
     if request.method == 'POST':
-        filters = []
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
             nDays = form.Days.data
             selectedTemplate = form.TemplateFile.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -56,6 +57,11 @@ def hosts_report_lastupdate():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             if nDays > 0:
                 now = datetime.datetime.now()
@@ -116,9 +122,11 @@ def hosts_report_eol():
         if form.validate_on_submit():
             systemgroup = form.SystemGroup.data
             location = form.Location.data
+            label = form.Label.data
 
             invertSystemgroup = form.InvertSystemGroup.data
             invertLocation = form.InvertLocation.data
+            invertLabel = form.InvertLabel.data
 
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
@@ -130,6 +138,11 @@ def hosts_report_eol():
                     host_filter.append(Host.Location.ilike("%" + location + "%"))
                 else:
                     host_filter.append(Host.Location.notilike("%" + location + "%"))
+            if len(label) > 0:
+                if not invertLabel:
+                    host_filter.append(Host.Label.ilike("%"+label+"%"))
+                else:
+                    host_filter.append(Host.Label.notilike("%"+label+"%"))
 
             eol_matches = get_EoLInfo(host_filter=host_filter)
 
