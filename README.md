@@ -48,7 +48,10 @@ Needs to be run from root directory of this repository while Docker Images are r
 - Clear imported data (hosts, domains, etc.). This will keep login user: `docker-compose exec webapp flask -e webapp.env db clear`
 - Import all files within the upload directory of Docker Image: `docker-compose exec webapp flask -e webapp.env import dir /app/uploads`
 
-
+## Import data via web interface ##
+1. Upload results from collector scripts (Menu: "Upload Files")
+2. Import uploaded files ("Import Files"). You can choose to import a single uploaded file or all at once. 
+3. Analyze imported data.
 
 
 ## Manual installation to run applications locally ##
