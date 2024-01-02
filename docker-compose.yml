@@ -29,18 +29,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
   nginx:
-      build: ./services/nginx
-      volumes:
-        - static_volume:/app/static/
-        - ssl_volume:/app/ssl/
-      ports:
-        - 80:80
-        - 81:81
-        - 443:443
-        - 8443:8443
-      depends_on:
-        - webapp
-        - webapi
+    build: ./services/nginx
+    volumes:
+      - static_volume:/app/static/
+      - ssl_volume:/app/ssl/
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+      - "8443:8443"
+    depends_on:
+      - webapp
+      - webapi
 volumes:
   postgres_data:
   static_volume:
