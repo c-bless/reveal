@@ -384,14 +384,14 @@ def services2db(xml, host):
                 if "Name" == i.tag: service.Name = i.text
                 if "StartMode" == i.tag: service.StartMode = i.text
                 if "PathName" == i.tag: service.PathName = i.text
-                if "Started" == i.tag: service.Started = i.text
+                if "Started" == i.tag: service.Started = str2bool_or_none(i.text)
                 if "StartName" == i.tag: service.StartName = i.text
                 if "SystemName" == i.tag: service.SystemName = i.text
                 if "DisplayName" == i.tag: service.DisplayName = i.text
-                if "AcceptStop" == i.tag: service.AcceptStop = i.text
-                if "AcceptPause" == i.tag: service.AcceptPause = i.text
+                if "AcceptStop" == i.tag: service.AcceptStop = str2bool_or_none(i.text)
+                if "AcceptPause" == i.tag: service.AcceptPause = str2bool_or_none(i.text)
                 if "ProcessId" == i.tag: service.ProcessId = i.text
-                if "DelayedAutoStart" == i.tag: service.DelayedAutoStart = i.text
+                if "DelayedAutoStart" == i.tag: service.DelayedAutoStart = str2bool_or_none(i.text)
             service.Host = host
             db.session.add(service)
             for i in c.getchildren():
