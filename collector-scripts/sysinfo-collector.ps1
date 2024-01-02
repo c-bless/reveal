@@ -382,7 +382,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("StartName",[string]$s.StartName);
             $xmlWriter.WriteElementString("SystemName",[string]$s.SystemName);
             $xmlWriter.WriteElementString("DisplayName",[string]$s.DisplayName);
-            $xmlWriter.WriteElementString("Running",[string]$s.Running);
+            #$xmlWriter.WriteElementString("Running",[string]$s.Running);
             $xmlWriter.WriteElementString("AcceptStop",[string]$s.AcceptStop);
             $xmlWriter.WriteElementString("AcceptPause",[string]$s.AcceptPause);
             $xmlWriter.WriteElementString("ProcessId",[string]$s.ProcessId);

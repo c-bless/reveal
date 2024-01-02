@@ -388,15 +388,12 @@ def services2db(xml, host):
                 if "StartName" == i.tag: service.StartName = i.text
                 if "SystemName" == i.tag: service.SystemName = i.text
                 if "DisplayName" == i.tag: service.DisplayName = i.text
-                if "Running" == i.tag: service.Running = i.text
                 if "AcceptStop" == i.tag: service.AcceptStop = i.text
                 if "AcceptPause" == i.tag: service.AcceptPause = i.text
                 if "ProcessId" == i.tag: service.ProcessId = i.text
                 if "DelayedAutoStart" == i.tag: service.DelayedAutoStart = i.text
             service.Host = host
             db.session.add(service)
-            #db.session.commit()
-            #db.session.refresh(service)
             for i in c.getchildren():
                 if "BinaryPermissions" == i.tag:
                     childs = i.getchildren()
@@ -432,7 +429,6 @@ def netipaddresses2db(xml, host):
             db.session.add(n)
 
 
-
 def users2db(xml, host):
     for c in xml.getchildren():
         if "User" == c.tag:
@@ -453,7 +449,6 @@ def users2db(xml, host):
             db.session.add(user)
 
 
-
 def groups2db(xml, host):
     for c in xml.getchildren():
         if "Group" == c.tag:
@@ -466,8 +461,6 @@ def groups2db(xml, host):
                 if "SID" == i.tag: group.SID = i.text
             group.Host = host
             db.session.add(group)
-            #db.session.commit()
-            #db.session.refresh(group)
             for i in c.getchildren():
                 if "Members" == i.tag:
                     for m in i.getchildren():
@@ -480,7 +473,6 @@ def groups2db(xml, host):
                             if "SID" == a.tag: member.SID = a.text
                         member.Group = group
                         db.session.add(member)
-
 
 
 def shares2db(xml, host):

@@ -288,7 +288,6 @@ class Service(db.Model):
     StartName = db.Column(db.String(256), unique=False, nullable=True)
     SystemName = db.Column(db.String(256), unique=False, nullable=True)
     DisplayName = db.Column(db.String(), unique=False, nullable=True)
-    Running = db.Column(db.String(256), unique=False, nullable=True)
     AcceptStop = db.Column(db.String(10), unique=False, nullable=True)
     AcceptPause = db.Column(db.String(10), unique=False, nullable=True)
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
