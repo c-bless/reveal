@@ -33,7 +33,6 @@
 
                         </div>
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Started) }}
 
                             {{ render_field_sm2(form.StartMode) }}
                             {{ render_check_field_sm2(form.InvertStartMode) }}
@@ -42,6 +41,9 @@
                             {{ render_field_sm2(form.StartName) }}
                             {{ render_check_field_sm2(form.InvertStartName) }}
 
+                            <br/>
+                            {{ render_check_field_sm2(form.Started) }}
+                            {{ render_check_field_sm2(form.UseStarted) }}
 
                         </div>
                     </div>

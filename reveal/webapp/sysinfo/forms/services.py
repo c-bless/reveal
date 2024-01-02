@@ -20,9 +20,12 @@ class ServiceSearchForm(FlaskForm):
                              validators=[Regexp(regex=RE_SYSINFO_SERVICE_SYSTEMNAME, message="Invalid input")])
     PathName = StringField('PathName',
                            validators=[Regexp(regex=RE_SYSINFO_SERVICE_PATHNAME, message="Invalid input")])
-    Started = StringField('Started', validators=[Regexp(regex=RE_SYSINFO_SERVICE_STARTED, message="Invalid input")])
     StartMode = StringField('StartMode', validators=[Regexp(regex=RE_SYSINFO_SERVICE_STARTMODE, message="Invalid input")])
     StartName = StringField('StartName', validators=[Regexp(regex=RE_SYSINFO_SERVICE_STARTNAME, message="Invalid input")])
+
+    Started = BooleanField('Started (True)')
+    UseStarted = BooleanField('Use Started')
+
 
     InvertName = BooleanField('Invert Name')
     InvertDisplayName = BooleanField('Invert DisplayName')

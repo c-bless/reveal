@@ -22,13 +22,14 @@ def service_search_list():
     form = ServiceSearchForm()
 
     if request.method == 'POST':
-        filters = []
+        service_filter = []
         if form.validate_on_submit():
             name = form.Name.data
             systemname = form.SystemName.data
             displayname = form.DisplayName.data
             pathname = form.PathName.data
             started = form.Started.data
+            useStarted = form.UseStarted.data
             startmode = form.StartMode.data
             startname = form.StartName.data
             invertName = form.InvertName.data
@@ -39,39 +40,39 @@ def service_search_list():
             invertStartName = form.InvertStartName.data
 
             if len(name) > 0 :
-                if invertName == False:
-                    filters.append(Service.Name.ilike("%"+name+"%"))
+                if not invertName:
+                    service_filter.append(Service.Name.ilike("%"+name+"%"))
                 else:
-                    filters.append(Service.Name.notilike("%"+name+"%"))
+                    service_filter.append(Service.Name.notilike("%"+name+"%"))
             if len(systemname) > 0:
-                if invertSystemName == False:
-                    filters.append(Service.SystemName.ilike("%"+systemname+"%"))
+                if not invertSystemName:
+                    service_filter.append(Service.SystemName.ilike("%"+systemname+"%"))
                 else:
-                    filters.append(Service.SystemName.notilike("%"+systemname+"%"))
+                    service_filter.append(Service.SystemName.notilike("%"+systemname+"%"))
             if len(pathname) > 0 :
-                if invertPathName == False:
-                    filters.append(Service.PathName.ilike("%"+pathname+"%"))
+                if not invertPathName:
+                    service_filter.append(Service.PathName.ilike("%"+pathname+"%"))
                 else:
-                    filters.append(Service.PathName.notilike("%"+pathname+"%"))
+                    service_filter.append(Service.PathName.notilike("%"+pathname+"%"))
             if len(startmode) > 0 :
-                if invertStartMode == False:
-                    filters.append(Service.StartMode.ilike("%"+startmode+"%"))
+                if not invertStartMode:
+                    service_filter.append(Service.StartMode.ilike("%"+startmode+"%"))
                 else:
-                    filters.append(Service.StartMode.notilike("%"+startmode+"%"))
+                    service_filter.append(Service.StartMode.notilike("%"+startmode+"%"))
             if len(startname) > 0 :
-                if invertStartName == False:
-                    filters.append(Service.StartName.ilike("%"+startname+"%"))
+                if not invertStartName:
+                    service_filter.append(Service.StartName.ilike("%"+startname+"%"))
                 else:
-                    filters.append(Service.StartName.notilike("%"+startname+"%"))
+                    service_filter.append(Service.StartName.notilike("%"+startname+"%"))
             if len(displayname) > 0 :
-                if invertDisplayName == False:
-                    filters.append(Service.DisplayName.ilike("%"+displayname+"%"))
+                if not invertDisplayName:
+                    service_filter.append(Service.DisplayName.ilike("%"+displayname+"%"))
                 else:
-                    filters.append(Service.DisplayName.notilike("%"+displayname+"%"))
-            if len(started) > 0 :
-                filters.append(Service.Started.ilike("%"+started+"%"))
+                    service_filter.append(Service.DisplayName.notilike("%"+displayname+"%"))
+            if useStarted:
+                service_filter.append(Service.Started == started)
 
-            services = Service.query.filter(*filters).all()
+            services = Service.query.filter(*service_filter).all()
 
             if 'download' in request.form:
                 output = generate_services_excel(services=services)
