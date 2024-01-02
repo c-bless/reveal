@@ -88,7 +88,7 @@ def get_ad_computer_by_spn_list(search_data):
     if "NOT_SPN" in search_data:
         if len(search_data['NOT_SPN']) > 0:
             filters.append(ADSPN.Name.notilike("%" + search_data['NOT_SPN'] + "%"))
-
+    spns = []
     if "Domain" in search_data:
         if len (search_data["Domain"]) > 0:
             spns = ADSPN.query.filter(and_(*filters)).join(ADComputer).join(
@@ -161,6 +161,7 @@ def post_ad_computer_search(search_data):
             filters.append(ADComputer.TrustedToAuthForDelegation == True)
         else:
             filters.append(ADComputer.TrustedToAuthForDelegation == False)
+    computer_list = []
     if "Domain" in search_data:
         if len (search_data["Domain"]) > 0:
             computer_list = ADComputer.query.filter(and_(*filters)).join(

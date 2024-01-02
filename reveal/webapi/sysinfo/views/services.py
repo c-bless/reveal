@@ -1,5 +1,5 @@
 from http import HTTPStatus
-
+from sqlalchemy import and_
 from reveal.webapi.sysinfo.views import bp
 from reveal.webapi.extentions import auth
 

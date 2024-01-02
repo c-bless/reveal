@@ -67,8 +67,8 @@ try{
 
         #############################################################################################################
         #    Collecting Basic information about the current domain
-        #    Note: successful execution of ADDomain and ADForest is requrired sine these are referenced when imported 
-        #    to systemdb, therefore a global try catch is wrapped around all commands
+        #    Note: successful execution of ADDomain and ADForest is required sine these are referenced when imported
+        #    to REVEAL, therefore a global try catch is wrapped around all commands
         #############################################################################################################
         $xmlWriter.WriteStartElement("DomainCollector")
             $xmlWriter.WriteAttributeString("version", "$version")

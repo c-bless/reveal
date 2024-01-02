@@ -21,8 +21,9 @@ def get_EoLInfo(host_filter=[]):
                                                )).all()
                 eol_match.Hosts = hosts
         if not in_list:
+            conditions = []
             for v in special_os_versions:
-                conditions = [Host.OSName.notilike(f'%{v}%')]
+                conditions.append(Host.OSName.notilike(f'%{v}%'))
             hosts = Host.query.filter(and_((Host.OSBuildNumber == e.Build), *conditions, *host_filter)).all()
             eol_match.Hosts = hosts
 
