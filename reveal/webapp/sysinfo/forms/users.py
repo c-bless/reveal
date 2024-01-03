@@ -42,4 +42,4 @@ class LocalUserSearchForm(FlaskForm):
     UseDescriptionNotEmpty = BooleanField('use DescriptionNotEmpty')
 
     search = SubmitField('Search')
-    download = SubmitField('Download Excel (Full)')
+    download = SubmitField('Download Excel')

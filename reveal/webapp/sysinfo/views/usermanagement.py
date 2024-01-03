@@ -124,7 +124,7 @@ def user_search_list():
 
             users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
 
-            if 'excel' in request.form:
+            if 'download' in request.form:
                 output = generate_localuser_excel(users=users)
                 return Response(output, mimetype="text/xslx",
                                 headers={"Content-disposition": "attachment; filename=local-users.xlsx",

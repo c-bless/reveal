@@ -26,4 +26,4 @@ class LocalGroupMemberSearchForm(FlaskForm):
     InvertLocation = BooleanField('Invert Location')
 
     search = SubmitField('Search')
-    excel = SubmitField('Download Excel (Full)')
+    excel = SubmitField('Download Excel')
