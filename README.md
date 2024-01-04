@@ -18,10 +18,11 @@ details.
 for further information see [WIKI](https://github.com/c-bless/reveal/wiki). Some examples:
 
 ## Installation / Usage of REVEAL
-* [Installation and usage of REVEAL web application](https://github.com/c-bless/reveal/wiki/Data-Collection-and-importing-results)
+* [Building Docker images for REVEAL web application](https://github.com/c-bless/reveal/wiki/Build-Docker-Images-and-setup-REVEAL-web-application). This is the preferred way of using the application 
+* [Manual use of REVEAL web application without Docker](https://github.com/c-bless/reveal/wiki/Manual-installation-and-start-of-REVEAL-web-application-without-Docker). This is mainly used during development 
 * [Data Collection via PowerShell and Import into REVEAL web application](https://github.com/c-bless/reveal/wiki/Installation--and-usage-of-REVEAL-web-application)
 
-##  Reports / Word Export
+## Reports / Word Export
 
 * [Templates for reports](https://github.com/c-bless/reveal/wiki/Templates-for-DOCX-reports)
 * [Description of object types usable in reports](https://github.com/c-bless/reveal/wiki/Object-Types-imported-from-Sysinfo%E2%80%90Collector)
