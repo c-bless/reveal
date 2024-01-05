@@ -7,6 +7,7 @@ from reveal.webapp.ad.reports.admins import ReportSchemaAdminGroups
 from reveal.webapp.ad.reports.spn import ReportComputerBySPN
 from reveal.webapp.ad.reports.delegations import ReportComputerByUnconstraintDelegation
 from reveal.webapp.ad.reports.user import ReportUserBadPwCountGtN
+from reveal.webapp.ad.reports.user import ReportUserPWExpired
 
 
 def get_report_list():
@@ -23,6 +24,7 @@ def get_report_usermgmt_list():
     report_plugin_list.append(ReportEnterpriseAdminGroups())
     report_plugin_list.append(ReportSchemaAdminGroups())
     report_plugin_list.append(ReportUserBadPwCountGtN())
+    report_plugin_list.append(ReportUserPWExpired())
     return report_plugin_list
 
 

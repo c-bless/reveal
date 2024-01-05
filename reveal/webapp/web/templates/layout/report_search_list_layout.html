@@ -4,11 +4,13 @@
 {% extends "layout/base_layout.html" %}
 
 {% block stylesheets %}
-    {{ super() }}
+{{ super() }}
 
-    <!-- DataTables -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+<!-- DataTables -->
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 {% endblock stylesheets %}
 
 {% block page_title %} Report: {{ report_name }} {% endblock page_title %}
@@ -16,101 +18,107 @@
 {% block menu_l2 %} Reports {% endblock menu_l2 %}
 
 {% block content %}
-        <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <div class="card card-olive">
-                        <div class="card-header">
-                            <strong class="card-title">Search Form - {{ report_name }} </strong>
-                        </div>
+<div class="row">
+    <div class="col-12">
+        <div class="col-md-12">
+            <div class="card card-olive">
+                <div class="card-header">
+                    <strong class="card-title">Search Form - {{ report_name }} </strong>
+                </div>
+                <div class="card-body">
+                    {%block searchform %}
+                    <form class="form-horizontal" method="post">
+                        {% if form %}{{ form.hidden_tag() }} {% endif %}
+                        {%block searchform_input %}
+
                         <div class="card-body">
-                            {%block searchform %}
-                                    <form class="form-horizontal" method="post">
-                                            {% if form %}{{ form.hidden_tag() }} {% endif %}
-                                            {%block searchform_input %}
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    {% if form.SystemGroup %}{{ render_field_sm2(form.SystemGroup) }}{% endif %}
+                                    {% if form.InvertSystemGroup %}{{ render_check_field_sm2(form.InvertSystemGroup)
+                                    }}{% endif %}
+                                </div>
+                                <div class="col-sm-4">
+                                    {% if form.Location %}{{ render_field_sm2(form.Location) }}{% endif %}
+                                    {% if form.InvertLocation %}{{ render_check_field_sm2(form.InvertLocation) }}{%
+                                    endif %}
+                                </div>
+                                <div class="col-sm-4">
+                                    {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
+                                    {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
+                                </div>
+                            </div>
 
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-4">
-                                                        {% if form.SystemGroup %}{{ render_field_sm2(form.SystemGroup) }}{% endif %}
-                                                        {% if form.InvertSystemGroup %}{{ render_check_field_sm2(form.InvertSystemGroup) }}{% endif %}
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        {% if form.Location %}{{ render_field_sm2(form.Location) }}{% endif %}
-                                                        {% if form.InvertLocation %}{{ render_check_field_sm2(form.InvertLocation) }}{% endif %}
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
-                                                        {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            {%endblock searchform_input %}
-                                            <!-- /.card-body -->
-                                            <div class="card-footer">
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        {%block searchform_footer_left %}  {%endblock searchform_footer_left %}
-                                                        {% if form.search %}{{ render_submit_field(form.search) }}{% endif %}
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <div class="row">
-                                                            {%block searchform_footer_middle %}  {%endblock searchform_footer_middle %}
-                                                            <strong>Download:</strong>
-                                                            {% if form.brief %}{{ render_submit_field(form.brief) }}{% endif %}
-                                                            {% if form.full %}{{ render_submit_field(form.full) }}{% endif %}
-                                                            {% if form.excel %}{{ render_submit_field(form.excel) }}{% endif %}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        {%block searchform_footer_right %}  {%endblock searchform_footer_right %}
-                                                        <div class="row">
-                                                            {%if form.word %}<div class="col-sm-2"><strong>Download:</strong>{{ render_submit_field(form.word) }}</div>{% endif %}
-                                                            {%if form.TemplateFile %}<div class="col-sm-4">{{ form.TemplateFile(class="form-control") }}</div>{% endif %}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- /.card-footer -->
-                                    </form>
-                            {% endblock searchform %}
                         </div>
+
+                        {%endblock searchform_input %}
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    {%block searchform_footer_left %} {%endblock searchform_footer_left %}
+                                    {% if form.search %}{{ render_submit_field(form.search) }}{% endif %}
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="row">
+                                        {%block searchform_footer_middle %} <strong>Download:</strong>{%endblock searchform_footer_middle %}
+                                        {% if form.brief %}{{ render_submit_field(form.brief) }}{% endif %}
+                                        {% if form.full %}{{ render_submit_field(form.full) }}{% endif %}
+                                        {% if form.excel %}{{ render_submit_field(form.excel) }}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    {%block searchform_footer_right %} {%endblock searchform_footer_right %}
+                                    <div class="row">
+                                        {%if form.word %}
+                                        <div class="col-sm-2"><strong>Download:</strong>{{
+                                            render_submit_field(form.word) }}
+                                        </div>
+                                        {% endif %}
+                                        {%if form.TemplateFile %}
+                                        <div class="col-sm-4">{{ form.TemplateFile(class="form-control") }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-footer -->
+                    </form>
+                    {% endblock searchform %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="col-md-12">
+            <div class="card card-olive">
+                <div class="card-header">
+                    <strong class="card-title">Search Result</strong>
+                    <div class="float-right d-none d-sm-block">
+                        <div class="float-right d-none d-sm-block">
+                            {% block download_links %} {%endblock download_links %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="table1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        {%block datatable %} {%endblock datatable %}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <div class="card card-olive">
-                        <div class="card-header">
-                            <strong class="card-title">Search Result</strong>
-                            <div class="float-right d-none d-sm-block">
-                                <div class="float-right d-none d-sm-block">
-                                        {% block download_links %} {%endblock download_links %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="table1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                    {%block datatable %} {%endblock datatable %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
+    </div>
+    <!-- /.col -->
+</div>
+<!-- /.row -->
 {% endblock content %}
 
 
 {% block javascripts %}
-    {{ super() }}
-    <!-- Specific Page Vendor -->
-
+{{ super() }}
+<!-- Specific Page Vendor -->
 
 
 <!-- jQuery -->
@@ -157,5 +165,6 @@
       "responsive": true,
     });
   });
+
 </script>
 {% endblock javascripts %}
