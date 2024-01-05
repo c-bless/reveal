@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import Regexp
 from wtforms.validators import Optional
 
@@ -47,3 +47,13 @@ class ADUserSearchForm(FlaskForm):
     download = SubmitField('Download (Excel)')
 
 
+
+class UserDownload(FlaskForm):
+    download = SubmitField('Download Users')
+
+
+class UserBadPwdCount(FlaskForm):
+    n = IntegerField("Min. Count", default=5)
+
+    search = SubmitField('Search')
+    download = SubmitField('Download Users')

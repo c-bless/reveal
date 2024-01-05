@@ -38,3 +38,10 @@ def str2datetime_or_none(text: str) -> datetime.datetime | None:
             return datetime.datetime.strptime(text, "%m/%d/%Y %H:%M:%S").date()
         except:
             return None
+
+
+def str2int_or_none(text: str) -> int:
+    try:
+        return int(text)
+    except ValueError:
+        return None

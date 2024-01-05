@@ -19,6 +19,7 @@ from reveal.core.models.activedirectory import ADTrust
 
 from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import ts2datetime_or_none
+from reveal.core.importer.converter import str2int_or_none
 
 def import_domain_collector(root):
     if root.tag != "DomainCollector":
@@ -28,8 +29,6 @@ def import_domain_collector(root):
     for c in root.getchildren():
         if c.tag == "ADDomain": domain = domain2db(c)
         if c.tag == "ADForest": forest = forest2db(c)
-    print('Domain: {0}'.format(domain))
-    print('Forest: {0}'.format(forest))
     for c in root.getchildren():
         if c.tag == "ADDomainControllerList":
             for dc in c.getchildren():
@@ -235,8 +234,6 @@ def dc2db(xml, domain, forest):
         if "LdapPort" == e.tag: dc.LdapPort = int(e.text)
         if "SslPort" == e.tag: dc.SslPort = int(e.text)
     db.session.add(dc)
-    # db.session.commit()
-    # db.session.refresh(dc)
     for e in xml.getchildren():
         if "ServerRoles" == e.tag:
             for s in e.getchildren():
@@ -278,8 +275,6 @@ def computer2db(xml, domain):
         if "OperatingSystemVersion" == e.tag: c.OperatingSystemVersion = e.text
         if "Description" == e.tag: c.Description = e.text
     db.session.add(c)
-    # db.session.commit()
-    # db.session.refresh(c)
     for e in xml.getchildren():
         if "servicePrincipalNames" == e.tag:
             for s in e.getchildren():
@@ -306,13 +301,13 @@ def user2db(xml, domain):
         if "Description" == e.tag: user.Description = e.text
         if "DistinguishedName" == e.tag: user.DistinguishedName = e.text
         if "displayName" == e.tag: user.DisplayName = e.text
-        if "BadLogonCount" == e.tag: user.BadLogonCount = e.text
-        if "BadPwdCount" == e.tag: user.BadPwdCount = e.text
+        if "BadLogonCount" == e.tag: user.BadLogonCount = str2int_or_none(e.text)
+        if "BadPwdCount" == e.tag: user.BadPwdCount = str2int_or_none(e.text)
         if "Created" == e.tag: user.Created = e.text
         if "LastBadPasswordAttempt" == e.tag: user.LastBadPasswordAttempt = e.text
         if "lastLogon" == e.tag and e.text: user.lastLogon = ts2datetime_or_none(int(e.text))
         if "LastLogonDate" == e.tag: user.LastLogonDate = e.text
-        if "logonCount" == e.tag: user.logonCount = e.text
+        if "logonCount" == e.tag: user.logonCount = str2int_or_none(e.text)
         if "LockedOut" == e.tag: user.LockedOut = str2bool_or_none(e.text)
         if "PasswordExpired" == e.tag: user.PasswordExpired = str2bool_or_none(e.text)
         if "PasswordLastSet" == e.tag: user.PasswordLastSet = e.text
@@ -322,8 +317,6 @@ def user2db(xml, domain):
         if "Modified" == e.tag: user.Modified = e.text
         if "MemberOfStr" == e.tag: user.MemberOfStr = e.text
     db.session.add(user)
-    #db.session.commit()
-    #db.session.refresh(user)
     for e in xml.getchildren():
         if "MemberOf" == e.tag:
             for m in e.getchildren():
@@ -347,8 +340,6 @@ def group2db(xml, domain):
         if "SID" == e.tag: group.SID = e.text
         if "MemberOfStr" == e.tag: group.MemberOfStr = e.text
     db.session.add(group)
-    #db.session.commit()
-    #db.session.refresh(group)
     for e in xml.getchildren():
         if "Members" == e.tag:
             for m in e.getchildren():

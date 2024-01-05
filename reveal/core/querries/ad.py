@@ -33,6 +33,9 @@ def find_protected_users() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-525")).all()
 
 
+def find_user_pw_expired() -> list[ADUser]:
+    return ADUser.query.filter(ADUser.PasswordExpired == True).all()
+
 
 def find_user_badpwcount_gt(n: int)-> list[ADUser]:
     return ADUser.query.filter(ADUser.BadPwdCount >= n).all()
