@@ -3,6 +3,7 @@ from sqlalchemy import and_
 from reveal.core.models.activedirectory import ADGroup
 from reveal.core.models.activedirectory import ADSPN
 from reveal.core.models.activedirectory import ADComputer
+from reveal.core.models.activedirectory import ADUser
 
 def find_domain_admin_groups() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-512")).all()
@@ -31,3 +32,7 @@ def find_computer_with_Unconstraint_Delegation():
 def find_protected_users() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-525")).all()
 
+
+
+def find_user_badpwcount_gt(n: int)-> list[ADUser]:
+    return ADUser.query.filter(ADUser.BadPwdCount >= n).all()
