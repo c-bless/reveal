@@ -32,3 +32,6 @@ class ADGroupSearchForm(FlaskForm):
     download = SubmitField('Download (Excel)')
 
 
+class GroupDownload(FlaskForm):
+    download = SubmitField('Download Groups')
+

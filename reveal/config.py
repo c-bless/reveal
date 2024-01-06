@@ -52,7 +52,7 @@ class AppConfig(object):
 class ApiConfig(object):
     # import secrets
     # secrets.token_hex(32)
-    VERSION = "v0.4"
+    VERSION = "v0.5-dev"
     SECRET_KEY = os.environ.get('SECRET_KEY') or \
                  'e2c943e09c7af7282229cd32c32971bba9b6a2a26abbd7f2c0f8b42a856f02af'  # change me!
 

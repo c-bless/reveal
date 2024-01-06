@@ -1,18 +1,16 @@
-{% extends "layout/list_layout.html" %}
+{% extends "layout/report_search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 {% set title = "GroupMember List" %}
 {% block page_title %} Report: {{ report_name }} {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
 {% block menu_l2 %} GroupMember List {% endblock menu_l2 %}
 
-{% block download_links %}
+
+{% block searchform_footer_middle %}
 {{ super() }}
-{% if download_url %}
-<a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
-    <i class="fas fa-download"> Download (Excel)</i>
-</a>
-{% endif %}
-{% endblock download_links %}
+{%if form %} {{ render_submit_field(form.download) }} {% endif %}
+{% endblock searchform_footer_middle %}
 
 {% block datatable %}
 {{ super() }}

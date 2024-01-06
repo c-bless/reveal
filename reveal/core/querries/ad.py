@@ -39,3 +39,7 @@ def find_user_pw_expired() -> list[ADUser]:
 
 def find_user_badpwcount_gt(n: int)-> list[ADUser]:
     return ADUser.query.filter(ADUser.BadPwdCount >= n).all()
+
+
+def find_SIMATIC_groups() -> list[ADGroup]:
+    return ADGroup.query.filter(ADGroup.SamAccountName.ilike("%SIMATIC%")).all()

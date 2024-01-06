@@ -7,29 +7,26 @@ from reveal.core.export.excel.ad_groupmembers import generate_ad_groupmembers_ex
 from reveal.core.querries.ad import find_domain_admin_groups
 from reveal.core.querries.ad import find_enterprise_admin_groups
 from reveal.core.querries.ad import find_schema_admin_groups
+from reveal.webapp.ad.forms.groups import GroupDownload
 
 ####################################################################
 # Members in Domain Admins groups
 ####################################################################
 
-@ad_bp.route('/reports/members/domainadmins/', methods=['GET'])
+@ad_bp.route('/reports/members/domainadmins/', methods=['GET', 'POST'])
 @login_required
 def groupmembers_domain_admins():
+    form = GroupDownload()
     groups = find_domain_admin_groups()
-    return render_template('ad/reports/groupmembers_list.html', groups=groups,
-                           download_url= url_for("ad.groupmembers_domain_admins_excel_full"),
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_ad_groupmembers_excel(groups)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=groupmembers_domain_admins.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return render_template('ad/reports/groupmembers_list.html', groups=groups, form=form,
                            report_name= 'GroupMembers "Domain Admins"')
-
-
-@ad_bp.route('/reports/members/domainadmins/excel/full', methods=['GET'])
-@login_required
-def groupmembers_domain_admins_excel_full():
-    groups = find_domain_admin_groups()
-    output = generate_ad_groupmembers_excel(groups)
-
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_domain_admins.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
 class ReportDomainAdminGroups(ReportInfo):
@@ -44,29 +41,22 @@ class ReportDomainAdminGroups(ReportInfo):
         )
 
 
-
 ####################################################################
 # Members in Enterprise Admins groups
 ####################################################################
-
-@ad_bp.route('/reports/members/enterpriseadmins/', methods=['GET'])
+@ad_bp.route('/reports/members/enterpriseadmins/', methods=['GET', 'POST'])
 @login_required
 def groupmembers_enterprise_admins():
+    form = GroupDownload()
     groups = find_enterprise_admin_groups()
-    return render_template('ad/reports/groupmembers_list.html', groups=groups,
-                           download_url= url_for("ad.groupmembers_enterprise_admins_excel_full"),
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_ad_groupmembers_excel(groups)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=groupmembers_enterprise_admins.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    return render_template('ad/reports/groupmembers_list.html', groups=groups, form=form,
                            report_name= 'GroupMembers "Enterprise Admins"')
-
-
-@ad_bp.route('/reports/members/enterpriseadmins/excel/full', methods=['GET'])
-@login_required
-def groupmembers_enterprise_admins_excel_full():
-    groups = find_enterprise_admin_groups()
-    output = generate_ad_groupmembers_excel(groups)
-
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_enterprise_admins.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
 class ReportEnterpriseAdminGroups(ReportInfo):
@@ -81,29 +71,22 @@ class ReportEnterpriseAdminGroups(ReportInfo):
         )
 
 
-
 ####################################################################
 # Members in Schema Admins groups
 ####################################################################
-
-@ad_bp.route('/reports/members/schemaadmins/', methods=['GET'])
+@ad_bp.route('/reports/members/schemaadmins/', methods=['GET', 'POST'])
 @login_required
 def groupmembers_schema_admins():
+    form = GroupDownload()
     groups = find_schema_admin_groups()
-    return render_template('ad/reports/groupmembers_list.html', groups=groups,
-                           download_url= url_for("ad.groupmembers_schema_admins_excel_full"),
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_ad_groupmembers_excel(groups)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=groupmembers_schema_admins.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+    return render_template('ad/reports/groupmembers_list.html', groups=groups, form=form,
                            report_name= 'GroupMembers "Schema Admins"')
-
-
-@ad_bp.route('/reports/members/schemaadmins/excel/full', methods=['GET'])
-@login_required
-def groupmembers_schema_admins_excel_full():
-    groups = find_schema_admin_groups()
-    output = generate_ad_groupmembers_excel(groups)
-
-    return Response(output, mimetype="text/xlsx",
-                 headers={"Content-disposition": "attachment; filename=groupmembers_schema_admins.xlsx",
-                              "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
 
 
 class ReportSchemaAdminGroups(ReportInfo):
@@ -116,4 +99,3 @@ class ReportSchemaAdminGroups(ReportInfo):
             description='Report all members of of "Schema Admin" group.',
             views=[("view", url_for("ad.groupmembers_schema_admins"))]
         )
-
