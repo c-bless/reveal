@@ -20,7 +20,7 @@ for further information see [WIKI](https://github.com/c-bless/reveal/wiki). Some
 ## Installation / Usage of REVEAL
 * [Building Docker images for REVEAL web application](https://github.com/c-bless/reveal/wiki/Build-Docker-Images-and-setup-REVEAL-web-application). This is the preferred way of using the application 
 * [Manual use of REVEAL web application without Docker](https://github.com/c-bless/reveal/wiki/Manual-installation-and-start-of-REVEAL-web-application-without-Docker). This is mainly used during development 
-* [Data Collection via PowerShell and Import into REVEAL web application](https://github.com/c-bless/reveal/wiki/Installation--and-usage-of-REVEAL-web-application)
+* [Data Collection via PowerShell and Import into REVEAL web application](https://github.com/c-bless/reveal/wiki/Data-Collection-and-importing-results)
 
 ## Reports / Word Export
 
