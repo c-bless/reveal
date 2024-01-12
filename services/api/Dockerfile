@@ -1,18 +1,15 @@
-FROM python:latest
+FROM python:3.12.1-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /app
-RUN mkdir /app/reveal
+RUN mkdir /app && mkdir /app/reveal
 
 WORKDIR /app
 
-RUN pip install --upgrade pip
-
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install --requirement requirements.txt
 
 COPY /reveal reveal
 
