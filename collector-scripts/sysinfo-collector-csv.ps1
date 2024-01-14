@@ -125,6 +125,7 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
         Whoami = [string] [System.Environment]::UserName
         WhoamiIsAdmin = [string] ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
         PSVersion = [string]$PSVersionTable.PSVersion
+        PSVersion2Installed = ""
         LastUpdate = [string] "N/A"
     }
 
@@ -184,6 +185,7 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
         WhoamiIsAdmin = [string] ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
         PSVersion = [string]$PSVersionTable.PSVersion
         LastUpdate = [string] "N/A"
+        PSVersion2Installed = ""
     }
 }
 
@@ -415,26 +417,185 @@ $ntfs_acls | Export-CSV -Path $file_prefix"-share_ntfs_acls.csv"
 ###############################################################################################################
 # https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd939844(v=ws.10)?redirectedfrom=MSDN
 
+Write-Host "[*] Checking WSUS configuration"
+$wsus_settings = [PSCustomObject]@{
+    AcceptTrustedPublisherCerts = ""
+    DisableWindowsUpdateAccess = ""
+    ElevateNonAdmins = ""
+    TargetGroup = ""
+    TargetGroupEnabled = ""
+    WUServer = ""
+    WUStatusServer = ""
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "AcceptTrustedPublisherCerts") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name AcceptTrustedPublisherCerts -ErrorAction SilentlyContinue
+    $wsus_settings.AcceptTrustedPublisherCerts = [string] $wsus.AcceptTrustedPublisherCerts
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "DisableWindowsUpdateAccess") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name DisableWindowsUpdateAccess -ErrorAction SilentlyContinue
+    $wsus_settings.DisableWindowsUpdateAccess = [string] $wsus.DisableWindowsUpdateAccess
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "ElevateNonAdmins") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name ElevateNonAdmins -ErrorAction SilentlyContinue
+    $wsus_settings.ElevateNonAdmins = [string] $wsus.ElevateNonAdmins
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
+    $wsus_settings.TargetGroup = [string]  $wsus.TargetGroup
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroupEnabled") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroupEnabled -ErrorAction SilentlyContinue
+    $wsus_settings.TargetGroupEnabled = [string]  $wsus.TargetGroupEnabled
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUServer") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUServer -ErrorAction SilentlyContinue
+    $wsus_settings.WUServer = [string]  $wsus.WUServer
+}
+if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUStatusServer") {
+    $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUStatusServer -ErrorAction SilentlyContinue
+    $wsus_settings.WUStatusServer = [string]   $wsus.WUStatusServer
+}
+$wsus_settings | export-csv -Path $file_prefix"-wsus.csv"
 
 ###############################################################################################################
 # Collecting firewall status
 ###############################################################################################################
            
+if (Get-Command Get-NetFirewallProfile -ea SilentlyContinue) {
+    Write-Host "[*] Collecting local firewall state"
+    try{
+        $profiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
+        $profiles | Export-CSV -Path $file_prefix"-fwprofiles.csv"
+        foreach ($p in $profiles) {
+            try{
+                if (!$p.Enabled){
+                    $result = [PSCustomObject]@{
+                        Component = 'Firewall'
+                        Name = 'FirewallEnabled'
+                        Method       = 'Get-NetFirewallProfile'
+                        Key   = $p.Name
+                        Value      = $p.Enabled
+                        Result = 'Firewall is not enabled for the profile'
+                    }
+                    $config_checks.Add($result)
+                }
+            }catch{}
+        }
+    }catch{}
+}
 
 
 ###############################################################################################################
 # Collecting WinLogon Settings
 ###############################################################################################################
+Write-Host "[*] Checking autologon configuration"
+$winlogon_settings = [PSCustomObject]@{
+    DefaultUserName = ""
+    DefaultPassword = ""
+    DefaultPasswordBase64 = ""
+    DefaultPasswordEncrypted = ""
+    AutoAdminLogon = ""
+    ForceAutoLogon = ""
+    DefaultDomain = ""
+}
+if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultUserName") {
+    $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultUserName -ErrorAction SilentlyContinue
+    $winlogon_settings.DefaultUserName = $value.DefaultUserName;
+}
+if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultPassword") {
+    $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultPassword -ErrorAction SilentlyContinue
+    $base64 = $false
+    $encrypted = $false
+    try {
+        $aesManaged = New-Object "System.Security.Cryptography.AesManaged"
+        $aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CBC
+        $aesManaged.Padding = [System.Security.Cryptography.PaddingMode]::PKCS7
+        $aesManaged.BlockSize = 128
+        $aesManaged.KeySize = 256
+        $aesManaged.Key = $encKey
+        $plainBytes = [Text.Encoding]::UTF8.GetBytes($value.DefaultPassword)
+        $encryptor = $aesManaged.CreateEncryptor()
+        $encryptedText = $encryptor.TransformFinalBlock($plainBytes,0,$plainBytes.Length)
 
-Write-Host "[*] Checking autologon configuration"           
-            
-        
+        $encrypted = $true
+        $base64 = $true
+        [byte[]] $fullData = $aesManaged.IV + $encryptedText
+        $aesManaged.Dispose()
+        $defaultPassword = [Convert]::ToBase64String($fullData)
+    } catch {
+        # .NET library for Cryptography not available.
+        $defaultPassword = [convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($value.DefaultPassword))
+        $base64 = $true
+    }
+    $winlogon_settings.DefaultPasswordBase64 = [string] $base64
+    $winlogon_settings.DefaultPasswordEncrypted = [string] $encrypted
+    $winlogon_settings.DefaultPassword = $defaultPassword
+    # add additional entry to config_checks
+    $result = [PSCustomObject]@{
+        Component = 'Winlogon'
+        Name = 'WinlogonDefaultPassword'
+        Method       = 'Registry'
+        Key   = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\DefaultPassword'
+        Value      = $defaultPassword
+        Result = 'DefaultPassword set'
+        Message = 'Password for autologon user stored in Registry'
+    }
+    [void]$config_checks.Add($result)
+}
+if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "AutoAdminLogon") {
+    $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -ErrorAction SilentlyContinue
+    $winlogon_settings.AutoAdminLogon = $value.AutoAdminLogon
+}
+if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "ForceAutoLogon") {
+    $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name ForceAutoLogon -ErrorAction SilentlyContinue
+    $winlogon_settings.ForceAutoLogon = $value.ForceAutoLogon
+}
+if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultDomainName") {
+    $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomainName -ErrorAction SilentlyContinue
+    $winlogon_settings.DefaultDomain = $value.DefaultDomain
+}
+$winlogon_settings | Export-CSV -Path $file_prefix"-winlogon.csv"
+
 ###############################################################################################################
 # Collecting information about Installed PS Versions / Check if Version 2 is enabled 
 ###############################################################################################################
         
 Write-Host "[*] Checking installed PS versions"
 
+$v2installed = $false
+
+$entries = New-Object System.Collections.ArrayList
+
+$ids = (1..5)
+foreach ( $id in $ids) {
+    $entry =  Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\PowerShell\$id\PowerShellEngine -ErrorAction SilentlyContinue
+    if ($entry) {
+        [void] $entries.Add([PSCustomObject]@{
+            Version = [string] $entry.PowerShellVersion
+            PSCompatibleVersion = [string] $entry.PSCompatibleVersion
+            PSPath = [string] $entry.PSPath
+            RuntimeVersion = [string] $entry.RuntimeVersion
+            ConsoleHostModuleName = [string] $entry.ConsoleHostModuleName
+        })
+        # if version is = 2.0 add an additional entry to $config_checks
+        if ($entry.PowerShellVersion -eq "2.0"){
+            $v2installed = $true
+            $result = [PSCustomObject]@{
+                Component = 'PS'
+                Name = 'PSv2Installed'
+                Method       = 'Registry'
+                Key   = 'HKLM:\SOFTWARE\Microsoft\PowerShell\'+$id+'\PowerShellEngine\PowerShellVersion'
+                Value      = $entry.PowerShellVersion
+                Result = 'Installed'
+                Message = 'PS Version 2.0 installed'
+            }
+            [void]$config_checks.Add($result)
+        }
+    }
+}
+$entries | Export-csv -Path $file_prefix"-powershell.csv"
+
+$host_info.PSVersion2Installed = [string] $v2installed
         
 ###############################################################################################################
 # Collecting information about Windows Scripting Host 
