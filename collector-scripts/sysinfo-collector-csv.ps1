@@ -271,7 +271,7 @@ if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
         $netadapters = get-wmiobject -Class win32_networkadapterconfiguration -Filter "IPEnabled = 'True'"
         foreach ($n in $netadapters ) {
             foreach ($i in $n.IPAddress){
-                $adapter_list.Add([PSCustomObject]@{
+                [void] $adapter_list.Add([PSCustomObject]@{
                     IP = [string] $i 
                     InterfaceAlias = [string] $n.Caption
                     DHCP = [string] $n.DHCPEnabled
@@ -322,13 +322,92 @@ $users | select AccountType,Domain,Disabled,LocalAccount,Name,FullName,Descripti
 ###############################################################################################################
 # Collecting information about local groups
 ###############################################################################################################
-  
+Write-Host "[*] Collecting local groups"
+$groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
+
+$groups | select Name,Caption,Description,LocalAccount,SID | Export-CSV -Path $file_prefix"-groups.csv"
+$group_members = New-Object System.Collections.ArrayList
+
+foreach ($g in $groups ) {
+
+        $groupname = [string] $g.Name
+        Write-Host "[*] - Enumerating members of group: $groupname"
+        $query="Associators of {Win32_Group.Domain='$hostname',Name='$groupname'} where Role=GroupComponent"
+        $members = get-wmiobject -query $query -ComputerName $hostname
+        foreach ($m in $members){
+            [void] $group_members.Add([PSCustomObject]@{
+                Groupname = $groupname
+                AccountType = [string] $m.AccountType
+                Domain = [string] $m.Domain
+                Name = [string] $m.Name
+                SID = [string] $m.SID
+                Caption = [string] $m.Caption
+            });
+        }
+}
+$group_members | Export-CSV -Path $file_prefix"-group_members.csv"
 
 ###############################################################################################################
 # Collecting information about shares on the system
 ###############################################################################################################
-    
-            
+Write-Host "[*] Collecting information about shares"
+$shares = Get-WmiObject -class win32_share
+$shares | select Name,Path,Description | Export-CSV -Path $file_prefix"-shares.csv"
+
+$share_acls = New-Object System.Collections.ArrayList
+$ntfs_acls = New-Object System.Collections.ArrayList
+
+foreach ($s in $shares ) {
+
+    ## Get ACLs (NTFS)
+    $path = [string] $s.Path
+    try {
+        $acl = get-acl -Path $path -ErrorAction SilentlyContinue
+        foreach ($a in $acl.Access) {
+            [void] $ntfs_acls.Add([PSCustomObject]@{
+                Share = $s.Name
+                Name = [string] $s.Name
+                AccountName = [string] $a.IdentityReference
+                AccessControlType = [string] $a.AccessControlType
+                AccessRight = [string] $a.FileSystemRights
+            })
+        }
+    } catch {}
+    if (Get-Command Get-SmbShareAccess -ErrorAction SilentlyContinue) {
+        try {
+            $acl = Get-SmbShareAccess -Name $s.Name -ErrorAction SilentlyContinue
+            foreach ($a in $acl) {
+               [void]  $share_acls.Add([PSCustomObject]@{
+                    Share = $s.Name
+                    Name = [string] $s.Name
+                    ScopeName = [string] $a.ScopeName
+                    AccountName = [string] $a.AccountName
+                    AccessControlType = [string] $a.AccessControlType
+                    AccessRight = [string] $a.AccessRight
+                })
+            }
+        } catch {}
+    }else{
+        try {
+            $share = "\\" + $hostname  +"\"+  [string]$s.Name
+            $acl = get-acl -Path $share -ErrorAction SilentlyContinue
+            foreach ($a in $acl.Access) {
+                [void] $share_acls.Add([PSCustomObject]@{
+                    Share = $s.Name
+                    Name = [string] $s.Name
+                    ScopeName = ""
+                    AccountName = [string] $a.IdentityReference
+                    AccessControlType = [string] $a.AccessControlType
+                    AccessRight = [string] $a.FileSystemRights
+                })
+            }
+        } catch {}
+    }
+}
+$share_acls | Export-CSV -Path $file_prefix"-share_acls.csv"
+$ntfs_acls | Export-CSV -Path $file_prefix"-share_ntfs_acls.csv"
+
+
 
 
 ###############################################################################################################
