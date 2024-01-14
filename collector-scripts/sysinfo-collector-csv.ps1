@@ -309,8 +309,47 @@ $services = Get-WmiObject  -class win32_service
 
 $services | select Caption,Description,Name,StartMode,PathName,Started,StartName,SystemName,DisplayName,Running,AcceptStop,AcceptPause,ProcessId,DelayedAutoStart| Export-CSV -Path $file_prefix"-services.csv"
 
+$service_acls = New-Object System.Collections.ArrayList
+foreach ($s in $services ) {
+    try {
+        # check permissions of binary. Therefore parameters needed to be stripped from path, otherwise
+        # Get-ACL will not work.
+        $folder = Split-Path -Path $s.PathName
+        $leaf = Split-Path -Path $s.PathName -Leaf
+        $space = $leaf.IndexOf(" ")
+        if ($space -eq -1) {
+            $bin = $s.PathName
+        }else{
+            $bin = $folder+"\"+$leaf.Substring(0,$space)
+        }
+        $xmlWriter.WriteElementString("Executable",[string]$bin);
 
-#TODO ACLS
+
+        $space2 = $bin.IndexOf('"')
+        if ($space2 -ne -1){
+            $bin =$bin.Replace('"','')
+        }
+
+        $acl = get-acl -Path $bin -ErrorAction SilentlyContinue
+        #$xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
+        $xmlWriter.WriteStartElement("BinaryPermissions")
+        foreach ($a in $acl.Access) {
+            try{
+                foreach ($a in $acl.Access) {
+                    [void] $service_acls.Add([PSCustomObject]@{
+                        Name = [string] $s.Name
+                        AccountName = [string] $a.IdentityReference
+                        AccessControlType = [string] $a.AccessControlType
+                        AccessRight = [string] $a.FileSystemRights
+                    })
+                }
+            }catch{}
+        }
+    } catch {}
+}
+
+$service_acls | Export-CSV -Path $file_prefix"-service_acls.csv"
+
 ###############################################################################################################
 # Collecting information about local user accounts
 ###############################################################################################################
@@ -736,7 +775,72 @@ if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockL
 ###############################################################################################################
 # Collecting information about SMB (Check if SMBv1 is enabled)
 ###############################################################################################################
-        
+
+# https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3?tabs=server
+Write-Host "[*] Checking if SMBv1 is enabled"
+
+$xmlWriter.WriteStartElement("SMBSettings")
+
+$smb_settings = [PSCustomObject]@{
+   Method = ""
+   SMB1Enabled = ""
+   SMB2Enabled = ""
+   EncryptData = ""
+   EnableSecuritySignature = ""
+   RequireSecuritySignature = ""
+}
+
+if (Get-Command Get-SmbServerConfiguration -ea SilentlyContinue) {
+    # Cmdlet has been introduced in Windows 8, Windows Server 2012
+    $smb_settings.Method = "Get-SmbServerConfiguration"
+    $smb = Get-SmbServerConfiguration
+    $smb_settings.SMB1Enabled = [string] $smb.EnableSMB1Protocol)
+    $smb_settings.SMB2Enabled = [string] $smb.EnableSMB2Protocol)
+    $smb_settings.EncryptData = [string] $smb.EncryptData)
+    $smb_settings.EnableSecuritySignature = [string] $smb.EnableSecuritySignature)
+    $smb_settings.RequireSecuritySignature = [string] $smb.RequireSecuritySignature)
+
+} else {
+    $smb_method= "Registry"
+    # older Windows versions can check the registry.
+    if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB1") {
+        $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB1 -ErrorAction SilentlyContinue
+        if ($smb1 -eq 0){
+            $smb_settings.SMB1Enabled = "False"
+        } else{
+            $smb_settings.SMB1Enabled = "True"
+
+        }
+    } else {
+        # Enabled by default. Since the entry does not exist it is enabled
+        $smb_settings.SMB1Enabled = "True"
+    }
+
+    if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB2") {
+        $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB2 -ErrorAction SilentlyContinue
+        if ($smb1 -eq 0){
+            $smb_settings.SMB2Enabled =  "False"
+        } else{
+            $smb_settings.SMB2Enabled = "True"
+
+        }
+    } else {
+        # Enabled by default. Since the entry does not exist it is enabled
+        $smb_settings.SMB2Enabled =  "True"
+    }
+
+    if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "EnableSecuritySignature") {
+        $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name EnableSecuritySignature -ErrorAction SilentlyContinue
+        $smb_settings.EnableSecuritySignature = [string] $smb.EnableSecuritySignature
+    }
+
+    if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "RequireSecuritySignature") {
+        $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name RequireSecuritySignature -ErrorAction SilentlyContinue
+        $smb_settings.RequireSecuritySignature = [string] $smb.RequireSecuritySignature
+    }
+}
+
+$smb_settings | Export-CSV -Path $file_prefix"-smb_settings.csv"
 
 ###############################################################################################################
 # Collecting information about Defender (Status / Settings)
@@ -771,11 +875,107 @@ if (Get-Command Get-Printer -ea SilentlyContinue) {
 ###############################################################################################################
         
 
+Write-Host "[*] Checking for existence of specified files"
+# ArrayList to store results from file existence checks. Those will be added as FileExistence-Tags.
+# All Custom objects that are added should follow the following structure
+# $result = [PSCustomObject]@{
+#     Name = 'NAME of the check'
+#     File   = 'Pathname'
+#     ExpectedHASH  = 'HASH'
+# }
+$file_checks = New-Object System.Collections.ArrayList
+$file_checks_results = New-Object System.Collections.ArrayList
+
+# Template for file checks
+# generate expected hash via: Get-FileHash -Path C:\temp\testfile.txt -Algorithm SHA256
+
+#[void]$file_checks.Add(
+#    [PSCustomObject]@{
+#        Name = 'Testfile'
+#        File   =  'C:\temp\testfile.txt'
+#        ExpectedHASH  = 'D37B9395C2BAF168F977CE9FF9EC007D7270FC84CBF1549324BFC8DFC34333A9'
+#    }
+#)
+
+foreach ($c in $file_checks){
+    $result = [PSCustomObject]@{
+        Name = $c.Name
+        File   = $c.File
+        ExpectedHASH  = $c.ExpectedHASH
+        FileExist = $false
+        HashMatch = $false
+        HashChecked = $false
+        CurrentHash= ''
+    }
+    try{
+        $path = [string] $c.File
+        if (Test-Path $path){
+            write-host "[!] Found file: "$path
+            $result.FileExist = $true
+            if (Get-Command Get-FileHash -ErrorAction SilentlyContinue){
+                $expectedHash = [string] $c.ExpectedHASH
+                $hash = Get-FileHash -Path $path -Algorithm SHA256
+                if ($expectedHash -eq $hash.HASH){
+                    $result.HashMatch = $true
+                    $result.HashChecked = $true
+                } else{
+                    $result.HashMatch = $false
+                }
+                $result.CurrentHash = $hash.Hash
+            }
+        }else{
+            $result.FileExist = $false
+        }
+        [void]$file_checks_results.Add($result)
+    } catch {}
+}
+
+
+# Perform: FileExistence Checks
+
+$xmlWriter.WriteStartElement("FileExistChecks")
+foreach ($c in $file_checks_results){
+    $xmlWriter.WriteStartElement("FileExistCheck")
+    $xmlWriter.WriteElementString("Name",[string] $c.Name)
+    $xmlWriter.WriteElementString("File", [string] $c.File)
+    $xmlWriter.WriteElementString("ExpectedHASH", [string] $c.ExpectedHASH)
+    $xmlWriter.WriteElementString("FileExist", [string] $c.FileExist)
+    $xmlWriter.WriteElementString("HashMatch", [string] $c.HashMatch)
+    $xmlWriter.WriteElementString("HashChecked", [string] $c.HashChecked)
+    $xmlWriter.WriteElementString("CurrentHash", [string] $c.CurrentHash)
+    $xmlWriter.WriteEndElement() # FileExistCheck
+}
+$file_checks_results | Export-CSV -Path $file_prefix"-FileExistChecks.csv"
+
 ###############################################################################################################
 # Perform: Path ACL Checks
 ###############################################################################################################
-        
-            
+Write-Host "[*] Checking ACLs for specified pathes"
+# ArrayList of pathes that should be checked
+$acl_path_checks = New-Object System.Collections.ArrayList
+$acl_path_check_results = New-Object System.Collections.ArrayList
+
+[void]$acl_path_checks.Add('C:\')
+[void]$acl_path_checks.Add('C:\Program Files\')
+[void]$acl_path_checks.Add('C:\Program Files (x86)\')
+
+foreach ($c in $acl_path_checks){
+    $path = [string] $c
+    if (Test-Path $path){
+        $acl = get-acl -Path $path -ErrorAction SilentlyContinue
+        foreach ($a in $acl.Access) {
+            try{
+                [void] $acl_path_check_results.Add([PSCustomObject]@{
+                    Path = [string] $path
+                    AccountName = [string] $a.IdentityReference
+                    AccessControlType = [string] $a.AccessControlType
+                    AccessRight = [string] $a.FileSystemRights
+                })
+            }catch{}
+        }
+    }
+}
+$acl_path_check_results | Export-CSV -Path $file_prefix"-file_path_checks.csv"
 
 ###############################################################################################################
 # Adding ConfigChecks to xml. 
