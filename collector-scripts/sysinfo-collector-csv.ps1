@@ -322,7 +322,6 @@ foreach ($s in $services ) {
         }else{
             $bin = $folder+"\"+$leaf.Substring(0,$space)
         }
-        $xmlWriter.WriteElementString("Executable",[string]$bin);
 
 
         $space2 = $bin.IndexOf('"')
@@ -331,13 +330,12 @@ foreach ($s in $services ) {
         }
 
         $acl = get-acl -Path $bin -ErrorAction SilentlyContinue
-        #$xmlWriter.WriteElementString("NTFSPermission", [string] $acl.AccessToString)
-        $xmlWriter.WriteStartElement("BinaryPermissions")
         foreach ($a in $acl.Access) {
             try{
                 foreach ($a in $acl.Access) {
                     [void] $service_acls.Add([PSCustomObject]@{
                         Name = [string] $s.Name
+                        Executable = [string]$bin
                         AccountName = [string] $a.IdentityReference
                         AccessControlType = [string] $a.AccessControlType
                         AccessRight = [string] $a.FileSystemRights
@@ -353,10 +351,10 @@ $service_acls | Export-CSV -Path $file_prefix"-service_acls.csv"
 ###############################################################################################################
 # Collecting information about local user accounts
 ###############################################################################################################
-    
+
 # using WMI to be compatible with older PS versions
 Write-Host "[*] Collecting local user accounts"
-$users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True" 
+$users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
 $users | select AccountType,Domain,Disabled,LocalAccount,Name,FullName,Description,SID,Lockout,PasswordChanged,PasswordRequired | Export-CSV -Path $file_prefix"-users.csv"
 
 
@@ -499,7 +497,7 @@ $wsus_settings | export-csv -Path $file_prefix"-wsus.csv"
 ###############################################################################################################
 # Collecting firewall status
 ###############################################################################################################
-           
+
 if (Get-Command Get-NetFirewallProfile -ea SilentlyContinue) {
     Write-Host "[*] Collecting local firewall state"
     try{
@@ -516,7 +514,7 @@ if (Get-Command Get-NetFirewallProfile -ea SilentlyContinue) {
                         Value      = $p.Enabled
                         Result = 'Firewall is not enabled for the profile'
                     }
-                    $config_checks.Add($result)
+                    [void] $config_checks.Add($result)
                 }
             }catch{}
         }
@@ -596,9 +594,9 @@ if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea
 $winlogon_settings | Export-CSV -Path $file_prefix"-winlogon.csv"
 
 ###############################################################################################################
-# Collecting information about Installed PS Versions / Check if Version 2 is enabled 
+# Collecting information about Installed PS Versions / Check if Version 2 is enabled
 ###############################################################################################################
-        
+
 Write-Host "[*] Checking installed PS versions"
 
 $v2installed = $false
@@ -635,19 +633,19 @@ foreach ( $id in $ids) {
 $entries | Export-csv -Path $file_prefix"-powershell.csv"
 
 $host_info.PSVersion2Installed = [string] $v2installed
-        
+
 ###############################################################################################################
-# Collecting information about Windows Scripting Host 
+# Collecting information about Windows Scripting Host
 ###############################################################################################################
-        
+
 Write-Host "[*] Checking settings for Windows Scripting Host"
-        
-            
+
+
 #######################################################################
 $wsh_trust_policy =""
 if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "TrustPolicy") {
     $wsh =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\" -Name TrustPolicy -ErrorAction SilentlyContinue
-    $wsh_trust_policy = [string] $wsh.TrustPolicy   
+    $wsh_trust_policy = [string] $wsh.TrustPolicy
 }else{
     $wsh_trust_policy = "N/A"
 }
@@ -663,7 +661,7 @@ $result = [PSCustomObject]@{
 }
 [void]$config_checks.Add($result)
 #######################################################################
-        
+
 $wsh_enabled=1
 $wsh_enabled_status="Enabled"
 $wsh_enabled_result=""
@@ -672,8 +670,8 @@ if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea Sile
     $wsh_enabled = $wsh.Enabled
     if ($wsh.Enabled -eq 0){
         $wsh_enabled_result="Disabled (Explicit)"
-        $wsh_enabled_status =  "Disabled"    
-    }else{ 
+        $wsh_enabled_status =  "Disabled"
+    }else{
         $wsh_enabled_result="Enabled (Explicit)"
     }
 }else{
@@ -692,7 +690,7 @@ $result = [PSCustomObject]@{
 }
 [void]$config_checks.Add($result)
 #######################################################################
-        
+
 $wsh_remote=1
 $wsh_remote_status="Enabled"
 $wsh_remote_result=""
@@ -702,17 +700,17 @@ if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea Sile
     $wsh_remote = $wsh.Remote
     if ($wsh.Remote -eq 0){
         $wsh_remote_result="Disabled (Explicit)"
-        $wsh_remote_status =  "Disabled"    
-    }else{ 
+        $wsh_remote_status =  "Disabled"
+    }else{
         $wsh_remote_result="Enabled (Explicit)"
     }
 }else{
     $wsh_remote_result="Enabled (Default)"
     $wsh_remote="N/A"
 }
-        
+
 #$xmlWriter.WriteElementString("RemoteStatus", $wsh_remote_status)
-        
+
 $result = [PSCustomObject]@{
     Component = 'WSH'
     Name = 'WSHRemote'
@@ -723,8 +721,8 @@ $result = [PSCustomObject]@{
     Message = $wsh_remote_result
 }
 [void]$config_checks.Add($result)
-        
-        
+
+
 ###############################################################################################################
 # Collecting information about NTP settings
 ###############################################################################################################
@@ -733,10 +731,10 @@ Write-Host "[*] Checking NTP configuration"
 
 $ntp = [PSCustomObject]@{
     Server = ""
-    Type = "" 
+    Type = ""
     UpdateInterval = ""
 }
-        
+
 if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "NtpServer") {
     $ntpServer =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name NtpServer -ErrorAction SilentlyContinue
     $ntp.Server = [string] $ntpServer.NtpServer
@@ -753,15 +751,15 @@ if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config"  -ea Sile
     # default is 360000 for non-domain-joined computers
     $ntp.UpdateInterval = [string] $interval.UpdateInterval
 }
-$ntp | export-csv -Path $file_prefix"-ntp.csv" 
+$ntp | export-csv -Path $file_prefix"-ntp.csv"
 
 ###############################################################################################################
 # Collecting information about PowerShell (PS Logging enabled ?)
 ###############################################################################################################
-        
+
 # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging?view=powershell-5.1
 Write-Host "[*] Checking PS Logging is enabled"
-        
+
 if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"  -ea SilentlyContinue).Property -contains "EnableScriptBlockLogging") {
     $logging =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -ErrorAction SilentlyContinue
     if ($logging -eq 1){
@@ -770,8 +768,8 @@ if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockL
         $host_info.PSScriptBlockLogging = "Disabled"
     }
 }
-        
-        
+
+
 ###############################################################################################################
 # Collecting information about SMB (Check if SMBv1 is enabled)
 ###############################################################################################################
@@ -779,7 +777,6 @@ if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockL
 # https://learn.microsoft.com/en-us/windows-server/storage/file-server/troubleshoot/detect-enable-and-disable-smbv1-v2-v3?tabs=server
 Write-Host "[*] Checking if SMBv1 is enabled"
 
-$xmlWriter.WriteStartElement("SMBSettings")
 
 $smb_settings = [PSCustomObject]@{
    Method = ""
@@ -794,11 +791,11 @@ if (Get-Command Get-SmbServerConfiguration -ea SilentlyContinue) {
     # Cmdlet has been introduced in Windows 8, Windows Server 2012
     $smb_settings.Method = "Get-SmbServerConfiguration"
     $smb = Get-SmbServerConfiguration
-    $smb_settings.SMB1Enabled = [string] $smb.EnableSMB1Protocol)
-    $smb_settings.SMB2Enabled = [string] $smb.EnableSMB2Protocol)
-    $smb_settings.EncryptData = [string] $smb.EncryptData)
-    $smb_settings.EnableSecuritySignature = [string] $smb.EnableSecuritySignature)
-    $smb_settings.RequireSecuritySignature = [string] $smb.RequireSecuritySignature)
+    $smb_settings.SMB1Enabled = [string] $smb.EnableSMB1Protocol
+    $smb_settings.SMB2Enabled = [string] $smb.EnableSMB2Protocol
+    $smb_settings.EncryptData = [string] $smb.EncryptData
+    $smb_settings.EnableSecuritySignature = [string] $smb.EnableSecuritySignature
+    $smb_settings.RequireSecuritySignature = [string] $smb.RequireSecuritySignature
 
 } else {
     $smb_method= "Registry"
@@ -845,20 +842,20 @@ $smb_settings | Export-CSV -Path $file_prefix"-smb_settings.csv"
 ###############################################################################################################
 # Collecting information about Defender (Status / Settings)
 ###############################################################################################################
-        
+
 Write-Host "[*] Checking Defender settings"
 # Get-MpPreference
 # Get-MpComputerStatus
 
 if (Get-Command Get-MpPreference -ea SilentlyContinue) {
-    $preferences = Get-MpPreference 
+    $preferences = Get-MpPreference
     $preferences | select DisableArchiveScanning,DisableAutoExclusions,DisableBehaviorMonitoring,DisableBlockAtFirstSeen,DisableCatchupFullScan,DisableCatchupQuickScan,DisableEmailScanning,DisableIntrusionPreventionSystem,DisableIOAVProtection,DisableRealtimeMonitoring,DisableRemovableDriveScanning,DisableRestorePoint,DisableScanningMappedNetworkDrivesForFullScan,DisableScanningNetworkFiles,DisableScriptScanning,EnableNetworkProtection,ExclusionPath,ExclusionProcess | Export-CSV -Path $file_prefix"-defender.csv"
 }
 
 ###############################################################################################################
 # Collecting information about Printer
 ###############################################################################################################
-        
+
 Write-Host "[*] Checking if printers are installed"
 if (Get-Command Get-Printer -ea SilentlyContinue) {
     try {
@@ -866,14 +863,14 @@ if (Get-Command Get-Printer -ea SilentlyContinue) {
         $printers | select Name,ShareName,Type,DriverName,PortName,Shared,Published | export-csv -Path $file_prefix"-printer.csv"
     }catch{}
 }
-        
-        
+
+
 ###############################################################################################################
 # Perform: File Existence Checks
-# This will check if specified files exist on the system and if they are matching a predefined hash. 
+# This will check if specified files exist on the system and if they are matching a predefined hash.
 # The matching of HASH is only performed in recent PowerShell versions by using Get-FileHash
 ###############################################################################################################
-        
+
 
 Write-Host "[*] Checking for existence of specified files"
 # ArrayList to store results from file existence checks. Those will be added as FileExistence-Tags.
@@ -930,21 +927,6 @@ foreach ($c in $file_checks){
     } catch {}
 }
 
-
-# Perform: FileExistence Checks
-
-$xmlWriter.WriteStartElement("FileExistChecks")
-foreach ($c in $file_checks_results){
-    $xmlWriter.WriteStartElement("FileExistCheck")
-    $xmlWriter.WriteElementString("Name",[string] $c.Name)
-    $xmlWriter.WriteElementString("File", [string] $c.File)
-    $xmlWriter.WriteElementString("ExpectedHASH", [string] $c.ExpectedHASH)
-    $xmlWriter.WriteElementString("FileExist", [string] $c.FileExist)
-    $xmlWriter.WriteElementString("HashMatch", [string] $c.HashMatch)
-    $xmlWriter.WriteElementString("HashChecked", [string] $c.HashChecked)
-    $xmlWriter.WriteElementString("CurrentHash", [string] $c.CurrentHash)
-    $xmlWriter.WriteEndElement() # FileExistCheck
-}
 $file_checks_results | Export-CSV -Path $file_prefix"-FileExistChecks.csv"
 
 ###############################################################################################################
@@ -978,8 +960,7 @@ foreach ($c in $acl_path_checks){
 $acl_path_check_results | Export-CSV -Path $file_prefix"-file_path_checks.csv"
 
 ###############################################################################################################
-# Adding ConfigChecks to xml. 
-# This in done at the end of the document, cause checks can be added from each performed check in the script. 
+# Adding ConfigChecks to csv.
 ###############################################################################################################
 $config_checks | Export-csv -Path $file_prefix"-config-checks.csv"
            
