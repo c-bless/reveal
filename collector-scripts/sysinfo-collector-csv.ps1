@@ -45,7 +45,7 @@ $date = Get-Date -Format "yyyyMMdd_HHmmss"
 $hostname = $env:COMPUTERNAME
 
 # can be generated with helper script ./genkey.py
-$encKey = (32, 206, 33, 147, 90, 84, 147, 234, 212, 152, 228, 119, 34, 250, 220, 108)
+$encKey = (7, 16, 166, 10, 141, 23, 37, 94, 240, 162, 206, 168, 181, 97, 19, 170)
 
 $path = Get-Location
 
