@@ -28,7 +28,6 @@ def groupmembers_simatic():
                             headers={"Content-disposition": "attachment; filename=groupmembers_SIMATIC_groups.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
     return render_template('ad/reports/groupmembers_list.html', groups=groups, form=form,
-                           download_url=url_for("ad.groupmembers_domain_admins_excel_full"),
                            report_name='GroupMembers "%SIMATIC" groups')
 
 
