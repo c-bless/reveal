@@ -341,8 +341,12 @@ try{
                                 $xmlWriter.WriteElementString("Group", [string] $m);
                             }
                             $xmlWriter.WriteEndElement(); # MemberOf
-                            $xmlWriter.WriteElementString("MemberOfStr", [string] $user.MemberOf);
-                            $xmlWriter.WriteEndElement(); # ADUser         
+                            $xmlWriter.WriteStartElement("msDS-AllowedToDelegateTo");
+                            foreach ($s in $user."msDS-AllowedToDelegateTo") {
+                                $xmlWriter.WriteElementString("SPN", [string] $s);
+                            }
+                            $xmlWriter.WriteEndElement(); # msDS-AllowedToDelegateTo
+                            $xmlWriter.WriteEndElement(); # ADUser
                         } catch {
                             # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
                         }
