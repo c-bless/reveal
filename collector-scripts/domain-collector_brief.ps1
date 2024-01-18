@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.4
+    Version:    0.4.3
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -39,7 +39,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.3.5"
+$version="0.4.3"
 $script_type ="brief"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -290,25 +290,26 @@ try{
                     )
                     # servicePrincipalNames will contain subelements. Thus, it will not be iterated to create new XML elements. 
                     $properties = $basic_properties + "servicePrincipalNames"
-                    $computer_list = Get-ADComputer -Filter * -Properties $properties
-                        foreach ($c in $computer_list) {
-                            try {
-                                $xmlWriter.WriteStartElement("ADComputer")
-                                    # add all basic properties directly as new XML elements
-                                    foreach ($p in $basic_properties) {
-                                        $xmlWriter.WriteElementString($p, [string] $c."$p");
-                                    }
-                                    # add new sub Tags for all SPNs
-                                    $xmlWriter.WriteStartElement("servicePrincipalNames")
-                                    foreach ($s in $c.ServicePrincipalNames) {
-                                        $xmlWriter.WriteElementString("SPN", [string] $s);
-                                    }
-                                    $xmlWriter.WriteEndElement() # servicePrincipalNames
-                                $xmlWriter.WriteEndElement() # ADComputer
-                            } catch{
-                                # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
-                            }
+                    $computer_list = Get-ADComputer -Filter *
+                    foreach ($c in $computer_list) {
+                        try {
+                            $computer = Get-ADComputer -Identity $c.SamAccountName -Properties $properties
+                            $xmlWriter.WriteStartElement("ADComputer")
+                                # add all basic properties directly as new XML elements
+                                foreach ($p in $basic_properties) {
+                                    $xmlWriter.WriteElementString($p, [string] $computer."$p");
+                                }
+                                # add new sub Tags for all SPNs
+                                $xmlWriter.WriteStartElement("servicePrincipalNames")
+                                foreach ($s in $computer.ServicePrincipalNames) {
+                                    $xmlWriter.WriteElementString("SPN", [string] $s);
+                                }
+                                $xmlWriter.WriteEndElement() # servicePrincipalNames
+                            $xmlWriter.WriteEndElement() # ADComputer
+                        } catch{
+                            # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one.
                         }
+                    }
                 } catch {
                     # Failed executions will be ignored and no ADComputer tags will be added under ADComputerList
                 }
@@ -324,33 +325,34 @@ try{
                 Write-Host "[*] Collecting information about AD users." 
                 $xmlWriter.WriteStartElement("ADUserList")
                 try{
-                        # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
-                        # new XML Element
-                        $basic_properties = @(
-                            'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name',
-                            'Enabled', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired'
-                        )
-                        # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
-                        $properties = $basic_properties + "MemberOf"
-                        $user_list = Get-ADUser -Filter * -Properties $properties
-                        foreach ($u in $user_list) {
-                            try{
-                                $xmlWriter.WriteStartElement("ADUser");
-                                # add all basic properties directly as new XML elements
-                                foreach ($p in $basic_properties) {
-                                    $xmlWriter.WriteElementString($p, [string] $u."$p");
-                                }
-                                $xmlWriter.WriteStartElement("MemberOf");
-                                foreach ($m in $u.MemberOf) {
-                                    $xmlWriter.WriteElementString("Group", [string] $m);
-                                }
-                                $xmlWriter.WriteEndElement(); # MemberOf
-                                $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
-                                $xmlWriter.WriteEndElement(); # ADUser         
-                            } catch {
-                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
+                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as
+                    # new XML Element
+                    $basic_properties = @(
+                        'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name',
+                        'Enabled', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired'
+                    )
+                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
+                    $properties = $basic_properties + "MemberOf"
+                    $user_list = Get-ADUser -Filter *
+                    foreach ($u in $user_list) {
+                        try{
+                            $user = get-aduser -identity $u.samaccountname -Properties $properties
+                            $xmlWriter.WriteStartElement("ADUser");
+                            # add all basic properties directly as new XML elements
+                            foreach ($p in $basic_properties) {
+                                $xmlWriter.WriteElementString($p, [string] $user."$p");
                             }
+                            $xmlWriter.WriteStartElement("MemberOf");
+                            foreach ($m in $user.MemberOf) {
+                                $xmlWriter.WriteElementString("Group", [string] $m);
+                            }
+                            $xmlWriter.WriteEndElement(); # MemberOf
+                            $xmlWriter.WriteElementString("MemberOfStr", [string] $user.MemberOf);
+                            $xmlWriter.WriteEndElement(); # ADUser
+                        } catch {
+                            # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
                         }
+                    }
                 } catch {
                     # Failed executions will be ignored and no ADUser tags will be added under ADUserList
                 }
