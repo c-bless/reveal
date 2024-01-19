@@ -4,6 +4,7 @@ from reveal.core.extentions import db
 from reveal.core.models.activedirectory import ADDomain
 from reveal.core.models.activedirectory import ADUser
 from reveal.core.models.activedirectory import ADUserMembership
+from reveal.core.models.activedirectory import ADUserAuthDelegationSPN
 from reveal.core.models.activedirectory import ADGroup
 from reveal.core.models.activedirectory import ADGroupMember
 from reveal.core.models.activedirectory import ADDomainController
@@ -20,6 +21,7 @@ from reveal.core.models.activedirectory import ADTrust
 from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import ts2datetime_or_none
 from reveal.core.importer.converter import str2int_or_none
+
 
 def import_domain_collector(root):
     if root.tag != "DomainCollector":
@@ -325,6 +327,13 @@ def user2db(xml, domain):
                     group.Group = m.text
                     group.User = user
                     db.session.add(group)
+        if "msDS-AllowedToDelegateTo" == e.tag:
+            for s in e.getchildren():
+                if "SPN" == s.tag:
+                    spn = ADUserAuthDelegationSPN()
+                    spn.SPN = s.text
+                    spn.User = user
+                    db.session.add(spn)
     db.session.commit()
 
 

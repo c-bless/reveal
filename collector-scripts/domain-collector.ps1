@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.4
+    Version:    0.4.3
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -40,7 +40,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.4"
+$version="0.4.3"
 $script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -59,6 +59,7 @@ try{
     # check if command from activedirectory module is available. If if it not installed (command above would fail), it can be imported manually before executing the script. 
     if (Get-Command Get-ADDomain) {
         Write-Host "[*] Collecting Domain information."
+        $start_of_script = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         $domain = Get-ADDomain;
         $path = Get-Location
 
@@ -172,7 +173,8 @@ try{
             #    ADDomainControllerList
             #############################################################################################################
             if (Get-Command Get-ADDomainController -ErrorAction SilentlyContinue) {
-                Write-Host "[*] Collecting Domain Controller list." 
+                Write-Host "[*] Collecting Domain Controller list."
+                $start_of_dc = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
                 
                 $xmlWriter.WriteStartElement("ADDomainControllerList")
                 try{
@@ -211,6 +213,7 @@ try{
                     # Failed executions will be ignored and no ADDomainController tags will be added under ADDomainControllerList
                 }
                 $xmlWriter.WriteEndElement() # DomainControllerList
+                $end_of_dc = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
             }
 
             
@@ -280,7 +283,8 @@ try{
             #    Note: Failed executions will be ignored and no ADComputer tags will be added to ADComputerList
             #############################################################################################################
             if (Get-Command Get-ADComputer -ErrorAction SilentlyContinue) {
-                Write-Host "[*] Collecting information about AD computer." 
+                Write-Host "[*] Collecting information about AD computer."
+                $start_of_comp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
                 $xmlWriter.WriteStartElement("ADComputerList")
                 try {
                     # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
@@ -292,29 +296,32 @@ try{
                     )
                     # servicePrincipalNames will contain subelements. Thus, it will not be iterated to create new XML elements. 
                     $properties = $basic_properties + "servicePrincipalNames"
-                    $computer_list = Get-ADComputer -Filter * -Properties $properties
-                        foreach ($c in $computer_list) {
-                            try {
-                                $xmlWriter.WriteStartElement("ADComputer")
-                                    # add all basic properties directly as new XML elements
-                                    foreach ($p in $basic_properties) {
-                                        $xmlWriter.WriteElementString($p, [string] $c."$p");
-                                    }
-                                    # add new sub Tags for all SPNs
-                                    $xmlWriter.WriteStartElement("servicePrincipalNames")
-                                    foreach ($s in $c.ServicePrincipalNames) {
-                                        $xmlWriter.WriteElementString("SPN", [string] $s);
-                                    }
-                                    $xmlWriter.WriteEndElement() # servicePrincipalNames
-                                $xmlWriter.WriteEndElement() # ADComputer
-                            } catch{
-                                # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one. 
-                            }
+                    $computer_list = Get-ADComputer -Filter *
+                    foreach ($c in $computer_list) {
+                        try {
+                            $computer = Get-ADComputer -Identity $c.SamAccountName -Properties $properties
+                            $xmlWriter.WriteStartElement("ADComputer")
+                                # add all basic properties directly as new XML elements
+                                foreach ($p in $basic_properties) {
+                                    $xmlWriter.WriteElementString($p, [string] $computer."$p");
+                                }
+                                # add new sub Tags for all SPNs
+                                $xmlWriter.WriteStartElement("servicePrincipalNames")
+                                foreach ($s in $computer.ServicePrincipalNames) {
+                                    $xmlWriter.WriteElementString("SPN", [string] $s);
+                                }
+                                $xmlWriter.WriteEndElement() # servicePrincipalNames
+                            $xmlWriter.WriteEndElement() # ADComputer
+                        } catch{
+                            # Ignore this ADComputer object and try to parse the next. No Tag will be added for this one.
                         }
+                    }
                 } catch {
                     # Failed executions will be ignored and no ADComputer tags will be added under ADComputerList
                 }
                 $xmlWriter.WriteEndElement() # ADComputerList
+
+                $end_of_comp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
             }
 
     
@@ -323,41 +330,43 @@ try{
             #    Note: Failed executions will be ignored and no ADUser tags will be added to ADUserList
             #############################################################################################################
             if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
-                Write-Host "[*] Collecting information about AD users." 
+                Write-Host "[*] Collecting information about AD users."
+                $start_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
                 $xmlWriter.WriteStartElement("ADUserList")
                 try{
-                        # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
-                        # new XML Element
-                        $basic_properties = @(
-                            'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
-                            'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate', 
-                            'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
-                        )
-                        # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
-                        $properties = $basic_properties + "MemberOf"
-                        $user_list = Get-ADUser -Filter * -Properties $properties
-                        foreach ($u in $user_list) {
-                            try{
-                                $xmlWriter.WriteStartElement("ADUser");
-                                # add all basic properties directly as new XML elements
-                                foreach ($p in $basic_properties) {
-                                    $xmlWriter.WriteElementString($p, [string] $u."$p");
-                                }
-                                $xmlWriter.WriteStartElement("MemberOf");
-                                foreach ($m in $u.MemberOf) {
-                                    $xmlWriter.WriteElementString("Group", [string] $m);
-                                }
-                                $xmlWriter.WriteEndElement(); # MemberOf
-                                $xmlWriter.WriteElementString("MemberOfStr", [string] $u.MemberOf);
-                                $xmlWriter.WriteEndElement(); # ADUser         
-                            } catch {
-                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
+                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as
+                    # new XML Element
+                    $basic_properties = @(
+                        'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
+                        'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate',
+                        'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
+                    )
+                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
+                    $properties = $basic_properties + "MemberOf"
+                    $user_list = Get-ADUser -Filter *
+                    foreach ($u in $user_list) {
+                        try{
+                            $user = get-aduser -identity $u.samaccountname -Properties $properties
+                            $xmlWriter.WriteStartElement("ADUser");
+                            # add all basic properties directly as new XML elements
+                            foreach ($p in $basic_properties) {
+                                $xmlWriter.WriteElementString($p, [string] $user."$p");
                             }
+                            $xmlWriter.WriteStartElement("MemberOf");
+                            foreach ($m in $user.MemberOf) {
+                                $xmlWriter.WriteElementString("Group", [string] $m);
+                            }
+                            $xmlWriter.WriteEndElement(); # MemberOf
+                            $xmlWriter.WriteEndElement(); # ADUser
+                        } catch {
+                            # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
                         }
+                    }
                 } catch {
                     # Failed executions will be ignored and no ADUser tags will be added under ADUserList
                 }
-                $xmlWriter.WriteEndElement() # ADUserList                                                                                 
+                $xmlWriter.WriteEndElement() # ADUserList
+                $end_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
             }
 
             #############################################################################################################
@@ -365,7 +374,8 @@ try{
             #    Note: Failed executions will be ignored and no ADGroup tags will be added to ADGroupList
             #############################################################################################################
             if (Get-Command Get-ADGroup  -ErrorAction SilentlyContinue) {
-                Write-Host "[*] Collecting information about AD groups." 
+                Write-Host "[*] Collecting information about AD groups."
+                $start_of_groups = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
                 $xmlWriter.WriteStartElement("ADGroupList")
                 try{
                     $group_list = Get-ADGroup -Filter * -Properties * 
@@ -415,6 +425,7 @@ try{
                     # Failed executions will be ignored and no ADGroup tags will be added under ADGroupList
                 }
                 $xmlWriter.WriteEndElement() # ADGroupList
+                $end_of_groups = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
             }
             
         $xmlWriter.WriteEndElement() # DomainCollector
@@ -423,3 +434,26 @@ try{
         $xmlWriter.Close()
    }
 }catch {}
+
+$end_of_script = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+Write-Host "[*] Script execution:"
+Write-Host "[*] - started: $start_of_script"
+Write-Host "[*] - finished: $end_of_script"
+
+Write-Host "[*] Collection of domain controller list:"
+Write-Host "[*] - started: $start_of_dc"
+Write-Host "[*] - finished: $end_of_dc"
+
+Write-Host "[*] Collection of computer list:"
+Write-Host "[*] - started: $start_of_comp"
+Write-Host "[*] - finished: $end_of_comp"
+
+Write-Host "[*] Collection of user list: "
+Write-Host "[*] - started: $start_of_users"
+Write-Host "[*] - finished: $end_of_users"
+
+
+Write-Host "[*] Collection of group list:"
+Write-Host "[*] - started: $start_of_groups"
+Write-Host "[*] - finished: $end_of_groups"
