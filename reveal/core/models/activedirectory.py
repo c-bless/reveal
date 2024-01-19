@@ -254,6 +254,7 @@ class ADUser(db.Model):
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(), unique=False, nullable=True)
     Memberships = db.relationship('ADUserMembership', backref='User', lazy='dynamic')
+    DelegationSPN = db.relationship('ADUserAuthDelegationSPN', backref='User', lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
@@ -275,6 +276,18 @@ class ADUserMembership(db.Model):
     def __str__(self):
         return self.Group
 
+
+class ADUserAuthDelegationSPN(db.Model):
+    __tablename__ = "ADUserAuthDelegationSPN"
+    id = db.Column(db.Integer, primary_key=True)
+    SPN = db.Column(db.String(), unique=False, nullable=False)
+    User_id = db.Column(db.Integer, db.ForeignKey('ADUser.id'), nullable=False)
+
+    def __repr__(self):
+        return self.SPN
+
+    def __str__(self):
+        return self.SPN
 
 
 class ADGroup(db.Model):

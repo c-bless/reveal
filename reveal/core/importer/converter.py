@@ -42,6 +42,8 @@ def str2datetime_or_none(text: str) -> datetime.datetime | None:
 
 def str2int_or_none(text: str) -> int:
     try:
+        if text is None:
+            return None
         return int(text)
     except ValueError:
         return None
