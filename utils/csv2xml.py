@@ -188,56 +188,87 @@ def add_netips(host: etree.Element, entry: os.DirEntry):
     except:
         pass
 
+
 def add_services(host: etree.Element, entry: os.DirEntry):
-    try:
-        with open(entry.path, mode='r') as csv_file:
-            csv_file.__next__()  # skip first row, This should contain PowerShell type information
-            reader = csv.DictReader(csv_file)
-            header = reader.fieldnames
-            services = etree.SubElement(host, "Services")
-            for row in reader:
-                service = etree.SubElement(services, "Service")
-                if "Caption" in header:
-                    caption = etree.SubElement(service, "Caption")
-                    caption.text = row['Caption']
-                if "Description" in header:
-                    desc = etree.SubElement(service, "Description")
-                    desc.text = row['Description']
-                if "Name" in header:
-                    name = etree.SubElement(service, "Name")
-                    name.text = row['Name']
-                if "StartMode" in header:
-                    mode = etree.SubElement(service, "StartMode")
-                    mode.text = row['StartMode']
-                if "PathName" in header:
-                    pathname = etree.SubElement(service, "PathName")
-                    pathname.text = row['PathName']
-                if "Started" in header:
-                    started = etree.SubElement(service, "Started")
-                    started.text = row['Started']
-                if "StartName" in header:
-                    startname = etree.SubElement(service, "StartName")
-                    startname.text = row['StartName']
-                if "DisplayName" in header:
-                    dn = etree.SubElement(service, "DisplayName")
-                    dn.text = row['DisplayName']
-                if "Running" in header:
-                    running = etree.SubElement(service, "Running")
-                    running.text = row['Running']
-                if "AcceptStop" in header:
-                    accept_stop = etree.SubElement(service, "AcceptStop")
-                    accept_stop.text = row['AcceptStop']
-                if "AcceptPause" in header:
-                    accept_pause = etree.SubElement(service, "AcceptPause")
-                    accept_pause.text = row['AcceptPause']
-                if "ProcessId" in header:
-                    pid = etree.SubElement(service, "ProcessId")
-                    pid.text = row['ProcessId']
-                if "DelayedAutoStart" in header:
-                    delayed_start = etree.SubElement(service, "DelayedAutoStart")
-                    delayed_start.text = row['DelayedAutoStart']
-    except:
-        pass
+    service_acl_path = entry.path.replace("-services.csv", "-service_acls.csv")
+    service_acl_elements = {}
+    with open(service_acl_path, "r") as service_acls:
+        service_acls.__next__()
+        sa_reader = csv.DictReader(service_acls)
+        sa_header = sa_reader.fieldnames
+        sname = ""
+        for sa_row in sa_reader:
+            permission = etree.Element("Permission")
+            if "Name" in sa_header:
+                sname = sa_row['Name']
+                permission.set("Name", sa_row['Name'])
+            if "Executable" in sa_header:
+                permission.set("Executable", sa_row['Executable'])
+            if "AccountName" in sa_header:
+                permission.set("AccountName", sa_row['AccountName'])
+            if "AccessControlType" in sa_header:
+                permission.set("AccessControlType", sa_row['AccessControlType'])
+            if "AccessRight" in sa_header:
+                permission.set("AccessRight", sa_row['AccessRight'])
+            if sname in service_acl_elements:
+                service_acl_elements[sname].append(permission)
+            else:
+                service_acl_elements[sname] = [permission]
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        services = etree.SubElement(host, "Services")
+        for row in reader:
+            service = etree.SubElement(services, "Service")
+            if "Caption" in header:
+                caption = etree.SubElement(service, "Caption")
+                caption.text = row['Caption']
+            if "Description" in header:
+                desc = etree.SubElement(service, "Description")
+                desc.text = row['Description']
+            if "Name" in header:
+                name = etree.SubElement(service, "Name")
+                name.text = row['Name']
+                if row['Name'] in service_acl_elements:
+                    bp = etree.SubElement(service, "BinaryPermissions")
+                    e = ""
+                    for s in service_acl_elements[row['Name']]:
+                        e = s.get("Executable")
+                        bp.append(s)
+                    executable = etree.SubElement(service, "Executable")
+                    executable.text = e
+            if "StartMode" in header:
+                mode = etree.SubElement(service, "StartMode")
+                mode.text = row['StartMode']
+            if "PathName" in header:
+                pathname = etree.SubElement(service, "PathName")
+                pathname.text = row['PathName']
+            if "Started" in header:
+                started = etree.SubElement(service, "Started")
+                started.text = row['Started']
+            if "StartName" in header:
+                startname = etree.SubElement(service, "StartName")
+                startname.text = row['StartName']
+            if "DisplayName" in header:
+                dn = etree.SubElement(service, "DisplayName")
+                dn.text = row['DisplayName']
+            if "Running" in header:
+                running = etree.SubElement(service, "Running")
+                running.text = row['Running']
+            if "AcceptStop" in header:
+                accept_stop = etree.SubElement(service, "AcceptStop")
+                accept_stop.text = row['AcceptStop']
+            if "AcceptPause" in header:
+                accept_pause = etree.SubElement(service, "AcceptPause")
+                accept_pause.text = row['AcceptPause']
+            if "ProcessId" in header:
+                pid = etree.SubElement(service, "ProcessId")
+                pid.text = row['ProcessId']
+            if "DelayedAutoStart" in header:
+                delayed_start = etree.SubElement(service, "DelayedAutoStart")
+                delayed_start.text = row['DelayedAutoStart']
+
 
 def add_users(host: etree.Element, entry: os.DirEntry):
     try:
@@ -285,31 +316,58 @@ def add_users(host: etree.Element, entry: os.DirEntry):
         pass
 
 def add_groups(host: etree.Element, entry: os.DirEntry):
-    try:
-        with open(entry.path, mode='r') as csv_file:
-            csv_file.__next__()  # skip first row, This should contain PowerShell type information
-            reader = csv.DictReader(csv_file)
-            header = reader.fieldnames
-            groups = etree.SubElement(host, "Groups")
-            for row in reader:
-                group = etree.SubElement(groups, "Group")
-                if "Name" in header:
-                    name = etree.SubElement(group, "Name")
-                    name.text = row['Name']
-                if "Caption" in header:
-                    caption = etree.SubElement(group, "Caption")
-                    caption.text = row['Caption']
-                if "Description" in header:
-                    desc = etree.SubElement(group, "Description")
-                    desc.text = row['Description']
-                if "LocalAccount" in header:
-                    local_account = etree.SubElement(group, "LocalAccount")
-                    local_account.text = row['LocalAccount']
-                if "SID" in header:
-                    sid = etree.SubElement(group, "SID")
-                    sid.text = row['SID']
-    except:
-        pass
+    members_path = entry.path.replace("-groups.csv", "-group_members.csv")
+    members_elements = {}
+    with open(members_path, "r") as members_file:
+        members_file.__next__()
+        m_reader = csv.DictReader(members_file)
+        m_header = m_reader.fieldnames
+        gname = ""
+        for m_row in m_reader:
+            member = etree.Element("Member")
+            if "Groupname" in m_header:
+                gname = m_row['Groupname']
+                member.set("Groupname", m_row['Groupname'])
+            if "Name" in m_header:
+                member.set("Name", m_row['Name'])
+            if "AccountType" in m_header:
+                member.set("AccountType", m_row['AccountType'])
+            if "Domain" in m_header:
+                member.set("Domain", m_row['Domain'])
+            if "SID" in m_header:
+                member.set("SID", m_row['SID'])
+            if "Caption" in m_header:
+                member.set("Caption", m_row['Caption'])
+            if gname in members_elements:
+                members_elements[gname].append(member)
+            else:
+                members_elements[gname] = [member]
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        groups = etree.SubElement(host, "Groups")
+        for row in reader:
+            group = etree.SubElement(groups, "Group")
+            if "Name" in header:
+                name = etree.SubElement(group, "Name")
+                name.text = row['Name']
+                if row['Name'] in members_elements:
+                    ml = etree.SubElement(group, "Members")
+                    for m in members_elements[row['Name']]:
+                        ml.append(m)
+            if "Caption" in header:
+                caption = etree.SubElement(group, "Caption")
+                caption.text = row['Caption']
+            if "Description" in header:
+                desc = etree.SubElement(group, "Description")
+                desc.text = row['Description']
+            if "LocalAccount" in header:
+                local_account = etree.SubElement(group, "LocalAccount")
+                local_account.text = row['LocalAccount']
+            if "SID" in header:
+                sid = etree.SubElement(group, "SID")
+                sid.text = row['SID']
 
 def add_fw_profiles(host: etree.Element, entry: os.DirEntry):
     try:
@@ -353,7 +411,7 @@ def add_smb(host: etree.Element, entry: os.DirEntry):
             csv_file.__next__()  # skip first row, This should contain PowerShell type information
             reader = csv.DictReader(csv_file)
             header = reader.fieldnames
-            smb = etree.SubElement(host, "NTP")
+            smb = etree.SubElement(host, "SMB")
             for row in reader:
                 if "SMB1Enabled" in header:
                     smb1 = etree.SubElement(smb, "SMB1Enabled")
@@ -406,134 +464,250 @@ def add_wsus(host: etree.Element, entry: os.DirEntry):
         pass
 
 def add_printers(host: etree.Element, entry: os.DirEntry):
-    try:
-        with open(entry.path, mode='r') as csv_file:
-            csv_file.__next__()  # skip first row, This should contain PowerShell type information
-            reader = csv.DictReader(csv_file)
-            header = reader.fieldnames
-            printers = etree.SubElement(host, "Printers")
-            for row in reader:
-                printer = etree.SubElement(printers, "Printer")
-                if "ShareName" in header:
-                    shareName = etree.SubElement(printer, "ShareName")
-                    shareName.text = row['ShareName']
-                if "Type" in header:
-                    t = etree.SubElement(printer, "Type")
-                    t.text = row['Type']
-                if "DriverName" in header:
-                    dn = etree.SubElement(printer, "DriverName")
-                    dn.text = row['DriverName']
-                if "PortName" in header:
-                    pn = etree.SubElement(printer, "PortName")
-                    pn.text = row['PortName']
-                if "Shared" in header:
-                    shared = etree.SubElement(printer, "Shared")
-                    shared.text = row['Shared']
-                if "Published" in header:
-                    published = etree.SubElement(printer, "Published")
-                    published.text = row['Published']
-    except:
-        pass
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        printers = etree.SubElement(host, "Printers")
+        for row in reader:
+            printer = etree.SubElement(printers, "Printer")
+            if "ShareName" in header:
+                shareName = etree.SubElement(printer, "ShareName")
+                shareName.text = row['ShareName']
+            if "Type" in header:
+                t = etree.SubElement(printer, "Type")
+                t.text = row['Type']
+            if "DriverName" in header:
+                dn = etree.SubElement(printer, "DriverName")
+                dn.text = row['DriverName']
+            if "PortName" in header:
+                pn = etree.SubElement(printer, "PortName")
+                pn.text = row['PortName']
+            if "Shared" in header:
+                shared = etree.SubElement(printer, "Shared")
+                shared.text = row['Shared']
+            if "Published" in header:
+                published = etree.SubElement(printer, "Published")
+                published.text = row['Published']
 
 
 def add_products(host: etree.Element, entry: os.DirEntry):
-    try:
-        with open(entry.path, mode='r') as csv_file:
-            csv_file.__next__()  # skip first row, This should contain PowerShell type information
-            reader = csv.DictReader(csv_file)
-            header = reader.fieldnames
-            products = etree.SubElement(host, "Products")
-            for row in reader:
-                product = etree.SubElement(products, "Product")
-                if "Caption" in header:
-                    caption = etree.SubElement(product, "Caption")
-                    caption.text = row['Caption']
-                if "InstallDate" in header:
-                    installdate = etree.SubElement(product, "InstallDate")
-                    installdate.text = row['InstallDate']
-                if "Description" in header:
-                    desc = etree.SubElement(product, "Description")
-                    desc.text = row['Description']
-                if "Vendor" in header:
-                    vendor = etree.SubElement(product, "Vendor")
-                    vendor.text = row['Vendor']
-                if "Name" in header:
-                    name = etree.SubElement(product, "Name")
-                    name.text = row['Name']
-                if "Version" in header:
-                    version = etree.SubElement(product, "Version")
-                    version.text = row['Version']
-                if "InstallLocation" in header:
-                    install_loc = etree.SubElement(product, "InstallLocation")
-                    install_loc.text = row['InstallLocation']
-    except:
-        pass
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        products = etree.SubElement(host, "Products")
+        for row in reader:
+            product = etree.SubElement(products, "Product")
+            if "Caption" in header:
+                caption = etree.SubElement(product, "Caption")
+                caption.text = row['Caption']
+            if "InstallDate" in header:
+                installdate = etree.SubElement(product, "InstallDate")
+                installdate.text = row['InstallDate']
+            if "Description" in header:
+                desc = etree.SubElement(product, "Description")
+                desc.text = row['Description']
+            if "Vendor" in header:
+                vendor = etree.SubElement(product, "Vendor")
+                vendor.text = row['Vendor']
+            if "Name" in header:
+                name = etree.SubElement(product, "Name")
+                name.text = row['Name']
+            if "Version" in header:
+                version = etree.SubElement(product, "Version")
+                version.text = row['Version']
+            if "InstallLocation" in header:
+                install_loc = etree.SubElement(product, "InstallLocation")
+                install_loc.text = row['InstallLocation']
 
 def add_winlogon(host: etree.Element, entry: os.DirEntry):
-    try:
-        with open(entry.path, mode='r') as csv_file:
-            csv_file.__next__()  # skip first row, This should contain PowerShell type information
-            reader = csv.DictReader(csv_file)
-            header = reader.fieldnames
-            winlogon = etree.SubElement(host, "Winlogon")
-            for row in reader:
-                if "DefaultUserName" in header:
-                    username = etree.SubElement(winlogon, "DefaultUserName")
-                    username.text = row['DefaultUserName']
-                if "AutoAdminLogon" in header:
-                    auto_admin_logon = etree.SubElement(winlogon, "AutoAdminLogon")
-                    auto_admin_logon.text = row['AutoAdminLogon']
-                if "ForceAutoLogon" in header:
-                    force_auto_logon = etree.SubElement(winlogon, "ForceAutoLogon")
-                    force_auto_logon.text = row['ForceAutoLogon']
-                if "DefaultPassword" in header:
-                    def_pw = etree.SubElement(winlogon, "DefaultPassword")
-                    def_pw.text = row['DefaultPassword']
-                if "DefaultDomain" in header:
-                    domain = etree.SubElement(winlogon, "DefaultDomain")
-                    domain.text = row['DefaultDomain']
-    except:
-        pass
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        winlogon = etree.SubElement(host, "Winlogon")
+        for row in reader:
+            if "DefaultUserName" in header:
+                username = etree.SubElement(winlogon, "DefaultUserName")
+                username.text = row['DefaultUserName']
+            if "AutoAdminLogon" in header:
+                auto_admin_logon = etree.SubElement(winlogon, "AutoAdminLogon")
+                auto_admin_logon.text = row['AutoAdminLogon']
+            if "ForceAutoLogon" in header:
+                force_auto_logon = etree.SubElement(winlogon, "ForceAutoLogon")
+                force_auto_logon.text = row['ForceAutoLogon']
+            if "DefaultPassword" in header:
+                def_pw = etree.SubElement(winlogon, "DefaultPassword")
+                def_pw.text = row['DefaultPassword']
+            if "DefaultDomain" in header:
+                domain = etree.SubElement(winlogon, "DefaultDomain")
+                domain.text = row['DefaultDomain']
+
 
 def add_routes(host: etree.Element, entry: os.DirEntry):
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        routes = etree.SubElement(host, "Routes")
+        for row in reader:
+            route = etree.SubElement(routes, "Route")
+            if "AddressFamily" in header:
+                af = etree.SubElement(route, "AddressFamily")
+                af.text = row['AddressFamily']
+            if "DestinationPrefix" in header:
+                prefix = etree.SubElement(route, "DestinationPrefix")
+                prefix.text = row['DestinationPrefix']
+            if "InterfaceAlias" in header:
+                if_alias = etree.SubElement(route, "InterfaceAlias")
+                if_alias.text = row['InterfaceAlias']
+            if "NextHop" in header:
+                next_hop = etree.SubElement(route, "NextHop")
+                next_hop.text = row['NextHop']
+            if "RouteMetric" in header:
+                metric = etree.SubElement(route, "RouteMetric")
+                metric.text = row['RouteMetric']
+            if "ifIndex" in header:
+                if_index = etree.SubElement(route, "ifIndex")
+                if_index.text = row['AddressFamily']
+            if "InterfaceMetric" in header:
+                if_metric = etree.SubElement(route, "InterfaceMetric")
+                if_metric.text = row['InterfaceMetric']
+            if "IsStatic" in header:
+                is_static = etree.SubElement(route, "IsStatic")
+                is_static.text = row['IsStatic']
+            if "AdminDistance" in header:
+                admin_distance = etree.SubElement(route, "AdminDistance")
+                admin_distance.text = row['AdminDistance']
+
+
+def add_shares(host: etree.Element, entry: os.DirEntry):
     try:
         with open(entry.path, mode='r') as csv_file:
             csv_file.__next__()  # skip first row, This should contain PowerShell type information
             reader = csv.DictReader(csv_file)
             header = reader.fieldnames
-            routes = etree.SubElement(host, "Routes")
+            shares = etree.SubElement(host, "Shares")
+            share_acl_path = entry.path.replace("-shares.csv", "-share_acls.csv")
+            share_acl_elements = {}
+            try:
+                with open(share_acl_path, "r") as share_acls:
+                    share_acls.__next__()
+                    sa_reader = csv.DictReader(share_acls)
+                    sa_header = sa_reader.fieldnames
+                    name = ""
+                    for sa_row in sa_reader:
+                        permission = etree.Element("Permission")
+                        if "Name" in sa_header:
+                            name = sa_row['Name']
+                            permission.set("Name", sa_row['Name'])
+                        if "ScopeName" in sa_header:
+                            permission.set("ScopeName", sa_row['ScopeName'])
+                        if "AccountName" in sa_header:
+                            permission.set("AccountName", sa_row['AccountName'])
+                        if "AccessControlType" in sa_header:
+                            permission.set("AccessControlType", sa_row['AccessControlType'])
+                        if "AccessRight" in sa_header:
+                            permission.set("AccessRight", sa_row['AccessRight'])
+                        if name in share_acl_elements:
+                            share_acl_elements[name].append(permission)
+                        else:
+                            share_acl_elements[name] = [permission]
+            except:
+                pass
+            share_ntfs_acls = entry.path.replace("-shares.csv", "-share_ntfs_acls.csv")
+            share_ntfs_elements = {}
+            try:
+                with open(share_ntfs_acls, "r") as ntfs_acls:
+                    ntfs_acls.__next__()
+                    n_reader = csv.DictReader(ntfs_acls)
+                    n_header = n_reader.fieldnames
+                    name = ""
+                    for n_row in n_reader:
+                        permission = etree.Element("Permission")
+                        if "Name" in n_header:
+                            name = n_row['Name']
+                            permission.set("Name", n_row['Name'])
+                        if "AccountName" in n_header:
+                            permission.set("AccountName", n_row['AccountName'])
+                        if "AccessControlType" in n_header:
+                            permission.set("AccessControlType", n_row['AccessControlType'])
+                        if "AccessRight" in n_header:
+                            permission.set("AccessRight", n_row['AccessRight'])
+                        if name in share_ntfs_elements:
+                            share_ntfs_elements[name].append(permission)
+                        else:
+                            share_ntfs_elements[name] = [permission]
+            except:
+                pass
             for row in reader:
-                route = etree.SubElement(routes, "Route")
-                if "AddressFamily" in header:
-                    af = etree.SubElement(route, "AddressFamily")
-                    af.text = row['AddressFamily']
-                if "DestinationPrefix" in header:
-                    prefix = etree.SubElement(route, "DestinationPrefix")
-                    prefix.text = row['DestinationPrefix']
-                if "InterfaceAlias" in header:
-                    if_alias = etree.SubElement(route, "InterfaceAlias")
-                    if_alias.text = row['InterfaceAlias']
-                if "NextHop" in header:
-                    next_hop = etree.SubElement(route, "NextHop")
-                    next_hop.text = row['NextHop']
-                if "RouteMetric" in header:
-                    metric = etree.SubElement(route, "RouteMetric")
-                    metric.text = row['RouteMetric']
-                if "ifIndex" in header:
-                    if_index = etree.SubElement(route, "ifIndex")
-                    if_index.text = row['AddressFamily']
-                if "InterfaceMetric" in header:
-                    if_metric = etree.SubElement(route, "InterfaceMetric")
-                    if_metric.text = row['InterfaceMetric']
-                if "IsStatic" in header:
-                    is_static = etree.SubElement(route, "IsStatic")
-                    is_static.text = row['IsStatic']
-                if "AdminDistance" in header:
-                    admin_distance = etree.SubElement(route, "AdminDistance")
-                    admin_distance.text = row['AdminDistance']
+                share = etree.SubElement(shares, "Share")
+                if "Name" in header:
+                    name = etree.SubElement(share, "Name")
+                    name.text = row['Name']
+                    if row['Name'] in share_acl_elements:
+                        sp = etree.Element("SharePermissions")
+                        for s in share_acl_elements[row['Name']]:
+                            sp.append(s)
+                        share.append(sp)
+                    if row['Name'] in share_ntfs_elements:
+                        np = etree.Element("NTFSPermissions")
+                        for s in share_ntfs_elements[row['Name']]:
+                            np.append(s)
+                        share.append(np)
+                if "Path" in header:
+                    path = etree.SubElement(share, "Path")
+                    path.text = row['Path']
+                if "Description" in header:
+                    desc = etree.SubElement(share, "Description")
+                    desc.text = row['Description']
     except:
         pass
 
+
+def add_file_path_checks(host: etree.Element, entry: os.DirEntry):
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        path_checks = etree.SubElement(host, "PathACLChecks")
+        path_acls_elements = {}
+        for row in reader:
+            acl = etree.Element("ACL")
+            path_name = ""
+            if "Path" in header:
+                path_name = row['Path']
+                acl.set('Path', row['Path'])
+            if "AccountName" in header:
+                acl.set('AccountName', row['AccountName'])
+            if "AccessControlType" in header:
+                acl.set('AccessControlType', row['AccessControlType'])
+            if "AccessRight" in header:
+                acl.set('AccessRight', row['AccessRight'])
+            if path_name in path_acls_elements:
+                path_acls_elements[path_name].append(acl)
+            else:
+                path_acls_elements[path_name] = [acl]
+        for k in path_acls_elements:
+            path_acl = etree.SubElement(path_checks, "PathACL")
+            p = etree.SubElement(path_acl, "Path")
+            p.text = k
+            acls = etree.SubElement(path_acl, "ACLs")
+            for i in path_acls_elements[k]:
+                acls.append(i)
+
+
+def add_defender(host: etree.Element, entry: os.DirEntry):
+    with open(entry.path, mode='r') as csv_file:
+        csv_file.__next__()  # skip first row, This should contain PowerShell type information
+        reader = csv.DictReader(csv_file)
+        header = reader.fieldnames
+        defender = etree.SubElement(host, "Defender")
+        for row in reader:
+            for k in header:
+                e = etree.SubElement(defender, k)
+                e.text = row[k]
 
 def main():
     parser = argparse.ArgumentParser(description="Tool to convert CSV files produced by sysinfo-collector into a XML "
@@ -590,17 +764,16 @@ def main():
                 add_winlogon(host, entry)
             if entry.name.endswith("-routes.csv"):
                 add_routes(host, entry)
-            # shares
-            # defender
+            if entry.name.endswith("-shares.csv"):
+                add_shares(host, entry)
+            if entry.name.endswith("-file_path_checks.csv"):
+                add_file_path_checks(host, entry)
+            if entry.name.endswith("-defender.csv"):
+                add_defender(host, entry)
             # fileexistchecks
-            # filepathchecks
-            # groups members
-            # service_acls
-            # share_acls
-            # share_ntfs_acls
 
     # Save to XML file
-    doc.write('output.xml', xml_declaration=True, encoding='utf-8')
+    doc.write('output.xml', pretty_print=True, xml_declaration=True, encoding='utf-8')
 
 
 if __name__=="__main__":
