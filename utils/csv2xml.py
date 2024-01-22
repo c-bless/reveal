@@ -464,62 +464,68 @@ def add_wsus(host: etree.Element, entry: os.DirEntry):
         pass
 
 def add_printers(host: etree.Element, entry: os.DirEntry):
-    with open(entry.path, mode='r') as csv_file:
-        csv_file.__next__()  # skip first row, This should contain PowerShell type information
-        reader = csv.DictReader(csv_file)
-        header = reader.fieldnames
-        printers = etree.SubElement(host, "Printers")
-        for row in reader:
-            printer = etree.SubElement(printers, "Printer")
-            if "ShareName" in header:
-                shareName = etree.SubElement(printer, "ShareName")
-                shareName.text = row['ShareName']
-            if "Type" in header:
-                t = etree.SubElement(printer, "Type")
-                t.text = row['Type']
-            if "DriverName" in header:
-                dn = etree.SubElement(printer, "DriverName")
-                dn.text = row['DriverName']
-            if "PortName" in header:
-                pn = etree.SubElement(printer, "PortName")
-                pn.text = row['PortName']
-            if "Shared" in header:
-                shared = etree.SubElement(printer, "Shared")
-                shared.text = row['Shared']
-            if "Published" in header:
-                published = etree.SubElement(printer, "Published")
-                published.text = row['Published']
+    try:
+        with open(entry.path, mode='r') as csv_file:
+            csv_file.__next__()  # skip first row, This should contain PowerShell type information
+            reader = csv.DictReader(csv_file)
+            header = reader.fieldnames
+            printers = etree.SubElement(host, "Printers")
+            for row in reader:
+                printer = etree.SubElement(printers, "Printer")
+                if "ShareName" in header:
+                    shareName = etree.SubElement(printer, "ShareName")
+                    shareName.text = row['ShareName']
+                if "Type" in header:
+                    t = etree.SubElement(printer, "Type")
+                    t.text = row['Type']
+                if "DriverName" in header:
+                    dn = etree.SubElement(printer, "DriverName")
+                    dn.text = row['DriverName']
+                if "PortName" in header:
+                    pn = etree.SubElement(printer, "PortName")
+                    pn.text = row['PortName']
+                if "Shared" in header:
+                    shared = etree.SubElement(printer, "Shared")
+                    shared.text = row['Shared']
+                if "Published" in header:
+                    published = etree.SubElement(printer, "Published")
+                    published.text = row['Published']
+    except:
+        pass
 
 
 def add_products(host: etree.Element, entry: os.DirEntry):
-    with open(entry.path, mode='r') as csv_file:
-        csv_file.__next__()  # skip first row, This should contain PowerShell type information
-        reader = csv.DictReader(csv_file)
-        header = reader.fieldnames
-        products = etree.SubElement(host, "Products")
-        for row in reader:
-            product = etree.SubElement(products, "Product")
-            if "Caption" in header:
-                caption = etree.SubElement(product, "Caption")
-                caption.text = row['Caption']
-            if "InstallDate" in header:
-                installdate = etree.SubElement(product, "InstallDate")
-                installdate.text = row['InstallDate']
-            if "Description" in header:
-                desc = etree.SubElement(product, "Description")
-                desc.text = row['Description']
-            if "Vendor" in header:
-                vendor = etree.SubElement(product, "Vendor")
-                vendor.text = row['Vendor']
-            if "Name" in header:
-                name = etree.SubElement(product, "Name")
-                name.text = row['Name']
-            if "Version" in header:
-                version = etree.SubElement(product, "Version")
-                version.text = row['Version']
-            if "InstallLocation" in header:
-                install_loc = etree.SubElement(product, "InstallLocation")
-                install_loc.text = row['InstallLocation']
+    try:
+        with open(entry.path, mode='r') as csv_file:
+            csv_file.__next__()  # skip first row, This should contain PowerShell type information
+            reader = csv.DictReader(csv_file)
+            header = reader.fieldnames
+            products = etree.SubElement(host, "Products")
+            for row in reader:
+                product = etree.SubElement(products, "Product")
+                if "Caption" in header:
+                    caption = etree.SubElement(product, "Caption")
+                    caption.text = row['Caption']
+                if "InstallDate" in header:
+                    installdate = etree.SubElement(product, "InstallDate")
+                    installdate.text = row['InstallDate']
+                if "Description" in header:
+                    desc = etree.SubElement(product, "Description")
+                    desc.text = row['Description']
+                if "Vendor" in header:
+                    vendor = etree.SubElement(product, "Vendor")
+                    vendor.text = row['Vendor']
+                if "Name" in header:
+                    name = etree.SubElement(product, "Name")
+                    name.text = row['Name']
+                if "Version" in header:
+                    version = etree.SubElement(product, "Version")
+                    version.text = row['Version']
+                if "InstallLocation" in header:
+                    install_loc = etree.SubElement(product, "InstallLocation")
+                    install_loc.text = row['InstallLocation']
+    except:
+        pass
 
 def add_winlogon(host: etree.Element, entry: os.DirEntry):
     with open(entry.path, mode='r') as csv_file:
