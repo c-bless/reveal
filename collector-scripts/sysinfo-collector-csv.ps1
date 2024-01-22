@@ -332,15 +332,13 @@ foreach ($s in $services ) {
         $acl = get-acl -Path $bin -ErrorAction SilentlyContinue
         foreach ($a in $acl.Access) {
             try{
-                foreach ($a in $acl.Access) {
-                    [void] $service_acls.Add([PSCustomObject]@{
+                [void] $service_acls.Add([PSCustomObject]@{
                         Name = [string] $s.Name
                         Executable = [string]$bin
                         AccountName = [string] $a.IdentityReference
                         AccessControlType = [string] $a.AccessControlType
                         AccessRight = [string] $a.FileSystemRights
                     })
-                }
             }catch{}
         }
     } catch {}

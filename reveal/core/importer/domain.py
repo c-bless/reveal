@@ -318,6 +318,8 @@ def user2db(xml, domain):
         if "pwdLastSet" == e.tag: user.pwdLastSet = ts2datetime_or_none(e.text)
         if "Modified" == e.tag: user.Modified = e.text
         if "MemberOfStr" == e.tag: user.MemberOfStr = e.text
+        if "TrustedForDelegation" == e.tag: user.TrustedForDelegation = str2bool_or_none(e.text)
+        if "TrustedToAuthForDelegation" == e.tag: user.TrustedToAuthForDelegation = str2bool_or_none(e.text)
     db.session.add(user)
     for e in xml.getchildren():
         if "MemberOf" == e.tag:

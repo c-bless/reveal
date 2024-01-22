@@ -251,6 +251,8 @@ class ADUser(db.Model):
     PasswordNeverExpires = db.Column(db.Boolean(), nullable=True)
     PasswordNotRequired = db.Column(db.Boolean(), nullable=True)
     pwdLastSet = db.Column(db.DateTime(), unique=False, nullable=True)
+    TrustedForDelegation = db.Column(db.Boolean(), unique=False, nullable=True)
+    TrustedToAuthForDelegation = db.Column(db.Boolean(), unique=False, nullable=True)
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(), unique=False, nullable=True)
     Memberships = db.relationship('ADUserMembership', backref='User', lazy='dynamic')

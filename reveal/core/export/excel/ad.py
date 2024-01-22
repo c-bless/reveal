@@ -53,10 +53,10 @@ def generate_user_excel(user_list=[]):
 def create_user_worksheet(workbook, user_list=[]):
     worksheet = workbook.add_worksheet("User")
 
-    header_data = ["SamAccountName", "Name", "GivenName", "Surname", "SID", "Enabled", "BadLogonCount", "BadPwdCount",
-                   "Created", "LastBadPasswordAttempt", "lastLogon", "logonCount", "PasswordExpired", "PasswordLastSet",
-                   "Modified", "memberof", "memberships", "domain"]
-
+    header_data = ["SamAccountName", "DisplayName", "Name", "GivenName", "Surname", "SID", "Enabled", "BadLogonCount",
+                   "BadPwdCount", "Created", "LastBadPasswordAttempt", "lastLogon", "logonCount", "PasswordExpired",
+                   "PasswordLastSet", "Modified", "memberof", "memberships", "domain", 'TrustedForDelegation',
+                   'TrustedToAuthForDelegation', 'msDS-AllowedToDelegateTo']
     header_format = workbook.add_format(header_format_dict)
     wrap_format = workbook.add_format(wrap_format_dict)
 
@@ -67,9 +67,12 @@ def create_user_worksheet(workbook, user_list=[]):
     for u in user_list:
         memberships = ["{0}".format(g.Group) for g in u.Memberships]
         membershipStr = "\n".join(memberships)
-        tmp = [u.SAMAccountName, u.Name, u.GivenName, u.Surname, u.SID, u.Enabled, u.BadLogonCount, u.BadPwdCount,
-               u.Created, u.LastBadPasswordAttempt, u.lastLogon, u.logonCount, u.PasswordExpired, u.PasswordLastSet,
-               u.Modified, u.MemberOfStr, membershipStr, u.Domain]
+        spns = ["{0}".format(s.SPN) for s in u.DelegationSPN]
+        spn_str = "\n".join(spns)
+        tmp = [u.SAMAccountName, u.DisplayName, u.Name, u.GivenName, u.Surname, u.SID, u.Enabled, u.BadLogonCount,
+               u.BadPwdCount, u.Created, u.LastBadPasswordAttempt, u.lastLogon, u.logonCount, u.PasswordExpired,
+               u.PasswordLastSet, u.Modified, u.MemberOfStr, membershipStr, u.Domain, u.TrustedForDelegation,
+               u.TrustedToAuthForDelegation, spn_str]
         rows.append(tmp)
 
     # Start from the first cell. Rows and columns are zero indexed.
@@ -78,12 +81,12 @@ def create_user_worksheet(workbook, user_list=[]):
     # Iterate over the data and write it out row by row.
     for r in rows:
         for c in r:
-            if col == 16:
+            if col == 17 or col == 22:
                 worksheet.write(row, col, str(c), wrap_format)
             else:
                 worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:P1")
+        worksheet.autofilter("A1:T1")
         col = 0
         row += 1
 
