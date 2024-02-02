@@ -6,52 +6,52 @@
 {% block menu_l2 %} User List {% endblock menu_l2 %}
 
 {% block download_links %}
-    {{ super() }}
-    <a href="{{url_for('ad.export_user_excel')}}" class="btn btn-block btn-secondary">
-        <i class="fas fa-download"> Full Export (Excel)</i>
-    </a>
+{{ super() }}
+<a href="{{url_for('ad.export_user_excel')}}" class="btn btn-block btn-secondary">
+    <i class="fas fa-download"> Full Export (Excel)</i>
+</a>
 {% endblock download_links %}
 
 {% block datatable %}
 {{ super() }}
-      <table id="table1" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th width="15%"> SAMAccountName </th>
-                        <th width="10%"> Domain </th>
-                        <th width="5%"> Enabled</th>
-                        <th width="20%"> SID </th>
-                        <th width="5%"> GivenName </th>
-                        <th width="5%"> Surname </th>
-                        <th width="15">Displayname</th>
-                        <th width="20">Description</th>
-                        <th width="5">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if users %}
-                        {% for u in users %}
-                          <tr>
-                            <td> {{ u.SAMAccountName }} </td>
-                            <td> {{ u.Domain }} </td>
-                            <td> {{ u.Enabled }} </td>
-                            <td> {{ u.SID }} </td>
-                            <td> {{ u.GivenName }} </td>
-                            <td> {{ u.Surname }} </td>
-                            <td> {{ u.DisplayName }} </td>
-                            <td> {{ u.Description }} </td>
-                            <td class="actions">
-                                <a href="{{url_for('ad.user_detail',id=u.id)}}" class="btn btn-default btn-xs">
-                                    <i class="fa fa-eye"></i> View
-                                </a>
-                            </td>
-                          </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="9">No domain users found!</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+<table id="table1" class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th width="15%"> SAMAccountName</th>
+        <th width="10%"> Domain</th>
+        <th width="5%"> Enabled</th>
+        <th width="20%"> SID</th>
+        <th width="5%"> GivenName</th>
+        <th width="5%"> Surname</th>
+        <th width="15">Displayname</th>
+        <th width="20">Description</th>
+        <th width="5">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if users %}
+    {% for u in users %}
+    <tr>
+        <td> {{ u.SAMAccountName }}</td>
+        <td> {{ u.Domain }}</td>
+        <td> {{ u.Enabled }}</td>
+        <td> {{ u.SID }}</td>
+        <td> {{ u.GivenName }}</td>
+        <td> {{ u.Surname }}</td>
+        <td> {{ u.DisplayName }}</td>
+        <td> {{ u.Description }}</td>
+        <td class="actions">
+            <a href="{{url_for('ad.user_detail',id=u.id)}}" class="btn btn-default btn-xs">
+                <i class="fa fa-eye"></i> View
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="9">No domain users found!</td>
+    </tr>
+    {% endif %}
+    </tbody>
+</table>
 {% endblock datatable %}

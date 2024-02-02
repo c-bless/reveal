@@ -20,7 +20,7 @@ class AppConfig(object):
     DEBUG = False
 
     # 400 MB
-    MAX_CONTENT_LENGTH = 1024 * 1024 * 400
+    MAX_CONTENT_LENGTH = 1024 * 1024 * 550
     UPLOAD_EXTENSIONS = ['.xml']
     UPLOAD_DIR = os.environ.get('UPLOAD_DIR') or \
                  os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/uploads/"

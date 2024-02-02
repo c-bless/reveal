@@ -336,10 +336,11 @@ try{
                         'Surname', 'Name', 'SIDHistory', 'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created',
                         'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate', 'TrustedForDelegation',
                         'TrustedToAuthForDelegation', 'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet',
-                        'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified','msDS-AllowedToDelegateTo'
+                        'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
                     )
                     # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
                     $properties = $basic_properties + "MemberOf"
+                    $properties = $properties + 'msDS-AllowedToDelegateTo'
                     $user_list = Get-ADUser -Filter *
                     foreach ($u in $user_list) {
                         try{

@@ -107,3 +107,7 @@ class ADComputerBySPNSearchForm(FlaskForm):
 class ADComputerByUnconstraintDelegation(FlaskForm):
     download = SubmitField('Download (Excel)')
 
+
+class ADUserByUnconstraintDelegation(FlaskForm):
+    download = SubmitField('Download (Excel)')
+
