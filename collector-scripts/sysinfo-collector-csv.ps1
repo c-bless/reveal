@@ -7,26 +7,26 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.4.2
+    Version:    0.5-dev
     License:    GPLv3
 
     .INPUTS
     None
-    
-    .OUTPUTS
-    This script will create a XML-file with the collected system information. 
-    
-    .EXAMPLE
-    .\sysinfo-collector.ps1  
 
-    .Example 
-    .\sysinfo-collector.ps1 -Systemgroup PCS7 -Location "Control room"
+    .OUTPUTS
+    This script will create a XML-file with the collected system information.
+
+    .EXAMPLE
+    .\sysinfo-collector.ps1
+
+    .Example
+    .\sysinfo-collector-csv.ps1 -Systemgroup PCS7 -Location "Control room" -Label "Inventory Number"
 #>
 param (
     # optional parameter to specify the systemgroup the host belongs to
     [Parameter(Mandatory=$false)]
     [string]$Systemgroup = "N/A",
-    
+
     # name of the location
     [Parameter(Mandatory=$false)]
     [string]$Location = "N/A",
@@ -37,8 +37,8 @@ param (
 )
 
 
-# version number of this script used as attribute in XML root tag 
-$version="0.4.2"
+# version number of this script used as attribute in XML root tag
+$version="0.5-dev"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -55,7 +55,7 @@ try{
 }catch {}
 $file_prefix = $dir_name + "\" + $hostname
 
-    
+
 # ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags at the end of the
 # XML file between a ConfigChecks-Tag. All Custom objects that are added should follow the following structure
 # $result = [PSCustomObject]@{
@@ -67,18 +67,18 @@ $file_prefix = $dir_name + "\" + $hostname
 #     Result = 'RESULT'
 #     Message = 'MESSAGE'
 # }
-$config_checks = New-Object System.Collections.ArrayList 
-    
+$config_checks = New-Object System.Collections.ArrayList
+
 
 # Get Systeminformation
 Write-Host "[*] Collecting general computer infos."
 
 ###############################################################################################################
-# Collecting basic information about the system 
+# Collecting basic information about the system
 # This includes OS Name, OS Version)
 ###############################################################################################################
 $host_info = [PSCustomObject]@{}
-# if Get-ComputerInfo is available this command will be used to collect basic computer information. 
+# if Get-ComputerInfo is available this command will be used to collect basic computer information.
 # This cmdlet was introduced in Windows PowerShell 5.1. Thus, for older versions a combination of WMI querries is used.
 if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
     # we have at least PowerShell 5.1
@@ -105,7 +105,7 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
     $host_info = [PSCustomObject]@{
         OSBuildNumber = [string] [System.Environment]::OSVersion.Version.Build
         Version = "$version"
-        Type = "Windows" 
+        Type = "Windows"
         SystemGroup =  $Systemgroup
         Location = $Location
         Label = $Label
@@ -136,13 +136,13 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
     $hypervisor = ""
     $installDate = ""
     $manufacturer = ""
-    $model = "" 
+    $model = ""
     $PrimaryOwnerName = ""
     $osversion = ""
     $osname = ""
     $timezoneString = ""
     try{
-        $cs = Get-WmiObject -Class win32_ComputerSystem -Property * 
+        $cs = Get-WmiObject -Class win32_ComputerSystem -Property *
         $domainRole = [string] $cs.DomainRole;
         $hypervisor = [string]$cs.HypervisorPresent;
         $installDate = [string] $cs.InstallDate;
@@ -166,7 +166,7 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
     $host_info = [PSCustomObject]@{
         OSBuildNumber = [string] [System.Environment]::OSVersion.Version.Build
         Version = "$version"
-        Type = "Windows" 
+        Type = "Windows"
         SystemGroup =  $Systemgroup
         Location = $Location
         Label = $Label
@@ -178,7 +178,7 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
         OSInstallDate = $installDate
         Manufacturer = $manufacturer
         TimeZone = $timezoneString
-        Model = $model 
+        Model = $model
         HyperVisorPresent = $hypervisor
         PrimaryOwnerName = $PrimaryOwnerName
         Whoami = [string] [System.Environment]::UserName
@@ -194,7 +194,7 @@ if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
 # Collecting information about the BIOS
 ###############################################################################################################
 try{
-    $bios = Get-WmiObject -Class win32_bios    
+    $bios = Get-WmiObject -Class win32_bios
     $bios_info =  [PSCustomObject]@{
         Manufacturer = [string] $bios.Manufacturer
         Name = [string] $bios.Name
@@ -209,24 +209,24 @@ try{
 # Collecting information about installed hotfixes / patches
 ###############################################################################################################
 Write-Host "[*] Collecting installed hotfixes"
-            
+
 if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
-    $hotfixes = Get-HotFix 
+    $hotfixes = Get-HotFix
     if ( $hotfixes.Length -gt 0 ){
         $lastUpdate = $hotfixes[0]
         $host_info.LastUpdate = [string] $lastUpdate.InstalledOn;
-    } 
+    }
     $hotfixes | Select HotFixId,InstalledOn,Description| Export-Csv -Path $file_prefix"-hotfixes.csv"
 } else {
     try{
         $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
     } catch {
-        $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering 
+        $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering
     }
     if ( $hotfixes.Length -gt 0 ){
         $lastUpdate = $hotfixes[0]
         $host_info.LastUpdate = [string] $lastUpdate.InstalledOn;
-    } 
+    }
     $hotfixes | Select HotFixId,InstalledOn,Description| Export-Csv -Path $file_prefix"-hotfixes.csv"
 }
 
@@ -235,9 +235,9 @@ if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
  ###############################################################################################################
 # Collecting information about installed products / applications
 ###############################################################################################################
-    
+
 Write-Host "[*] Collecting installed products"
-$products = Get-WmiObject  -class win32_product 
+$products = Get-WmiObject  -class win32_product
 $products | select Caption,InstallDate,Description,Vendor,Name,Version,InstallLocation | Export-Csv -Path $file_prefix"-products.csv"
 
 
@@ -262,19 +262,19 @@ if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
 ###############################################################################################################
 # Collecting information about ip addresses
 ###############################################################################################################
-        
+
 if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
     Write-Host "[*] Collecting IP addresses"
     $netips = Get-NetIPAddress
     $netips | Select AddressFamily,Type,IPAddress,PrefixLength,InterfaceAlias | Export-CSV -Path $file_prefix"-netipaddresses.csv"
 } else {
-    $adapter_list = New-Object System.Collections.ArrayList 
+    $adapter_list = New-Object System.Collections.ArrayList
     try{
         $netadapters = get-wmiobject -Class win32_networkadapterconfiguration -Filter "IPEnabled = 'True'"
         foreach ($n in $netadapters ) {
             foreach ($i in $n.IPAddress){
                 [void] $adapter_list.Add([PSCustomObject]@{
-                    IP = [string] $i 
+                    IP = [string] $i
                     InterfaceAlias = [string] $n.Caption
                     DHCP = [string] $n.DHCPEnabled
                 })
@@ -289,7 +289,7 @@ if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
 # Collecting information about available routes (routing table)
 ###############################################################################################################
 Write-Host "[*] Collecting routing table"
-       
+
 if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
     try{
         $routes = Get-NetRoute
@@ -303,7 +303,7 @@ if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
 ###############################################################################################################
 # Collecting information about services
 ###############################################################################################################
-        
+
 Write-Host "[*] Collecting service information"
 $services = Get-WmiObject  -class win32_service
 
@@ -720,6 +720,37 @@ $result = [PSCustomObject]@{
 }
 [void]$config_checks.Add($result)
 
+###############################################################################################################
+# Check if LLMNR is enabled
+###############################################################################################################
+$llmnr_value = ""
+$llmnr_result = ""
+$llmnr_msg = ""
+if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient"  -ea SilentlyContinue).Property -contains "EnableMulticast") {
+    $em =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Name EnableMulticast -ErrorAction SilentlyContinue
+    $llmnr_value = $em.EnableMulticast
+    if ($em.EnableMulticast -eq 0){
+        $llmnr_result = "Disabled"
+        $llmnr_msg = "LLMNR is disabled"
+    }else{
+        $llmnr_result = "Enabled"
+        $llmnr_msg = "LLMNR is Enabled (not recommended)"
+    }
+}else {
+    $llmnr_result = "Enabled (not configured)"
+    $llmnr_msg = "LLMNR is Enabled (not recommended)"
+}
+
+$result = [PSCustomObject]@{
+    Component = 'LLMNR'
+    Name = 'LLMNR - Enabled'
+    Method       = 'Registry'
+    Key   = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient'
+    Value      = $llmnr_value
+    Result = $llmnr_result
+    Message = $llmnr_msg
+}
+[void]$config_checks.Add($result)
 
 ###############################################################################################################
 # Collecting information about NTP settings
