@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.4.3
+    Version:    0.5
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -17,7 +17,7 @@
     The amount of data collected by the script differs depending on the version of the domain-collector script.
 
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
-                                amount of attributes about computer accounts. It should be used for smaller domains.
+                                amount of attributes about computer accounts. It would take some time on larger domains.
 
     domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
@@ -25,7 +25,8 @@
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
-                                 of attributes about computer accounts. It could be used for larger domains.
+                                 of attributes about computer accounts.
+
 
 
     .INPUTS
@@ -40,7 +41,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.4.3"
+$version="0.5"
 $script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"

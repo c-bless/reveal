@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.5-dev
+    Version:    0.5
     License:    GPLv3
 
     .INPUTS
@@ -38,7 +38,7 @@ param (
 
 
 # version number of this script used as attribute in XML root tag
-$version="0.5-dev"
+$version="0.5"
 
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
