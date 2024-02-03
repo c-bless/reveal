@@ -1,4 +1,4 @@
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 from reveal.core.models.activedirectory import ADGroup
 from reveal.core.models.activedirectory import ADSPN
@@ -27,6 +27,13 @@ def find_computer_by_SPN(spn):
 
 def find_computer_with_Unconstraint_Delegation():
     return ADComputer.query.filter(ADComputer.TrustedForDelegation == True ).all()
+
+
+def find_user_with_delegation():
+    return ADUser.query.filter(or_(
+        ADUser.TrustedForDelegation == True,
+        ADUser.TrustedToAuthForDelegation == True)
+    ).all()
 
 
 def find_protected_users() -> list[ADGroup]:
