@@ -11,7 +11,7 @@ def find_uqsp(host_filter=[]) -> list[Service]:
     services = Service.query.filter(
         and_(
             Service.PathName.notlike('"%'),
-            Service.PathName.contains(" "),
+            Service.PathName.like("% %"),
             Service.PathName.notilike(r'C:\\Windows%'))
     ).join(Host).filter(*host_filter).all()
     return services
