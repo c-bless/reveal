@@ -12,13 +12,13 @@ def generate_services_excel(services=[]):
 
     for s in services:
         tmp = [s.SystemName, s.Caption, s.Description, s.Name, s.StartMode, s.PathName, s.Started, s.StartName,
-               s.DisplayName, s.Running, s.AcceptStop, s.AcceptPause, s.ProcessId, s.DelayedAutoStart,
+               s.DisplayName, s.AcceptStop, s.AcceptPause, s.ProcessId, s.DelayedAutoStart,
                s.BinaryPermissionsStr, s.Host, s.Host.SystemGroup, s.Host.Location]
         rows.append(tmp)
 
 
     header_data = ["SystemName", "Caption", "Description", "Name", "StartMode", "PathName", "Started", "StartName",
-               "DisplayName", "Running", "AcceptStop", "AcceptPause", "ProcessId", "DelayedAutoStart",
+               "DisplayName", "AcceptStop", "AcceptPause", "ProcessId", "DelayedAutoStart",
                "BinaryPermissionsStr", "Hostname", "SystemGroup", "Location"]
 
     header_format = workbook.add_format({'bold': True,
@@ -36,12 +36,12 @@ def generate_services_excel(services=[]):
     # Iterate over the data and write it out row by row.
     for service in rows:
         for c in service:
-            if col == 14:
+            if col == 13:
                 worksheet.write(row, col, str(c), cell_format)
             else:
                 worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:O1")
+        worksheet.autofilter("A1:N1")
         col = 0
         row += 1
 
