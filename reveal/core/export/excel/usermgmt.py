@@ -20,10 +20,11 @@ def generate_group_members_excel(groups=[]):
         host = g.Host.Hostname
         systemgroup = g.Host.SystemGroup
         location = g.Host.Location
-        tmp = [host, systemgroup, location, name, g.SID, "\n".join(members)]
+        label = g.Host.Label
+        tmp = [host, systemgroup, location, label, name, g.SID, "\n".join(members)]
         rows.append(tmp)
 
-    header_data = ["Host", "Systemgroup", "Location", "Group", "SID", "Members"]
+    header_data = ["Host", "Systemgroup", "Location", "Label", "Group", "SID", "Members"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -122,12 +123,13 @@ def generate_localuser_excel(users=[]):
         host = u.Host.Hostname
         systemgroup = u.Host.SystemGroup
         location = u.Host.Location
+        label = u.Host.Label
         tmp = [accountType, domain, disabled, localAccount, name, fullName, sid, lockout, pwchanged, pwrequired,
-               description, host, systemgroup, location]
+               description, host, systemgroup, location, label]
         rows.append(tmp)
 
     header_data = ["AccountType", "Domain", "Disabled", "LocalAccount", "Name", "FullName", "SID", "Lockout",
-                   "PasswordChanged", "PasswordRequired", "Description", "Host", "Systemgroup", "Location"]
+                   "PasswordChanged", "PasswordRequired", "Description", "Host", "Systemgroup", "Location", "Label"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -148,7 +150,7 @@ def generate_localuser_excel(users=[]):
         col = 0
         row += 1
 
-    worksheet.autofilter("A1:N1")
+    worksheet.autofilter("A1:O1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
