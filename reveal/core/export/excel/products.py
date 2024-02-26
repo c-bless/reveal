@@ -12,11 +12,11 @@ def generate_products_excel(products=[]):
     rows = []
 
     for p in products:
-        tmp = [ p.Caption, p.Name, p.Version, p.Host_id, p.Host, p.Host.SystemGroup, p.Host.Location, p.InstallLocation, p.InstallDate]
+        tmp = [ p.Caption, p.Name, p.Version, p.Host_id, p.Host, p.Host.SystemGroup, p.Host.Location, p.Host.Label, p.InstallLocation, p.InstallDate]
         rows.append(tmp)
 
 
-    header_data = ["Caption", "Name", "Version", "Host_id","Host", "SystemGroup", "Location", "InstallLocation", "InstallDate"]
+    header_data = ["Caption", "Name", "Version", "Host_id","Host", "SystemGroup", "Location", "Label", "InstallLocation", "InstallDate"]
 
     header_format = workbook.add_format({'bold': True,
                                          'bottom': 2,

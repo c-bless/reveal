@@ -13,11 +13,11 @@ def generate_configchecks_excel(checks=[]):
 
     for c in checks:
 
-        tmp = [c.Name, c.Component, c.Method, c.Key, c.Value, c.Result, c.Message, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location]
+        tmp = [c.Name, c.Component, c.Method, c.Key, c.Value, c.Result, c.Message, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location, c.Host.Label]
         rows.append(tmp)
 
 
-    header_data = ["Name", "Component", "Method", "Key", "Value", "Result", "Message", "Hostname", "Systemgroup", "Location"]
+    header_data = ["Name", "Component", "Method", "Key", "Value", "Result", "Message", "Hostname", "Systemgroup", "Location", "Label"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -56,11 +56,11 @@ def generate_registrychecks_excel(checks=[]):
     rows = []
 
     for c in checks:
-        tmp = [c.Name, c.Category, c.Tags, c.Path, c.Key, c.Expected, c.Description, c.KeyExists, c.ValueMatch, c.CurrentValue, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location, c.Host.Whoami, c.Host.WhoamiIsAdmin]
+        tmp = [c.Name, c.Category, c.Tags, c.Path, c.Key, c.Expected, c.Description, c.KeyExists, c.ValueMatch, c.CurrentValue, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location, c.Host.Label, c.Host.Whoami, c.Host.WhoamiIsAdmin]
         rows.append(tmp)
 
 
-    header_data = ["Name", "Category", "Tags", "Path", "Key", "Expected", "Description", "KeyExists", "ValueMatch", "CurrentValue", "Hostname", "Systemgroup", "Location", "Whoami", "Whoami is Admin"]
+    header_data = ["Name", "Category", "Tags", "Path", "Key", "Expected", "Description", "KeyExists", "ValueMatch", "CurrentValue", "Hostname", "Systemgroup", "Location", "Label", "Whoami", "Whoami is Admin"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -102,10 +102,10 @@ def generate_fileexistchecks_excel(checks=[]):
 
     for c in checks:
 
-        tmp = [c.Name, c.File, c.FileExist, c.ExpectedHASH, c.HashMatch, c.HashChecked, c.CurrentHash, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location]
+        tmp = [c.Name, c.File, c.FileExist, c.ExpectedHASH, c.HashMatch, c.HashChecked, c.CurrentHash, c.Host.Hostname, c.Host.SystemGroup, c.Host.Location, c.Host.Label]
         rows.append(tmp)
 
-    header_data = ["Name", "File", "FileExist", "ExpectedHASH", "HashMatch", "HashChecked", "CurrentHash", "Hostname", "Systemgroup", "Location"]
+    header_data = ["Name", "File", "FileExist", "ExpectedHASH", "HashMatch", "HashChecked", "CurrentHash", "Hostname", "Systemgroup", "Location", "Label"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,

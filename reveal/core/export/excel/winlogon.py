@@ -15,11 +15,11 @@ def generate_winlogon_excel(hosts=[]):
 
     for h in hosts:
 
-        tmp = [h.SystemGroup, h.Location, h.Hostname, h.AutoAdminLogon, h.ForceAutoLogon,h.DefaultDomain, h.DefaultPassword, h.DefaultUserName]
+        tmp = [h.SystemGroup, h.Location, h.Label, h.Hostname, h.AutoAdminLogon, h.ForceAutoLogon,h.DefaultDomain, h.DefaultPassword, h.DefaultUserName]
         rows.append(tmp)
 
 
-    header_data = ["Systemgroup", "Location", "Hostname", "AutoAdminLogon",
+    header_data = ["Systemgroup", "Location", "Label", "Hostname", "AutoAdminLogon",
                    "ForceAutoLogon", "DefaultDomain", "DefaultPassword", "DefaultUserName"]
 
     wrap_format = workbook.add_format({'text_wrap': True})

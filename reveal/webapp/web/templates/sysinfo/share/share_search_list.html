@@ -58,16 +58,25 @@
             <thead>
             <tr>
                 <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-sort="ascending" aria-label="Name" width="20%">Name
+                    aria-sort="ascending" aria-label="Name" width="15%">Name
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">Host
+                    aria-label="DisplayName" width="10%">Host
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartMode" width="30%">Path
+                    aria-label="DisplayName" width="10%">Location
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartName" width="30%">Description
+                    aria-label="DisplayName" width="10%">Label
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="DisplayName" width="10%">SystemGroup
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartMode" width="20%">Path
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="StartName" width="20%">Description
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="Details" width="5%">Details
@@ -80,6 +89,9 @@
                   <tr>
                     <td> {{ s.Name }} </td>
                     <td> {{ s.Host }} </td>
+                    <td> {{ s.Host.Location }} </td>
+                    <td> {{ s.Host.Label }} </td>
+                    <td> {{ s.Host.SystemGroup }} </td>
                     <td> {{ s.Path }} </td>
                     <td> {{ s.Description }} </td>
                     <td class="actions">
@@ -91,7 +103,7 @@
                 {% endfor %}
             {% else %}
                 <tr>
-                    <td colspan="10">No services found!</td>
+                    <td colspan="8">No shares found!</td>
                 </tr>
             {% endif %}
         </tbody>

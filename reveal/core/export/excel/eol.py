@@ -11,7 +11,7 @@ def generate_eol_excel_brief(eol_matches=[]):
     rows = []
 
     header_data = ["OS", "Version", "OSVersion", "Build", "ServiceOption", "StartDate", "EndOfService",
-                   "MainstreamEndDate", "Hosts / Systemgroup / Location", ]
+                   "MainstreamEndDate", "Hosts / Systemgroup / Location / Label", ]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -37,7 +37,7 @@ def generate_eol_excel_brief(eol_matches=[]):
         worksheet.write(row, 7, str(e.MainstreamEndDate))
         host_list = []
         for h in hosts:
-            host_list.append("{0} / {1} / {2}".format(h.Hostname, h.SystemGroup, h.Location))
+            host_list.append("{0} / {1} / {2} / {3}".format(h.Hostname, h.SystemGroup, h.Location, h.Label))
         worksheet.write(row, 8, "\n".join(host_list), wrap_format)
         row += 1
 
@@ -60,7 +60,7 @@ def generate_eol_excel_full(eol_matches=[]):
     rows = []
 
     header_data = ["OS", "Version", "OSVersion", "Build", "ServiceOption", "StartDate", "EndOfService",
-                   "MainstreamEndDate", "Host", "HostOS", "SystemGroup", "Location"]
+                   "MainstreamEndDate", "Host", "HostOS", "SystemGroup", "Location", "Label"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -87,9 +87,10 @@ def generate_eol_excel_full(eol_matches=[]):
             worksheet.write(row, 9, str(h.OSVersion))
             worksheet.write(row, 10, str(h.SystemGroup))
             worksheet.write(row, 11, str(h.Location))
+            worksheet.write(row, 12, str(h.Label))
             row += 1
 
-    worksheet.autofilter("A1:L1")
+    worksheet.autofilter("A1:M1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()

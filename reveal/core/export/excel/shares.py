@@ -21,12 +21,12 @@ def generate_shares_excel(shares=[]):
         for ntfs in s.NTFSPermissions:
             acl = "{0} / {1} / {2}".format(ntfs.AccountName, ntfs.AccessControlType, ntfs.AccessRight)
             ntfs_acls.append(acl)
-        tmp = [s.Name, s.Path, s.Description, s.Host, s.Host.SystemGroup, s.Host.Location, uri, uri2,
+        tmp = [s.Name, s.Path, s.Description, s.Host, s.Host.SystemGroup, s.Host.Location, s.Host.Label, uri, uri2,
                "\n".join(share_acls), "\n".join(ntfs_acls)]
         rows.append(tmp)
 
 
-    header_data = ["Name", "Path", "Description", "Hostname", "SystemGroup", "Location", "URI", "URI (with domain)",
+    header_data = ["Name", "Path", "Description", "Hostname", "SystemGroup", "Location", "Label", "URI", "URI (with domain)",
                    "Share ACLs", "NTFS ACLs"]
 
     header_format = workbook.add_format({'bold': True,

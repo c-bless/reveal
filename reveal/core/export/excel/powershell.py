@@ -10,14 +10,14 @@ def generate_ps2_installed(hosts=[]):
 
     rows = []
 
-    header_data = ["Hostname", "Domain", "SystemGroup", "Location", "OS Name", "OS Version", "OS BuildNumber",
+    header_data = ["Hostname", "Domain", "SystemGroup", "Location", "Label", "OS Name", "OS Version", "OS BuildNumber",
                    "PS2Enabled", "PSActive", "PSInstalled"]
 
     for h in hosts:
         versions = []
         for v in h.PSInstalledVersions:
             versions.append(v.RuntimeVersion)
-        tmp = [h.Hostname,  h.Domain, h.SystemGroup, h.Location, h.OSName, h.OSVersion, h.OSBuildNumber,
+        tmp = [h.Hostname,  h.Domain, h.SystemGroup, h.Location, h.Label, h.OSName, h.OSVersion, h.OSBuildNumber,
                h.PS2Installed, h.PSVersion, "\n".join(versions)]
         rows.append(tmp)
 

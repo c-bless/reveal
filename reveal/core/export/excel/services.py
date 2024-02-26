@@ -13,13 +13,13 @@ def generate_services_excel(services=[]):
     for s in services:
         tmp = [s.SystemName, s.Caption, s.Description, s.Name, s.StartMode, s.PathName, s.Started, s.StartName,
                s.DisplayName, s.AcceptStop, s.AcceptPause, s.ProcessId, s.DelayedAutoStart,
-               s.BinaryPermissionsStr, s.Host, s.Host.SystemGroup, s.Host.Location]
+               s.BinaryPermissionsStr, s.Host, s.Host.SystemGroup, s.Host.Location, s.Host.Label]
         rows.append(tmp)
 
 
     header_data = ["SystemName", "Caption", "Description", "Name", "StartMode", "PathName", "Started", "StartName",
                "DisplayName", "AcceptStop", "AcceptPause", "ProcessId", "DelayedAutoStart",
-               "BinaryPermissionsStr", "Hostname", "SystemGroup", "Location"]
+               "BinaryPermissionsStr", "Hostname", "SystemGroup", "Location", "Label"]
 
     header_format = workbook.add_format({'bold': True,
                                          'bottom': 2,
@@ -63,12 +63,12 @@ def generate_services_acl_excel(acls=[]):
 
     for a in acls:
         h = a.Service.Host
-        tmp = [h.Hostname, h.SystemGroup, h.Location, a.Name, a.AccountName, a.AccessControlType, a.AccessRight,
+        tmp = [h.Hostname, h.SystemGroup, h.Location, h.Label, a.Name, a.AccountName, a.AccessControlType, a.AccessRight,
                a.Service.StartName, a.Service.PathName, a.Service.StartMode ]
         rows.append(tmp)
 
 
-    header_data = ["Hostname", "SystemGroup", "Location", "Name", "AccountName", "AccessControlType", "AccessRight",
+    header_data = ["Hostname", "SystemGroup", "Location", "Label", "Name", "AccountName", "AccessControlType", "AccessRight",
                    "StartName", "Path", "Startmode" ]
 
     header_format = workbook.add_format({'bold': True,
