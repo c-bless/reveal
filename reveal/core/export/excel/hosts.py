@@ -110,7 +110,7 @@ def generate_hosts_excel_brief(hosts=[]):
         rows.append(tmp)
 
 
-    header_data = ["Systemgroup", "Location", "label", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
+    header_data = ["Systemgroup", "Label", "Location", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
                    "OSBuildNumber"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
@@ -151,11 +151,11 @@ def generate_wsus(hosts=[]):
     rows = []
 
     for h in hosts:
-        tmp = [h.Hostname, h.SystemGroup, h.Location, h.Domain, h.OSName, h.WUServer, h.LastUpdate]
+        tmp = [h.Hostname, h.SystemGroup, h.Location, h.Label, h.Domain, h.OSName, h.WUServer, h.LastUpdate]
         rows.append(tmp)
 
 
-    header_data = ["Hostname", "Location", "Systemgroup", "Domain", "OSName", "WSUS Server", "Last Update"]
+    header_data = ["Hostname", "Location", "Systemgroup", "Label", "Domain", "OSName", "WSUS Server", "Last Update"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
