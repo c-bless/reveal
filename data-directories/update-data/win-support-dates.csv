@@ -4,18 +4,18 @@ Windows 10 Enterprise,22H2,,19045,General Availability Channel,False,YYYY-MM-DD,
 Windows 10 Pro,21H2,10.0.19044,19044,General Availability Channel,True,YYYY-MM-DD,2021-11-16,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
 Windows 10 Enterprise,21H2,10.0.19044,19044,General Availability Channel,False,YYYY-MM-DD,2021-11-16,2024-06-11,,https://learn.microsoft.com/en-us/windows/release-health/release-information
 Windows 10 Enterprise LTSC,21H2,10.0.19044,19044,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2021-11-16,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 Enterprise LTSC,1809,10.0.17763,17763,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2018-11-13,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 Enterprise LTSB,1607,10.0.14393,14393,Long-Term Servicing Branch (LTSB),False,YYYY-MM-DD,2016-08-02,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 Enterprise LTSB,1507 (RTM),10.0.10240,10240,Long-Term Servicing Branch (LTSB),False,YYYY-MM-DD,2015-07-29,2027-01-12,2032-01-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,21H1,10.0.19043,19043,Semi-Annual Channel,True,YYYY-MM-DD,2021-05-18,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,20H2,10.0.19042,19042,Semi-Annual Channel,True,YYYY-MM-DD,2020-10-20,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,2004,10.0.19041,19041,Semi-Annual Channel,True,YYYY-MM-DD,2020-05-27,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,1909,10.0.18363,18363,Semi-Annual Channel,True,YYYY-MM-DD,2019-11-12,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,1903,10.0.18362,18362,Semi-Annual Channel,True,YYYY-MM-DD,2019-05-21,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,1803,10.0.17134,17134,Semi-Annual Channel / Semi-Annual Channel (Targeted),True,YYYY-MM-DD,2017-10-17,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,1709,10.0.16299,16299,Semi-Annual Channel / Semi-Annual Channel (Targeted),True,YYYY-MM-DD,2017-04-11,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,1703,10.0.15063,15063,Semi-Annual Channel / CB,True,YYYY-MM-DD,,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
-Windows 10 ,1511,10.0.10586,10586,CBB / CB,True,YYYY-MM-DD,2015-11-10,,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSC,1809,10.0.17763,17763,Long-Term Servicing Channel (LTSC),False,YYYY-MM-DD,2018-11-13,EoS,2029-01-09,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSB,1607,10.0.14393,14393,Long-Term Servicing Branch (LTSB),False,YYYY-MM-DD,2016-08-02,EoS,2026-10-13,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 Enterprise LTSB,1507 (RTM),10.0.10240,10240,Long-Term Servicing Branch (LTSB),False,YYYY-MM-DD,2015-07-29,EoS,2025-10-14,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,21H1,10.0.19043,19043,Semi-Annual Channel,True,YYYY-MM-DD,2021-05-18,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,20H2,10.0.19042,19042,Semi-Annual Channel,True,YYYY-MM-DD,2020-10-20,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,2004,10.0.19041,19041,Semi-Annual Channel,True,YYYY-MM-DD,2020-05-27,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1909,10.0.18363,18363,Semi-Annual Channel,True,YYYY-MM-DD,2019-11-12,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1903,10.0.18362,18362,Semi-Annual Channel,True,YYYY-MM-DD,2019-05-21,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1803,10.0.17134,17134,Semi-Annual Channel / Semi-Annual Channel (Targeted),True,YYYY-MM-DD,2017-10-17,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1709,10.0.16299,16299,Semi-Annual Channel / Semi-Annual Channel (Targeted),True,YYYY-MM-DD,2017-04-11,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1703,10.0.15063,15063,Semi-Annual Channel / CB,True,YYYY-MM-DD,,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
+Windows 10 ,1511,10.0.10586,10586,CBB / CB,True,YYYY-MM-DD,2015-11-10,EoS,,https://learn.microsoft.com/en-us/windows/release-health/release-information
 Windows 11 Pro,22H2,10.0.22621,22621,General Availability Channel,False,YYYY-MM-DD,,2024-10-08,,
 Windows 11 Enterprise,22H2,10.0.22621,22621,General Availability Channel,False,YYYY-MM-DD,,2025-10-14,,
 Windows 11 Pro,21H2,10.0.22000,22000,General Availability Channel,False,YYYY-MM-DD,,2023-10-10,,
