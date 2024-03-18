@@ -8,7 +8,8 @@ from reveal.webapi.sysinfo.schemas.responses.eol import EoLMatchSchema
 def get_EoLInfo(host_filter=[]):
     eols = EoL.query.filter(EoL.EndOfService == True).all()
     eol_matches = []
-    special_os_versions = ["Pro", "LTSC", "LTSB"]
+    special_os_versions = ["Pro", "Server 2000", "Server 2003", "Server 2008", "Server 2012", "Server 2016",
+                           "Server 2019", "Server 2022", "LTSC", "LTSB"]
     for e in eols:
         eol_match = EoLMatchSchema()
         eol_match.Eol = e
