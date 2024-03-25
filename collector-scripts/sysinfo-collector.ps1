@@ -1053,6 +1053,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         #    }
         #)
 
+        # [MODIFY ME: ADD ADDITIONAL FILES HERE]
+
         foreach ($c in $file_checks){
             $result = [PSCustomObject]@{
                 Name = $c.Name
@@ -1116,7 +1118,9 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         [void]$acl_path_checks.Add('C:\')
         [void]$acl_path_checks.Add('C:\Program Files\')
         [void]$acl_path_checks.Add('C:\Program Files (x86)\')
-        
+
+        # [MODIFY ME: ADD ADDITIONAL PATHES HERE]
+
         $xmlWriter.WriteStartElement("PathACLChecks")
         foreach ($c in $acl_path_checks){
             $path = [string] $c
@@ -1265,6 +1269,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             }
         )
 
+        # [MODIFY ME: ADD ADDITIONAL REGISTRY CHECKS HERE]
         
         # Perform the above specified Registry Checks
         
