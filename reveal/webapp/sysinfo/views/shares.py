@@ -37,8 +37,11 @@ def share_search_list():
             hide_c_dollar = form.Hide_C_Dollar.data
             hide_d_dollar = form.Hide_D_Dollar.data
             hide_e_dollar = form.Hide_E_Dollar.data
+            hide_f_dollar = form.Hide_F_Dollar.data
+            hide_g_dollar = form.Hide_G_Dollar.data
             hide_ADMIN_dollar = form.Hide_ADMIN_Dollar.data
             hide_IPC_dollar = form.Hide_IPC_Dollar.data
+            hide_PRINT_dollar = form.Hide_PRINT_Dollar.data
 
             if len(name) > 0:
                 if invertName == False:
@@ -64,12 +67,18 @@ def share_search_list():
                 filters.append(Share.Name != "IPC$")
             if (hide_ADMIN_dollar):
                 filters.append(Share.Name != "ADMIN$")
+            if (hide_PRINT_dollar):
+                filters.append(Share.Name != "print$")
             if (hide_c_dollar):
                 filters.append(Share.Name != "C$")
             if (hide_d_dollar):
                 filters.append(Share.Name != "D$")
             if (hide_e_dollar):
                 filters.append(Share.Name != "E$")
+            if (hide_f_dollar):
+                filters.append(Share.Name != "F$")
+            if (hide_g_dollar):
+                filters.append(Share.Name != "G$")
             shares = Share.query.filter(*filters).all()
             if 'download' in request.form:
                 output = generate_shares_excel(shares=shares)

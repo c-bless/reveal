@@ -23,9 +23,13 @@ class ShareSearchForm(FlaskForm):
 
     Hide_ADMIN_Dollar = BooleanField('Hide "Admin$"')
     Hide_IPC_Dollar = BooleanField('Hide "IPC$"')
+    Hide_PRINT_Dollar = BooleanField('Hide "print$"')
     Hide_C_Dollar = BooleanField('Hide "C$"')
     Hide_D_Dollar = BooleanField('Hide "D$"')
     Hide_E_Dollar = BooleanField('Hide "E$"')
+    Hide_F_Dollar = BooleanField('Hide "E$"')
+    Hide_G_Dollar = BooleanField('Hide "F$"')
+    Hide_E_Dollar = BooleanField('Hide "G$"')
 
     search = SubmitField('Search')
     download = SubmitField('Download (Excel)')
