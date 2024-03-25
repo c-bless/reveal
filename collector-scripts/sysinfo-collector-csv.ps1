@@ -561,6 +561,7 @@ if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea
         # .NET library for Cryptography not available.
         $defaultPassword = [convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($value.DefaultPassword))
         $base64 = $true
+        $encrypted = $false
     }
     $winlogon_settings.DefaultPasswordBase64 = [string] $base64
     $winlogon_settings.DefaultPasswordEncrypted = [string] $encrypted

@@ -664,6 +664,7 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 # .NET library for Cryptography not available.
                 $defaultPassword = [convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($value.DefaultPassword))
                 $base64 = $true
+                $encrypted = $false
             }
             $xmlWriter.WriteStartElement("DefaultPassword")
                 $xmlWriter.WriteAttributeString("base64", [string] $base64)
