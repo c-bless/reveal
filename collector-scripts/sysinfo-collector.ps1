@@ -862,6 +862,67 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         [void]$config_checks.Add($result)
         
         ###############################################################################################################
+        # Check if SMB Signing is required
+        # https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-signing-overview
+        ###############################################################################################################
+        Write-Host "[*] Checking if SMB Signing is enabled"
+        # check if "Microsoft network client: Digitally sign communications (always)" is required
+        $client_sign_value = ""
+        $client_sign_result = ""
+        $client_sign_msg = ""
+        if ((get-item "HKLM:\System\CurrentControlSet\Services\LanManWorkstation\Parameters"  -ea SilentlyContinue).Property -contains "RequireSecuritySignature") {
+            $client_sign =  Get-ItemProperty -Path  "HKLM:\System\CurrentControlSet\Services\LanManWorkstation\Parameters"  -Name RequireSecuritySignature -ErrorAction SilentlyContinue
+            $client_sign_value = $ce.RequireSecuritySignature
+            #  Data Type: REG_DWORD Data: 0 (disable), 1 (enable)
+            if ($client_sign_value -eq 0){
+                $client_sign_result = "Disabled"
+                $client_sign_msg = "Microsoft network client: Digitally sign communications (always) is not required"
+            }else{
+                $client_sign_result = "Enabled"
+                $client_sign_msg = "Microsoft network client: Digitally sign communications (always) is required"
+            }
+        }
+
+        $result = [PSCustomObject]@{
+            Component = 'SMB'
+            Name = 'Microsoft network client: Digitally sign communications (always)'
+            Method       = 'Registry'
+            Key   = 'HKLM:\System\CurrentControlSet\Services\LanManWorkstation\Parameters\RequireSecuritySignature'
+            Value      = $client_sign_value
+            Result = $client_sign_result
+            Message = $client_sign_msg
+        }
+        [void]$config_checks.Add($result)
+
+        # check if "Microsoft network server: Digitally sign communications (always)" is required
+        $srv_sign_value = ""
+        $srv_sign_result = ""
+        $srv_sign_msg = ""
+        if ((get-item "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters"  -ea SilentlyContinue).Property -contains "RequireSecuritySignature") {
+            $srv_sign =  Get-ItemProperty -Path  "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters"  -Name RequireSecuritySignature -ErrorAction SilentlyContinue
+            $srv_sign_value = $ce.RequireSecuritySignature
+            #  Data Type: REG_DWORD Data: 0 (disable), 1 (enable)
+            if ($srv_sign_value -eq 0){
+                $srv_sign_result = "Disabled"
+                $srv_sign_msg = "Microsoft network server: Digitally sign communications (always) is not required"
+            }else{
+                $srv_sign_result = "Enabled"
+                $srv_sign_msg = "Microsoft network server: Digitally sign communications (always) is required"
+            }
+        }
+
+        $result = [PSCustomObject]@{
+            Component = 'SMB'
+            Name = 'Microsoft network server: Digitally sign communications (always)'
+            Method       = 'Registry'
+            Key   = 'HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters\RequireSecuritySignature'
+            Value      = $srv_sign_value
+            Result = $srv_sign_result
+            Message = $srv_sign_msg
+        }
+        [void]$config_checks.Add($result)
+
+        ###############################################################################################################
         # Collecting information about NTP settings
         ###############################################################################################################
         # https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings?tabs=config
