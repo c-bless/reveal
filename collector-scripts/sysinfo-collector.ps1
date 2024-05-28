@@ -962,7 +962,104 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
                 $xmlWriter.WriteElementString("PSScriptBlockLogging", "Disabled")
             }
         }
+
         
+        ###############################################################################################################
+        # Check SSL / TLS settings
+        # https://learn.microsoft.com/en-us/windows-server/security/tls/tls-registry-settings?tabs=diffie-hellman
+        ###############################################################################################################
+        
+        Write-Host "[*] Checking SSL/TLS settings"
+        
+        $ssl_tls_versions = New-Object System.Collections.ArrayList
+        [void]$ssl_tls_versions.add("SSL 2.0")
+        [void]$ssl_tls_versions.add("SSL 3.0")
+        [void]$ssl_tls_versions.add("TLS 1.0")
+        [void]$ssl_tls_versions.add("TLS 1.1")
+        [void]$ssl_tls_versions.add("TLS 1.2")
+        [void]$ssl_tls_versions.add("DTLS 1.2")
+
+        
+        foreach ( $v in $ssl_tls_versions) {
+          
+            if ((get-item HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\$v\Client  -ea SilentlyContinue).Property -contains "Enabled") {
+                $version_enabled =  Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\$v\Client -Name Enabled -ErrorAction SilentlyContinue
+                if ($version_enabled.Enabled -eq 0){
+                    $result = [PSCustomObject]@{
+                        Component = 'SSL/TLS'
+                        Name = $v + ' - disabled (Client)'
+                        Method       = 'Registry'
+                        Key   =  'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\'+$v+'\Client\Enabled'
+                        Value      = $version_enabled.Enabled
+                        Result = "Disabled (explicit)"
+                        Message = $v + ' is disabled (Client)'
+                    }
+                    [void]$config_checks.Add($result)
+                }else{
+                    $result = [PSCustomObject]@{
+                        Component = 'SSL/TLS'
+                        Name = $v + ' - disabled (Client)'
+                        Method       = 'Registry'
+                        Key   =  'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\'+$v+'\Client\Enabled'
+                        Value      = $version_enabled.Enabled
+                        Result = "Enabled (explicit)"
+                        Message = $v + ' is enabled (Client)'
+                    }
+                    [void]$config_checks.Add($result)
+                }
+            }else {
+                $result = [PSCustomObject]@{
+                    Component = 'SSL/TLS'
+                    Name = $v + ' - disabled (Client)'
+                    Method       = 'Registry'
+                    Key   =  'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\'+$v+'\Client\Enabled'
+                    Value      = $null
+                    Result = "Not configured"
+                    Message = $v + ' is not configured (Client)'
+                }
+                [void]$config_checks.Add($result)
+            }
+
+            if ((get-item HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\$v\Server  -ea SilentlyContinue).Property -contains "Enabled") {
+                $version_enabled =  Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\$v\Server -Name Enabled -ErrorAction SilentlyContinue
+                if ($version_enabled.Enabled -eq 0){
+                    $result = [PSCustomObject]@{
+                        Component = 'SSL/TLS'
+                        Name = $v + ' - disabled  (Server)'
+                        Method       = 'Registry'
+                        Key   =  'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\'+$v+'\Server\Enabled'
+                        Value      = $version_enabled.Enabled
+                        Result = "Disabled (explicit)"
+                        Message = $v + ' is disabled (Server)'
+                    }
+                    [void]$config_checks.Add($result)
+                }else{
+                    $result = [PSCustomObject]@{
+                        Component = 'SSL/TLS'
+                        Name = $v + ' - disabled (Server)'
+                        Method       = 'Registry'
+                        Key   =  'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\'+$v+'\Server\Enabled'
+                        Value      = $version_enabled.Enabled
+                        Result = "Enabled (explicit)"
+                        Message = $v + ' is enabled (Server)'
+                    }
+                    [void]$config_checks.Add($result)
+                }
+            }else {
+                $result = [PSCustomObject]@{
+                    Component = 'SSL/TLS'
+                    Name = $v + ' - disabled (Server)'
+                    Method       = 'Registry'
+                    Key   =  'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\'+$v+'\Server\Enabled'
+                    Value      = $null
+                    Result = "Not configured"
+                    Message = $v + ' is not configured (Server)'
+                }
+                [void]$config_checks.Add($result)
+            }
+        }
+
+       
         
         ###############################################################################################################
         # Collecting information about SMB (Check if SMBv1 is enabled)
