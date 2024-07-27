@@ -20,6 +20,8 @@ from reveal.webapp.sysinfo.reports.updates import ReportEOL
 from reveal.webapp.sysinfo.reports.powershell import ReportPS2Istalled
 from reveal.webapp.sysinfo.reports.winlogon import ReportPWInWinlogon
 from reveal.webapp.sysinfo.reports.smb import ReportSMBv1
+from reveal.webapp.sysinfo.reports.smb import ReportSMBClientNoSigning
+from reveal.webapp.sysinfo.reports.smb import ReportSMBServerNoSigning
 from reveal.webapp.sysinfo.reports.wsh import ReportWSHEnabled, ReportWSHRemoteEnabled
 from reveal.webapp.sysinfo.reports.wsus import ReportWSUSHttp
 from reveal.webapp.sysinfo.reports.services import ReportUQSP
@@ -63,6 +65,8 @@ def get_systemhardening_report_list():
     report_plugin_list.append(ReportPS2Istalled())
     report_plugin_list.append(ReportPWInWinlogon())
     report_plugin_list.append(ReportSMBv1())
+    report_plugin_list.append(ReportSMBClientNoSigning())
+    report_plugin_list.append(ReportSMBServerNoSigning())
     report_plugin_list.append(ReportWSHEnabled())
     report_plugin_list.append(ReportWSHRemoteEnabled())
     report_plugin_list.append(ReportWSUSHttp())

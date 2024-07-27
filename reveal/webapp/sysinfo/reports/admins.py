@@ -69,27 +69,35 @@ def hosts_report_domainadmin():
                 hosts = find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter=host_filter)
                 output = generate_hosts_excel_brief(hosts)
                 return Response(output, mimetype="text/xslx",
-                                headers={"Content-disposition": "attachment; filename=hosts_brief-domadmin.xlsx",
-                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts_brief-domadmin.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'full' in request.form:
                 hosts = find_hosts_where_domadm_is_localadmin_with_host_filter(host_filter=host_filter)
                 output = generate_hosts_excel(hosts)
                 return Response(output, mimetype="text/xslx",
-                                headers={"Content-disposition": "attachment; filename=hosts-domadmin.xlsx",
-                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                headers={
+                                    "Content-disposition": "attachment; filename=hosts-domadmin.xlsx",
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'memberships' in request.form:
                 output = generate_group_members_excel(groups=groups)
                 return Response(output, mimetype="text/xlsx",
                                 headers={
                                     "Content-disposition": "attachment; filename=groups-with-domainadmin-brief.xlsx",
-                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'word' in request.form:
                 if selectedTemplate in templates:
                     template_dir = get_group_report_directory()
                     report = ReportDomAdminMemberOfLocalAdmin()
-                    output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}", report, groups=groups)
+                    output = generate_group_report_docx(f"{template_dir}/{selectedTemplate}",
+                                                        report, groups=groups)
                     return Response(output, mimetype="text/docx",
-                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
+                                    headers={
+                                        "Content-disposition": "attachment; filename={0}.docx".format(report.name)
+                                    })
         else:
             groups = find_groups_where_domadm_is_localadmin()
 
@@ -97,8 +105,8 @@ def hosts_report_domainadmin():
         groups = find_groups_where_domadm_is_localadmin()
 
     return render_template('sysinfo/reports/group_members_list_search_report.html', groups=groups,
-                               report_name="Domain Admins in local administrators group",
-                               form=form)
+                           report_name="Domain Admins in local administrators group",
+                           form=form)
 
 
 
@@ -109,7 +117,7 @@ class ReportDomAdminMemberOfLocalAdmin(ReportInfo):
             name="Domain Admins in local administrators group",
             category="Hardening",
             tags=["Domain Admins", "Local Admins", "User Assignments", "MemberOf", "Admins",
-                 "Admin Privileges"],
+                  "Admin Privileges"],
             description='Report all hosts where "Domain Admins" are members of the local administrators group',
             views=[("view", url_for('sysinfo.hosts_report_domainadmin'))]
         )
@@ -123,7 +131,7 @@ class ReportDomAdminMemberOfLocalAdmin(ReportInfo):
 def hosts_report_autologonadmin():
     form = AutoAdminReportForm()
     host_filter = []
-
+    hosts = []
     templates = get_host_report_templates()
     form.TemplateFile.choices = [(template, template) for template in templates]
 
@@ -161,20 +169,25 @@ def hosts_report_autologonadmin():
                 return Response(output, mimetype="text/xlsx",
                                 headers={
                                     "Content-disposition": "attachment; filename=hosts-with-autologonadmin-brief.xlsx",
-                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'full' in request.form:
                 output = generate_hosts_excel(hosts)
                 return Response(output, mimetype="text/xlsx",
                                 headers={
                                     "Content-disposition": "attachment; filename=hosts-with-autologonadmin-full.xlsx",
-                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                                    "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                })
             if 'word' in request.form:
                 if selectedTemplate in templates:
                     template_dir = get_host_report_directory()
                     report = ReportAutologonIsLocalAdmin()
-                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}", report, hosts=hosts)
+                    output = generate_hosts_report_docx(f"{template_dir}/{selectedTemplate}",
+                                                        report, hosts=hosts)
                     return Response(output, mimetype="text/docx",
-                                    headers={"Content-disposition": "attachment; filename={0}.docx".format(report.name)})
+                                    headers={
+                                        "Content-disposition": "attachment; filename={0}.docx".format(report.name)
+                                    })
     else:
         hosts = get_autologon_admin()
 
@@ -189,7 +202,7 @@ class ReportAutologonIsLocalAdmin(ReportInfo):
             name="Autologon as admin",
             category="Hardening",
             tags=["Autologon", "Local Admins", "User Assignments", "MemberOf", "Admins",
-                 "Admin Privileges"],
+                  "Admin Privileges"],
             description='Report all hosts where the autologon user is member of the local administrator group.',
             views=[("view",url_for("sysinfo.hosts_report_autologonadmin"))]
         )
