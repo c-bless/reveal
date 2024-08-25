@@ -67,23 +67,25 @@ def user_search_list():
 
             lockout = form.Lockout.data
             passwordRequired = form.PasswordRequired.data
-            passwordChanged = form.PasswordChanged.data
+            passwordChangeable = form.PasswordChangeable.data
+            passwordExpires = form.PasswordExpires.data
             useLockout = form.UseLockout.data
-            usePasswordRequired= form.UsePasswordRequired.data
-            usePasswordChanged= form.UsePasswordChanged.data
-            useDescriptionNotEmpty= form.UseDescriptionNotEmpty.data
-            descriptionNotEmpty=form.DescriptionNotEmpty.data
+            usePasswordRequired = form.UsePasswordRequired.data
+            usePasswordExpires = form.UsePasswordExpires.data
+            usePasswordChangeable = form.UsePasswordChangeable.data
+            useDescriptionNotEmpty = form.UseDescriptionNotEmpty.data
+            descriptionNotEmpty = form.DescriptionNotEmpty.data
 
             if len(name) > 0:
                 if not invertName:
-                    user_filter.append(User.Name.ilike("%"+name+"%"))
+                    user_filter.append(User.Name.ilike("%" + name + "%"))
                 else:
-                    user_filter.append(User.Name.notilike("%"+name+"%"))
+                    user_filter.append(User.Name.notilike("%" + name + "%"))
             if len(fullName) > 0:
                 if not invertFullName:
-                    user_filter.append(User.FullName.ilike("%"+fullName+"%"))
+                    user_filter.append(User.FullName.ilike("%" + fullName + "%"))
                 else:
-                    user_filter.append(User.FullName.notilike("%"+fullName+"%"))
+                    user_filter.append(User.FullName.notilike("%" + fullName + "%"))
             if len(accountType):
                 if not invertAccountType:
                     user_filter.append(User.AccountType == accountType)
@@ -91,9 +93,9 @@ def user_search_list():
                     user_filter.append(User.AccountType != accountType)
             if len(sid) > 0:
                 if not invertSID:
-                    user_filter.append(User.SID.ilike("%"+sid+"%"))
+                    user_filter.append(User.SID.ilike("%" + sid + "%"))
                 else:
-                    user_filter.append(User.SID.notilike("%"+sid+"%"))
+                    user_filter.append(User.SID.notilike("%" + sid + "%"))
             if len(description) > 0:
                 if not invertDescription:
                     user_filter.append(User.Description.ilike("%" + description + "%"))
@@ -101,10 +103,12 @@ def user_search_list():
                     user_filter.append(User.Description.notilike("%" + description + "%"))
             if useLockout:
                 user_filter.append(User.Lockout == lockout)
-            if usePasswordChanged:
-                user_filter.append(User.PasswordChanged == passwordChanged)
+            if usePasswordChangeable:
+                user_filter.append(User.PasswordChangeable == passwordChangeable)
             if usePasswordRequired:
                 user_filter.append(User.PasswordRequired == passwordRequired)
+            if usePasswordExpires:
+                user_filter.append(User.PasswordExpires == passwordExpires)
             if useDescriptionNotEmpty:
                 if descriptionNotEmpty:
                     user_filter.append(User.Description != None)
@@ -113,14 +117,14 @@ def user_search_list():
 
             if len(host) > 0:
                 if not invertHost:
-                    host_filter.append(Host.Hostname.ilike("%"+host+"%"))
+                    host_filter.append(Host.Hostname.ilike("%" + host + "%"))
                 else:
-                    host_filter.append(Host.Hostname.notilike("%"+host+"%"))
+                    host_filter.append(Host.Hostname.notilike("%" + host + "%"))
             if len(systemgroup) > 0:
                 if not invertSystemgroup:
-                    host_filter.append(Host.SystemGroup.ilike("%"+systemgroup+"%"))
+                    host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
                 else:
-                    host_filter.append(Host.SystemGroup.notilike("%"+systemgroup+"%"))
+                    host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
 
             users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
 
@@ -135,12 +139,10 @@ def user_search_list():
     return render_template('sysinfo/user/user_search_list.html', form=form, users=users)
 
 
-
-
 #####################################################################################
 # Get local admins
 #####################################################################################
-@sysinfo_bp.route('/groups/localadmins/', methods=['GET','POST'])
+@sysinfo_bp.route('/groups/localadmins/', methods=['GET', 'POST'])
 @login_required
 def localadmin_search_list():
     form = LocalGroupMemberSearchForm()
@@ -172,16 +174,16 @@ def localadmin_search_list():
                 host_filter.append(Host.Location.ilike("%" + location + "%"))
             else:
                 host_filter.append(Host.Location.notilike("%" + location + "%"))
-        if len(hostname) > 0 :
+        if len(hostname) > 0:
             if invertHostname == False:
-                host_filter.append(Host.Hostname.ilike("%"+hostname+"%"))
+                host_filter.append(Host.Hostname.ilike("%" + hostname + "%"))
             else:
-                host_filter.append(Host.Hostname.notilike("%"+hostname+"%"))
-        if len(domain) > 0 :
+                host_filter.append(Host.Hostname.notilike("%" + hostname + "%"))
+        if len(domain) > 0:
             if invertDomain == False:
-                user_filter.append(GroupMember.Domain.ilike("%"+domain+"%"))
+                user_filter.append(GroupMember.Domain.ilike("%" + domain + "%"))
             else:
-                user_filter.append(GroupMember.Domain.notilike("%"+domain+"%"))
+                user_filter.append(GroupMember.Domain.notilike("%" + domain + "%"))
         if len(username) > 0:
             if invertUsername == False:
                 user_filter.append(GroupMember.Name.ilike("%" + username + "%"))
@@ -192,11 +194,10 @@ def localadmin_search_list():
         if 'excel' in request.form:
             output = generate_group_members_excel(groups=groups)
             return Response(output, mimetype="text/xlsx",
-                        headers={"Content-disposition": "attachment; filename=groupmembers_local_admins.xlsx",
-                                 "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+                            headers={"Content-disposition": "attachment; filename=groupmembers_local_admins.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
     else:
         groups = find_group_local_admins(user_filter=user_filter, host_filter=host_filter)
 
-    return render_template('sysinfo/group/group_members_list.html',form=form, groups=groups,
+    return render_template('sysinfo/group/group_members_list.html', form=form, groups=groups,
                            report_name="Local Admins")
-

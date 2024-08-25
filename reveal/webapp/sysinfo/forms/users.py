@@ -32,11 +32,14 @@ class LocalUserSearchForm(FlaskForm):
     Lockout = BooleanField('Lockout')
     UseLockout = BooleanField('use Lockout')
 
-    PasswordChanged = BooleanField('PasswordChanged')
-    UsePasswordChanged = BooleanField('use PasswordChanged')
+    PasswordChangeable = BooleanField('PasswordChangable')
+    UsePasswordChangeable = BooleanField('use PasswordChangable')
 
     PasswordRequired = BooleanField('PasswordRequired')
     UsePasswordRequired = BooleanField('use PasswordRequired')
+
+    PasswordExpires = BooleanField('PasswordExpires')
+    UsePasswordExpires = BooleanField('use PasswordExpires')
 
     DescriptionNotEmpty = BooleanField('Description NotEmpty')
     UseDescriptionNotEmpty = BooleanField('use DescriptionNotEmpty')

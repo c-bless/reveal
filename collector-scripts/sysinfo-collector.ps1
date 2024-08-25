@@ -447,7 +447,8 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteElementString("Description",[string]$u.Description);
             $xmlWriter.WriteElementString("SID",[string]$u.SID);
             $xmlWriter.WriteElementString("Lockout",[string]$u.Lockout);
-            $xmlWriter.WriteElementString("PasswordChanged",[string]$u.PasswordChanged);
+            $xmlWriter.WriteElementString("PasswordChangeable",[string]$u.PasswordChangeable);
+            $xmlWriter.WriteElementString("PasswordExpires",[string]$u.PasswordExpires);
             $xmlWriter.WriteElementString("PasswordRequired",[string]$u.PasswordRequired);
             $xmlWriter.WriteEndElement() # user
         }

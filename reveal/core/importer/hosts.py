@@ -443,7 +443,8 @@ def users2db(xml, host):
                 if "Description" == i.tag: user.Description = i.text
                 if "SID" == i.tag: user.SID = i.text
                 if "Lockout" == i.tag: user.Lockout = str2bool_or_none(i.text)
-                if "PasswordChanged" == i.tag: user.PasswordChanged = i.text
+                if "PasswordChangeable" == i.tag: user.PasswordChangeable = str2bool_or_none(i.text)
+                if "PasswordExpires" == i.tag: user.PasswordExpires = str2bool_or_none(i.text)
                 if "PasswordRequired" == i.tag: user.PasswordRequired = str2bool_or_none(i.text)
             user.Host = host
             db.session.add(user)

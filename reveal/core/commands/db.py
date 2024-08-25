@@ -73,7 +73,7 @@ def clear_db():
 
     db.session.query(ServiceACL).delete()
     db.session.query(Service).delete()
-    
+
     db.session.query(Hotfix).delete()
     db.session.query(ConfigCheck).delete()
     db.session.query(PSInstalledVersions).delete()
@@ -109,7 +109,6 @@ def clear_db():
     db.session.query(ADForest).delete()
     db.session.query(UploadedFile).delete()
     db.session.commit()
-
 
     print("[*] Clearing data in upload directory")
     for f in os.listdir(current_app.config['UPLOAD_DIR']):

@@ -154,3 +154,4 @@ def find_local_admins_group_member(user_filter=[], host_filter=[]) -> list[Group
         join(Group).filter(Group.SID == SID_LOCAL_ADMIN_GROUP).\
         join(Host).filter(and_(*host_filter)).all()
     return members
+

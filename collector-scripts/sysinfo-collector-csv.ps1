@@ -353,7 +353,7 @@ $service_acls | Export-CSV -Path $file_prefix"-service_acls.csv"
 # using WMI to be compatible with older PS versions
 Write-Host "[*] Collecting local user accounts"
 $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
-$users | select AccountType,Domain,Disabled,LocalAccount,Name,FullName,Description,SID,Lockout,PasswordChanged,PasswordRequired | Export-CSV -Path $file_prefix"-users.csv"
+$users | select AccountType,Domain,Disabled,LocalAccount,Name,FullName,Description,SID,Lockout,PasswordChangeable,PasswordExpires,PasswordRequired | Export-CSV -Path $file_prefix"-users.csv"
 
 
 ###############################################################################################################
