@@ -43,6 +43,10 @@ def find_protected_users() -> list[ADGroup]:
 def find_user_pw_expired() -> list[ADUser]:
     return ADUser.query.filter(ADUser.PasswordExpired == True).all()
 
+def find_user_pw_not_required() -> list[ADUser]:
+    return ADUser.query.filter(ADUser.PasswordNotRequired == True).all()
+
+
 
 def find_user_pw_never_expires() -> list[ADUser]:
     return ADUser.query.filter(ADUser.PasswordNeverExpires == True).all()

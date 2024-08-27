@@ -5,6 +5,7 @@ from reveal.webapp.ad import ad_bp
 from reveal.core.reports import ReportInfo
 from reveal.core.querries.ad import find_user_badpwcount_gt
 from reveal.core.querries.ad import find_user_pw_expired
+from reveal.core.querries.ad import find_user_pw_not_required
 from reveal.webapp.ad.forms.users import UserBadPwdCount
 from reveal.webapp.ad.forms.users import UserDownload
 from reveal.core.export.excel.ad import generate_user_excel
@@ -93,7 +94,7 @@ def report_aduser_pwneverexired():
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
     return render_template('ad/reports/pwneverexpires_list.html', users=users, form=form,
-                           report_name= 'List User with expired passwords.')
+                           report_name= 'List User which have PasswordNeverExpires set.')
 
 
 class ReportUserPWNeverExpires(ReportInfo):
@@ -110,31 +111,31 @@ class ReportUserPWNeverExpires(ReportInfo):
 
 
 ####################################################################
-# Get users with PasswordNeverExpires
+# Get users with PasswordNotRequired
 ####################################################################
-@ad_bp.route('/reports/user/pwneverexpired/', methods=['GET','POST'])
+@ad_bp.route('/reports/user/pwnnotrequired/', methods=['GET','POST'])
 @login_required
-def report_aduser_pwneverexired():
+def report_aduser_pwnotrequired():
     form = UserDownload()
-    users = find_user_pw_expired()
+    users = find_user_pw_not_required()
     if request.method == 'POST' and form.validate_on_submit():
         if 'download' in request.form:
             output = generate_user_excel(user_list=users)
             return Response(output, mimetype="text/xlsx",
-                            headers={"Content-disposition": "attachment; filename=ADUser-with-pw-never-expired.xlsx",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-pw-not-required.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
-    return render_template('ad/reports/pwneverexpires_list.html', users=users, form=form,
-                           report_name= 'List User with expired passwords.')
+    return render_template('ad/reports/pwnotrequired_list.html', users=users, form=form,
+                           report_name= 'List User which have PasswordNotRequired set.')
 
 
-class ReportUserPWNeverExpires(ReportInfo):
+class ReportUserPWnotRequired(ReportInfo):
 
     def __init__(self):
         super().initWithParams(
-            name='List User which have attribute PasswordNeverExpires set',
+            name='List User which have attribute PasswordNotRequired set',
             category="User Management",
-            tags=["User Management", "AD User", "password never expires"],
-            description='Report all domain user which have attribute PasswordNeverExpires set',
-            views=[("view", url_for("ad.report_aduser_pwneverexired"))]
+            tags=["User Management", "AD User", "password not required"],
+            description='Report all domain user which have attribute PasswordNotRequired set',
+            views=[("view", url_for("ad.report_aduser_pwnotrequired"))]
         )
