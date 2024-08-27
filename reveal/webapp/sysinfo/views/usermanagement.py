@@ -40,7 +40,6 @@ def user_detail(id):
 @login_required
 def user_search_list():
     form = LocalUserSearchForm()
-
     if request.method == 'POST':
         user_filter = []
         host_filter = []
@@ -102,12 +101,16 @@ def user_search_list():
                 else:
                     user_filter.append(User.Description.notilike("%" + description + "%"))
             if useLockout:
+                print("useLockout")
                 user_filter.append(User.Lockout == lockout)
             if usePasswordChangeable:
+                print("usePasswordChangeable")
                 user_filter.append(User.PasswordChangeable == passwordChangeable)
             if usePasswordRequired:
+                print("usePasswordRequired")
                 user_filter.append(User.PasswordRequired == passwordRequired)
             if usePasswordExpires:
+                print("usePasswordExpires")
                 user_filter.append(User.PasswordExpires == passwordExpires)
             if useDescriptionNotEmpty:
                 if descriptionNotEmpty:
@@ -125,7 +128,7 @@ def user_search_list():
                     host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
                 else:
                     host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
-
+            print(user_filter)
             users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
 
             if 'download' in request.form:

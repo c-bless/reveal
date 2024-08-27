@@ -5,6 +5,7 @@ from reveal.core.models.sysinfo import Service
 from reveal.core.models.sysinfo import ServiceACL
 from reveal.core.models.sysinfo import RegistryCheck
 from reveal.core.models.sysinfo import Host
+from reveal.core.models.sysinfo import ConfigCheck
 
 
 def find_uqsp(host_filter=[]) -> list[Service]:
@@ -135,3 +136,13 @@ def find_hotkeys_enabled_list(host_filter=[]) -> list[RegistryCheck]:
     result.extend(mouse_keys)
 
     return result
+
+
+def find_hosts_with_LLMNR(host_filter=[]) -> list[ConfigCheck]:
+    checks = ConfigCheck.query.filter(
+        and_(
+            ConfigCheck.Component == "LLMNR",
+            ConfigCheck.Result.ilike("Enabled%")
+        )
+    ).join(Host).filter(*host_filter).all()
+    return checks

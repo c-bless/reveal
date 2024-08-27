@@ -8,3 +8,10 @@ class RegistryCheckReportForm(RevealReportSearchForm):
 
     excel = SubmitField('Excel')
     word = SubmitField('Word')
+
+
+class ConfigCheckReportForm(RevealReportSearchForm):
+    TemplateFile = SelectField('Template (Word)')
+
+    excel = SubmitField('Excel')
+    word = SubmitField('Word')

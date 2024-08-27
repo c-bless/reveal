@@ -19,6 +19,7 @@ from reveal.webapp.sysinfo.reports.updates import ReportEOL
 
 from reveal.webapp.sysinfo.reports.powershell import ReportPS2Istalled
 from reveal.webapp.sysinfo.reports.winlogon import ReportPWInWinlogon
+from reveal.webapp.sysinfo.reports.hardening import ReportLLMNREnabled
 from reveal.webapp.sysinfo.reports.smb import ReportSMBv1
 from reveal.webapp.sysinfo.reports.smb import ReportSMBClientNoSigning
 from reveal.webapp.sysinfo.reports.smb import ReportSMBServerNoSigning
@@ -76,6 +77,7 @@ def get_systemhardening_report_list():
     report_plugin_list.append(ReportFilePrinterInstalled())
     report_plugin_list.append(ReportHotkeysEnabled())
     report_plugin_list.append(ReportModifiableServices())
+    report_plugin_list.append(ReportLLMNREnabled())
 
     return report_plugin_list
 

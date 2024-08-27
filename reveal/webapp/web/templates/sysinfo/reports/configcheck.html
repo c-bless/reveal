@@ -1,0 +1,64 @@
+{% extends "layout/report_search_list_layout.html" %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
+                       aria-describedby="table1_info">
+            <thead>
+            <tr>
+
+
+                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Component" width="15%">Component
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Method" width="10%">Method
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Result" width="15%">Result
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Key" width="15%">Key
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Host" width="5%">Host
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Message" width="20%">Message
+                </th>
+                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+                    aria-label="Actions" width="5%">Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if checks %}
+                {% for c in checks %}
+                  <tr>
+                    <td> {{ c.Name }} </td>
+                    <td> {{ c.Component }} </td>
+                    <td> {{ c.Method }} </td>
+                    <td> {{ c.Result }} </td>
+                    <td> {{ c.Key }} </td>
+                    <td> {{ c.Host }} </td>
+                    <td> {{ c.Message }} </td>
+                    <td class="actions">
+                        <a href="{{ url_for('sysinfo.configcheck_detail', id=c.id) }}" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye"></i> View
+                        </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8">No matching configuration checks found!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

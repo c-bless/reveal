@@ -49,8 +49,12 @@
                             {{ render_check_field_sm2(form.Lockout) }}
                             {{ render_check_field_sm2(form.UseLockout) }}
                             <br />
-                            {{ render_check_field_sm2(form.PasswordChanged) }}
-                            {{ render_check_field_sm2(form.UsePasswordChanged) }}
+                            {{ render_check_field_sm2(form.PasswordChangeable) }}
+                            {{ render_check_field_sm2(form.PasswordChangeable) }}
+                            <br />
+
+                            {{ render_check_field_sm2(form.PasswordExpires) }}
+                            {{ render_check_field_sm2(form.PasswordExpires) }}
                             <br />
 
                             {{ render_check_field_sm2(form.PasswordRequired) }}
@@ -95,7 +99,7 @@
                     aria-label="Started" width="5%">Lockout
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="PathName" width="5%">PW Changed
+                    aria-label="PathName" width="5%">PW Changeable
                 </th>
                 <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
                     aria-label="SystemName" width="5%">PW Required
@@ -126,7 +130,7 @@
                     <td> {{ u.AccountType }} </td>
                     <td> {{ u.SID }} </td>
                     <td> {{ u.Lockout }} </td>
-                    <td> {{ u.PasswordChanged }} </td>
+                    <td> {{ u.PasswordChangeable}} </td>
                     <td> {{ u.PasswordRequired }} </td>
                     <td> {{ u.Description }} </td>
                     <td> {{ u.Host }} </td>

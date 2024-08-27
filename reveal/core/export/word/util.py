@@ -34,6 +34,10 @@ def generate_hotkey_docx(template, report, hotkey_dict=[]):
     context = {'hotkey_dict': hotkey_dict, 'report': report}
     return generate_docx(template=template, context=context)
 
+def generate_configcheck_docx(template, report, checks=[]):
+    context = {'checks': checks, 'report': report}
+    return generate_docx(template=template, context=context)
+
 
 def generate_group_report_docx(template, report, groups=[]):
     context = {'groups': groups, 'report': report}
@@ -69,9 +73,17 @@ def get_host_report_templates()-> list[str]:
 def get_registryCheckDict_directory()->str:
     return "{0}/templates/reports/RegistryCheckDictReports/".format(current_app.config.get(('REPORT_DIR')))
 
+def get_ConfigCheck_directory()->str:
+    return "{0}/templates/reports/ConfigCheckReports/".format(current_app.config.get(('REPORT_DIR')))
+
 
 def get_registryCheckDict_report_templates()-> list[str]:
     template_dir = get_registryCheckDict_directory()
+    return os.listdir(template_dir)
+
+
+def get_configCheck_report_templates()-> list[str]:
+    template_dir = get_ConfigCheck_directory()
     return os.listdir(template_dir)
 
 
