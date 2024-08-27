@@ -76,8 +76,6 @@ class ReportUserPWExpired(ReportInfo):
         )
 
 
-
-
 ####################################################################
 # Get users with PasswordNeverExpires
 ####################################################################
@@ -107,7 +105,6 @@ class ReportUserPWNeverExpires(ReportInfo):
             description='Report all domain user which have attribute PasswordNeverExpires set',
             views=[("view", url_for("ad.report_aduser_pwneverexired"))]
         )
-
 
 
 ####################################################################
