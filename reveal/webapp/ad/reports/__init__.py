@@ -8,6 +8,7 @@ from reveal.webapp.ad.reports.spn import ReportComputerBySPN
 from reveal.webapp.ad.reports.delegations import ReportComputerByUnconstraintDelegation
 from reveal.webapp.ad.reports.user import ReportUserBadPwCountGtN
 from reveal.webapp.ad.reports.user import ReportUserPWExpired
+from reveal.webapp.ad.reports.user import ReportUserPWNeverExpires
 from reveal.webapp.ad.reports.siemens import ReportSIMATICGroups
 
 
@@ -27,6 +28,7 @@ def get_report_usermgmt_list():
     report_plugin_list.append(ReportUserBadPwCountGtN())
     report_plugin_list.append(ReportUserPWExpired())
     report_plugin_list.append(ReportSIMATICGroups())
+    report_plugin_list.append(ReportUserPWNeverExpires())
     return report_plugin_list
 
 

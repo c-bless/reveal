@@ -74,3 +74,67 @@ class ReportUserPWExpired(ReportInfo):
             views=[("view", url_for("ad.report_aduser_pwexired"))]
         )
 
+
+
+
+####################################################################
+# Get users with PasswordNeverExpires
+####################################################################
+@ad_bp.route('/reports/user/pwneverexpired/', methods=['GET','POST'])
+@login_required
+def report_aduser_pwneverexired():
+    form = UserDownload()
+    users = find_user_pw_expired()
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_user_excel(user_list=users)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-pw-never-expired.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return render_template('ad/reports/pwneverexpires_list.html', users=users, form=form,
+                           report_name= 'List User with expired passwords.')
+
+
+class ReportUserPWNeverExpires(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List User which have attribute PasswordNeverExpires set',
+            category="User Management",
+            tags=["User Management", "AD User", "password never expires"],
+            description='Report all domain user which have attribute PasswordNeverExpires set',
+            views=[("view", url_for("ad.report_aduser_pwneverexired"))]
+        )
+
+
+
+####################################################################
+# Get users with PasswordNeverExpires
+####################################################################
+@ad_bp.route('/reports/user/pwneverexpired/', methods=['GET','POST'])
+@login_required
+def report_aduser_pwneverexired():
+    form = UserDownload()
+    users = find_user_pw_expired()
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_user_excel(user_list=users)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-pw-never-expired.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return render_template('ad/reports/pwneverexpires_list.html', users=users, form=form,
+                           report_name= 'List User with expired passwords.')
+
+
+class ReportUserPWNeverExpires(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List User which have attribute PasswordNeverExpires set',
+            category="User Management",
+            tags=["User Management", "AD User", "password never expires"],
+            description='Report all domain user which have attribute PasswordNeverExpires set',
+            views=[("view", url_for("ad.report_aduser_pwneverexired"))]
+        )
