@@ -67,8 +67,6 @@ RE_SYSINFO_REGISTRYCHECK_CURRENTVALUE = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 
 RE_SYSINFO_FILENAME = r'^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
 
-
-
 RE_AD_GROUP_SCOPE = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_GROUP_CATEGORY = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_GROUP_CN = r"^([a-zA-Z0-9 \.\-\_]+)?$"
@@ -90,10 +88,9 @@ RE_AD_COMPUTER_GROUPNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 
 RE_SID_USER_ACCOUNTS = r"^S-1-5-((32-\d*)|(21-\d*-\d*-\d*-\d*))$"
 RE_AD_USER_NAME = r"^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
-RE_AD_SAMACCOUNT = r"^([a-zA-Z0-9\.\-\_]+[\$]?)?$"
+RE_AD_SAMACCOUNT = r"^([a-zA-Z0-9 \.\-\_]+[\$]?)?$"
 RE_AD_USER_GIVENNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_SURNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_AD_USER_DISPLAYNAME = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 
-RE_AD_SPN = r"^([a-zA-Z0-9 \\\.\-\_]+)?$"
 RE_AD_OPERATION_MASTERROLE = r"^([a-zA-Z0-9 \.\-\_]+)?$"

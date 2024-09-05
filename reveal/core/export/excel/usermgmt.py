@@ -40,7 +40,7 @@ def generate_group_members_excel(groups=[]):
     # Iterate over the data and write it out row by row.
     for host in rows:
         for c in host:
-            if col == 5:
+            if col == 6:
                 worksheet.write(row, col, str(c), wrap_format)
             else:
                 worksheet.write(row, col, str(c))
@@ -48,7 +48,7 @@ def generate_group_members_excel(groups=[]):
         col = 0
         row += 1
 
-    worksheet.autofilter("A1:F1")
+    worksheet.autofilter("A1:G1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
