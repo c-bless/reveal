@@ -96,8 +96,8 @@ try{
 
             #############################################################################################################
             #    Collecting Basic information about the current Forest
-            #    Note: successful execution of ADDomain and ADForest is requrired sine these are referenced when imported 
-            #    to systemdb, therefore a global try catch is wrapped around all commands
+            #    Note: successful execution of ADDomain and ADForest is required sine these are referenced when imported
+            #    to REVEAL, therefore a global try catch is wrapped around all commands
             #############################################################################################################
             Write-Host "[*] Collecting forest information." 
             $forest = Get-ADForest 
@@ -146,7 +146,7 @@ try{
                                     $xmlWriter.WriteElementString("ForestTransitive", [string] $t.ForestTransitive);
                                     $xmlWriter.WriteElementString("IntraForest", [string] $t.IntraForest);
                                     $xmlWriter.WriteElementString("IsTreeParent", [string] $t.IsTreeParent);
-                                    $xmlWriter.WriteElementString("IsTreeRotrustot", [string] $t.IsTreeRoot);
+                                    $xmlWriter.WriteElementString("IsTreeRoot", [string] $t.IsTreeRoot);
                                 $xmlWriter.WriteEndElement() # ADTrust
                             } catch{
                                 # Ignore this ADTrust object and try to parse the next. No Tag will be added for this one. 
@@ -337,12 +337,12 @@ try{
                         'lastLogon', 'LastLogonDate', 'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet',
                         'pwdLastSet','Modified'
                     )
-                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
+                    # MemberOf will contain sub-elements. Thus, it will not be iterated to create new XML elements.
                     $properties = $basic_properties + "MemberOf"
                     $user_list = Get-ADUser -Filter *
                     foreach ($u in $user_list) {
                         try{
-                            $user = get-aduser -identity $u.samaccountname -Properties $properties
+                            $user = Get-ADUser -identity $u.SamAccountName -Properties $properties
                             $xmlWriter.WriteStartElement("ADUser");
                             # add all basic properties directly as new XML elements
                             foreach ($p in $basic_properties) {
@@ -528,6 +528,31 @@ try{
                         # Failed executions will be ignored and no ADUser tags will be added under ADUserList
                     }
                     $xmlWriter.WriteEndElement() # ServicePrincipalNames
+
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (AdminSDHolder)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (AdminSDHolder)"
+                    $xmlWriter.WriteStartElement("AdminSDHolder")
+                    try{
+                        $user_list = Get-ADUser -Filter {AdminSDHolder -eq 1} -Properties SamAccountName,AdminSDHolder
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("AdminSDHolder", [string] $u."AdminSDHolder");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # AdminSDHolder
+
+
+
 
                    #########################
                    ## End of all user addons
