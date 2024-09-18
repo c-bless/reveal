@@ -366,15 +366,15 @@ try{
 
             }
 
-            #############################################################################################################
+            ############################################################################################################
             #    Collecting additional information about domain Users (Kerberos delegations)
-            #############################################################################################################
+            ############################################################################################################
             if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
                 $xmlWriter.WriteStartElement("ADUserAddon")
                     $start_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-                    #############################################################################################################
+                    ####################################################################################################
                     #    Collecting additional information about domain Users (Kerberos delegations)
-                    #############################################################################################################
+                    ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users with Kerberos Delegations."
 
                     $xmlWriter.WriteStartElement("TrustedForDelegation")
@@ -418,6 +418,27 @@ try{
                     }
                     $xmlWriter.WriteEndElement() # TrustedToAuthForDelegation
 
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (PasswordNotRequired)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (PasswordNotRequired)"
+                    $xmlWriter.WriteStartElement("PasswordNotRequired")
+                    try{
+                        $user_list = Get-ADUser -filter { PasswordNotRequired -eq $true} -properties PasswordNotRequired
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("PasswordNotRequired", [string] $u."PasswordNotRequired");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement()  # PasswordNotRequired
 
 
 
@@ -508,6 +529,10 @@ Write-Host "[*] - finished: $end_of_comp"
 Write-Host "[*] Collection of user list: "
 Write-Host "[*] - started: $start_of_users"
 Write-Host "[*] - finished: $end_of_users"
+
+Write-Host "[*] Collection of additional user attributes: "
+Write-Host "[*] - started: $start_of_users_addon"
+Write-Host "[*] - finished: $end_of_users_addon"
 
 Write-Host "[*] Collection of group list:"
 Write-Host "[*] - started: $start_of_groups"
