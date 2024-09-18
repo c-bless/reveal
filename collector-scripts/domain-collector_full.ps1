@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.5
+    Version:    0.6
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -40,7 +40,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.5"
+$version="0.6"
 $script_type ="full"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -318,29 +318,27 @@ try{
 
             }
 
-    
+
             #############################################################################################################
             #    Collecting information about domain Users
             #    Note: Failed executions will be ignored and no ADUser tags will be added to ADUserList
             #############################################################################################################
             if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
-                Write-Host "[*] Collecting information about AD users." 
+                Write-Host "[*] Collecting information about AD users."
                 $start_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
                 $xmlWriter.WriteStartElement("ADUserList")
                 try{
-                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as 
+                    # Set the properties to retrieve. $basic_properties will contain all properties that can be added as
                     # new XML Element
                     $basic_properties = @(
                         'DistinguishedName', 'SID', 'SamAccountName', 'displayName', 'Description', 'GivenName',
-                        'Surname', 'Name', 'SIDHistory', 'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created',
-                        'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate', 'TrustedForDelegation',
-                        'TrustedToAuthForDelegation', 'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet',
-                        'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
+                        'Surname', 'Name', 'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt',
+                        'lastLogon', 'LastLogonDate', 'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet',
+                        'pwdLastSet','Modified'
                     )
-                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements. 
+                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
                     $properties = $basic_properties + "MemberOf"
-                    $properties = $properties + 'msDS-AllowedToDelegateTo'
                     $user_list = Get-ADUser -Filter *
                     foreach ($u in $user_list) {
                         try{
@@ -355,23 +353,19 @@ try{
                                 $xmlWriter.WriteElementString("Group", [string] $m);
                             }
                             $xmlWriter.WriteEndElement(); # MemberOf
-                            $xmlWriter.WriteStartElement("msDS-AllowedToDelegateTo");
-                            foreach ($s in $user."msDS-AllowedToDelegateTo") {
-                                $xmlWriter.WriteElementString("SPN", [string] $s);
-                            }
-                            $xmlWriter.WriteEndElement(); # msDS-AllowedToDelegateTo
                             $xmlWriter.WriteEndElement(); # ADUser
                         } catch {
-                            # Ignore this ADUser object and try to parse the next. No Tag will be added for this one. 
+                            # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
                         }
                     }
                 } catch {
                     # Failed executions will be ignored and no ADUser tags will be added under ADUserList
                 }
-                $xmlWriter.WriteEndElement() # ADUserList     
+                $xmlWriter.WriteEndElement() # ADUserList
                 $end_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
             }
+
 
             #############################################################################################################
             #    Collecting information about domain groups
@@ -426,7 +420,8 @@ try{
                 $end_of_groups = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
             }
-            
+
+
         $xmlWriter.WriteEndElement() # DomainCollector
         $xmlWriter.WriteEndDocument()
         $xmlWriter.Flush()
@@ -451,7 +446,6 @@ Write-Host "[*] - finished: $end_of_comp"
 Write-Host "[*] Collection of user list: "
 Write-Host "[*] - started: $start_of_users"
 Write-Host "[*] - finished: $end_of_users"
-
 
 Write-Host "[*] Collection of group list:"
 Write-Host "[*] - started: $start_of_groups"

@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.5
+    Version:    0.6
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -41,7 +41,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.5"
+$version="0.6"
 $script_type="default"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -333,14 +333,16 @@ try{
             if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
                 Write-Host "[*] Collecting information about AD users."
                 $start_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
                 $xmlWriter.WriteStartElement("ADUserList")
                 try{
                     # Set the properties to retrieve. $basic_properties will contain all properties that can be added as
                     # new XML Element
                     $basic_properties = @(
-                        'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name', 'SIDHistory',
-                        'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt', 'lastLogon', 'LastLogonDate',
-                        'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired', 'pwdLastSet','Modified'
+                        'DistinguishedName', 'SID', 'SamAccountName', 'displayName', 'Description', 'GivenName',
+                        'Surname', 'Name', 'Enabled', 'BadLogonCount', 'BadPwdCount' , 'Created', 'LastBadPasswordAttempt',
+                        'lastLogon', 'LastLogonDate', 'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet',
+                        'pwdLastSet','Modified'
                     )
                     # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
                     $properties = $basic_properties + "MemberOf"
@@ -368,7 +370,9 @@ try{
                 }
                 $xmlWriter.WriteEndElement() # ADUserList
                 $end_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
             }
+
 
             #############################################################################################################
             #    Collecting information about domain groups

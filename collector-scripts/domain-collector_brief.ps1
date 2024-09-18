@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.5
+    Version:    0.6
     License:    GPLv3
 
     In general the following data is collected: General information about the domain and the forest, domain trusts, list of
@@ -40,7 +40,7 @@
 #>
 
 # version number of this script used as attribute in XML root tag 
-$version="0.5"
+$version="0.6"
 $script_type ="brief"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -336,8 +336,8 @@ try{
                     # Set the properties to retrieve. $basic_properties will contain all properties that can be added as
                     # new XML Element
                     $basic_properties = @(
-                        'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName', 'Surname', 'Name',
-                        'Enabled', 'PasswordLastSet', 'PasswordNeverExpires','PasswordNotRequired'
+                        'DistinguishedName', 'SID', 'SAMAccountName', 'displayName', 'Description', 'GivenName',
+                        'Surname', 'Name', 'Enabled', 'PasswordLastSet'
                     )
                     # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
                     $properties = $basic_properties + "MemberOf"
