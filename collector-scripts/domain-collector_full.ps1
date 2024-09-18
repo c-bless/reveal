@@ -484,6 +484,32 @@ try{
                     }
                     $xmlWriter.WriteEndElement()  # logonworkstations
 
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (ServicePrincipalNames / Service accounts)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (ServicePrincipalName)"
+                    $xmlWriter.WriteStartElement("ServicePrincipalName")
+                    try{
+                        $user_list = Get-ADUser -Filter 'ServicePrincipalName -like "*"' -Properties SamAccountName,ServicePrincipalName
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteStartElement("ServicePrincipalName");
+                                 foreach ($s in $u."ServicePrincipalName") {
+                                    $xmlWriter.WriteElementString("SPN", [string] $s);
+                                }
+                                $xmlWriter.WriteEndElement();
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # ServicePrincipalNames
+
                    #########################
                    ## End of all user addons
                    $end_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
