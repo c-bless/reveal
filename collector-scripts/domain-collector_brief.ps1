@@ -21,11 +21,13 @@
 
     domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
-                                 larger amount of attributes about computer accounts.
+                                 larger amount of attributes about computer accounts and user accounts with Kerberos
+                                 delegations.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
-                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
-                                 of attributes about computer accounts.
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller
+                                 amount of attributes about computer and user accounts as well as user accounts with
+                                 Kerberos delegations.
 
 
     .INPUTS

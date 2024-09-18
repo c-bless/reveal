@@ -373,6 +373,68 @@ try{
 
             }
 
+            #############################################################################################################
+            #    Collecting additional information about domain Users (Kerberos delegations)
+            #############################################################################################################
+            if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
+                $xmlWriter.WriteStartElement("ADUserAddon")
+                    $start_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                    #############################################################################################################
+                    #    Collecting additional information about domain Users (Kerberos delegations)
+                    #############################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users with Kerberos Delegations."
+
+                    $xmlWriter.WriteStartElement("TrustedForDelegation")
+                    try{
+                        $user_list = Get-ADUser -filter { TrustedForDelegation -eq $true} -properties TrustedForDelegation
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("TrustedForDelegation", [string] $u."TrustedForDelegation");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # TrustedForDelegation
+
+                    $xmlWriter.WriteStartElement("TrustedToAuthForDelegation")
+                    try{
+                        $user_list = Get-ADUser -filter { TrustedToAuthForDelegation -eq $true} -properties TrustedToAuthForDelegation,msDS-AllowedToDelegateTo
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("TrustedToAuthForDelegation", [string] $u."TrustedToAuthForDelegation");
+                                $xmlWriter.WriteStartElement("msDS-AllowedToDelegateTo");
+                                foreach ($s in $u."msDS-AllowedToDelegateTo") {
+                                    $xmlWriter.WriteElementString("SPN", [string] $s);
+                                }
+                                $xmlWriter.WriteEndElement(); # msDS-AllowedToDelegateTo
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # TrustedToAuthForDelegation
+
+
+
+
+
+                   #########################
+                   ## End of all user addons
+                   $end_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+                $xmlWriter.WriteEndElement() # ADUserAddon
+            }
 
             #############################################################################################################
             #    Collecting information about domain groups
