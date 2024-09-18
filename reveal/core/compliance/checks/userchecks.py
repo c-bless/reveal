@@ -10,9 +10,10 @@ from reveal.core.models.sysinfo import Group
 from reveal.core.models.sysinfo import GroupMember
 from reveal.core.models.sysinfo import Host
 from reveal.core.models.sysinfo import User
+from reveal.core.compliance import ComplianceResult
 
 
-def verify_user_disabled(host: Host, username: str, accept_removed=True) -> bool:
+def verify_user_disabled(host: Host, username: str, accept_removed=True) -> ComplianceResult:
     """
     Verifies if the specified user is disabled on the given host.
 
@@ -22,20 +23,24 @@ def verify_user_disabled(host: Host, username: str, accept_removed=True) -> bool
     :param host: Host object retrieved from database
     :param username: the username that should be disabled
     :param accept_removed: specifies if a removed account is accepted as disabled
-    :return: True if user has been disabled otherwise False is returned
+
+    :return: result of compliance check. `result.compliant` is `True` if user is disabled `False` otherwise.
     """
-    result = False
+    result = ComplianceResult(compliant=False)
     users = []
     for u in host.Users:
         users.append(u.Name)
         if u.Name == username and u.Disabled:
-            result = True
+            result.compliant = True
     if accept_removed is True and username not in users:
+        result.compliant = True
         result = True
+    if result.compliant is False:
+        result.messages.append(f"User {username} is not disabled.")
     return result
 
 
-def verify_user_exists(host: Host, username: str, accept_disabled=False) -> bool:
+def verify_user_exists(host: Host, username: str, accept_disabled=False) -> ComplianceResult:
     """
     Verifies if the given account exists.
 
@@ -47,14 +52,18 @@ def verify_user_exists(host: Host, username: str, accept_disabled=False) -> bool
     :param accept_disabled:
     :return:
     """
+    result = ComplianceResult(compliant=False)
     for u in host.Users:
         if u.Name == username:
             if u.Disabled is False:
                 # user account is activated
-                return True
+                return result
             # user account has been found but it is disabled.
             elif accept_disabled is True:
                 # disabled accounts are accepted
-                return True
+                return result
+            else:
+                result.messages.append(f"User {username} exist but is disabled.")
     # user account has not been found
-    return False
+    result.messages.append(f"User {username} does not exist.")
+    return result

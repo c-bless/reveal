@@ -69,6 +69,7 @@ def import_file_once(filename):
         db.session.rollback()
         return False
 
+
 # File has been uploaded via web interface
 def import_file(filename):
     with open(filename, 'rb') as f:
