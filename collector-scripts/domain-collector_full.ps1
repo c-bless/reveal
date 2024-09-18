@@ -462,6 +462,27 @@ try{
                     }
                     $xmlWriter.WriteEndElement()  # PasswordNeverExpires
 
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (logonworkstations)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (logonworkstations)"
+                    $xmlWriter.WriteStartElement("logonworkstations")
+                    try{
+                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties description
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("logonworkstations", [string] $u."logonworkstations");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement()  # logonworkstations
 
                    #########################
                    ## End of all user addons
