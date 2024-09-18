@@ -440,7 +440,27 @@ try{
                     }
                     $xmlWriter.WriteEndElement()  # PasswordNotRequired
 
-
+                    ###################################################################################################
+                    #    Collecting additional information about domain Users (PasswordNeverExpires)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (PasswordNeverExpires)"
+                    $xmlWriter.WriteStartElement("PasswordNeverExpires")
+                    try{
+                        $user_list = Get-ADUser -filter { PasswordNeverExpires -eq $true} -properties PasswordNeverExpires
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("PasswordNeverExpires", [string] $u."PasswordNeverExpires");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement()  # PasswordNeverExpires
 
 
                    #########################
