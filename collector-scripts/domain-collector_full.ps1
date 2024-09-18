@@ -418,6 +418,25 @@ try{
                     }
                     $xmlWriter.WriteEndElement() # TrustedToAuthForDelegation
 
+                    ###  Accounts that cannot be delegated
+                    $xmlWriter.WriteStartElement("AccountNotDelegated")
+                    try{
+                        $user_list = Get-ADUser -filter { AccountNotDelegated -eq $true} -properties AccountNotDelegated
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("AccountNotDelegated", [string] $u."AccountNotDelegated");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # AccountNotDelegated
+
                     ####################################################################################################
                     #    Collecting additional information about domain Users (PasswordNotRequired)
                     ####################################################################################################
