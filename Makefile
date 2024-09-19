@@ -1,29 +1,29 @@
 BASEDIR     = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 TMP_DIR      = $(BASEDIR)/tmp
-REVEAL_SRC = $(BASEDIR)/reveal/
-WEBAPP_SRC  = $(REVEAL_SRC)/webapp/
-WEBAPI_SRC  = $(REVEAL_SRC)/webapi/
-STATIC_DIR   = $(BASEDIR)/data-directories/static/
-DISTDIR     = $(STATIC_DIR)dist/
-PLUGINDIR   = $(STATIC_DIR)plugins/
+REVEAL_SRC = $(BASEDIR)/reveal
+WEBAPP_SRC  = $(REVEAL_SRC)/webapp
+WEBAPI_SRC  = $(REVEAL_SRC)/webapi
+STATIC_DIR   = $(BASEDIR)/data-directories/static
+DISTDIR     = $(STATIC_DIR)dist
+PLUGINDIR   = $(STATIC_DIR)plugins
 
 
-DOCKER_WEBAPP                   = $(BASEDIR)/services/web/
-DOCKER_WEBAPP_SRC               = $(BASEDIR)/services/web/reveal/
-REPORT_DIR                      = $(BASEDIR)/data-directories/reports/
-DOCKER_REPORT_DIR               = $(BASEDIR)/services/web/reports/
-UPLOAD_DIR                      = $(BASEDIR)/data-directories/uploads/
-DOCKER_UPLOAD_DIR               = $(BASEDIR)/services/web/uploads/
-UPDATE_DATA_DIR                 = $(BASEDIR)/data-directories/update-data/
-DOCKER_UPDATE_DATA_DIR          = $(BASEDIR)/services/web/update-data/
-DOCKER_WEB_STATIC_DATA_DIR      = $(BASEDIR)/services/web/static/
+DOCKER_WEBAPP                   = $(BASEDIR)/services/web
+DOCKER_WEBAPP_SRC               = $(BASEDIR)/services/web/reveal
+REPORT_DIR                      = $(BASEDIR)/data-directories/reports
+DOCKER_REPORT_DIR               = $(BASEDIR)/services/web/reports
+UPLOAD_DIR                      = $(BASEDIR)/data-directories/uploads
+DOCKER_UPLOAD_DIR               = $(BASEDIR)/services/web/uploads
+UPDATE_DATA_DIR                 = $(BASEDIR)/data-directories/update-data
+DOCKER_UPDATE_DATA_DIR          = $(BASEDIR)/services/web/update-data
+DOCKER_WEB_STATIC_DATA_DIR      = $(BASEDIR)/services/web/static
 
-DOCKER_NGINX_STATIC_DATA_DIR    = $(BASEDIR)/services/nginx/static/
-DOCKER_NGINX                    = $(BASEDIR)/services/nginx/
+DOCKER_NGINX_STATIC_DATA_DIR    = $(BASEDIR)/services/nginx/static
+DOCKER_NGINX                    = $(BASEDIR)/services/nginx
 
-DOCKER_WEBAPI                   = $(BASEDIR)/services/api/
-DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/reveal/
+DOCKER_WEBAPI                   = $(BASEDIR)/services/api
+DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/reveal
 
 TMP_ADMIN_LTE_URL = https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip
 TMP_ADMIN_LTE_ZIP = "admin-lte.zip"
