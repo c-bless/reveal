@@ -250,6 +250,9 @@ class ADUser(db.Model):
     PasswordLastSet = db.Column(db.String(50), unique=False, nullable=True)
     PasswordNeverExpires = db.Column(db.Boolean(), nullable=True)
     PasswordNotRequired = db.Column(db.Boolean(), nullable=True)
+    AccountNotDelegated = db.Column(db.Boolean(), nullable=True)
+    AdminSDHolder = db.Column(db.Boolean(), nullable=True)
+    LogonWorkstations = db.Column(db.String(), unique=False, nullable=True)
     pwdLastSet = db.Column(db.DateTime(), unique=False, nullable=True)
     TrustedForDelegation = db.Column(db.Boolean(), unique=False, nullable=True)
     TrustedToAuthForDelegation = db.Column(db.Boolean(), unique=False, nullable=True)
@@ -257,6 +260,7 @@ class ADUser(db.Model):
     MemberOfStr = db.Column(db.String(), unique=False, nullable=True)
     Memberships = db.relationship('ADUserMembership', backref='User', lazy='dynamic')
     DelegationSPN = db.relationship('ADUserAuthDelegationSPN', backref='User', lazy='dynamic')
+    ServiceSPN = db.relationship('ADUserServicePrincipalName', backref='User', lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
@@ -291,6 +295,18 @@ class ADUserAuthDelegationSPN(db.Model):
     def __str__(self):
         return self.SPN
 
+
+class ADUserServicePrincipalName(db.Model):
+    __tablename__ = "ADUserServicePrincipalName"
+    id = db.Column(db.Integer, primary_key=True)
+    SPN = db.Column(db.String(), unique=False, nullable=False)
+    User_id = db.Column(db.Integer, db.ForeignKey('ADUser.id'), nullable=False)
+
+    def __repr__(self):
+        return self.SPN
+
+    def __str__(self):
+        return self.SPN
 
 class ADGroup(db.Model):
     __tablename__ = "ADGroup"

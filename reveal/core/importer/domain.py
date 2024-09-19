@@ -14,6 +14,7 @@ from reveal.core.models.activedirectory import ADForestGlobalCatalog
 from reveal.core.models.activedirectory import ADComputer
 from reveal.core.models.activedirectory import ADDCServerRole
 from reveal.core.models.activedirectory import ADOperationMasterRole
+from reveal.core.models.activedirectory import ADUserServicePrincipalName
 from reveal.core.models.activedirectory import ADSPN
 from reveal.core.models.activedirectory import ADPasswordPolicy
 from reveal.core.models.activedirectory import ADTrust
@@ -26,8 +27,8 @@ from reveal.core.importer.converter import str2int_or_none
 def import_domain_collector(root):
     if root.tag != "DomainCollector":
         return
-    domain=None
-    forest=None
+    domain = None
+    forest = None
     for c in root.getchildren():
         if c.tag == "ADDomain": domain = domain2db(c)
         if c.tag == "ADForest": forest = forest2db(c)
@@ -72,6 +73,8 @@ def import_domain_collector(root):
                         print("Error while importing ADUser")
                         error = str(e.__dict__['orig'])
                         print(error)
+        if c.tag == "ADUserAddon":
+            userAddons2db(xml=c, domain=domain)
         if c.tag == "ADDefaultDomainPasswordPolicy":
             try:
                 passwordPolicy2db(xml=c, domain=domain)
@@ -99,7 +102,6 @@ def import_domain_collector(root):
                 error = str(e.__dict__['orig'])
                 print(error)
         db.session.commit()
-
 
 
 def domain2db(addomain):
@@ -194,6 +196,7 @@ def forest2db(adforest):
         print(error)
         return None
 
+
 def passwordPolicy2db(xml, domain, type="ADDefaultDomainPasswordPolicy"):
     policy = ADPasswordPolicy()
     policy.Domain= domain
@@ -286,6 +289,239 @@ def computer2db(xml, domain):
                     spn.Computer = c
                     db.session.add(spn)
     db.session.commit()
+
+
+def userTrustedForDel2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            trusted4del = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "TrustedForDelegation" == e.tag: trusted4del = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.TrustedForDelegation: trusted4del})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing TrustedForDelegation on ADUserAddon")
+
+
+def userTrustedToAuthForDel2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            trusted4del = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "TrustedToAuthForDelegation" == e.tag: trusted4del = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                user = db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).first()
+                user.TrustedToAuthForDelegation = trusted4del
+                if "msDS-AllowedToDelegateTo" == x.tag:
+                    for s in x.getchildren():
+                        if "SPN" == s.tag:
+                            spn = ADUserAuthDelegationSPN()
+                            spn.SPN = s.text
+                            spn.User = user
+                            db.session.add(spn)
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing TrustedToAuthForDelegation on ADUserAddon")
+
+
+def userPasswordNeverExpires2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            pw_expires = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "PasswordNeverExpires" == e.tag: pw_expires = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.PasswordNeverExpires: pw_expires})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing PasswordNeverExpires on ADUserAddon")
+
+
+def userPasswordNotRequired2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            pw_req = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "PasswordNotRequired" == e.tag: pw_req = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.PasswordNotRequired: pw_req})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing PasswordNotRequired on ADUserAddon")
+
+
+def userAdminSDHolder2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            sdholder = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "AdminSDHolder" == e.tag: sdholder = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.AdminSDHolder: sdholder})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing AdminSDHolder on ADUserAddon")
+
+
+def userAccountNotDelegated2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            notdelegated = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "AccountNotDelegated" == e.tag: notdelegated = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.AccountNotDelegated: notdelegated})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing AccountNotDelegated on ADUserAddon")
+
+
+def userLogonWorkstations2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            workstations = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "logonworkstations" == e.tag: workstations = str(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.LogonWorkstations: workstations})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing SIDHistory on ADUserAddon")
+
+
+def userSIDHistory2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            history = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "SIDHistory" == e.tag: history = str(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).update(
+                    {ADUser.SIDHistory: history})
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing SIDHistory on ADUserAddon")
+
+
+def userServicePrincipalName2db(xml, domain):
+    for x in xml.getchildren():
+        if "ADUser" == x.tag:
+            samaccountname = None
+            spm = None
+            for e in x.getchildren():
+                if "SamAccountName" == e.tag: samaccountname = e.text
+                if "SPN" == e.tag: spn = str2bool_or_none(e.text)
+            if samaccountname is None:
+                continue
+            try:
+                user = db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).first()
+                if "ServicePrincipalName" == x.tag:
+                    for s in x.getchildren():
+                        if "SPN" == s.tag:
+                            spn = ADUserServicePrincipalName()
+                            spn.SPN = s.text
+                            spn.User = user
+                            db.session.add(spn)
+                db.session.commit()
+            except SQLAlchemyError as er:
+                db.session.rollback()
+                print("Error while importing ServicePrincipalName on ADUserAddon")
+
+
+def userAddons2db(xml, domain):
+    for x in xml.getchildren():
+        if "TrustedForDelegation" == x.tag:
+            try:
+                userTrustedForDel2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "TrustedToAuthForDelegation" == x.tag:
+            try:
+                userTrustedToAuthForDel2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "AccountNotDelegated" == x.tag:
+            try:
+                userAccountNotDelegated2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "PasswordNotRequired" == x.tag:
+            try:
+                userPasswordNotRequired2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "PasswordNeverExpires" == x.tag:
+            try:
+                userPasswordNeverExpires2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "logonworkstations" == x.tag:
+            try:
+                userLogonWorkstations2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "ServicePrincipalName" == x.tag:
+            try:
+                userServicePrincipalName2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "SIDHistory" == x.tag:
+            try:
+                userSIDHistory2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
+        if "AdminSDHolder" == x.tag:
+            try:
+                userAdminSDHolder2db(xml=x, domain=domain)
+            except Exception as error:
+                print(error)
 
 
 def user2db(xml, domain):
