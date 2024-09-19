@@ -42,6 +42,7 @@ endif
 tmp:
 	@$(shell mkdir -p $(TMP_ADMIN_LTE_DIR) )
 	@$(shell mkdir -p $(UPLOAD_DIR) )
+	@$(shell mkdir -p $(STATIC_DIR) )
 	./download-dependencies.sh
 
 
