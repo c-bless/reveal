@@ -4,7 +4,6 @@ services:
     command: gunicorn --bind 0.0.0.0:8000 --workers=2 --timeout=300 reveal.app:app
     volumes:
       - ./services/web/:/app
-      - static_volume:/app/static/
       - upload_volume:/app/uploads/
       - report_volume:/app/reports/
       - update-data:/app/update-data/
@@ -28,9 +27,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
   nginx:
     build: ./services/nginx
-    volumes:
-      - static_volume:/app/static/
-      - ssl_volume:/app/ssl/
     ports:
       - "80:80"
       - "81:81"
@@ -41,7 +37,6 @@ services:
       - webapi
 volumes:
   postgres_data:
-  static_volume:
   upload_volume:
   report_volume:
   update-data:
