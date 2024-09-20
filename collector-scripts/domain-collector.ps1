@@ -10,22 +10,24 @@
     Version:    0.6
     License:    GPLv3
 
-    In general the following data is collected: General information about the domain and the forest, domain trusts, list of
-    domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer and
-    user accounts and domain groups are collected.
+    In general the following data is collected: General information about the domain and the forest, domain trusts, list
+    of domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer
+    and user accounts and domain groups are collected.
 
     The amount of data collected by the script differs depending on the version of the domain-collector script.
 
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
-                                amount of attributes about computer accounts. It would take some time on larger domains.
+                                amount of attributes about computer and user accounts. It would take some time on
+                                larger domains.
 
     domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
-                                 larger amount of attributes about computer accounts.
+                                 larger amount of attributes about computer and user accounts.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
-                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
-                                 of attributes about computer accounts.
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller
+                                 amount of attributes about computer accounts. Only basic settings on user objects are
+                                 enumerated.
 
 
 
@@ -325,7 +327,8 @@ try{
                 $end_of_comp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
             }
 
-    
+
+
             #############################################################################################################
             #    Collecting information about domain Users
             #    Note: Failed executions will be ignored and no ADUser tags will be added to ADUserList
@@ -344,12 +347,12 @@ try{
                         'lastLogon', 'LastLogonDate', 'logonCount', 'LockedOut', 'PasswordExpired', 'PasswordLastSet',
                         'pwdLastSet','Modified'
                     )
-                    # MemberOf will contain subelements. Thus, it will not be iterated to create new XML elements.
+                    # MemberOf will contain sub-elements. Thus, it will not be iterated to create new XML elements.
                     $properties = $basic_properties + "MemberOf"
                     $user_list = Get-ADUser -Filter *
                     foreach ($u in $user_list) {
                         try{
-                            $user = get-aduser -identity $u.samaccountname -Properties $properties
+                            $user = Get-ADUser -identity $u.SamAccountName -Properties $properties
                             $xmlWriter.WriteStartElement("ADUser");
                             # add all basic properties directly as new XML elements
                             foreach ($p in $basic_properties) {
@@ -373,9 +376,9 @@ try{
 
             }
 
-            #############################################################################################################
+            ############################################################################################################
             #    Collecting additional information about domain Users (Kerberos delegations)
-            #############################################################################################################
+            ############################################################################################################
             if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
                 $xmlWriter.WriteStartElement("ADUserAddon")
                     $start_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -425,6 +428,24 @@ try{
                     }
                     $xmlWriter.WriteEndElement() # TrustedToAuthForDelegation
 
+                    ###  Accounts that cannot be delegated
+                    $xmlWriter.WriteStartElement("AccountNotDelegated")
+                    try{
+                        $user_list = Get-ADUser -filter { AccountNotDelegated -eq $true} -properties AccountNotDelegated
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("AccountNotDelegated", [string] $u."AccountNotDelegated");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # AccountNotDelegated
 
                     ####################################################################################################
                     #    Collecting additional information about domain Users (PasswordNotRequired)
@@ -448,7 +469,7 @@ try{
                     }
                     $xmlWriter.WriteEndElement()  # PasswordNotRequired
 
-                    ####################################################################################################
+                    ###################################################################################################
                     #    Collecting additional information about domain Users (PasswordNeverExpires)
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users (PasswordNeverExpires)"
@@ -470,12 +491,86 @@ try{
                     }
                     $xmlWriter.WriteEndElement()  # PasswordNeverExpires
 
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (logonworkstations)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (logonworkstations)"
+                    $xmlWriter.WriteStartElement("logonworkstations")
+                    try{
+                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties description
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("logonworkstations", [string] $u."logonworkstations");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement()  # logonworkstations
+
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (ServicePrincipalNames / Service accounts)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (ServicePrincipalName)"
+                    $xmlWriter.WriteStartElement("ServicePrincipalName")
+                    try{
+                        $user_list = Get-ADUser -Filter 'ServicePrincipalName -like "*"' -Properties SamAccountName,ServicePrincipalName
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteStartElement("ServicePrincipalName");
+                                 foreach ($s in $u."ServicePrincipalName") {
+                                    $xmlWriter.WriteElementString("SPN", [string] $s);
+                                }
+                                $xmlWriter.WriteEndElement();
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # ServicePrincipalNames
+
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (AdminSDHolder)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (AdminSDHolder)"
+                    $xmlWriter.WriteStartElement("AdminSDHolder")
+                    try{
+                        $user_list = Get-ADUser -Filter {AdminSDHolder -eq 1} -Properties SamAccountName,AdminSDHolder
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("AdminSDHolder", [string] $u."AdminSDHolder");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # AdminSDHolder
+
+
+
+
                    #########################
                    ## End of all user addons
                    $end_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
                 $xmlWriter.WriteEndElement() # ADUserAddon
             }
+
 
             ############################################################################################################
             #    Collecting information about domain groups

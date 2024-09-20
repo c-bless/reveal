@@ -10,22 +10,24 @@
     Version:    0.6
     License:    GPLv3
 
-    In general the following data is collected: General information about the domain and the forest, domain trusts, list of
-    domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer and
-    user accounts and domain groups are collected.
+    In general the following data is collected: General information about the domain and the forest, domain trusts, list
+    of domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer
+    and user accounts and domain groups are collected.
 
     The amount of data collected by the script differs depending on the version of the domain-collector script.
 
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
-                                amount of attributes about computer accounts. It would take some time on larger domains.
+                                amount of attributes about computer and user accounts. It would take some time on
+                                larger domains.
 
     domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
-                                 larger amount of attributes about computer accounts.
+                                 larger amount of attributes about computer and user accounts.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
-                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller amount
-                                 of attributes about computer accounts.
+                                 "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller
+                                 amount of attributes about computer accounts. Only basic settings on user objects are
+                                 enumerated.
 
 
     .INPUTS
@@ -317,6 +319,7 @@ try{
                 $end_of_comp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
             }
+
 
 
             #############################################################################################################

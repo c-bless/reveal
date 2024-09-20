@@ -10,24 +10,24 @@
     Version:    0.6
     License:    GPLv3
 
-    In general the following data is collected: General information about the domain and the forest, domain trusts, list of
-    domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer and
-    user accounts and domain groups are collected.
+    In general the following data is collected: General information about the domain and the forest, domain trusts, list
+    of domain controllers, password policies (default policy and fine grained policies). Furthermore, lists of computer
+    and user accounts and domain groups are collected.
 
     The amount of data collected by the script differs depending on the version of the domain-collector script.
 
     domain-collector_full.ps1 : This version enumerates memberships for all domain groups. It also collects a larger
-                                amount of attributes about computer accounts. It would take some time on larger domains.
+                                amount of attributes about computer and user accounts. It would take some time on
+                                larger domains.
 
     domain-collector.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a
-                                 larger amount of attributes about computer accounts and user accounts with Kerberos
-                                 delegations.
+                                 larger amount of attributes about computer and user accounts.
 
     domain-collector_brief.ps1 : This version enumerates memberships for the domain groups "Domain Admins",
                                  "Enterprise Admins", "Schema Admins", "ProtectedUsers". It also collects a smaller
-                                 amount of attributes about computer and user accounts as well as user accounts with
-                                 Kerberos delegations.
+                                 amount of attributes about computer accounts. Only basic settings on user objects are
+                                 enumerated.
 
 
     .INPUTS
@@ -367,6 +367,68 @@ try{
                 }
                 $xmlWriter.WriteEndElement() # ADUserList
                 $end_of_users = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+            }
+
+
+            ############################################################################################################
+            #    Collecting additional information about domain Users (Kerberos delegations)
+            ############################################################################################################
+            if (Get-Command Get-ADUser  -ErrorAction SilentlyContinue) {
+                $xmlWriter.WriteStartElement("ADUserAddon")
+                    $start_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                    ####################################################################################################
+                    #    Collecting additional information about domain Users (Kerberos delegations)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users with Kerberos Delegations."
+
+                    $xmlWriter.WriteStartElement("TrustedForDelegation")
+                    try{
+                        $user_list = Get-ADUser -filter { TrustedForDelegation -eq $true} -properties TrustedForDelegation
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("TrustedForDelegation", [string] $u."TrustedForDelegation");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # TrustedForDelegation
+
+                    $xmlWriter.WriteStartElement("TrustedToAuthForDelegation")
+                    try{
+                        $user_list = Get-ADUser -filter { TrustedToAuthForDelegation -eq $true} -properties TrustedToAuthForDelegation,msDS-AllowedToDelegateTo
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("TrustedToAuthForDelegation", [string] $u."TrustedToAuthForDelegation");
+                                $xmlWriter.WriteStartElement("msDS-AllowedToDelegateTo");
+                                foreach ($s in $u."msDS-AllowedToDelegateTo") {
+                                    $xmlWriter.WriteElementString("SPN", [string] $s);
+                                }
+                                $xmlWriter.WriteEndElement(); # msDS-AllowedToDelegateTo
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # TrustedToAuthForDelegation
+
+
+
+                   #########################
+                   ## End of all user addons
+                   $end_of_users_addon = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+                $xmlWriter.WriteEndElement() # ADUserAddon
             }
 
             #############################################################################################################
