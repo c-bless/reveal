@@ -69,6 +69,8 @@
                       <dd class="col-sm-8">{{ user.PasswordNotRequired }}</dd>
                       <dt class="col-sm-4">PasswordExpired</dt>
                       <dd class="col-sm-8">{{ user.PasswordExpired }}</dd>
+                      <dt class="col-sm-4">AccountNotDelegated</dt>
+                      <dd class="col-sm-8">{{ user.AccountNotDelegated }}</dd>
                       <dt class="col-sm-4">pwdLastSet</dt>
                       <dd class="col-sm-8">{{ user.pwdLastSet }}</dd>
                       <dt class="col-sm-4">Modified</dt>
@@ -79,36 +81,69 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card card-olive">
-              <div class="card-header">
-                <h3 class="card-title">Memberships</h3>
+            <div class="row">
+                <div class="card card-olive">
+                <div class="card-header">
+                  <h3 class="card-title">Memberships</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Group</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% if user.Memberships %}
+                      {% for m in user.Memberships %}
+                      <tr>
+                        <td>{{ m.Group }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td>No members found.</td>
+                      </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
               </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Group</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {% if user.Memberships %}
-                    {% for m in user.Memberships %}
-                    <tr>
-                      <td>{{ m.Group }}</td>
-                    </tr>
-                    {% endfor %}
-                  {% else %}
-                    <tr>
-                      <td>No members found.</td>
-                    </tr>
-                  {% endif %}
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
             </div>
 
+            <div class="row">
+                <div class="card card-olive">
+                <div class="card-header">
+                  <h3 class="card-title">ServicePrincipalNames</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Group</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% if user.ServicePrincipalName %}
+                      {% for s in user.ServicePrincipalName %}
+                      <tr>
+                        <td>{{ s.SPN }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td>No SPNs found.</td>
+                      </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+            </div>
             <!-- /.card -->
           </div>
     </div>

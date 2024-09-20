@@ -55,7 +55,7 @@ def create_user_worksheet(workbook, user_list=[]):
 
     header_data = ["SamAccountName", "DisplayName", "Name", "GivenName", "Surname", "SID", "Enabled", "BadLogonCount",
                    "BadPwdCount", "Created", "LastBadPasswordAttempt", "lastLogon", "logonCount", "PasswordExpired",
-                   "PasswordLastSet", "Modified", "memberof", "memberships", "domain", 'TrustedForDelegation',
+                   "PasswordLastSet", "Modified", "memberof", "memberships", "domain", "AccountNotDelegated", 'TrustedForDelegation',
                    'TrustedToAuthForDelegation', 'msDS-AllowedToDelegateTo']
     header_format = workbook.add_format(header_format_dict)
     wrap_format = workbook.add_format(wrap_format_dict)
@@ -71,8 +71,8 @@ def create_user_worksheet(workbook, user_list=[]):
         spn_str = "\n".join(spns)
         tmp = [u.SAMAccountName, u.DisplayName, u.Name, u.GivenName, u.Surname, u.SID, u.Enabled, u.BadLogonCount,
                u.BadPwdCount, u.Created, u.LastBadPasswordAttempt, u.lastLogon, u.logonCount, u.PasswordExpired,
-               u.PasswordLastSet, u.Modified, u.MemberOfStr, membershipStr, u.Domain, u.TrustedForDelegation,
-               u.TrustedToAuthForDelegation, spn_str]
+               u.PasswordLastSet, u.Modified, u.MemberOfStr, membershipStr, u.Domain, u.AccountNotDelegated,
+               u.TrustedForDelegation, u.TrustedToAuthForDelegation, spn_str]
         rows.append(tmp)
 
     # Start from the first cell. Rows and columns are zero indexed.
@@ -81,12 +81,12 @@ def create_user_worksheet(workbook, user_list=[]):
     # Iterate over the data and write it out row by row.
     for r in rows:
         for c in r:
-            if col == 17 or col == 22:
+            if col == 17 or col == 23:
                 worksheet.write(row, col, str(c), wrap_format)
             else:
                 worksheet.write(row, col, str(c))
             col += 1
-        worksheet.autofilter("A1:T1")
+        worksheet.autofilter("A1:U1")
         col = 0
         row += 1
 
@@ -176,9 +176,9 @@ def create_domain_worksheet(workbook, domain, policy_list=[]):
     header_format = workbook.add_format(header_format_dict)
     wrap_format = workbook.add_format(wrap_format_dict)
 
-    header_data = ["Type", "Name", "ComplexityEnabled", "DistinguishedName", "LockoutDuration", "LockoutObservationWindow",
-                   "LockoutThreshold", "MaxPasswordAge", "MinPasswordAge", "MinPasswordLength",
-                   "PasswordHistoryCount", "ReversibleEncryptionEnabled"]
+    header_data = ["Type", "Name", "ComplexityEnabled", "DistinguishedName", "LockoutDuration",
+                   "LockoutObservationWindow", "LockoutThreshold", "MaxPasswordAge", "MinPasswordAge",
+                   "MinPasswordLength", "PasswordHistoryCount", "ReversibleEncryptionEnabled"]
 
     for col_num, data in enumerate(header_data):
         worksheet.write(20, col_num, data, header_format)
