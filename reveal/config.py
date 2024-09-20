@@ -39,6 +39,10 @@ class AppConfig(object):
 
     # Enable protection agains *Cross-site Request Forgery (CSRF)*
     CSRF_ENABLED = True
+    # Do not strictly check the referrer header
+    # This check will fail when the forwarded docker nginx port is different to 443
+    WTF_CSRF_SSL_STRICT = False
+    
     # import secrets
     # secrets.token_hex(32)
     CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY') or \
