@@ -57,3 +57,13 @@ class UserBadPwdCount(FlaskForm):
 
     search = SubmitField('Search')
     download = SubmitField('Download Users')
+
+
+
+class ADUserByUnconstraintDelegation(FlaskForm):
+    download = SubmitField('Download (Excel)')
+
+
+class ADUserByConstraintDelegation(FlaskForm):
+    download = SubmitField('Download (Excel)')
+

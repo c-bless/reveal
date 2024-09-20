@@ -1,4 +1,3 @@
-
 {% extends "layout/base_layout.html" %}
 {% import "_tablehelper.html" as helper %}
 
@@ -12,91 +11,91 @@
 {% if user %}
 
 <div class="row m-1">
-        <div class="col-md-6">
-            <div class="card card-olive">
-                  <div class="card-header">
-                    <h3 class="card-title">General Information</h3>
+    <div class="col-md-6">
+        <div class="card card-olive">
+            <div class="card-header">
+                <h3 class="card-title">General Information</h3>
 
-                    <div class="card-tools">
-                      <a href="#" class="btn btn-tool btn-sm">
+                <div class="card-tools">
+                    <a href="#" class="btn btn-tool btn-sm">
                         <i class="fas fa-download"></i>
-                      </a>
-                      <a href="#" class="btn btn-tool btn-sm">
+                    </a>
+                    <a href="#" class="btn btn-tool btn-sm">
                         <i class="fas fa-bars"></i>
-                      </a>
-                    </div>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                    <dl class="row">
-                      <dt class="col-sm-4">Domain</dt>
-                      <dd class="col-sm-8">{{ user.Domain }}</dd>
-                      <dt class="col-sm-4">Name</dt>
-                      <dd class="col-sm-8">{{ user.Name }}</dd>
-                      <dt class="col-sm-4">Disabled</dt>
-                      <dd class="col-sm-8">{{ user.Disabled }}</dd>
-                      <dt class="col-sm-4">LocalAccount</dt>
-                      <dd class="col-sm-8">{{ user.LocalAccount }}</dd>
-                      <dt class="col-sm-4">AccountType</dt>
-                      <dd class="col-sm-8">{{ user.AccountType }}</dd>
-                      <dt class="col-sm-4">SID</dt>
-                      <dd class="col-sm-8">{{ user.SID }}</dd>
-                      <dt class="col-sm-4">Lockout</dt>
-                      <dd class="col-sm-8">{{ user.Lockout }}</dd>
-                      <dt class="col-sm-4">PasswordChangeable</dt>
-                      <dd class="col-sm-8">{{ user.PasswordChangeable }}</dd>
-                      <dt class="col-sm-4">PasswordExpires</dt>
-                      <dd class="col-sm-8">{{ user.PasswordExpires }}</dd>
-                      <dt class="col-sm-4">PasswordRequired</dt>
-                      <dd class="col-sm-8">{{ user.PasswordRequired }}</dd>
-                      <dt class="col-sm-4">Description</dt>
-                      <dd class="col-sm-8">{{ user.Description }}</dd>
-                    </dl>
-                  </div>
-                  <!-- /.card-body -->
-
+                    </a>
+                </div>
             </div>
-        </div>
-
-
-        <div class="col-md-6">
-            <div class="card card-olive">
-                  <div class="card-header">
-                    <h3 class="card-title">Local groups</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                            <th>Group</th>
-                            <th>SID</th>
-                            <th>Caption</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {% if groups %}
-                        {% for g in groups %}
-                        <tr>
-                            <td>{{ g.Name }}</td>
-                            <td>{{ g.SID }}</td>
-                            <td>{{ g.Caption }}</td>
-                        </tr>
-                        {% endfor %}
-                      {% else %}
-                        <tr>
-                          <td colspan="3">No groups found.</td>
-                        </tr>
-                      {% endif %}
-                      </tbody>
-                    </table>
-                  </div>
-                  <!-- /.card-body -->
-
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Domain</dt>
+                    <dd class="col-sm-8">{{ user.Domain }}</dd>
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">{{ user.Name }}</dd>
+                    <dt class="col-sm-4">Disabled</dt>
+                    <dd class="col-sm-8">{{ user.Disabled }}</dd>
+                    <dt class="col-sm-4">LocalAccount</dt>
+                    <dd class="col-sm-8">{{ user.LocalAccount }}</dd>
+                    <dt class="col-sm-4">AccountType</dt>
+                    <dd class="col-sm-8">{{ user.AccountType }}</dd>
+                    <dt class="col-sm-4">SID</dt>
+                    <dd class="col-sm-8">{{ user.SID }}</dd>
+                    <dt class="col-sm-4">Lockout</dt>
+                    <dd class="col-sm-8">{{ user.Lockout }}</dd>
+                    <dt class="col-sm-4">PasswordChangeable</dt>
+                    <dd class="col-sm-8">{{ user.PasswordChangeable }}</dd>
+                    <dt class="col-sm-4">PasswordExpires</dt>
+                    <dd class="col-sm-8">{{ user.PasswordExpires }}</dd>
+                    <dt class="col-sm-4">PasswordRequired</dt>
+                    <dd class="col-sm-8">{{ user.PasswordRequired }}</dd>
+                    <dt class="col-sm-4">Description</dt>
+                    <dd class="col-sm-8">{{ user.Description }}</dd>
+                </dl>
             </div>
-        </div>
+            <!-- /.card-body -->
 
+        </div>
     </div>
+
+
+    <div class="col-md-6">
+        <div class="card card-olive">
+            <div class="card-header">
+                <h3 class="card-title">Local groups</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Group</th>
+                        <th>SID</th>
+                        <th>Caption</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if groups %}
+                    {% for g in groups %}
+                    <tr>
+                        <td>{{ g.Name }}</td>
+                        <td>{{ g.SID }}</td>
+                        <td>{{ g.Caption }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="3">No groups found.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+
+        </div>
+    </div>
+
+</div>
 
 {% endif %}
 {% endblock content %}

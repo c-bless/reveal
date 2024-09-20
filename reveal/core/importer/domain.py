@@ -321,15 +321,16 @@ def userTrustedToAuthForDel2db(xml, domain):
             if samaccountname is None:
                 continue
             try:
-                user = db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).first()
-                user.TrustedToAuthForDelegation = trusted4del
-                if "msDS-AllowedToDelegateTo" == x.tag:
-                    for s in x.getchildren():
-                        if "SPN" == s.tag:
-                            spn = ADUserAuthDelegationSPN()
-                            spn.SPN = s.text
-                            spn.User = user
-                            db.session.add(spn)
+                for e in x.getchildren():
+                    if "msDS-AllowedToDelegateTo" == e.tag:
+                        user = db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).first()
+                        user.TrustedToAuthForDelegation = trusted4del
+                        for s in e.getchildren():
+                            if "SPN" == s.tag:
+                                spn = ADUserAuthDelegationSPN()
+                                spn.SPN = s.text
+                                spn.User = user
+                                db.session.add(spn)
                 db.session.commit()
             except SQLAlchemyError as er:
                 db.session.rollback()
@@ -454,21 +455,20 @@ def userServicePrincipalName2db(xml, domain):
     for x in xml.getchildren():
         if "ADUser" == x.tag:
             samaccountname = None
-            spm = None
             for e in x.getchildren():
                 if "SamAccountName" == e.tag: samaccountname = e.text
-                if "SPN" == e.tag: spn = str2bool_or_none(e.text)
             if samaccountname is None:
                 continue
             try:
-                user = db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).first()
-                if "ServicePrincipalName" == x.tag:
-                    for s in x.getchildren():
-                        if "SPN" == s.tag:
-                            spn = ADUserServicePrincipalName()
-                            spn.SPN = s.text
-                            spn.User = user
-                            db.session.add(spn)
+                for sname in x.getchildren():
+                    if "ServicePrincipalName" == sname.tag:
+                        user = db.session.query(ADUser).filter(ADUser.SAMAccountName == samaccountname).first()
+                        for s in sname.getchildren():
+                            if "SPN" == s.tag:
+                                spn = ADUserServicePrincipalName()
+                                spn.SPN = s.text
+                                spn.User = user
+                                db.session.add(spn)
                 db.session.commit()
             except SQLAlchemyError as er:
                 db.session.rollback()

@@ -36,6 +36,18 @@ def find_user_with_delegation():
     ).all()
 
 
+def find_user_with_unconstraint_delegation():
+    return ADUser.query.filter(
+        ADUser.TrustedForDelegation == True
+    ).all()
+
+
+def find_user_with_constraint_delegation():
+    return ADUser.query.filter(
+        ADUser.TrustedToAuthForDelegation == True
+    ).all()
+
+
 def find_protected_users() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-525")).all()
 
