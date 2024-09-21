@@ -490,7 +490,7 @@ try{
                     Write-Host "[*] Collecting additional information about AD users (logonworkstations)"
                     $xmlWriter.WriteStartElement("logonworkstationsList")
                     try{
-                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties description
+                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties logonworkstations
                         foreach ($u in $user_list) {
                             try{
                                 $xmlWriter.WriteStartElement("ADUser");

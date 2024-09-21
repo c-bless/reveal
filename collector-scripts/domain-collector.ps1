@@ -501,7 +501,7 @@ try{
                     Write-Host "[*] Collecting additional information about AD users (logonworkstations)"
                     $xmlWriter.WriteStartElement("logonworkstationsList")
                     try{
-                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties description
+                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties logonworkstations
                         foreach ($u in $user_list) {
                             try{
                                 $xmlWriter.WriteStartElement("ADUser");
@@ -546,7 +546,7 @@ try{
                     ####################################################################################################
                     #    Collecting additional information about domain Users (SIDHistory)
                     ####################################################################################################
-                    Write-Host "[*] Collecting additional information about AD users (AdminSDHolder)"
+                    Write-Host "[*] Collecting additional information about AD users (SIDHistory)"
                     $xmlWriter.WriteStartElement("SIDHistoryList")
                     try{
                         $user_list = Get-ADUser -Filter 'SIDHistory -like "*"' -Properties SamAccountName,SIDHistory

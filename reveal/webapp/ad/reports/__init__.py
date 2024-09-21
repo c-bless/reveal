@@ -14,7 +14,9 @@ from reveal.webapp.ad.reports.user import ReportUserSIDHistory
 from reveal.webapp.ad.reports.user import ReportUserBadPwCountGtN
 from reveal.webapp.ad.reports.user import ReportUserPWExpired
 from reveal.webapp.ad.reports.user import ReportUserPWnotRequired
+from reveal.webapp.ad.reports.user import ReportUserLogonWorkstations
 from reveal.webapp.ad.reports.user import ReportUserPWNeverExpires
+from reveal.webapp.ad.reports.user import ReportUserSPNs
 from reveal.webapp.ad.reports.siemens import ReportSIMATICGroups
 
 
@@ -37,7 +39,9 @@ def get_report_usermgmt_list():
     report_plugin_list.append(ReportUserPWnotRequired())
     report_plugin_list.append(ReportSIMATICGroups())
     report_plugin_list.append(ReportUserPWNeverExpires())
+    report_plugin_list.append(ReportUserLogonWorkstations())
     report_plugin_list.append(ReportUserSIDHistory())
+    report_plugin_list.append(ReportUserSPNs())
     return report_plugin_list
 
 

@@ -7,6 +7,8 @@ from reveal.core.querries.ad import find_user_badpwcount_gt
 from reveal.core.querries.ad import find_user_pw_expired
 from reveal.core.querries.ad import find_user_pw_not_required
 from reveal.core.querries.ad import find_user_sidhistory
+from reveal.core.querries.ad import find_user_with_logonworkstations
+from reveal.core.querries.ad import find_user_with_SPNs
 from reveal.webapp.ad.forms.users import UserBadPwdCount
 from reveal.webapp.ad.forms.users import UserDownload
 from reveal.core.export.excel.ad import generate_user_excel
@@ -152,7 +154,7 @@ def report_aduser_sidhistory():
         if 'download' in request.form:
             output = generate_user_excel(user_list=users)
             return Response(output, mimetype="text/xlsx",
-                            headers={"Content-disposition": "attachment; filename=ADUser-with-SID-history",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-SID-history.xlsx",
                                      "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
 
     return render_template('ad/reports/user_with_sidhistory.html', users=users, form=form,
@@ -167,5 +169,71 @@ class ReportUserSIDHistory(ReportInfo):
             category="User Management",
             tags=["User Management", "AD User", "SID History"],
             description='List all domain user which have the attribute SIDHistory set',
-            views=[("view", url_for("ad.report_aduser_pwnotrequired"))]
+            views=[("view", url_for("ad.report_aduser_sidhistory"))]
+        )
+
+
+
+####################################################################
+# Get users with LogonWorkstations
+####################################################################
+@ad_bp.route('/reports/user/logonworkstations/', methods=['GET','POST'])
+@login_required
+def report_aduser_logonworkstations():
+    form = UserDownload()
+    users = find_user_with_logonworkstations()
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_user_excel(user_list=users)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-logonworkstations.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return render_template('ad/reports/user_with_logonworkstations.html', users=users, form=form,
+                           report_name= 'List User which have LogonWorkstations set.')
+
+
+
+class ReportUserLogonWorkstations(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List User with LogonWorkstations',
+            category="User Management",
+            tags=["User Management", "AD User", "LogonWorkstations"],
+            description='Report all domain user with a LogonWorkstations set.',
+            views=[("view", url_for("ad.report_aduser_logonworkstations"))]
+        )
+
+
+
+####################################################################
+# Get users with ServicePrincipalNames
+####################################################################
+@ad_bp.route('/reports/user/spns/', methods=['GET','POST'])
+@login_required
+def report_aduser_spns():
+    form = UserDownload()
+    users = find_user_with_SPNs()
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_user_excel(user_list=users)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-spns.xlsx",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return render_template('ad/reports/user_with_spns.html', users=users, form=form,
+                           report_name= 'List User which have LogonWorkstations set.')
+
+
+
+class ReportUserSPNs(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List User with ServicePrincipalNames',
+            category="User Management",
+            tags=["User Management", "AD User", "ServicePrincipalNames"],
+            description='Report all domain user with ServicePrincipalNames set.',
+            views=[("view", url_for("ad.report_aduser_spns"))]
         )
