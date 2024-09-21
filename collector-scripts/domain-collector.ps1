@@ -53,10 +53,14 @@ import-module ActiveDirectory -ErrorAction SilentlyContinue
 # Definition for which domain groups an enumeration of memberships will be done
 #############################################################################################################
 # Domain Admins -> "-512"
+# Cert Publishers -> "517"
 # Schema-Admins -> "-518"
 # Enterprise-Admins -> "-519"
 # ProtectedUsers -> "525"
-$group_sids_to_enum = @("-512","-518", "-519" , "-525")
+# Key Admins -> "526"
+# Enterprise Key Admins -> "527"
+# Backup Operators -> "551"
+$group_sids_to_enum = @("-512","-517", "-518", "-519" , "-525", "-526", "-527", "-551")
 
 try{
     # check if command from activedirectory module is available. If if it not installed (command above would fail), it can be imported manually before executing the script. 
@@ -387,7 +391,7 @@ try{
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users with Kerberos Delegations."
 
-                    $xmlWriter.WriteStartElement("TrustedForDelegation")
+                    $xmlWriter.WriteStartElement("TrustedForDelegationList")
                     try{
                         $user_list = Get-ADUser -filter { TrustedForDelegation -eq $true} -properties TrustedForDelegation
                         foreach ($u in $user_list) {
@@ -405,7 +409,7 @@ try{
                     }
                     $xmlWriter.WriteEndElement() # TrustedForDelegation
 
-                    $xmlWriter.WriteStartElement("TrustedToAuthForDelegation")
+                    $xmlWriter.WriteStartElement("TrustedToAuthForDelegationList")
                     try{
                         $user_list = Get-ADUser -filter { TrustedToAuthForDelegation -eq $true} -properties TrustedToAuthForDelegation,msDS-AllowedToDelegateTo
                         foreach ($u in $user_list) {
@@ -429,7 +433,7 @@ try{
                     $xmlWriter.WriteEndElement() # TrustedToAuthForDelegation
 
                     ###  Accounts that cannot be delegated
-                    $xmlWriter.WriteStartElement("AccountNotDelegated")
+                    $xmlWriter.WriteStartElement("AccountNotDelegatedList")
                     try{
                         $user_list = Get-ADUser -filter { AccountNotDelegated -eq $true} -properties AccountNotDelegated
                         foreach ($u in $user_list) {
@@ -451,7 +455,7 @@ try{
                     #    Collecting additional information about domain Users (PasswordNotRequired)
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users (PasswordNotRequired)"
-                    $xmlWriter.WriteStartElement("PasswordNotRequired")
+                    $xmlWriter.WriteStartElement("PasswordNotRequiredList")
                     try{
                         $user_list = Get-ADUser -filter { PasswordNotRequired -eq $true} -properties PasswordNotRequired
                         foreach ($u in $user_list) {
@@ -473,7 +477,7 @@ try{
                     #    Collecting additional information about domain Users (PasswordNeverExpires)
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users (PasswordNeverExpires)"
-                    $xmlWriter.WriteStartElement("PasswordNeverExpires")
+                    $xmlWriter.WriteStartElement("PasswordNeverExpiresList")
                     try{
                         $user_list = Get-ADUser -filter { PasswordNeverExpires -eq $true} -properties PasswordNeverExpires
                         foreach ($u in $user_list) {
@@ -495,9 +499,9 @@ try{
                     #    Collecting additional information about domain Users (logonworkstations)
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users (logonworkstations)"
-                    $xmlWriter.WriteStartElement("logonworkstations")
+                    $xmlWriter.WriteStartElement("logonworkstationsList")
                     try{
-                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties description
+                        $user_list = Get-ADUser -Filter 'logonworkstations -like "*"' -properties logonworkstations
                         foreach ($u in $user_list) {
                             try{
                                 $xmlWriter.WriteStartElement("ADUser");
@@ -517,7 +521,7 @@ try{
                     #    Collecting additional information about domain Users (ServicePrincipalNames / Service accounts)
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users (ServicePrincipalName)"
-                    $xmlWriter.WriteStartElement("ServicePrincipalName")
+                    $xmlWriter.WriteStartElement("ServicePrincipalNameList")
                     try{
                         $user_list = Get-ADUser -Filter 'ServicePrincipalName -like "*"' -Properties SamAccountName,ServicePrincipalName
                         foreach ($u in $user_list) {
@@ -540,10 +544,33 @@ try{
                     $xmlWriter.WriteEndElement() # ServicePrincipalNames
 
                     ####################################################################################################
+                    #    Collecting additional information about domain Users (SIDHistory)
+                    ####################################################################################################
+                    Write-Host "[*] Collecting additional information about AD users (SIDHistory)"
+                    $xmlWriter.WriteStartElement("SIDHistoryList")
+                    try{
+                        $user_list = Get-ADUser -Filter 'SIDHistory -like "*"' -Properties SamAccountName,SIDHistory
+                        foreach ($u in $user_list) {
+                            try{
+                                $xmlWriter.WriteStartElement("ADUser");
+                                $xmlWriter.WriteElementString("SamAccountName", [string] $u."SamAccountName");
+                                $xmlWriter.WriteElementString("SIDHistory", [string] $u."SIDHistory");
+                                $xmlWriter.WriteEndElement(); # ADUser
+                            } catch {
+                                # Ignore this ADUser object and try to parse the next. No Tag will be added for this one.
+                            }
+                        }
+                    } catch {
+                        # Failed executions will be ignored and no ADUser tags will be added under ADUserList
+                    }
+                    $xmlWriter.WriteEndElement() # SIDHistoryList
+
+
+                    ####################################################################################################
                     #    Collecting additional information about domain Users (AdminSDHolder)
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users (AdminSDHolder)"
-                    $xmlWriter.WriteStartElement("AdminSDHolder")
+                    $xmlWriter.WriteStartElement("AdminSDHolderList")
                     try{
                         $user_list = Get-ADUser -Filter {AdminSDHolder -eq 1} -Properties SamAccountName,AdminSDHolder
                         foreach ($u in $user_list) {
@@ -570,7 +597,6 @@ try{
 
                 $xmlWriter.WriteEndElement() # ADUserAddon
             }
-
 
             ############################################################################################################
             #    Collecting information about domain groups

@@ -477,47 +477,47 @@ def userServicePrincipalName2db(xml, domain):
 
 def userAddons2db(xml, domain):
     for x in xml.getchildren():
-        if "TrustedForDelegation" == x.tag:
+        if "TrustedForDelegationList" == x.tag:
             try:
                 userTrustedForDel2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "TrustedToAuthForDelegation" == x.tag:
+        if "TrustedToAuthForDelegationList" == x.tag:
             try:
                 userTrustedToAuthForDel2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "AccountNotDelegated" == x.tag:
+        if "AccountNotDelegatedList" == x.tag:
             try:
                 userAccountNotDelegated2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "PasswordNotRequired" == x.tag:
+        if "PasswordNotRequiredList" == x.tag:
             try:
                 userPasswordNotRequired2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "PasswordNeverExpires" == x.tag:
+        if "PasswordNeverExpiresList" == x.tag:
             try:
                 userPasswordNeverExpires2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "logonworkstations" == x.tag:
+        if "logonworkstationsList" == x.tag:
             try:
                 userLogonWorkstations2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "ServicePrincipalName" == x.tag:
+        if "ServicePrincipalNameList" == x.tag:
             try:
                 userServicePrincipalName2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "SIDHistory" == x.tag:
+        if "SIDHistoryList" == x.tag:
             try:
                 userSIDHistory2db(xml=x, domain=domain)
             except Exception as error:
                 print(error)
-        if "AdminSDHolder" == x.tag:
+        if "AdminSDHolderList" == x.tag:
             try:
                 userAdminSDHolder2db(xml=x, domain=domain)
             except Exception as error:

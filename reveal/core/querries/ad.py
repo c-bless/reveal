@@ -3,7 +3,7 @@ from sqlalchemy import and_, or_
 from reveal.core.models.activedirectory import ADGroup
 from reveal.core.models.activedirectory import ADSPN
 from reveal.core.models.activedirectory import ADComputer
-from reveal.core.models.activedirectory import ADUser
+from reveal.core.models.activedirectory import ADUser, ADUserServicePrincipalName
 
 def find_domain_admin_groups() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-512")).all()
@@ -48,6 +48,16 @@ def find_user_with_constraint_delegation():
     ).all()
 
 
+def find_user_with_logonworkstations():
+    return ADUser.query.filter(
+        ADUser.LogonWorkstations.ilike("*")
+    ).all()
+
+
+def find_user_with_SPNs() -> list[ADUser]:
+    return ADUser.query.filter().join(ADUserServicePrincipalName).filter(ADUserServicePrincipalName != None).all()
+
+
 def find_protected_users() -> list[ADGroup]:
     return ADGroup.query.filter(ADGroup.SID.ilike("%-525")).all()
 
@@ -58,6 +68,9 @@ def find_user_pw_expired() -> list[ADUser]:
 def find_user_pw_not_required() -> list[ADUser]:
     return ADUser.query.filter(ADUser.PasswordNotRequired == True).all()
 
+
+def find_user_sidhistory() -> list[ADUser]:
+    return ADUser.query.filter(ADUser.SIDHistory.ilike("S%")).all()
 
 
 def find_user_pw_never_expires() -> list[ADUser]:
