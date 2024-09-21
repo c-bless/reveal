@@ -1,13 +1,15 @@
 from flask import render_template
 from flask_login import login_required
 from reveal.webapp.ad import ad_bp
-from reveal.webapp.ad.reports.admins import ReportDomainAdminGroups
-from reveal.webapp.ad.reports.admins import ReportEnterpriseAdminGroups
-from reveal.webapp.ad.reports.admins import ReportSchemaAdminGroups
+from reveal.webapp.ad.reports.groups import ReportDomainAdminGroups
+from reveal.webapp.ad.reports.groups import ReportEnterpriseAdminGroups
+from reveal.webapp.ad.reports.groups import ReportSchemaAdminGroups
+from reveal.webapp.ad.reports.groups import ReportProtectedUsersGroups
 from reveal.webapp.ad.reports.spn import ReportComputerBySPN
 from reveal.webapp.ad.reports.delegations import ReportComputerByUnconstraintDelegation
 from reveal.webapp.ad.reports.delegations import ReportUserByUnconstraintDelegation
 from reveal.webapp.ad.reports.delegations import ReportUserByConstraintDelegation
+from reveal.webapp.ad.reports.user import ReportUserSIDHistory
 
 from reveal.webapp.ad.reports.user import ReportUserBadPwCountGtN
 from reveal.webapp.ad.reports.user import ReportUserPWExpired
@@ -29,11 +31,13 @@ def get_report_usermgmt_list():
     report_plugin_list.append(ReportDomainAdminGroups())
     report_plugin_list.append(ReportEnterpriseAdminGroups())
     report_plugin_list.append(ReportSchemaAdminGroups())
+    report_plugin_list.append(ReportProtectedUsersGroups())
     report_plugin_list.append(ReportUserBadPwCountGtN())
     report_plugin_list.append(ReportUserPWExpired())
     report_plugin_list.append(ReportUserPWnotRequired())
     report_plugin_list.append(ReportSIMATICGroups())
     report_plugin_list.append(ReportUserPWNeverExpires())
+    report_plugin_list.append(ReportUserSIDHistory())
     return report_plugin_list
 
 

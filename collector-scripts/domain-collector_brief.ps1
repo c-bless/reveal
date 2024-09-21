@@ -381,7 +381,7 @@ try{
                     ####################################################################################################
                     Write-Host "[*] Collecting additional information about AD users with Kerberos Delegations."
 
-                    $xmlWriter.WriteStartElement("TrustedForDelegation")
+                    $xmlWriter.WriteStartElement("TrustedForDelegationList")
                     try{
                         $user_list = Get-ADUser -filter { TrustedForDelegation -eq $true} -properties TrustedForDelegation
                         foreach ($u in $user_list) {
@@ -399,7 +399,7 @@ try{
                     }
                     $xmlWriter.WriteEndElement() # TrustedForDelegation
 
-                    $xmlWriter.WriteStartElement("TrustedToAuthForDelegation")
+                    $xmlWriter.WriteStartElement("TrustedToAuthForDelegationList")
                     try{
                         $user_list = Get-ADUser -filter { TrustedToAuthForDelegation -eq $true} -properties TrustedToAuthForDelegation,msDS-AllowedToDelegateTo
                         foreach ($u in $user_list) {

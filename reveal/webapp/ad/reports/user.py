@@ -6,6 +6,7 @@ from reveal.core.reports import ReportInfo
 from reveal.core.querries.ad import find_user_badpwcount_gt
 from reveal.core.querries.ad import find_user_pw_expired
 from reveal.core.querries.ad import find_user_pw_not_required
+from reveal.core.querries.ad import find_user_sidhistory
 from reveal.webapp.ad.forms.users import UserBadPwdCount
 from reveal.webapp.ad.forms.users import UserDownload
 from reveal.core.export.excel.ad import generate_user_excel
@@ -134,5 +135,37 @@ class ReportUserPWnotRequired(ReportInfo):
             category="User Management",
             tags=["User Management", "AD User", "password not required"],
             description='Report all domain user which have attribute PasswordNotRequired set',
+            views=[("view", url_for("ad.report_aduser_pwnotrequired"))]
+        )
+
+
+
+####################################################################
+# Get users with PasswordNotRequired
+####################################################################
+@ad_bp.route('/reports/user/sidhistory/', methods=['GET','POST'])
+@login_required
+def report_aduser_sidhistory():
+    form = UserDownload()
+    users = find_user_sidhistory()
+    if request.method == 'POST' and form.validate_on_submit():
+        if 'download' in request.form:
+            output = generate_user_excel(user_list=users)
+            return Response(output, mimetype="text/xlsx",
+                            headers={"Content-disposition": "attachment; filename=ADUser-with-SID-history",
+                                     "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+
+    return render_template('ad/reports/user_with_sidhistory.html', users=users, form=form,
+                           report_name= 'List User which have PasswordNotRequired set.')
+
+
+class ReportUserSIDHistory(ReportInfo):
+
+    def __init__(self):
+        super().initWithParams(
+            name='List User which have a SID History',
+            category="User Management",
+            tags=["User Management", "AD User", "SID History"],
+            description='List all domain user which have the attribute SIDHistory set',
             views=[("view", url_for("ad.report_aduser_pwnotrequired"))]
         )

@@ -59,6 +59,9 @@ def find_user_pw_not_required() -> list[ADUser]:
     return ADUser.query.filter(ADUser.PasswordNotRequired == True).all()
 
 
+def find_user_sidhistory() -> list[ADUser]:
+    return ADUser.query.filter(ADUser.SIDHistory.ilike("S%")).all()
+
 
 def find_user_pw_never_expires() -> list[ADUser]:
     return ADUser.query.filter(ADUser.PasswordNeverExpires == True).all()
