@@ -2,6 +2,7 @@ meta:
   name: "PCS7 v9.1 Compendium F"
   version: 0.1
   description: "Checks config settings recommended in PCS7 v9.1 Compendium Part F"
+  reference: ""
 
 
 system:
@@ -15,7 +16,7 @@ system:
   group_checks:
     group_memberships:
       - SIMATIC_HMI:
-          name: "SIMATIC_HMI"
+          name: "SIMATIC HMI"
           nested_groups: [ "GG_SIMATIC_HMI" ]
           user_members: [ ]
       - SIMATIC_HMI_CS:
@@ -67,6 +68,7 @@ system:
       names: [ ]
 
     not_running:
+      reference: "6.2.1 Deaktivieren von Diensten"
       names: [ "BTAGService", "bthserv", "WdiServiceHost", "DPS", "RmSvc", "lfsvc", "pla", "MapsBroker", "PhoneSvc",
                "WalletService", "WMPNetworkSvc", "FontCache3.0.0.0", "icssvc","WcsPlugInService", "wisvc", "XboxGipSvc",
                "XblAuthManager", "XboxNetApiSvc", "XblGameSave", "SEMgrSvc", "CertPropSvc" ]
