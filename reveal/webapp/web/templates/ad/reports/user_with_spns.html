@@ -46,7 +46,7 @@
         <td> {{ u.Enabled }}</td>
         <td> {{ u.DisplayName }}</td>
         <td>
-            {% for s in u.ServicePrincipalNames %}
+            {% for s in u.ServiceSPN %}
             {{ s.SPN }} <br/>
             {% endfor %}
         </td>

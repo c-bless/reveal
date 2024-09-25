@@ -1,0 +1,130 @@
+meta:
+  name: "PCS7 v9.1 Compendium F"
+  version: 0.1
+  description: "Checks config settings recommended in PCS7 v9.1 Compendium Part F"
+  reference: ""
+
+
+system:
+
+  user_checks:
+    status:
+      - Guest:
+          enabled: false
+          name: "guest"
+
+  group_checks:
+    group_memberships:
+      - SIMATIC_HMI:
+          name: "SIMATIC HMI"
+          nested_groups: [ "GG_SIMATIC_HMI" ]
+          user_members: [ ]
+      - SIMATIC_HMI_CS:
+          name: "SIMATIC HMI CS"
+          nested_groups: [ "GG_SIMATIC_HMI_CS" ]
+          user_members: [ ]
+      - SIMATIC_BATCH:
+          name: "SIMATIC BATCH"
+          nested_groups: [ "GG SIMATIC BATCH" ]
+          user_members: [ ]
+
+
+  service_status_checks:
+    # PCS7 9.0
+    # The following services can be disabled for all operating systems supported by PCS 7 V9.0:
+    # - Certificate distribution
+    # - Diagnostic Policy Service (DPS)	
+    # - Diagnostic Service Host (WdiServiceHost)
+    # - Windows Color System
+    # - Windows Connect Now - Config Registrar (wcncsvc)
+    # - Performance Logs and Alerts (pla)
+    # - Windows Presentation Foundation Font Cache (FontCache3.0.0.0)	
+
+    # PCS7 9.1 / 6.2.1 Deaktivieren von Diensten
+    # - Bluetooth-Audiogateway-Dienst                    (BTAGService)
+    # - Bluetooth-UnterstÜtzungsdienst                   (bthserv)
+    # - Bluetooth-Unterstützungsdienst für Benutzer
+    # - Diagnosediensthost                               (WdiServiceHost)
+    # - Diagnoserichtliniendienst                        (DPS)
+    # - Funkverwaltungsdienst                            (RmSvc)
+    # - Geolocation-Dienst                               (lfsvc)
+    # - Leistungsprotokolle und -warnungen               (pla)
+    # - Manager für heruntergeladene Karten              (MapsBroker)
+    # - Telefondienst                                    (PhoneSvc)
+    # - WalletService                                    (WalletService)
+    # - Windows Media Player-Netzwerkfreigabedienst      (WMPNetworkSvc)
+    # - Windows Presentation Foundation-Schriftartcache  (FontCache3.0.0.0)
+    # - Windows-Dienst für mobile Hotspots               (icssvc)
+    # - Windows-Farbsystem                               (WcsPlugInService)
+    # - Windows-Insider-Dienst                           (wisvc)
+    # - Windows-Sofortverbindung - Konfigurationsregistrierungsstelle
+    # - Xbox Accessory Management Service                (XboxGipSvc)
+    # - Xbox Live Authentifizierungs-Manager             (XblAuthManager)
+    # - Xbox Live-Netzwerkservice                        (XboxNetApiSvc)
+    # - Xbox Live-Spiele speichern                       (XblGameSave)
+    # - Zahlungs- und NFC/SE-Manager                     (SEMgrSvc)
+    # - Zertifikatverteilung                             (CertPropSvc)
+    running:
+      names: [ ]
+
+    not_running:
+      reference: "6.2.1 Deaktivieren von Diensten"
+      names: [ "BTAGService", "bthserv", "WdiServiceHost", "DPS", "RmSvc", "lfsvc", "pla", "MapsBroker", "PhoneSvc",
+               "WalletService", "WMPNetworkSvc", "FontCache3.0.0.0", "icssvc","WcsPlugInService", "wisvc", "XboxGipSvc",
+               "XblAuthManager", "XboxNetApiSvc", "XblGameSave", "SEMgrSvc", "CertPropSvc" ]
+
+
+  service_startmode_checks:
+    disabled:
+      names: [ "BTAGService", "bthserv", "WdiServiceHost", "DPS", "RmSvc", "lfsvc", "pla", "MapsBroker", "PhoneSvc",
+               "WalletService", "WMPNetworkSvc", "FontCache3.0.0.0", "icssvc","WcsPlugInService", "wisvc", "XboxGipSvc",
+               "XblAuthManager", "XboxNetApiSvc", "XblGameSave", "SEMgrSvc", "CertPropSvc" ]
+    accept_manual: True
+
+  firewall_checks:
+    # all, public, domain, private
+    enabled_profiles: [ 'public', 'domain', 'private' ]
+    disabled_profiles: [ ]
+
+  SMB:
+    v1: disabled
+    signing_enabled: True
+    signing_required: True
+
+  configcheck_results:
+    - sticky_keys:
+        name: "Sticky Keys Enabled"
+        result: True
+    - sslv2.0_client:
+        name: "SSL 2.0 - disabled (Client)"
+        result: Disabled
+    - sslv2.0_server:
+        name: "SSL 2.0 - disabled (Server)"
+        result: Disabled
+    - sslv3.0_client:
+        name: "SSL 3.0 - disabled (Client)"
+        result: Disabled
+    - sslv3.0_server:
+        name: "SSL 3.0 - disabled (Server)"
+        result: Disabled
+    - tls1.0_client:
+        name: "TLS 1.0 - disabled (Client)"
+        result: Disabled
+    - tls1.0_server:
+        name: "TLS 1.0 - disabled (Server)"
+        result: Disabled
+    - tls1.1_client:
+        name: "TLS 1.1 - disabled (Client)"
+        result: Disabled
+    - tls1.1_server:
+        name: "TLS 1.1 - disabled (Server)"
+        result: Disabled
+    - tls1.2_client:
+        name: "TLS 1.2 - disabled (Client)"
+        result: Enabled
+    - tls1.2_server:
+        name: "TLS 1.2 - disabled (Server)"
+        result: Enabled
+
+  wsus:
+    https_enabled: True
