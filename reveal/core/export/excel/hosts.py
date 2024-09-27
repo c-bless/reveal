@@ -1,10 +1,10 @@
-
 from io import BytesIO
 
 import xlsxwriter
 
 from reveal.core.sids import SID_LOCAL_ADMIN_GROUP
 from reveal.core.sids import SID_BUILTIN_REMOTE_DESKTOP_USERS
+
 
 def generate_hosts_excel(hosts=[]):
     output = BytesIO()
@@ -28,14 +28,15 @@ def generate_hosts_excel(hosts=[]):
             products.append("{0} ({1})".format(p.Name, p.Version))
         if len(products) == 0: products.append("")
         for u in h.Users:
-            users.append("{0}\\{1} (Disabled: {2}, PW required: {3})".format(u.Domain, u.Name, u.Disabled, u.PasswordRequired))
+            users.append(
+                "{0}\\{1} (Disabled: {2}, PW required: {3})".format(u.Domain, u.Name, u.Disabled, u.PasswordRequired))
         if len(users) == 0: users.append("")
         for hf in h.Hotfixes:
             hotfixes.append("{0} ({1})".format(hf.HotfixId, hf.InstalledOn))
         if len(hotfixes) == 0: hotfixes.append("")
         for g in h.Groups:
             name = g.Name
-            members =[]
+            members = []
             for m in g.Members:
                 members.append(str(m.Caption))
             if len(members) == 0:
@@ -52,19 +53,19 @@ def generate_hosts_excel(hosts=[]):
         if h.DefaultPassword:
             defaultPassword = "PW IN Registry"
 
-        tmp = [h.SystemGroup, h.Location, h.Label, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber,
-               "\n".join(ips), "\n".join(users),  "\n".join(groups), "\n".join(admins), "\n".join(rdp),
+        tmp = [h.SystemGroup, h.Location, h.Label, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion,
+               h.OSBuildNumber,
+               "\n".join(ips), "\n".join(users), "\n".join(groups), "\n".join(admins), "\n".join(rdp),
                "\n".join(products), "\n".join(hotfixes), h.LastUpdate, h.OSInstallDate, h.OSProductType, h.LogonServer,
                h.TimeZone, h.KeyboardLayout, h.HyperVisorPresent, h.DeviceGuardSmartStatus, h.PSVersion,
                h.AutoAdminLogon, h.ForceAutoLogon, defaultPassword, h.DefaultUserName, h.PS2Installed]
         rows.append(tmp)
 
-
     header_data = ["Systemgroup", "Location", "Label", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
                    "OSBuildNumber", "IPs", "Users", "Groups with members", "Admins", "RDP Users", "Products",
                    "hotfixes", "last update", "OSInstallDate", "OSProductType", "LogonServer", "TimeZone",
                    "KeyboardLayout", "HyperVisorPresent", "DeviceGuardSmartStatus", "PSVersion", "AutoAdminLogon",
-                   "ForceAutoLogon", "DefaultPassword", "DefaultUserName","PS2Installed"]
+                   "ForceAutoLogon", "DefaultPassword", "DefaultUserName", "PS2Installed"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -80,7 +81,7 @@ def generate_hosts_excel(hosts=[]):
     # Iterate over the data and write it out row by row.
     for host in rows:
         for c in host:
-            if ( col > 8) and (col <= 15):
+            if (col > 8) and (col <= 15):
                 worksheet.write(row, col, str(c), wrap_format)
             else:
                 worksheet.write(row, col, str(c))
@@ -106,9 +107,9 @@ def generate_hosts_excel_brief(hosts=[]):
     rows = []
 
     for h in hosts:
-        tmp = [h.SystemGroup, h.Label, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion, h.OSBuildNumber]
+        tmp = [h.SystemGroup, h.Label, h.Location, h.Hostname, h.Domain, h.DomainRole, h.OSName, h.OSVersion,
+               h.OSBuildNumber]
         rows.append(tmp)
-
 
     header_data = ["Systemgroup", "Label", "Location", "Hostname", "Domain", "DomainRole", "OSName", "OSVersion",
                    "OSBuildNumber"]
@@ -142,7 +143,6 @@ def generate_hosts_excel_brief(hosts=[]):
     return output
 
 
-
 def generate_wsus(hosts=[]):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})
@@ -154,10 +154,8 @@ def generate_wsus(hosts=[]):
         tmp = [h.Hostname, h.SystemGroup, h.Location, h.Label, h.Domain, h.OSName, h.WUServer, h.LastUpdate]
         rows.append(tmp)
 
-
     header_data = ["Hostname", "Location", "Systemgroup", "Label", "Domain", "OSName", "WSUS Server", "Last Update"]
 
-    wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
                                          'bottom': 2,
                                          'bg_color': '#CCCCCC'})

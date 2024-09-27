@@ -19,6 +19,7 @@ from reveal.core.models.sysinfo import ShareACLNTFS
 from reveal.core.models.sysinfo import ServiceACL
 from reveal.core.models.sysinfo import PSInstalledVersions
 from reveal.core.models.sysinfo import DefenderSettings
+from reveal.core.models.sysinfo import DefenderStatus
 from reveal.core.models.sysinfo import ConfigCheck
 from reveal.core.models.sysinfo import RegistryCheck
 from reveal.core.models.sysinfo import FileExistCheck
@@ -353,13 +354,53 @@ def printers2db(xml, host):
             db.session.add(printer)
 
 
-def defenderSettings2db(xml, host):
+def defenderStatus(xml, host):
+    status = DefenderStatus()
     for i in xml.getchildren():
-        setting = DefenderSettings()
-        setting.Name = str(i.tag)
-        setting.Value = i.text
-        setting.Host = host
-        db.session.add(setting)
+        if "AMEngineVersion" == i.tag: status.AMEngineVersion = str(i.text)
+        if "AMProductVersion" == i.tag: status.AMProductVersion = str(i.text)
+        if "AMServiceEnabled" == i.tag: status.AMServiceEnabled = str2bool_or_none(i.text)
+        if "AMServiceVersion" == i.tag: status.AMServiceVersion = str(i.text)
+        if "AntispywareEnabled" == i.tag: status.AntispywareEnabled = str2bool_or_none(i.text)
+        if "AntispywareSignatureLastUpdated" == i.tag: status.AntispywareSignatureLastUpdated = str(i.text)
+        if "AntivirusEnabled" == i.tag: status.AntivirusEnabled = str2bool_or_none(i.text)
+        if "AntivirusSignatureLastUpdated" == i.tag: status.AntivirusSignatureLastUpdated = str2bool_or_none(i.text)
+        if "AntivirusSignatureVersion" == i.tag: status.AntivirusSignatureVersion = str(i.text)
+        if "BehaviorMonitorEnabled" == i.tag: status.BehaviorMonitorEnabled = str2bool_or_none(i.text)
+        if "IoavProtectionEnabled" == i.tag: status.IoavProtectionEnabled = str2bool_or_none(i.text)
+        if "IsVirtualMachine" == i.tag: status.IsVirtualMachine = str2bool_or_none(i.text)
+        if "NISEnabled" == i.tag: status.NISEnabled = str2bool_or_none(i.text)
+        if "NISEngineVersion" == i.tag: status.NISEngineVersion = str(i.text)
+        if "NISSignatureLastUpdated" == i.tag: status.NISSignatureLastUpdated = str(i.text)
+        if "NISSignatureVersion" == i.tag: status.NISSignatureVersion = str(i.text)
+        if "OnAccessProtectionEnabled" == i.tag: status.OnAccessProtectionEnabled = str2bool_or_none(i.text)
+        if "RealTimeProtectionEnabled" == i.tag: status.RealTimeProtectionEnabled = str2bool_or_none(i.text)
+    db.session.add(status)
+
+
+def defenderSettings2db(xml, host):
+    settings = DefenderSettings()
+    for i in xml.getchildren():
+        if "DisableArchiveScanning" == i.tag: settings.DisableArchiveScanning = str2bool_or_none(i.text)
+        if "DisableAutoExclusions" == i.tag: settings.DisableAutoExclusions = str2bool_or_none(i.text)
+        if "DisableBehaviorMonitoring" == i.tag: settings.DisableBehaviorMonitoring = str2bool_or_none(i.text)
+        if "DisableBlockAtFirstSeen" == i.tag: settings.DisableBlockAtFirstSeen = str2bool_or_none(i.text)
+        if "DisableCatchupFullScan" == i.tag: settings.DisableCatchupFullScan = str2bool_or_none(i.text)
+        if "DisableCatchupQuickScan" == i.tag: settings.DisableCatchupQuickScan = str2bool_or_none(i.text)
+        if "DisableEmailScanning" == i.tag: settings.DisableEmailScanning = str2bool_or_none(i.text)
+        if "DisableIntrusionPreventionSystem" == i.tag: settings.DisableIntrusionPreventionSystem = str2bool_or_none(i.text)
+        if "DisableIOAVProtection" == i.tag: settings.DisableIOAVProtection = str2bool_or_none(i.text)
+        if "DisableRealtimeMonitoring" == i.tag: settings.DisableRealtimeMonitoring = str2bool_or_none(i.text)
+        if "DisableRemovableDriveScanning" == i.tag: settings.DisableRemovableDriveScanning = str2bool_or_none(i.text)
+        if "DisableRemovableDriveScanning" == i.tag: settings.DisableRemovableDriveScanning = str2bool_or_none(i.text)
+        if "DisableRestorePoint" == i.tag: settings.DisableRestorePoint = str2bool_or_none(i.text)
+        if "DisableScanningMappedNetworkDrivesForFullScan" == i.tag: settings.DisableScanningMappedNetworkDrivesForFullScan = str2bool_or_none(i.text)
+        if "DisableScanningNetworkFiles" == i.tag: settings.DisableScanningNetworkFiles = str2bool_or_none(i.text)
+        if "DisableScriptScanning" == i.tag: settings.DisableScriptScanning = str2bool_or_none(i.text)
+        if "EnableNetworkProtection" == i.tag: settings.EnableNetworkProtection = str2bool_or_none(i.text)
+        if "ExclusionPath" == i.tag: settings.ExclusionPath = str(i.text)
+        if "ExclusionProcess" == i.tag: settings.ExclusionProcess = str(i.text)
+    db.session.add(settings)
 
 
 def netadapter2db(xml, host):
