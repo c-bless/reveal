@@ -66,6 +66,7 @@ class Host(db.Model):
     # references
     PSInstalledVersions = db.relationship("PSInstalledVersions", back_populates='Host', lazy='dynamic')
     Hotfixes = db.relationship('Hotfix', back_populates='Host', lazy='dynamic')
+    DefenderStatus = db.relationship('DefenderStatus', back_populates='Host', lazy='dynamic')
     DefenderSettings = db.relationship('DefenderSettings', back_populates='Host', lazy='dynamic')
     Printers = db.relationship('Printer', back_populates='Host', lazy='dynamic')
     NetAdapters = db.relationship('NetAdapter', back_populates='Host', lazy='dynamic')
@@ -205,20 +206,66 @@ class Hotfix(db.Model):
     def __str__(self):
         return self.HotfixId
 
+class DefenderStatus(db.Model):
+    __tablename__ = "DefenderStatus"
+    id = db.Column(db.Integer, primary_key=True)
+    AMEngineVersion = db.Column(db.String(), unique=False, nullable=True)
+    AMProductVersion = db.Column(db.String(), unique=False, nullable=True)
+    AMServiceEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    AMServiceVersion = db.Column(db.String(), unique=False, nullable=True)
+    AntispywareEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    AntispywareSignatureLastUpdated = db.Column(db.String(), unique=False, nullable=True)
+    AntispywareSignatureVersion = db.Column(db.String(), unique=False, nullable=True)
+    AntivirusEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    AntivirusSignatureLastUpdated = db.Column(db.String(), unique=False, nullable=True)
+    AntivirusSignatureVersion = db.Column(db.String(), unique=False, nullable=True)
+    BehaviorMonitorEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    IoavProtectionEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    IsVirtualMachine = db.Column(db.Boolean(), unique=False, nullable=True)
+    NISEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    NISEngineVersion = db.Column(db.String(), unique=False, nullable=True)
+    NISSignatureLastUpdated = db.Column(db.String(), unique=False, nullable=True)
+    NISSignatureVersion = db.Column(db.String(), unique=False, nullable=True)
+    OnAccessProtectionEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    RealTimeProtectionEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
+    Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
+    Host = db.relationship("Host", back_populates="DefenderStatus")
+
+    def __repr__(self):
+        return "Defender Status"
+
+    def __str__(self):
+        return "Defender Status"
 
 class DefenderSettings(db.Model):
     __tablename__ = "DefenderSettings"
     id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String(), unique=False, nullable=True)
-    Value = db.Column(db.String(), unique=False, nullable=True)
+    DisableArchiveScanning = db.Column(db.Boolean, nullable=True)
+    DisableAutoExclusions = db.Column(db.Boolean, nullable=True)
+    DisableBehaviorMonitoring = db.Column(db.Boolean, nullable=True)
+    DisableBlockAtFirstSeen = db.Column(db.Boolean, nullable=True)
+    DisableCatchupFullScan = db.Column(db.Boolean, nullable=True)
+    DisableCatchupQuickScan = db.Column(db.Boolean, nullable=True)
+    DisableEmailScanning = db.Column(db.Boolean, nullable=True)
+    DisableIntrusionPreventionSystem = db.Column(db.Boolean, nullable=True)
+    DisableIOAVProtection = db.Column(db.Boolean, nullable=True)
+    DisableRealtimeMonitoring = db.Column(db.Boolean, nullable=True)
+    DisableRemovableDriveScanning = db.Column(db.Boolean, nullable=True)
+    DisableRestorePoint = db.Column(db.Boolean, nullable=True)
+    DisableScanningMappedNetworkDrivesForFullScan = db.Column(db.Boolean, nullable=True)
+    DisableScanningNetworkFiles = db.Column(db.Boolean, nullable=True)
+    DisableScriptScanning = db.Column(db.Boolean, nullable=True)
+    EnableNetworkProtection = db.Column(db.Boolean, nullable=True)
+    ExclusionPath = db.Column(db.String(), unique=False, nullable=True)
+    ExclusionProcess = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="DefenderSettings")
 
     def __repr__(self):
-        return self.Name
+        return "Defender settings"
 
     def __str__(self):
-        return self.Name
+        return "Defender settings"
 
 
 class Printer(db.Model):
