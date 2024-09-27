@@ -62,7 +62,17 @@
             aria-label="OSName" width="15%">OS Name
         </th>
         <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-            aria-label="Defender">Defender Settings
+            aria-label="Defender">DisableBehaviorMonitoring
+        </th>
+        <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+            aria-label="Defender">DisableScriptScanning
+        </th>
+        <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+            aria-label="Defender">DisableIOAVProtection
+        </th>
+        <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
+            aria-label="Defender">DisableRealtimeMonitoring
+        </th>
         </th>
         <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
             aria-label="SystemGroup">SystemGroup
@@ -85,7 +95,10 @@
         <td> {{ h.Hostname }} </td>
         <td> {{ h.Domain }} </td>
         <td> {{ h.OSName }} </td>
-        <td> {% for s in h.DefenderSettings %} {{ s.Name }}: {{ s.Value }}<br/> {% endfor %}</td>
+        <td> {% if h.DefenderSettings %}{%for d in h.DefenderSettings %} {{ d.DisableBehaviorMonitoring }}{% endfor %}{% endif %}</td>
+        <td> {% if h.DefenderSettings %}{%for d in h.DefenderSettings %} {{ d.DisableScriptScanning }}{% endfor %}{% endif %}</td>
+        <td> {% if h.DefenderSettings %}{%for d in h.DefenderSettings %} {{ d.DisableIOAVProtection }}{% endfor %}{% endif %}</td>
+        <td> {% if h.DefenderSettings %}{%for d in h.DefenderSettings %} {{ d.DisableRealtimeMonitoring }}{% endfor %}{% endif %}</td>
         <td> {{ h.SystemGroup }} </td>
         <td> {{ h.Location }} </td>
         <td> {{ h.Label }} </td>
@@ -98,7 +111,7 @@
     {% endfor %}
     {% else %}
     <tr>
-        <td colspan="8">No hosts found!</td>
+        <td colspan="15">No hosts found!</td>
     </tr>
     {% endif %}
     </tbody>

@@ -154,13 +154,20 @@ def import_host(root):
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating Printers. Error: {0}".format(str(e.__dict__['orig'])))
-            if "Defender" == elem.tag:
+            if "Defender" == elem.tag or "DefenderSettings" == elem.tag:
                 try:
                     defenderSettings2db(elem, host)
                     db.session.commit()
                 except SQLAlchemyError as e:
                     db.session.rollback()
                     print("Error while creating DefenderSettings. Error: {0}".format(str(e.__dict__['orig'])))
+            if "DefenderStatus" == elem.tag:
+                try:
+                    defenderStatus(elem, host)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    print("Error while creating DefenderStatus. Error: {0}".format(str(e.__dict__['orig'])))
             if "ConfigChecks" == elem.tag:
                 try:
                     configchecks2db(elem, host)
@@ -356,6 +363,7 @@ def printers2db(xml, host):
 
 def defenderStatus(xml, host):
     status = DefenderStatus()
+    status.Host = host
     for i in xml.getchildren():
         if "AMEngineVersion" == i.tag: status.AMEngineVersion = str(i.text)
         if "AMProductVersion" == i.tag: status.AMProductVersion = str(i.text)
@@ -380,6 +388,7 @@ def defenderStatus(xml, host):
 
 def defenderSettings2db(xml, host):
     settings = DefenderSettings()
+    settings.Host = host
     for i in xml.getchildren():
         if "DisableArchiveScanning" == i.tag: settings.DisableArchiveScanning = str2bool_or_none(i.text)
         if "DisableAutoExclusions" == i.tag: settings.DisableAutoExclusions = str2bool_or_none(i.text)
@@ -391,7 +400,6 @@ def defenderSettings2db(xml, host):
         if "DisableIntrusionPreventionSystem" == i.tag: settings.DisableIntrusionPreventionSystem = str2bool_or_none(i.text)
         if "DisableIOAVProtection" == i.tag: settings.DisableIOAVProtection = str2bool_or_none(i.text)
         if "DisableRealtimeMonitoring" == i.tag: settings.DisableRealtimeMonitoring = str2bool_or_none(i.text)
-        if "DisableRemovableDriveScanning" == i.tag: settings.DisableRemovableDriveScanning = str2bool_or_none(i.text)
         if "DisableRemovableDriveScanning" == i.tag: settings.DisableRemovableDriveScanning = str2bool_or_none(i.text)
         if "DisableRestorePoint" == i.tag: settings.DisableRestorePoint = str2bool_or_none(i.text)
         if "DisableScanningMappedNetworkDrivesForFullScan" == i.tag: settings.DisableScanningMappedNetworkDrivesForFullScan = str2bool_or_none(i.text)
