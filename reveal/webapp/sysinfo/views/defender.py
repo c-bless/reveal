@@ -6,6 +6,7 @@ from reveal.webapp.sysinfo import sysinfo_bp
 from reveal.webapp.sysinfo.forms.defender import DefenderSearchForm
 from reveal.core.models.sysinfo import Host
 from reveal.core.export.excel.hosts import generate_hosts_excel
+from reveal.core.export.excel.defender import generate_defender_excel
 
 
 @sysinfo_bp.route('/defender/search/', methods=['GET', 'POST'])
@@ -64,7 +65,12 @@ def defender_search_list():
             if 'full' in request.form:
                 output = generate_hosts_excel(hosts)
                 return Response(output, mimetype="text/xslx",
-                                headers={"Content-disposition": "attachment; filename=hosts.xlsx",
+                                headers={"Content-disposition": "attachment; filename=hosts_defender.xlsx",
+                                         "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+            if 'defender' in request.form:
+                output = generate_defender_excel(hosts)
+                return Response(output, mimetype="text/xslx",
+                                headers={"Content-disposition": "attachment; filename=defender_overview.xlsx",
                                          "Content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
         else:
 

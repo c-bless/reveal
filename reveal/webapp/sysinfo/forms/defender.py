@@ -26,4 +26,5 @@ class DefenderSearchForm(FlaskForm):
     InvertLabel = BooleanField('Invert Label')
 
     search = SubmitField('Search')
-    full = SubmitField('Download Excel (Full)')
+    full = SubmitField('Download Excel (Hosts)')
+    defender = SubmitField('Download Excel (Defender Overview)')
