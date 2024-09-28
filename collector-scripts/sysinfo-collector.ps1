@@ -1132,9 +1132,30 @@ $xmlWriter.WriteStartElement("SystemInfoCollector")
         ###############################################################################################################
         
         Write-Host "[*] Checking Defender settings"
-        # Get-MpPreference
-        # Get-MpComputerStatus
-
+        if (Get-Command Get-MpComputerStatus -ea SilentlyContinue) {
+            $xmlWriter.WriteStartElement("DefenderStatus")
+            $status = Get-MpComputerStatus
+            $xmlWriter.WriteElementString("AMEngineVersion", [string] $status.AMEngineVersion)
+            $xmlWriter.WriteElementString("AMProductVersion",  [string] $status.AMProductVersion)
+            $xmlWriter.WriteElementString("AMServiceEnabled",  [string] $status.AMServiceEnabled)
+            $xmlWriter.WriteElementString("AMServiceVersion",  [string] $status.AMServiceVersion)
+            $xmlWriter.WriteElementString("AntispywareEnabled",  [string] $status.AntispywareEnabled)
+            $xmlWriter.WriteElementString("AntispywareSignatureLastUpdated",  [string] $status.AntispywareSignatureLastUpdated)
+            $xmlWriter.WriteElementString("AntispywareSignatureVersion",  [string] $status.AntispywareSignatureVersion)
+            $xmlWriter.WriteElementString("AntivirusEnabled",  [string] $status.AntivirusEnabled)
+            $xmlWriter.WriteElementString("AntivirusSignatureLastUpdated",  [string] $status.AntivirusSignatureLastUpdated)
+            $xmlWriter.WriteElementString("AntivirusSignatureVersion",  [string] $status.AntivirusSignatureVersion)
+            $xmlWriter.WriteElementString("BehaviorMonitorEnabled",  [string] $status.BehaviorMonitorEnabled)
+            $xmlWriter.WriteElementString("IoavProtectionEnabled",  [string] $status.IoavProtectionEnabled)
+            $xmlWriter.WriteElementString("IsVirtualMachine",  [string] $status.IsVirtualMachine)
+            $xmlWriter.WriteElementString("NISEnabled",  [string] $status.NISEnabled)
+            $xmlWriter.WriteElementString("NISEngineVersion",  [string] $status.NISEngineVersion)
+            $xmlWriter.WriteElementString("NISSignatureLastUpdated",  [string] $status.NISSignatureLastUpdated)
+            $xmlWriter.WriteElementString("NISSignatureVersion",  [string] $status.NISSignatureVersion)
+            $xmlWriter.WriteElementString("OnAccessProtectionEnabled",  [string] $status.OnAccessProtectionEnabled)
+            $xmlWriter.WriteElementString("RealTimeProtectionEnabled",  [string] $status.RealTimeProtectionEnabled)
+            $xmlWriter.WriteEndElement() # Defender
+        }
         if (Get-Command Get-MpPreference -ea SilentlyContinue) {
             $xmlWriter.WriteStartElement("Defender")
             $preferences = Get-MpPreference 

@@ -27,13 +27,13 @@
                             <dd class="col-sm-8">{{ host.Location }}</dd>
                             <dt class="col-sm-4">Label</dt>
                             <dd class="col-sm-8">{{ host.Label }}</dd>
-                          </dl>
+                        </dl>
                     </div>
                     <div class="col-md-6">
-                            <dl>
-                              <dt class="col-sm-4">Asset Tag (Hostname / System group / Location / Label)</dt>
-                              <dd class="col-sm-8">{{ host.Hostname }} / {{ host.SystemGroup }} / {{ host.Location }} / {{ host.Label }}</dd>
-                            </dl>
+                        <dl>
+                            <dt class="col-sm-4">Asset Tag (Hostname / System group / Location / Label)</dt>
+                            <dd class="col-sm-8">{{ host.Hostname }} / {{ host.SystemGroup }} / {{ host.Location }} / {{ host.Label }}</dd>
+                        </dl>
                     </div>
                 </div>
             </div>
@@ -43,65 +43,65 @@
 </div>
 
 <div class="row m-1">
-        <div class="col-md-6">
-            <div class="card card-olive">
-                  <div class="card-header">
-                    <h3 class="card-title">General Information</h3>
+    <div class="col-md-6">
+        <div class="card card-olive">
+            <div class="card-header">
+                <h3 class="card-title">General Information</h3>
 
-                    <div class="card-tools">
-                      <a href="{{ url_for('sysinfo.host_export_word', id=host.id) }}" class="btn btn-tool btn-sm">
+                <div class="card-tools">
+                    <a href="{{ url_for('sysinfo.host_export_word', id=host.id) }}" class="btn btn-tool btn-sm">
                         <i class="fas fa-download"></i>
-                      </a>
-                      <a href="#" class="btn btn-tool btn-sm">
+                    </a>
+                    <a href="#" class="btn btn-tool btn-sm">
                         <i class="fas fa-bars"></i>
-                      </a>
-                    </div>
-                  </div>
-
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                    <dl class="row">
-                      <dt class="col-sm-4">Hostname</dt>
-                      <dd class="col-sm-8">{{ host.Hostname }}</dd>
-                      <dt class="col-sm-4">Domain</dt>
-                      <dd class="col-sm-8">{{ host.Domain }}</dd>
-                      <dt class="col-sm-4">DomainRole</dt>
-                      <dd class="col-sm-8">{{ host.DomainRole }}</dd>
-                      <dt class="col-sm-4">LogonServer</dt>
-                      <dd class="col-sm-8">{{ host.LogonServer }}</dd>
-                      <dt class="col-sm-4">TimeZone</dt>
-                      <dd class="col-sm-8">{{ host.TimeZone }}</dd>
-                      <dt class="col-sm-4">KeyboardLayout</dt>
-                      <dd class="col-sm-8">{{ host.KeyboardLayout }}</dd>
-                      <dt class="col-sm-4">HyperVisorPresent</dt>
-                      <dd class="col-sm-8">{{ host.HyperVisorPresent }}</dd>
-                      <dt class="col-sm-4">DeviceGuardSmartStatus</dt>
-                      <dd class="col-sm-8">{{ host.DeviceGuardSmartStatus }}</dd>
-                      <dt class="col-sm-4">PowerShell (active Version)</dt>
-                      <dd class="col-sm-8">{{ host.PSVersion }}</dd>
-                      <dt class="col-sm-4">PowerShell 2 Installed</dt>
-                      <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
-                      <dt class="col-sm-4">Whoami (User used for data collection)</dt>
-                      <dd class="col-sm-8">{{ host.Whoami }}</dd>
-                      <dt class="col-sm-4">Whoami is Admin</dt>
-                      <dd class="col-sm-8">{{ host.WhoamiIsAdmin }}</dd>
-                    </dl>
-                  </div>
-                  <!-- /.card-body -->
-
+                    </a>
+                </div>
             </div>
+
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Hostname</dt>
+                    <dd class="col-sm-8">{{ host.Hostname }}</dd>
+                    <dt class="col-sm-4">Domain</dt>
+                    <dd class="col-sm-8">{{ host.Domain }}</dd>
+                    <dt class="col-sm-4">DomainRole</dt>
+                    <dd class="col-sm-8">{{ host.DomainRole }}</dd>
+                    <dt class="col-sm-4">LogonServer</dt>
+                    <dd class="col-sm-8">{{ host.LogonServer }}</dd>
+                    <dt class="col-sm-4">TimeZone</dt>
+                    <dd class="col-sm-8">{{ host.TimeZone }}</dd>
+                    <dt class="col-sm-4">KeyboardLayout</dt>
+                    <dd class="col-sm-8">{{ host.KeyboardLayout }}</dd>
+                    <dt class="col-sm-4">HyperVisorPresent</dt>
+                    <dd class="col-sm-8">{{ host.HyperVisorPresent }}</dd>
+                    <dt class="col-sm-4">DeviceGuardSmartStatus</dt>
+                    <dd class="col-sm-8">{{ host.DeviceGuardSmartStatus }}</dd>
+                    <dt class="col-sm-4">PowerShell (active Version)</dt>
+                    <dd class="col-sm-8">{{ host.PSVersion }}</dd>
+                    <dt class="col-sm-4">PowerShell 2 Installed</dt>
+                    <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
+                    <dt class="col-sm-4">Whoami (User used for data collection)</dt>
+                    <dd class="col-sm-8">{{ host.Whoami }}</dd>
+                    <dt class="col-sm-4">Whoami is Admin</dt>
+                    <dd class="col-sm-8">{{ host.WhoamiIsAdmin }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+
         </div>
+    </div>
 
-        <div class="col-md-6">
-            <div class="row">
-              <div class="card card-olive">
-                    <div class="card-header">
-                      <h3 class="card-title">Operating System</h3>
-                    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="card card-olive">
+                <div class="card-header">
+                    <h3 class="card-title">Operating System</h3>
+                </div>
 
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                      <dl class="row">
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <dl class="row">
                         <dt class="col-sm-4">Operating System</dt>
                         <dd class="col-sm-8">{{ host.OSName }}</dd>
                         <dt class="col-sm-4">OSVersion</dt>
@@ -130,1013 +130,1097 @@
 </div>
 
 <div class="row m-1">
-  <div class="col-md-12">
-  <div class="card card-olive card-tabs">
-    <div class="card-header p-0 pt-1">
-      <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="tabs-network-tab" data-toggle="pill" href="#tabs-network"
-             role="tab" aria-controls="tabs-network" aria-selected="true">Network</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-firewall-tab" data-toggle="pill" href="#tabs-firewall"
-             role="tab" aria-controls="tabs-winlogon" aria-selected="false">Firewall</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-software-tab" data-toggle="pill" href="#tabs-software"
-             role="tab" aria-controls="tabs-software" aria-selected="false">Software</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-users-tab" data-toggle="pill" href="#tabs-users"
-             role="tab" aria-controls="tabs-users" aria-selected="false">Users / Groups</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-share-tab" data-toggle="pill" href="#tabs-shares"
-             role="tab" aria-controls="tabs-shares" aria-selected="false">Shares</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-services-tab" data-toggle="pill" href="#tabs-services"
-             role="tab" aria-controls="tabs-services" aria-selected="false">Services</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-winlogon-tab" data-toggle="pill" href="#tabs-winlogon"
-             role="tab" aria-controls="tabs-winlogon" aria-selected="false">Winlogon</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-smb-tab" data-toggle="pill" href="#tabs-smb"
-             role="tab" aria-controls="tabs-smb" aria-selected="false">SMB Settings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-Scripting-tab" data-toggle="pill" href="#tabs-Scripting"
-             role="tab" aria-controls="tabs-Scripting" aria-selected="false">Scripting</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-bios-tab" data-toggle="pill" href="#tabs-bios"
-             role="tab" aria-controls="tabs-bios" aria-selected="false">BIOS</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-wsus-tab" data-toggle="pill" href="#tabs-wsus"
-             role="tab" aria-controls="tabs-wsus" aria-selected="false">WSUS Settings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-printer-tab" data-toggle="pill" href="#tabs-printer"
-             role="tab" aria-controls="tabs-printer" aria-selected="false">Printer</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-configchecks-tab" data-toggle="pill" href="#tabs-configchecks"
-             role="tab" aria-controls="tabs-configchecks" aria-selected="false">ConfigChecks</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-registrychecks-tab" data-toggle="pill" href="#tabs-registrychecks"
-             role="tab" aria-controls="tabs-registrychecks" aria-selected="false">RegistryChecks</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-filechecks-tab" data-toggle="pill" href="#tabs-filechecks"
-             role="tab" aria-controls="tabs-filechecks" aria-selected="false">FileExistChecks</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-pathaclchecks-tab" data-toggle="pill" href="#tabs-pathaclchecks"
-             role="tab" aria-controls="tabs-pathaclchecks" aria-selected="false">Path ACL Checks</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-defender-tab" data-toggle="pill" href="#tabs-defender"
-             role="tab" aria-controls="tabs-defender" aria-selected="false">Defender</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-route-tab" data-toggle="pill" href="#tabs-routes"
-             role="tab" aria-controls="tabs-routes" aria-selected="false">Routes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="tabs-ntp-tab" data-toggle="pill" href="#tabs-ntp"
-             role="tab" aria-controls="tabs-ntp" aria-selected="false">NTP</a>
-        </li>
-      </ul>
-    </div>
-    <div class="card-body">
-      <div class="tab-content" id="custom-tabs-one-tabContent">
-        <div class="tab-pane fade show active" id="tabs-network" role="tabpanel" aria-labelledby="tabs-network-tab">
-                <div class="row m-1">
-                      <div class="col-md-6">
-                        <div class="card card-olive card-outline">
-                          <div class="card-header">
-                            <h3 class="card-title">Network Adapter</h3>
-                          </div>
-                          <!-- /.card-header -->
-                          <div class="card-body p-0">
-                            <table class="table table-striped">
-                              <thead>
-                                <tr>
-                                  <th>Name</th>
-                                  <th>MAC</th>
-                                  <th>Status</th>
-                                  <th>Description</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                              {% if host.NetAdapters %}
-                                {% for na in host.NetAdapters %}
-                                <tr>
-                                  <td>{{ na.Name }}</td>
-                                  <td>{{ na.MacAddress}}</td>
-                                  <td>{{ na.Status }}</td>
-                                  <td>{{ na.InterfaceDescription }}</td>
-                                </tr>
-                                {% endfor %}
-                              {% else %}
-                                <tr>Report all hosts which reached the End-of-Life / End-of-Support	 View
+    <div class="col-md-12">
+        <div class="card card-olive card-tabs">
+            <div class="card-header p-0 pt-1">
+                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tabs-network-tab" data-toggle="pill" href="#tabs-network"
+                           role="tab" aria-controls="tabs-network" aria-selected="true">Network</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-firewall-tab" data-toggle="pill" href="#tabs-firewall"
+                           role="tab" aria-controls="tabs-winlogon" aria-selected="false">Firewall</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-software-tab" data-toggle="pill" href="#tabs-software"
+                           role="tab" aria-controls="tabs-software" aria-selected="false">Software</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-users-tab" data-toggle="pill" href="#tabs-users"
+                           role="tab" aria-controls="tabs-users" aria-selected="false">Users / Groups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-share-tab" data-toggle="pill" href="#tabs-shares"
+                           role="tab" aria-controls="tabs-shares" aria-selected="false">Shares</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-services-tab" data-toggle="pill" href="#tabs-services"
+                           role="tab" aria-controls="tabs-services" aria-selected="false">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-winlogon-tab" data-toggle="pill" href="#tabs-winlogon"
+                           role="tab" aria-controls="tabs-winlogon" aria-selected="false">Winlogon</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-smb-tab" data-toggle="pill" href="#tabs-smb"
+                           role="tab" aria-controls="tabs-smb" aria-selected="false">SMB Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-Scripting-tab" data-toggle="pill" href="#tabs-Scripting"
+                           role="tab" aria-controls="tabs-Scripting" aria-selected="false">Scripting</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-bios-tab" data-toggle="pill" href="#tabs-bios"
+                           role="tab" aria-controls="tabs-bios" aria-selected="false">BIOS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-wsus-tab" data-toggle="pill" href="#tabs-wsus"
+                           role="tab" aria-controls="tabs-wsus" aria-selected="false">WSUS Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-printer-tab" data-toggle="pill" href="#tabs-printer"
+                           role="tab" aria-controls="tabs-printer" aria-selected="false">Printer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-configchecks-tab" data-toggle="pill" href="#tabs-configchecks"
+                           role="tab" aria-controls="tabs-configchecks" aria-selected="false">ConfigChecks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-registrychecks-tab" data-toggle="pill" href="#tabs-registrychecks"
+                           role="tab" aria-controls="tabs-registrychecks" aria-selected="false">RegistryChecks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-filechecks-tab" data-toggle="pill" href="#tabs-filechecks"
+                           role="tab" aria-controls="tabs-filechecks" aria-selected="false">FileExistChecks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-pathaclchecks-tab" data-toggle="pill" href="#tabs-pathaclchecks"
+                           role="tab" aria-controls="tabs-pathaclchecks" aria-selected="false">Path ACL Checks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-defender-tab" data-toggle="pill" href="#tabs-defender"
+                           role="tab" aria-controls="tabs-defender" aria-selected="false">Defender</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-route-tab" data-toggle="pill" href="#tabs-routes"
+                           role="tab" aria-controls="tabs-routes" aria-selected="false">Routes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tabs-ntp-tab" data-toggle="pill" href="#tabs-ntp"
+                           role="tab" aria-controls="tabs-ntp" aria-selected="false">NTP</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="custom-tabs-one-tabContent">
+                    <div class="tab-pane fade show active" id="tabs-network" role="tabpanel" aria-labelledby="tabs-network-tab">
+                        <div class="row m-1">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Network Adapter</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>MAC</th>
+                                                <th>Status</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.NetAdapters %}
+                                            {% for na in host.NetAdapters %}
+                                            <tr>
+                                                <td>{{ na.Name }}</td>
+                                                <td>{{ na.MacAddress}}</td>
+                                                <td>{{ na.Status }}</td>
+                                                <td>{{ na.InterfaceDescription }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>Report all hosts which reached the End-of-Life / End-of-Support	 View
 
-                                  <td colspan="4">No network adapter found.</td>
-                                </tr>
-                              {% endif %}
-                              </tbody>
-                            </table>
-                          </div>
-                          <!-- /.card-body -->
+                                                <td colspan="4">No network adapter found.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+
+                            <!-- /.card -->
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">IP Adresses</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Interface</th>
+                                                <th>IP</th>
+                                                <th>Prefix</th>
+                                                <th>Type</th>
+                                                <th>AddressFamily</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.NetIPAddresses %}
+                                            {% for nip in host.NetIPAddresses %}
+                                            <tr>
+                                                <td>{{ nip.InterfaceAlias }}</td>
+                                                <td>{{ nip.IP }}</td>
+                                                <td>{{ nip.Prefix }}</td>
+                                                <td>{{ nip.Type }}</td>
+                                                <td>{{ nip.AddressFamily }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="5">No IP addresses found.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
                         </div>
                     </div>
 
-                    <!-- /.card -->
-                  <div class="col-md-6">
-                    <div class="card card-olive card-outline">
-                      <div class="card-header">
-                        <h3 class="card-title">IP Adresses</h3>
-                      </div>
-                      <!-- /.card-header -->
-                      <div class="card-body p-0">
-                        <table class="table table-striped">
-                          <thead>
-                            <tr>
-                              <th>Interface</th>
-                              <th>IP</th>
-                              <th>Prefix</th>
-                              <th>Type</th>
-                              <th>AddressFamily</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                          {% if host.NetIPAddresses %}
-                            {% for nip in host.NetIPAddresses %}
-                            <tr>
-                              <td>{{ nip.InterfaceAlias }}</td>
-                              <td>{{ nip.IP }}</td>
-                              <td>{{ nip.Prefix }}</td>
-                              <td>{{ nip.Type }}</td>
-                              <td>{{ nip.AddressFamily }}</td>
-                            </tr>
-                            {% endfor %}
-                          {% else %}
-                            <tr>
-                              <td colspan="5">No IP addresses found.</td>
-                            </tr>
-                          {% endif %}
-                          </tbody>
-                        </table>
-                      </div>
-                      <!-- /.card-body -->
-                    </div>
-                  <!-- /.card -->
-                </div>
-                </div>
-        </div>
 
-
-
-
-        <div class="tab-pane fade" id="tabs-firewall" role="tabpanel" aria-labelledby="tabs-firewall-tab">
-          <div class="row m-1">
-            <div class="col-md-6">
-              <div class="card card-olive card-outline">
-                  <div class="card-header">
-                    <h3 class="card-title">Firewall Profiles</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                     <dl class="row">
-                      <dt class="col-sm-4">Firewall (Domain)</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfileDomain) }}</dd>
-                      <dt class="col-sm-4">Firewall (Private)</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePrivate) }}</dd>
-                      <dt class="col-sm-4">Firewall (Public)</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePublic) }}</dd>
-                    </dl>
-                  </div>
-                  <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="tabs-software" role="tabpanel" aria-labelledby="tabs-software-tab">
-          <div class="row m-1">
-            <div class="col-md-6">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Software Products</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Version</th>
-                      <th>InstallDate</th>
-                      <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Products %}
-                    {% for p in host.Products %}
-                    <tr>
-                      <td>{{ p.Name }}</td>
-                      <td>{{ p.Version }}</td>
-                      <td>{{ p.InstallDate }}</td>
-                      <td class="actions">
-                        <a href="#" class="btn btn-default btn-xs">
-                          <i class="fa fa-eye"></i> View
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td>No additional products installed.</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <!-- /.card -->
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Installed Hotfixes</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>KB</th>
-                      <th>InstalledOn</th>
-                      <th>Description</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Hotfixes %}
-                    {% for h in host.Hotfixes %}
-                    <tr>
-                      <td>{{ h.HotfixId }}</td>
-                      <td>{{ h.InstalledOn }}</td>
-                      <td>{{ h.Description }}</td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td>No hotfixes installed.</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="tabs-users" role="tabpanel" aria-labelledby="tabs-users-tab">
-          <div class="row m-1">
-            <div class="col-md-6">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Local Users</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>AccountType</th>
-                      <th>Name</th>
-                      <th>Disabled</th>
-                      <th>Details</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Users %}
-                    {% for u in host.Users %}
-                    <tr>
-                      <td>{{ u.AccountType }}</td>
-                      <td>{{ u.Name }}</td>
-                      <td>{{ u.Disabled }}</td>
-                      <td class="actions">
-                        <a href="{{ url_for('sysinfo.user_detail', id=u.id) }}" class="btn btn-default btn-xs">
-                          <i class="fa fa-eye"></i> View
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="4">No local Users found.</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-            <div class="col-md-6">
-              <!-- /.card -->
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Groups</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Details</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Groups %}
-                    {% for g in host.Groups %}
-                    <tr>
-                      <td>{{ g.Name }}</td>
-                      <td class="actions">
-                        <a href="{{ url_for('sysinfo.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
-                          <i class="fa fa-eye"></i> View
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="2">No groups found.</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="tabs-services" role="tabpanel" aria-labelledby="tabs-services-tab">
-          <div class="row m-1">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Services</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th> Name</th>
-                      <th> Displayname</th>
-                      <th> Started</th>
-                      <th> StartName</th>
-                      <th> Details</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Services %}
-                    {% for s in host.Services %}
-                    <tr>
-                      <td>{{ s.Name }}</td>
-                      <td>{{ s.DisplayName }}</td>
-                      <td>{{ s.Started }}</td>
-                      <td>{{ s.StartName }}</td>
-                      <td class="actions">
-                        <a href="{{ url_for('sysinfo.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
-                          <i class="fa fa-eye"></i> View
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="tabs-shares" role="tabpanel" aria-labelledby="tabs-shares-tab">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Shares</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Pathname</th>
-                      <th>Details</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Shares %}
-                    {% for s in host.Shares %}
-                    <tr>
-                      <td>{{ s.Name }}</td>
-                      <td>{{ s.Path }}</td>
-                      <td class="actions">
-                        <a href="{{ url_for('sysinfo.share_detail', id=s.id) }}" class="btn btn-default btn-xs">
-                          <i class="fa fa-eye"></i> View
-                        </a>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td>No shares found.</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="tabs-winlogon" role="tabpanel" aria-labelledby="tabs-winlogon-tab">
-          <div class="row">
-            <div class="card card-olive card-outline">
-              <div class="card-header">
-                <h3 class="card-title">Winlogon</h3>
-
-                <div class="card-tools">
-                  <a href="{{ url_for('sysinfo.host_export_word', id=host.id) }}" class="btn btn-tool btn-sm">
-                    <i class="fas fa-download"></i>
-                  </a>
-                  <a href="#" class="btn btn-tool btn-sm">
-                    <i class="fas fa-bars"></i>
-                  </a>
-                </div>
-              </div>
-
-              <!-- /.card-header -->
-              <div class="card-body">
-                <dl class="row">
-                  <dt class="col-sm-4">AutoAdminLogon</dt>
-                  <dd class="col-sm-8">{{ host.AutoAdminLogon }}</dd>
-                  <dt class="col-sm-4">DefaultDomain</dt>
-                  <dd class="col-sm-8">{{ host.DefaultDomain }}</dd>
-                  <dt class="col-sm-4">DefaultUserName</dt>
-                  <dd class="col-sm-8">{{ host.DefaultUserName }}</dd>
-                  <dt class="col-sm-4">DefaultPassword</dt>
-                  <dd class="col-sm-8">{% if host.DefaultPassword %} <span class="text-danger">NOT EMPTY!</span> {% else %} <span class="text-success">NOT SET</span> {% endif %}</dd>
-                </dl>
-              </div>
-              <!-- /.card-body -->
-
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-smb" role="tabpanel" aria-labelledby="tabs-smb-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">SMB Settings</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <dl class="row">
-                      <dt class="col-sm-4">SMBv1</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv1Enabled) }}</dd>
-                      <dt class="col-sm-4">SMBv2</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv2Enabled) }}</dd>
-                      <dt class="col-sm-4">EncryptData</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEncryptData) }}</dd>
-                      <dt class="col-sm-4">EnableSecuritySignature</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEnableSecuritySignature) }}</dd>
-                      <dt class="col-sm-4">RequireSecuritySignature</dt>
-                      <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBRequireSecuritySignature) }}</dd>
-                    </dl>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-Scripting" role="tabpanel" aria-labelledby="tabs-Scripting-tab">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">WSH Settings</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <dl class="row">
-                      <dt class="col-sm-4">Trust Policy</dt>
-                      <dd class="col-sm-8">{{ host.WSHTrustPolicy }}</dd>
-                      <dt class="col-sm-4">Enabled Status</dt>
-                      <dd class="col-sm-8">{{ host.WSHEnabled }}</dd>
-                      <dt class="col-sm-4">Remote Status</dt>
-                      <dd class="col-sm-8">{{ host.WSHRemote }}</dd>
-                    </dl>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">PowerShell</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <dl class="row">
-                      <dt class="col-sm-4">PowerShell (active Version)</dt>
-                      <dd class="col-sm-8">{{ host.PSVersion }}</dd>
-                      <dt class="col-sm-4">PowerShell 2 Installed</dt>
-                      <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
-                      <dt class="col-sm-4">PowerShell ScriptBlockLogging</dt>
-                      <dd class="col-sm-8">{{ host.PSScriptBlockLogging }}</dd>
-                    </dl>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">PS Versions</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>PSCompatibleVersion</th>
-                      <th>Version</th>
-                      <th>RuntimeVersion</th>
-                      <th>PSPath</th>
-                      <th>ConsoleHostModuleName</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {% if host.PSInstalledVersions %}
-                    {% for ps in host.PSInstalledVersions %}
-                    <tr>
-                      <td>{{ ps.PSCompatibleVersion }}</td>
-                      <td>{{ ps.Version }}</td>
-                      <td>{{ ps.RuntimeVersion }}</td>
-                      <td>{{ ps.PSPath }}</td>
-                      <td>{{ ps.ConsoleHostModuleName }}</td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td>No PS Versions found.</td>
-                    </tr>
-                    {% endif %}
-
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-wsus" role="tabpanel" aria-labelledby="tabs-wsus-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">WSUS Settings</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <dl class="row">
-                    <dt class="col-sm-4">AcceptTrustedPublisherCerts</dt>
-                    <dd class="col-sm-8">{{ host.AcceptTrustedPublisherCerts  }}</dd>
-                    <dt class="col-sm-4">DisableWindowsUpdateAccess</dt>
-                    <dd class="col-sm-8">{{ host.DisableWindowsUpdateAccess }}</dd>
-                    <dt class="col-sm-4">ElevateNonAdmins</dt>
-                    <dd class="col-sm-8">{{ host.ElevateNonAdmins }}</dd>
-                    <dt class="col-sm-4">TargetGroup</dt>
-                    <dd class="col-sm-8">{{ host.TargetGroup }}</dd>
-                    <dt class="col-sm-4">TargetGroupEnabled</dt>
-                    <dd class="col-sm-8">{{ host.TargetGroupEnabled }}</dd>
-                    <dt class="col-sm-4">WUServer</dt>
-                    <dd class="col-sm-8">{{ host.WUServer }}</dd>
-                    <dt class="col-sm-4">WUStatusServer</dt>
-                    <dd class="col-sm-8">{{ host.WUStatusServer }}</dd>
-                  </dl>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div class="tab-pane fade" id="tabs-bios" role="tabpanel" aria-labelledby="tabs-bios-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">BIOS</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                          <dl class="row">
-                            <dt class="col-sm-4">Manufacturer</dt>
-                            <dd class="col-sm-8">{{ host.BiosManufacturer  }}</dd>
-                            <dt class="col-sm-4">Name</dt>
-                            <dd class="col-sm-8">{{ host.BiosName }}</dd>
-                            <dt class="col-sm-4">Version</dt>
-                            <dd class="col-sm-8">{{ host.BiosVersion }}</dd>
-                            <dt class="col-sm-4">Serial</dt>
-                            <dd class="col-sm-8">{{ host.BiosSerial }}</dd>
-                          </dl>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-printer" role="tabpanel" aria-labelledby="tabs-printer-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Printer</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-
-                    <tr>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>ShareName</th>
-                      <th>PortName</th>
-                      <th>Shared</th>
-                      <th>Published</th>
-                      <th>DriverName</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.Printers %}
-                      {% for p in host.Printers %}
-                      <tr>
-                        <td>{{ p.Name }}</td>
-                        <td>{{ p.Type }}</td>
-                        <td>{{ p.ShareName }}</td>
-                        <td>{{ p.PortName }}</td>
-                        <td>{{ p.Shared }}</td>
-                        <td>{{ p.Published }}</td>
-                        <td>{{ p.DriverName }}</td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="7">No printers found!</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-configchecks" role="tabpanel" aria-labelledby="tabs-configchecks-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">ConfigChecks</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-
-                    <tr>
-                      <th>Name</th>
-                      <th>Component</th>
-                      <th>Method</th>
-                      <th>Key</th>
-                      <th>Value</th>
-                      <th>Result</th>
-                      <th>Message</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.ConfigChecks %}
-                      {% for c in host.ConfigChecks %}
-                      <tr>
-                        <td>{{ c.Name }}</td>
-                        <td>{{ c.Component }}</td>
-                        <td>{{ c.Method }}</td>
-                        <td>{{ c.Key }}</td>
-                        <td>{{ c.Value }}</td>
-                        <td>{{ c.Result }}</td>
-                        <td>{{ c.Message }}</td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="7">No config checks performed!</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-registrychecks" role="tabpanel" aria-labelledby="tabs-registrychecks-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">RegistryChecks</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-
-                    <tr>
-                      <th>Name</th>
-                      <th>Category</th>
-                      <th>Tags</th>
-                      <th>Path</th>
-                      <th>Key</th>
-                      <th>Expected</th>
-                      <th>KeyExists</th>
-                      <th>ValueMatch</th>
-                      <th>CurrentValue</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.RegistryChecks %}
-                      {% for c in host.RegistryChecks %}
-                      <tr>
-                        <td>{{ c.Name }}</td>
-                        <td>{{ c.Category }}</td>
-                        <td>{{ c.Tags }}</td>
-                        <td>{{ c.Path }}</td>
-                        <td>{{ c.Key }}</td>
-                        <td>{{ c.Expected }}</td>
-                        <td>{{ c.KeyExists }}</td>
-                        <td>{{ c.ValueMatch }}</td>
-                        <td>{{ c.CurrentValue }}</td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="7">No RegistryChecks performed!</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-filechecks" role="tabpanel" aria-labelledby="tabs-filechecks-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">FileExistChecks</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>File</th>
-                      <th>FileExist</th>
-                      <th>HashMatch</th>
-                      <th>HashChecked</th>
-                      <th>ExpectedHASH</th>
-                      <th>CurrentHash</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.FileExistChecks %}
-                      {% for c in host.FileExistChecks %}
-                      <tr>
-                        <td>{{ c.Name }}</td>
-                        <td>{{ c.File }}</td>
-                        <td>{{ c.FileExist }}</td>
-                        <td>{{ c.HashMatch }}</td>
-                        <td>{{ c.HashChecked }}</td>
-                        <td>{{ c.ExpectedHASH }}</td>
-                        <td>{{ c.CurrentHash }}</td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="7">No file checks performed!</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-pathaclchecks" role="tabpanel" aria-labelledby="tabs-pathaclchecks-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Path ACL Checks</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                    <tr>
-                      <th>Path</th>
-                      <th>ACL</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if host.PathACLChecks %}
-                      {% for c in host.PathACLChecks %}
-                      <tr>
-                        <td>{{ c.Path }}</td>
-                        <td>
-                          {% for p in c.ACLs %}
-                            {{ p.Name }} {{ p.AccountName }} {{ p.AccessControlType }} {{ p.AccessRight }} <br />
-                          {% endfor %}
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    {% else %}
-                    <tr>
-                      <td colspan="7">No path ACL checks performed!</td>
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div class="tab-pane fade" id="tabs-defender" role="tabpanel" aria-labelledby="tabs-defender-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">Defender Settings</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <dl class="row">
-                      {% if host.DefenderSettings %}
-                        {% for d in host.DefenderSettings %}
-                          <dt class="col-sm-4">{{ d.Name }}</dt>
-                          <dd class="col-sm-8">{{ d.Value }}</dd>
-                        {% endfor %}
-                      {% endif %}
-                  </dl>
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-ntp" role="tabpanel" aria-labelledby="tabs-ntp-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card card-olive card-outline">
-                <div class="card-header">
-                  <h3 class="card-title">NTP Settings</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                      {% if host.NTPSettings %}
-                        {% for n in host.NTPSettings %}
-                        <dl class="row">
-                                <dt class="col-sm-4">Server</dt>
-                                <dd class="col-sm-8">{{ n.Server }}</dd>
-                                <dt class="col-sm-4">Type</dt>
-                                <dd class="col-sm-8">{{ n.Type }}</dd>
-                                <dt class="col-sm-4">UpdateInterval</dt>
-                                <dd class="col-sm-8">{{ n.UpdateInterval }}</dd>
-                        </dl>
-                        {% endfor %}
-                      {% endif %}
-                </div>
-                <!-- /.card-body -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tabs-routes" role="tabpanel" aria-labelledby="tabs-route-tab">
-          <div class="row m-1">
-                      <div class="col-md-6">
-                        <div class="card card-olive card-outline">
-                          <div class="card-header">
-                            <h3 class="card-title">Routes</h3>
-                          </div>
-                          <!-- /.card-header -->
-                          <div class="card-body p-0">
-                            <table class="table table-striped">
-                              <thead>
-                                <tr>
-                                  <th>AddressFamily</th>
-                                  <th>DestinationPrefix</th>
-                                  <th>NextHop</th>
-                                  <th>RouteMetric</th>
-                                  <th>IfIndex</th>
-                                  <th>InterfaceMetric</th>
-                                  <th>AdminDistance</th>
-                                  <th>AdminDistance</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                              {% if host.Routes %}
-                                {% for r in host.Routes %}
-                                <tr>
-                                  <td>{{ r.AddressFamily }}</td>
-                                  <td>{{ r.DestinationPrefix}}</td>
-                                  <td>{{ r.NextHop }}</td>
-                                  <td>{{ r.RouteMetric }}</td>
-                                  <td>{{ r.IfIndex }}</td>
-                                  <td>{{ r.InterfaceMetric }}</td>
-                                  <td>{{ r.AdminDistance }}</td>
-                                  <td>{{ r.AdminDistance }}</td>
-                                </tr>
-                                {% endfor %}
-                              {% else %}
-                                <tr>
-                                  <td colspan="4">No routes found.</td>
-                                </tr>
-                              {% endif %}
-                              </tbody>
-                            </table>
-                          </div>
-                          <!-- /.card-body -->
+                    <div class="tab-pane fade" id="tabs-firewall" role="tabpanel" aria-labelledby="tabs-firewall-tab">
+                        <div class="row m-1">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Firewall Profiles</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">Firewall (Domain)</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfileDomain) }}</dd>
+                                            <dt class="col-sm-4">Firewall (Private)</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePrivate) }}</dd>
+                                            <dt class="col-sm-4">Firewall (Public)</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePublic) }}</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
                         </div>
                     </div>
-                  <!-- /.card -->
+                    <div class="tab-pane fade" id="tabs-software" role="tabpanel" aria-labelledby="tabs-software-tab">
+                        <div class="row m-1">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Software Products</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Version</th>
+                                                <th>InstallDate</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Products %}
+                                            {% for p in host.Products %}
+                                            <tr>
+                                                <td>{{ p.Name }}</td>
+                                                <td>{{ p.Version }}</td>
+                                                <td>{{ p.InstallDate }}</td>
+                                                <td class="actions">
+                                                    <a href="#" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td>No additional products installed.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- /.card -->
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Installed Hotfixes</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>KB</th>
+                                                <th>InstalledOn</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Hotfixes %}
+                                            {% for h in host.Hotfixes %}
+                                            <tr>
+                                                <td>{{ h.HotfixId }}</td>
+                                                <td>{{ h.InstalledOn }}</td>
+                                                <td>{{ h.Description }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td>No hotfixes installed.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tabs-users" role="tabpanel" aria-labelledby="tabs-users-tab">
+                        <div class="row m-1">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Local Users</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>AccountType</th>
+                                                <th>Name</th>
+                                                <th>Disabled</th>
+                                                <th>Details</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Users %}
+                                            {% for u in host.Users %}
+                                            <tr>
+                                                <td>{{ u.AccountType }}</td>
+                                                <td>{{ u.Name }}</td>
+                                                <td>{{ u.Disabled }}</td>
+                                                <td class="actions">
+                                                    <a href="{{ url_for('sysinfo.user_detail', id=u.id) }}" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="4">No local Users found.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- /.card -->
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Groups</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Details</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Groups %}
+                                            {% for g in host.Groups %}
+                                            <tr>
+                                                <td>{{ g.Name }}</td>
+                                                <td class="actions">
+                                                    <a href="{{ url_for('sysinfo.group_detail', id=g.id) }}" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="2">No groups found.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tabs-services" role="tabpanel" aria-labelledby="tabs-services-tab">
+                        <div class="row m-1">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Services</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th> Name</th>
+                                                <th> Displayname</th>
+                                                <th> Started</th>
+                                                <th> StartName</th>
+                                                <th> Details</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Services %}
+                                            {% for s in host.Services %}
+                                            <tr>
+                                                <td>{{ s.Name }}</td>
+                                                <td>{{ s.DisplayName }}</td>
+                                                <td>{{ s.Started }}</td>
+                                                <td>{{ s.StartName }}</td>
+                                                <td class="actions">
+                                                    <a href="{{ url_for('sysinfo.service_detail', id=s.id) }}" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tabs-shares" role="tabpanel" aria-labelledby="tabs-shares-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Shares</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Pathname</th>
+                                                <th>Details</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Shares %}
+                                            {% for s in host.Shares %}
+                                            <tr>
+                                                <td>{{ s.Name }}</td>
+                                                <td>{{ s.Path }}</td>
+                                                <td class="actions">
+                                                    <a href="{{ url_for('sysinfo.share_detail', id=s.id) }}" class="btn btn-default btn-xs">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td>No shares found.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="tabs-winlogon" role="tabpanel" aria-labelledby="tabs-winlogon-tab">
+                        <div class="row">
+                            <div class="card card-olive card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Winlogon</h3>
+
+                                    <div class="card-tools">
+                                        <a href="{{ url_for('sysinfo.host_export_word', id=host.id) }}" class="btn btn-tool btn-sm">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-tool btn-sm">
+                                            <i class="fas fa-bars"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <dl class="row">
+                                        <dt class="col-sm-4">AutoAdminLogon</dt>
+                                        <dd class="col-sm-8">{{ host.AutoAdminLogon }}</dd>
+                                        <dt class="col-sm-4">DefaultDomain</dt>
+                                        <dd class="col-sm-8">{{ host.DefaultDomain }}</dd>
+                                        <dt class="col-sm-4">DefaultUserName</dt>
+                                        <dd class="col-sm-8">{{ host.DefaultUserName }}</dd>
+                                        <dt class="col-sm-4">DefaultPassword</dt>
+                                        <dd class="col-sm-8">{% if host.DefaultPassword %} <span class="text-danger">NOT EMPTY!</span> {% else %} <span class="text-success">NOT SET</span> {% endif %}</dd>
+                                    </dl>
+                                </div>
+                                <!-- /.card-body -->
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-smb" role="tabpanel" aria-labelledby="tabs-smb-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">SMB Settings</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">SMBv1</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv1Enabled) }}</dd>
+                                            <dt class="col-sm-4">SMBv2</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv2Enabled) }}</dd>
+                                            <dt class="col-sm-4">EncryptData</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEncryptData) }}</dd>
+                                            <dt class="col-sm-4">EnableSecuritySignature</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEnableSecuritySignature) }}</dd>
+                                            <dt class="col-sm-4">RequireSecuritySignature</dt>
+                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBRequireSecuritySignature) }}</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-Scripting" role="tabpanel" aria-labelledby="tabs-Scripting-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">WSH Settings</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">Trust Policy</dt>
+                                            <dd class="col-sm-8">{{ host.WSHTrustPolicy }}</dd>
+                                            <dt class="col-sm-4">Enabled Status</dt>
+                                            <dd class="col-sm-8">{{ host.WSHEnabled }}</dd>
+                                            <dt class="col-sm-4">Remote Status</dt>
+                                            <dd class="col-sm-8">{{ host.WSHRemote }}</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">PowerShell</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">PowerShell (active Version)</dt>
+                                            <dd class="col-sm-8">{{ host.PSVersion }}</dd>
+                                            <dt class="col-sm-4">PowerShell 2 Installed</dt>
+                                            <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
+                                            <dt class="col-sm-4">PowerShell ScriptBlockLogging</dt>
+                                            <dd class="col-sm-8">{{ host.PSScriptBlockLogging }}</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">PS Versions</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>PSCompatibleVersion</th>
+                                                <th>Version</th>
+                                                <th>RuntimeVersion</th>
+                                                <th>PSPath</th>
+                                                <th>ConsoleHostModuleName</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            {% if host.PSInstalledVersions %}
+                                            {% for ps in host.PSInstalledVersions %}
+                                            <tr>
+                                                <td>{{ ps.PSCompatibleVersion }}</td>
+                                                <td>{{ ps.Version }}</td>
+                                                <td>{{ ps.RuntimeVersion }}</td>
+                                                <td>{{ ps.PSPath }}</td>
+                                                <td>{{ ps.ConsoleHostModuleName }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td>No PS Versions found.</td>
+                                            </tr>
+                                            {% endif %}
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-wsus" role="tabpanel" aria-labelledby="tabs-wsus-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">WSUS Settings</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">AcceptTrustedPublisherCerts</dt>
+                                            <dd class="col-sm-8">{{ host.AcceptTrustedPublisherCerts  }}</dd>
+                                            <dt class="col-sm-4">DisableWindowsUpdateAccess</dt>
+                                            <dd class="col-sm-8">{{ host.DisableWindowsUpdateAccess }}</dd>
+                                            <dt class="col-sm-4">ElevateNonAdmins</dt>
+                                            <dd class="col-sm-8">{{ host.ElevateNonAdmins }}</dd>
+                                            <dt class="col-sm-4">TargetGroup</dt>
+                                            <dd class="col-sm-8">{{ host.TargetGroup }}</dd>
+                                            <dt class="col-sm-4">TargetGroupEnabled</dt>
+                                            <dd class="col-sm-8">{{ host.TargetGroupEnabled }}</dd>
+                                            <dt class="col-sm-4">WUServer</dt>
+                                            <dd class="col-sm-8">{{ host.WUServer }}</dd>
+                                            <dt class="col-sm-4">WUStatusServer</dt>
+                                            <dd class="col-sm-8">{{ host.WUStatusServer }}</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="tabs-bios" role="tabpanel" aria-labelledby="tabs-bios-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">BIOS</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">Manufacturer</dt>
+                                            <dd class="col-sm-8">{{ host.BiosManufacturer  }}</dd>
+                                            <dt class="col-sm-4">Name</dt>
+                                            <dd class="col-sm-8">{{ host.BiosName }}</dd>
+                                            <dt class="col-sm-4">Version</dt>
+                                            <dd class="col-sm-8">{{ host.BiosVersion }}</dd>
+                                            <dt class="col-sm-4">Serial</dt>
+                                            <dd class="col-sm-8">{{ host.BiosSerial }}</dd>
+                                        </dl>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-printer" role="tabpanel" aria-labelledby="tabs-printer-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Printer</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>ShareName</th>
+                                                <th>PortName</th>
+                                                <th>Shared</th>
+                                                <th>Published</th>
+                                                <th>DriverName</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Printers %}
+                                            {% for p in host.Printers %}
+                                            <tr>
+                                                <td>{{ p.Name }}</td>
+                                                <td>{{ p.Type }}</td>
+                                                <td>{{ p.ShareName }}</td>
+                                                <td>{{ p.PortName }}</td>
+                                                <td>{{ p.Shared }}</td>
+                                                <td>{{ p.Published }}</td>
+                                                <td>{{ p.DriverName }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="7">No printers found!</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-configchecks" role="tabpanel" aria-labelledby="tabs-configchecks-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">ConfigChecks</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Component</th>
+                                                <th>Method</th>
+                                                <th>Key</th>
+                                                <th>Value</th>
+                                                <th>Result</th>
+                                                <th>Message</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.ConfigChecks %}
+                                            {% for c in host.ConfigChecks %}
+                                            <tr>
+                                                <td>{{ c.Name }}</td>
+                                                <td>{{ c.Component }}</td>
+                                                <td>{{ c.Method }}</td>
+                                                <td>{{ c.Key }}</td>
+                                                <td>{{ c.Value }}</td>
+                                                <td>{{ c.Result }}</td>
+                                                <td>{{ c.Message }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="7">No config checks performed!</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-registrychecks" role="tabpanel" aria-labelledby="tabs-registrychecks-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">RegistryChecks</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Tags</th>
+                                                <th>Path</th>
+                                                <th>Key</th>
+                                                <th>Expected</th>
+                                                <th>KeyExists</th>
+                                                <th>ValueMatch</th>
+                                                <th>CurrentValue</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.RegistryChecks %}
+                                            {% for c in host.RegistryChecks %}
+                                            <tr>
+                                                <td>{{ c.Name }}</td>
+                                                <td>{{ c.Category }}</td>
+                                                <td>{{ c.Tags }}</td>
+                                                <td>{{ c.Path }}</td>
+                                                <td>{{ c.Key }}</td>
+                                                <td>{{ c.Expected }}</td>
+                                                <td>{{ c.KeyExists }}</td>
+                                                <td>{{ c.ValueMatch }}</td>
+                                                <td>{{ c.CurrentValue }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="7">No RegistryChecks performed!</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-filechecks" role="tabpanel" aria-labelledby="tabs-filechecks-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">FileExistChecks</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>File</th>
+                                                <th>FileExist</th>
+                                                <th>HashMatch</th>
+                                                <th>HashChecked</th>
+                                                <th>ExpectedHASH</th>
+                                                <th>CurrentHash</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.FileExistChecks %}
+                                            {% for c in host.FileExistChecks %}
+                                            <tr>
+                                                <td>{{ c.Name }}</td>
+                                                <td>{{ c.File }}</td>
+                                                <td>{{ c.FileExist }}</td>
+                                                <td>{{ c.HashMatch }}</td>
+                                                <td>{{ c.HashChecked }}</td>
+                                                <td>{{ c.ExpectedHASH }}</td>
+                                                <td>{{ c.CurrentHash }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="7">No file checks performed!</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-pathaclchecks" role="tabpanel" aria-labelledby="tabs-pathaclchecks-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Path ACL Checks</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Path</th>
+                                                <th>ACL</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.PathACLChecks %}
+                                            {% for c in host.PathACLChecks %}
+                                            <tr>
+                                                <td>{{ c.Path }}</td>
+                                                <td>
+                                                    {% for p in c.ACLs %}
+                                                    {{ p.Name }} {{ p.AccountName }} {{ p.AccessControlType }} {{ p.AccessRight }} <br />
+                                                    {% endfor %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="7">No path ACL checks performed!</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane fade" id="tabs-defender" role="tabpanel" aria-labelledby="tabs-defender-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Defender Settings</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <div class="row">
+                                            {% if host.DefenderSettings %}
+                                            <div class="col-md-6">
+                                                <dl class="row">
+                                                    {%for d in host.DefenderSettings %}
+                                                    <dt class="col-sm-4">DisableArchiveScanning</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableArchiveScanning }}</dd>
+                                                    <dt class="col-sm-4">DisableAutoExclusions</dt>
+                                                    <dd class="col-sm-8">{{ d.AMProdDisableAutoExclusionsuctVersion }}</dd>
+                                                    <dt class="col-sm-4">DisableBehaviorMonitoring</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableBehaviorMonitoring }}</dd>
+                                                    <dt class="col-sm-4">DisableBlockAtFirstSeen</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableBlockAtFirstSeen }}</dd>
+                                                    <dt class="col-sm-4">DisableCatchupFullScan</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableCatchupFullScan }}</dd>
+                                                    <dt class="col-sm-4">DisableCatchupQuickScan</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableCatchupQuickScan }}</dd>
+                                                    <dt class="col-sm-4">DisableEmailScanning</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableEmailScanning }}</dd>
+                                                    <dt class="col-sm-4">DisableIntrusionPreventionSystem</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableIntrusionPreventionSystem }}</dd>
+                                                    <dt class="col-sm-4">DisableIOAVProtection</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableIOAVProtection }}</dd>
+                                                    <dt class="col-sm-4">DisableRealtimeMonitoring</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableRealtimeMonitoring }}</dd>
+                                                    <dt class="col-sm-4">DisableRemovableDriveScanning</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableRemovableDriveScanning }}</dd>
+                                                    <dt class="col-sm-4">DisableRestorePoint</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableRestorePoint }}</dd>
+                                                    <dt class="col-sm-4">DisableScanningMappedNetworkDrivesForFullScan</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableScanningMappedNetworkDrivesForFullScan }}</dd>
+                                                    <dt class="col-sm-4">DisableScanningNetworkFiles</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableScanningNetworkFiles }}</dd>
+                                                    <dt class="col-sm-4">DisableScriptScanning</dt>
+                                                    <dd class="col-sm-8">{{ d.DisableScriptScanning }}</dd>
+                                                    <dt class="col-sm-4">EnableNetworkProtection</dt>
+                                                    <dd class="col-sm-8">{{ d.EnableNetworkProtection }}</dd>
+                                                    <dt class="col-sm-4">ExclusionPath</dt>
+                                                    <dd class="col-sm-8">{{ d.ExclusionPath }}</dd>
+                                                    <dt class="col-sm-4">ExclusionProcess</dt>
+                                                    <dd class="col-sm-8">{{ d.ExclusionProcess }}</dd>
+                                                    {% endfor %}
+                                                </dl>
+                                            </div>
+                                            {% endif %}
+                                            {% if host.DefenderStatus %}
+                                            <div class="col-md-6">
+                                                <dl class="row">
+                                                    {%for d in host.DefenderStatus %}
+                                                    <dt class="col-sm-4">AMEngineVersion</dt>
+                                                    <dd class="col-sm-8">{{ d.AMEngineVersion }}</dd>
+                                                    <dt class="col-sm-4">AMProductVersion</dt>
+                                                    <dd class="col-sm-8">{{ d.AMProductVersion }}</dd>
+                                                    <dt class="col-sm-4">AMServiceEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.AMServiceEnabled }}</dd>
+                                                    <dt class="col-sm-4">AMServiceVersion</dt>
+                                                    <dd class="col-sm-8">{{ d.AMServiceVersion }}</dd>
+                                                    <dt class="col-sm-4">AntispywareEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.AntispywareEnabled }}</dd>
+                                                    <dt class="col-sm-4">AntispywareSignatureLastUpdated</dt>
+                                                    <dd class="col-sm-8">{{ d.AntispywareSignatureLastUpdated }}</dd>
+                                                    <dt class="col-sm-4">AntivirusEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.AntivirusEnabled }}</dd>
+                                                    <dt class="col-sm-4">AntivirusSignatureLastUpdated</dt>
+                                                    <dd class="col-sm-8">{{ d.AntivirusSignatureLastUpdated }}</dd>
+                                                    <dt class="col-sm-4">AntivirusEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.AntivirusEnabled }}</dd>
+                                                    <dt class="col-sm-4">AntivirusSignatureLastUpdated</dt>
+                                                    <dd class="col-sm-8">{{ d.AntivirusSignatureLastUpdated }}</dd>
+                                                    <dt class="col-sm-4">AntivirusSignatureVersion</dt>
+                                                    <dd class="col-sm-8">{{ d.AntivirusSignatureVersion }}</dd>
+                                                    <dt class="col-sm-4">BehaviorMonitorEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.BehaviorMonitorEnabled }}</dd>
+                                                    <dt class="col-sm-4">IoavProtectionEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.IoavProtectionEnabled }}</dd>
+                                                    <dt class="col-sm-4">IsVirtualMachine</dt>
+                                                    <dd class="col-sm-8">{{ d.IsVirtualMachine }}</dd>
+                                                    <dt class="col-sm-4">NISEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.NISEnabled }}</dd>
+                                                    <dt class="col-sm-4">NISEngineVersion</dt>
+                                                    <dd class="col-sm-8">{{ d.NISEngineVersion }}</dd>
+                                                    <dt class="col-sm-4">NISSignatureLastUpdated</dt>
+                                                    <dd class="col-sm-8">{{ d.NISSignatureLastUpdated }}</dd>
+                                                    <dt class="col-sm-4">NISSignatureVersion</dt>
+                                                    <dd class="col-sm-8">{{ d.NISSignatureVersion }}</dd>
+                                                    <dt class="col-sm-4">OnAccessProtectionEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.OnAccessProtectionEnabled }}</dd>
+                                                    <dt class="col-sm-4">RealTimeProtectionEnabled</dt>
+                                                    <dd class="col-sm-8">{{ d.RealTimeProtectionEnabled }}</dd>
+                                                  {% endfor %}
+                                                </dl>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-ntp" role="tabpanel" aria-labelledby="tabs-ntp-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">NTP Settings</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        {% if host.NTPSettings %}
+                                        {% for n in host.NTPSettings %}
+                                        <dl class="row">
+                                            <dt class="col-sm-4">Server</dt>
+                                            <dd class="col-sm-8">{{ n.Server }}</dd>
+                                            <dt class="col-sm-4">Type</dt>
+                                            <dd class="col-sm-8">{{ n.Type }}</dd>
+                                            <dt class="col-sm-4">UpdateInterval</dt>
+                                            <dd class="col-sm-8">{{ n.UpdateInterval }}</dd>
+                                        </dl>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tabs-routes" role="tabpanel" aria-labelledby="tabs-route-tab">
+                        <div class="row m-1">
+                            <div class="col-md-6">
+                                <div class="card card-olive card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Routes</h3>
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>AddressFamily</th>
+                                                <th>DestinationPrefix</th>
+                                                <th>NextHop</th>
+                                                <th>RouteMetric</th>
+                                                <th>IfIndex</th>
+                                                <th>InterfaceMetric</th>
+                                                <th>AdminDistance</th>
+                                                <th>AdminDistance</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% if host.Routes %}
+                                            {% for r in host.Routes %}
+                                            <tr>
+                                                <td>{{ r.AddressFamily }}</td>
+                                                <td>{{ r.DestinationPrefix}}</td>
+                                                <td>{{ r.NextHop }}</td>
+                                                <td>{{ r.RouteMetric }}</td>
+                                                <td>{{ r.IfIndex }}</td>
+                                                <td>{{ r.InterfaceMetric }}</td>
+                                                <td>{{ r.AdminDistance }}</td>
+                                                <td>{{ r.AdminDistance }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="4">No routes found.</td>
+                                            </tr>
+                                            {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+
                 </div>
+            </div>
+
         </div>
-
-      </div>
-    </div>
-
-  </div>
     </div>
 </div>
 
