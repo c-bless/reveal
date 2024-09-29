@@ -11,6 +11,7 @@ from reveal.webapp.sysinfo.views.shares import *
 from reveal.webapp.sysinfo.views.usermanagement import *
 from reveal.webapp.sysinfo.views.checks import *
 from reveal.webapp.sysinfo.views.defender import *
+from reveal.webapp.sysinfo.views.configreview import *
 
 from reveal.webapp.sysinfo.reports import *
 from reveal.webapp.sysinfo.reports.hardening import *
