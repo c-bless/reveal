@@ -104,3 +104,4 @@ def get_service_report_templates()-> list[str]:
 def get_serviceACL_report_templates()-> list[str]:
     template_dir = get_serviceACL_report_directory()
     return os.listdir(template_dir)
+

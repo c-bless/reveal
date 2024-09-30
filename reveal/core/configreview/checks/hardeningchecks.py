@@ -47,9 +47,26 @@ def verify_smbv1_disabled(host: Host) -> ComplianceResult:
     result = ComplianceResult(compliant=False)
     if host.SMBv1Enabled is False:
         result.compliant = True
+        result.messages.append("SMBv1 is disabled!")
     else:
         result.messages.append("SMBv1 is enabled!")
     return result
+
+
+def verify_smbv1_enabled(host: Host) -> ComplianceResult:
+    result = ComplianceResult(compliant=False)
+    if host.SMBv1Enabled is True:
+        result.compliant = True
+        result.messages.append("SMBv1 is enabled!")
+    else:
+        result.messages.append("SMBv1 is disabled!")
+    return result
+
+
+def verify_smbv1(host: Host, disabled = True) -> ComplianceResult:
+    if disabled is True:
+        return verify_smbv1_disabled()
+    return verify_smbv1_enabled()
 
 
 def verify_smbv_signing_enabled(host: Host) -> ComplianceResult:

@@ -6,6 +6,7 @@ from reveal.core.reports import ReportInfo
 from reveal.core.querries.ad import find_user_badpwcount_gt
 from reveal.core.querries.ad import find_user_pw_expired
 from reveal.core.querries.ad import find_user_pw_not_required
+from reveal.core.querries.ad import find_user_pw_never_expires
 from reveal.core.querries.ad import find_user_sidhistory
 from reveal.core.querries.ad import find_user_with_logonworkstations
 from reveal.core.querries.ad import find_user_with_SPNs
@@ -86,7 +87,7 @@ class ReportUserPWExpired(ReportInfo):
 @login_required
 def report_aduser_pwneverexired():
     form = UserDownload()
-    users = find_user_pw_expired()
+    users = find_user_pw_never_expires()
     if request.method == 'POST' and form.validate_on_submit():
         if 'download' in request.form:
             output = generate_user_excel(user_list=users)

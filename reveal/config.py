@@ -32,6 +32,8 @@ class AppConfig(object):
                       os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/update-data/"
     STATIC_DATA_DIR = os.environ.get('STATIC_DIR') or \
                       os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/static/"
+    CONFIGREVIEW_DIR = os.environ.get('CONFIGREVIEW_DIR') or \
+                 os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/configreview_checks"
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(parentdir, 'reveal.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -39,6 +41,10 @@ class AppConfig(object):
 
     # Enable protection agains *Cross-site Request Forgery (CSRF)*
     CSRF_ENABLED = True
+    # Do not strictly check the referrer header
+    # This check will fail when the forwarded docker nginx port is different to 443
+    WTF_CSRF_SSL_STRICT = False
+    
     # import secrets
     # secrets.token_hex(32)
     CSRF_SESSION_KEY = os.environ.get('CSRF_SESSION_KEY') or \

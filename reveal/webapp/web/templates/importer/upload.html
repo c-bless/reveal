@@ -3,54 +3,53 @@
 
 {% from "_formhelpers.html" import render_file_field, render_submit_field %}
 {% block stylesheets %}
-    {{ super() }}
+{{ super() }}
 {% endblock stylesheets %}
 
 
 {% block content %}
-    <section class="content">
-      <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <form class="form-horizontal" method="post" action="{{ url_for('importer.upload_post') }}"
-                                  enctype="multipart/form-data">
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-md-12">
+                <form class="form-horizontal" method="post" action="{{ url_for('importer.upload_post') }}"
+                      enctype="multipart/form-data">
 
-                        <div class="card card-olive">
+                    <div class="card card-olive">
 
-                            <div class="card-header">
-                                <strong class="card-title">{{title}}</strong>
-                            </div>
-
-
-                            <div class="card-body">
-                                    <dl class="row">
-                                      <dt class="col-sm-1">Allowed files:</dt>
-                                      <dd class="col-sm-8">Output of collector scripts (.xml)</dd>
-                                    </dl>
-                                    {{ render_file_field(form.Files) }}
-                                {{ form.hidden_tag() }}
-                            </div>
-
-                            <div class="card-footer">
-                                {{ render_submit_field(form.Submit) }}
-                            </div>
+                        <div class="card-header">
+                            <strong class="card-title">{{title}}</strong>
                         </div>
 
-                    </form>
-                </div>
-            </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
 
-    </section>
+                        <div class="card-body">
+                            <dl class="row">
+                                <dt class="col-sm-1">Allowed files:</dt>
+                                <dd class="col-sm-8">Output of collector scripts (.xml) or compliance checks (.yml)</dd>
+                            </dl>
+                            {{ render_file_field(form.Files) }}
+                            {{ form.hidden_tag() }}
+                        </div>
+
+                        <div class="card-footer">
+                            {{ render_submit_field(form.Submit) }}
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+</section>
 {% endblock content %}
 
 
 {% block javascripts %}
-    {{ super() }}
-    <!-- Specific Page Vendor -->
-
+{{ super() }}
+<!-- Specific Page Vendor -->
 
 
 <!-- jQuery -->
