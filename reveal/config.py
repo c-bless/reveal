@@ -32,6 +32,8 @@ class AppConfig(object):
                       os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/update-data/"
     STATIC_DATA_DIR = os.environ.get('STATIC_DIR') or \
                       os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/static/"
+    CONFIGREVIEW_DIR = os.environ.get('CONFIGREVIEW_DIR') or \
+                 os.path.abspath(os.path.join(basedir, os.pardir)) + "/data-directories/configreview_checks"
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(parentdir, 'reveal.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
