@@ -7,25 +7,6 @@ meta:
 
 system:
 
-  user_checks:
-    status:
-      - name: "guest"
-        enabled: false
-
-
-  group_checks:
-    group_memberships:
-      - name: "SIMATIC HMI"
-        nested_groups: [ "GG_SIMATIC_HMI" ]
-        user_members: [ ]
-      - name: "SIMATIC HMI CS"
-        nested_groups: [ "GG_SIMATIC_HMI_CS" ]
-        user_members: [ ]
-      - name: "SIMATIC BATCH"
-        nested_groups: [ "GG SIMATIC BATCH" ]
-        user_members: [ ]
-
-
   service_status_checks:
     # PCS7 9.0
     # The following services can be disabled for all operating systems supported by PCS 7 V9.0:
@@ -67,7 +48,7 @@ system:
     not_running:
       reference: "6.2.1 Deaktivieren von Diensten"
       names:
-        - "BTAGService" # Bluetooth-Audiogateway-Dienst                    (BTAGService)
+        - "BTAGService"       # Bluetooth-Audiogateway-Dienst (BTAGService)
         - "bthserv"
         - "WdiServiceHost"
         - "DPS"
@@ -92,9 +73,28 @@ system:
 
   service_startmode_checks:
     disabled:
-      names: [ "BTAGService", "bthserv", "WdiServiceHost", "DPS", "RmSvc", "lfsvc", "pla", "MapsBroker", "PhoneSvc",
-               "WalletService", "WMPNetworkSvc", "FontCache3.0.0.0", "icssvc","WcsPlugInService", "wisvc", "XboxGipSvc",
-               "XblAuthManager", "XboxNetApiSvc", "XblGameSave", "SEMgrSvc", "CertPropSvc" ]
+      names:
+        - "BTAGService"       # Bluetooth-Audiogateway-Dienst (BTAGService)
+        - "bthserv"
+        - "WdiServiceHost"
+        - "DPS"
+        - "RmSvc"
+        - "lfsvc"
+        - "pla"
+        - "MapsBroker"
+        - "PhoneSvc"
+        - "WalletService"
+        - "WMPNetworkSvc"
+        - "FontCache3.0.0.0"
+        - "icssvc"
+        - "WcsPlugInService"
+        - "wisvc"
+        - "XboxGipSvc"
+        - "XblAuthManager"
+        - "XboxNetApiSvc"
+        - "XblGameSave"
+        - "SEMgrSvc"
+        - "CertPropSvc"
 
   firewall_checks:
     # public, domain, private

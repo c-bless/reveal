@@ -63,24 +63,24 @@ def verify_config_checks(hosts, checks):
                 if "running" in ssc and "names" in ssc["running"]:
                     for r in ssc["running"]["names"]:
                         if r not in running:
-                            results.append([h.Hostname, "service status checks (running) ", r, "Failed",
+                            results.append([h.Hostname, h.SystemGroup, "service status checks (running) ", r, "Failed",
                                             f"Service ({r}) is not running"])
                         else:
-                            results.append([h.Hostname, "service status checks (running) ", r, "Pass",""])
+                            results.append([h.Hostname, h.SystemGroup, "service status checks (running) ", r, "Pass",""])
                 if "not_running" in ssc and "names" in ssc["running"]:
                     for r in ssc["not_running"]["names"]:
                         if r not in not_running:
-                            results.append([h.Hostname, "service status checks (not running)", r, "Failed",
-                                            f"Service ({r}) is running"])
+                            results.append([h.Hostname, h.SystemGroup, "service status checks (not running)", r, "Failed",
+                                 f"Service ({r}) is running"])
                         else:
-                            results.append([h.Hostname, "service status checks (not running) ", r, "Pass", ""])
+                            results.append([h.Hostname, h.SystemGroup, "service status checks (not running) ", r, "Pass", ""])
                 if "disabled" in ssc and "names" in ssc["disabled"]:
                     for r in ssc["disabled"]["names"]:
                         if r not in disabled:
-                            results.append([h.Hostname, "service status checks (disabled)", r, "Failed",
+                            results.append([h.Hostname, h.SystemGroup, "service status checks (disabled)", r, "Failed",
                                             f"Service ({r}) not disabled"])
                         else:
-                            results.append([h.Hostname, "service status checks (disabled) ", r, "Pass",""])
+                            results.append([h.Hostname, h.SystemGroup, "service status checks (disabled) ", r, "Pass",""])
             if "firewall_checks" in checks["system"]:
                 fwc = checks["system"]["firewall_checks"]
                 if "enabled_profiles" in fwc:
@@ -92,10 +92,10 @@ def verify_config_checks(hosts, checks):
                             if p == "private" and h.FwProfilePrivate is False: fw_result = False
                             if p == "domain" and h.FwProfileDomain is False: fw_result = False
                             if fw_result is False:
-                                results.append([h.Hostname, "Firewall status check", p, "Failed",
+                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Failed",
                                                 f"Firewall is disabled for profile ({p})"])
                             else:
-                                results.append([h.Hostname, "Firewall status check", p, "Pass", ""])
+                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Pass", ""])
                 if "disabled_profiles" in fwc:
                     profiles = ["public", "private", "domain"]
                     for p in profiles:
@@ -105,44 +105,52 @@ def verify_config_checks(hosts, checks):
                             if p == "private" and h.FwProfilePrivate is True: fw_result = False
                             if p == "domain" and h.FwProfileDomain is True: fw_result = False
                             if fw_result is False:
-                                results.append([h.Hostname, "Firewall status check", p, "Failed",
+                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Failed",
                                                 f"Firewall is enabled for profile ({p})"])
                             else:
-                                results.append([h.Hostname, "Firewall status check", p, "Pass", ""])
+                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Pass", ""])
             if "SMB" in checks["system"]:
                 smb = checks["system"]["SMB"]
                 if "v1" in smb:
-                    if smb["v1"] == h.SMBv1Enabled:
+                    if smb["v1"] != h.SMBv1Enabled:
                         if h.SMBv1Enabled is True:
-                            results.append([h.Hostname, "SMBv1 enabled check", "SMBv1", "Failed",
+                            results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Failed",
                                             f"SMBv1 was expected to be disabled"])
                         else:
-                            results.append([h.Hostname, "SMBv1 enabled check", "SMBv1", "Failed",
+                            results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Failed",
                                             f"SMBv1 was expected to be enabled"])
                     else:
-                        results.append([h.Hostname, "SMBv1 enabled check", "SMBv1", "Pass", ""])
+                        results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Pass", ""])
                 if "signing_enabled" in smb:
-                    if smb["signing_enabled"] == h.SMBEnableSecuritySignature:
+                    if smb["signing_enabled"] != h.SMBEnableSecuritySignature:
                         if h.SMBEnableSecuritySignature is True:
-                            results.append([h.Hostname, "SMBv1 signing enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be enabled"])
-                        else:
-                            results.append([h.Hostname, "SMBv1 signing enabled check", "SMBv1", "Failed",
+                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Failed",
                                             f"SMBv1 signing was expected to be disabled"])
-                    else:
-                        results.append([h.Hostname, "SMBv1 signing enabled check", "SMBv1", "Pass", ""])
-                if "signing_required" in smb:
-                    if smb["signing_required"] == h.SMBRequireSecuritySignature:
-                        if h.SMBRequireSecuritySignature is True:
-                            results.append([h.Hostname, "SMBv1 signing required check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be required"])
                         else:
-                            results.append([h.Hostname, "SMBv1 signing required check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be optional"])
+                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Failed",
+                                            f"SMBv1 signing was expected to be enabled"])
                     else:
-                        results.append([h.Hostname, "SMBv1 signing required check", "SMBv1", "Pass", ""])
-
-        result_class.results.append(results)
+                        results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Pass", ""])
+                if "signing_required" in smb:
+                    if smb["signing_required"] != h.SMBRequireSecuritySignature:
+                        if h.SMBRequireSecuritySignature is True:
+                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1",
+                                            "Failed", f"SMBv1 signing was not expected to be required (optional)"])
+                        else:
+                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1",
+                                            "Failed", f"SMBv1 signing was expected to be required"])
+                    else:
+                        results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1", "Pass", ""])
+            if "WSUS" in checks["system"]:
+                if "https_enabled" in checks["system"]["WSUS"]:
+                    https_enabled = checks["system"]["WSUS"]["https_enabled"]
+                    server = h.WUServer
+                    if not server.startswith("https://"):
+                        results.append([h.Hostname, h.SystemGroup, "WSUS via http", server, "Failed",
+                                        "WSUS is not configured for https"])
+                    else:
+                        results.append([h.Hostname, h.SystemGroup, "WSUS via http", server, "Pass", ""])
+        result_class.results.extend(results)
     return result_class
 
 
@@ -151,7 +159,7 @@ def generate_configreview_excel(results=[]):
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})
     worksheet = workbook.add_worksheet()
 
-    header_data = ["Hostname", "Check", "Component", "Result", "Message"]
+    header_data = ["Hostname", "Systemgroup", "Check", "Component", "Result", "Message"]
 
     wrap_format = workbook.add_format({'text_wrap': True})
     header_format = workbook.add_format({'bold': True,
@@ -166,13 +174,13 @@ def generate_configreview_excel(results=[]):
     col = 0
     # Iterate over the data and write it out row by row.
     for res in results:
-        for c in res[0]:
+        for c in res:
             worksheet.write(row, col, str(c))
             col += 1
         col = 0
         row += 1
 
-    worksheet.autofilter("A1:Y1")
+    worksheet.autofilter("A1:F1")
     worksheet.autofit()
     # Close the workbook before streaming the data.
     workbook.close()
