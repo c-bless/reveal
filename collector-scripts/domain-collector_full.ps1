@@ -56,7 +56,7 @@ try{
         Write-Host "[*] Collecting Domain information."
         $start_of_script = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
-        $domain = Get-ADDomain;
+        $domain = Get-ADDomain -Current LocalComputer;
         $path = Get-Location
 
         $name = [string] $domain.NetBIOSName
