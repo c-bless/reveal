@@ -16,3 +16,4 @@ COPY /update-data /app/update-data
 COPY /uploads /app/uploads
 COPY /reports /app/reports
 COPY /static /app/static
+COPY /configreview_checks /app/configreview_checks

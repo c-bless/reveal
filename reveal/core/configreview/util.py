@@ -117,7 +117,6 @@ def verify_config_checks(hosts, checks):
             if "SMB" in checks["system"]:
                 smb = checks["system"]["SMB"]
                 if "v1" in smb:
-                    print(f"v1 {h.SMBv1Enabled}")
                     if smb["v1"] != h.SMBv1Enabled:
                         if h.SMBv1Enabled is True:
                             results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Failed",

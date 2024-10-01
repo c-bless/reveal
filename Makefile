@@ -18,6 +18,8 @@ DOCKER_UPLOAD_DIR               = $(BASEDIR)/services/web/uploads
 UPDATE_DATA_DIR                 = $(BASEDIR)/data-directories/update-data
 DOCKER_UPDATE_DATA_DIR          = $(BASEDIR)/services/web/update-data
 DOCKER_WEB_STATIC_DATA_DIR      = $(BASEDIR)/services/web/static
+CONFIGREVIEW_DIR                = $(BASEDIR)/data-directories/configreview_checks
+DOCKER_CONFIGREVIEW_DIR         = $(BASEDIR)/services/web/configreview_checks
 
 DOCKER_NGINX_STATIC_DATA_DIR    = $(BASEDIR)/services/nginx/static
 DOCKER_NGINX                    = $(BASEDIR)/services/nginx
@@ -63,6 +65,7 @@ clean:
 	@$(shell rm -r $(DOCKER_REPORT_DIR))
 	@$(shell rm -r $(DOCKER_UPLOAD_DIR))
 	@$(shell rm -r $(DOCKER_UPDATE_DATA_DIR))
+	@$(shell rm -r $(DOCKER_CONFIGREVIEW_DIR))
 	@$(shell rm -r $(DOCKER_WEB_STATIC_DATA_DIR))
 	@$(shell rm -r $(DOCKER_NGINX_STATIC_DATA_DIR))
 	@$(shell rm -r $(DOCKER_WEBAPI_SRC))
@@ -71,6 +74,7 @@ clean:
 build: tmp
 	@$(shell cp -r $(REPORT_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(UPLOAD_DIR) $(DOCKER_WEBAPP))
+	@$(shell cp -r $(CONFIGREVIEW_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(UPDATE_DATA_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(STATIC_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(STATIC_DIR) $(DOCKER_NGINX))
