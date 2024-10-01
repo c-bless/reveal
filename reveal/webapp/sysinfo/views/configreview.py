@@ -72,7 +72,6 @@ def host_configreview_search_list():
                 if selectedReview in cc_files:
                     checks = load_configreview_checks(fname=selectedReview)
                     result = verify_config_checks(hosts, checks)
-                    print (result.results)
                     output = generate_configreview_excel(results=result.results)
                     return Response(output, mimetype="text/docx",
                                     headers={"Content-disposition": "attachment; filename=pcs7.xlsx",

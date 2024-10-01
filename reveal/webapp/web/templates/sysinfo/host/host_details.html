@@ -623,15 +623,15 @@
                                     <div class="card-body">
                                         <dl class="row">
                                             <dt class="col-sm-4">SMBv1</dt>
-                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv1Enabled) }}</dd>
+                                            <dd class="col-sm-8">{{ helper.render_TrueBad(host.SMBv1Enabled) }}</dd>
                                             <dt class="col-sm-4">SMBv2</dt>
-                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBv2Enabled) }}</dd>
+                                            <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBv2Enabled) }}</dd>
                                             <dt class="col-sm-4">EncryptData</dt>
-                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEncryptData) }}</dd>
+                                            <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBEncryptData) }}</dd>
                                             <dt class="col-sm-4">EnableSecuritySignature</dt>
-                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBEnableSecuritySignature) }}</dd>
+                                            <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBEnableSecuritySignature) }}</dd>
                                             <dt class="col-sm-4">RequireSecuritySignature</dt>
-                                            <dd class="col-sm-8">{{ helper.render_isEnabled(host.SMBRequireSecuritySignature) }}</dd>
+                                            <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBRequireSecuritySignature) }}</dd>
                                         </dl>
                                     </div>
                                     <!-- /.card-body -->

@@ -10,9 +10,26 @@
 {% endmacro %}
 
 {% macro render_isEnabled(enabled) %}
-  {% if enabled== "True" %}
+  {% if enabled== True %}
     <span class="text-success">Enabled</span>
   {% else %}
     <span class="text-danger">Disabled</span>
+  {% endif %}
+{% endmacro %}
+
+{% macro render_TrueBad(enabled) %}
+  {% if enabled== True %}
+    <span class="text-danger">True</span>
+  {% else %}
+    <span class="text-success">False</span>
+  {% endif %}
+{% endmacro %}
+
+
+{% macro render_TrueGood(enabled) %}
+  {% if enabled== True %}
+    <span class="text-success">True</span>
+  {% else %}
+    <span class="text-danger">False</span>
   {% endif %}
 {% endmacro %}

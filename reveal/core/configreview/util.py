@@ -67,11 +67,16 @@ def verify_config_checks(hosts, checks):
                                             f"Service ({r}) is not running"])
                         else:
                             results.append([h.Hostname, h.SystemGroup, "service status checks (running) ", r, "Pass",""])
-                if "not_running" in ssc and "names" in ssc["running"]:
+                if "not_running" in ssc and "names" in ssc["not_running"]:
                     for r in ssc["not_running"]["names"]:
                         if r not in not_running:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (not running)", r, "Failed",
-                                 f"Service ({r}) is running"])
+                            if r not in running:
+                                results.append(
+                                    [h.Hostname, h.SystemGroup, "service status checks (not running)", r, "Pass",
+                                     f"Service ({r}) does not exist"])
+                            else:
+                                results.append([h.Hostname, h.SystemGroup, "service status checks (not running)", r, "Failed",
+                                     f"Service ({r}) is running"])
                         else:
                             results.append([h.Hostname, h.SystemGroup, "service status checks (not running) ", r, "Pass", ""])
                 if "disabled" in ssc and "names" in ssc["disabled"]:
@@ -112,6 +117,7 @@ def verify_config_checks(hosts, checks):
             if "SMB" in checks["system"]:
                 smb = checks["system"]["SMB"]
                 if "v1" in smb:
+                    print(f"v1 {h.SMBv1Enabled}")
                     if smb["v1"] != h.SMBv1Enabled:
                         if h.SMBv1Enabled is True:
                             results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Failed",
@@ -124,23 +130,23 @@ def verify_config_checks(hosts, checks):
                 if "signing_enabled" in smb:
                     if smb["signing_enabled"] != h.SMBEnableSecuritySignature:
                         if h.SMBEnableSecuritySignature is True:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be disabled"])
+                            results.append([h.Hostname, h.SystemGroup, "SMB signing enabled check", "SMB", "Failed",
+                                            f"SMB signing was expected to be disabled"])
                         else:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be enabled"])
+                            results.append([h.Hostname, h.SystemGroup, "SMB signing enabled check", "SMB", "Failed",
+                                            f"SMB signing was expected to be enabled"])
                     else:
-                        results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Pass", ""])
+                        results.append([h.Hostname, h.SystemGroup, "SMB signing enabled check", "SMB", "Pass", ""])
                 if "signing_required" in smb:
                     if smb["signing_required"] != h.SMBRequireSecuritySignature:
                         if h.SMBRequireSecuritySignature is True:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1",
-                                            "Failed", f"SMBv1 signing was not expected to be required (optional)"])
+                            results.append([h.Hostname, h.SystemGroup, "SMB signing required check", "SMB",
+                                            "Failed", f"SMB signing was expected to be optional"])
                         else:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1",
-                                            "Failed", f"SMBv1 signing was expected to be required"])
+                            results.append([h.Hostname, h.SystemGroup, "SMB signing required check", "SMB",
+                                            "Failed", f"SMB signing was expected to be required"])
                     else:
-                        results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1", "Pass", ""])
+                        results.append([h.Hostname, h.SystemGroup, "SMB signing required check", "SMB", "Pass", ""])
             if "WSUS" in checks["system"]:
                 if "https_enabled" in checks["system"]["WSUS"]:
                     https_enabled = checks["system"]["WSUS"]["https_enabled"]
@@ -150,6 +156,29 @@ def verify_config_checks(hosts, checks):
                                         "WSUS is not configured for https"])
                     else:
                         results.append([h.Hostname, h.SystemGroup, "WSUS via http", server, "Pass", ""])
+            if "configcheck_results" in checks["system"]:
+                for cc_in in checks["system"]["configcheck_results"]:
+                    performed_checks = []
+                    if "name" in cc_in and "result" in cc_in:
+                        name = cc_in["name"]
+                        result = cc_in["result"]
+                        for cc in h.ConfigChecks:
+                            performed_checks.append(cc.Name)
+                        for cc in h.ConfigChecks:
+                            if name in performed_checks:
+                                if name == cc.Name:
+                                    if result == cc.Result:
+                                        results.append(
+                                            [h.Hostname, h.SystemGroup, "Configuration Check", name , "Pass", ""])
+                                    else:
+                                        str_result = str(cc.Result)
+                                        results.append(
+                                            [h.Hostname, h.SystemGroup, "Configuration Check", name , "Failed",
+                                             f"Result: {str_result}"])
+                            else:
+                                results.append(
+                                    [h.Hostname, h.SystemGroup, "Configuration Check", name, "UNKNOWN",
+                                     "Data not collected"])
         result_class.results.extend(results)
     return result_class
 

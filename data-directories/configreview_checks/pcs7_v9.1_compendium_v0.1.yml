@@ -107,8 +107,6 @@ system:
     signing_required: True
 
   configcheck_results:
-    - name: "Sticky Keys Enabled"
-      result: True
     - name: "SSL 2.0 - disabled (Client)"
       result: Disabled
     - name: "SSL 2.0 - disabled (Server)"
