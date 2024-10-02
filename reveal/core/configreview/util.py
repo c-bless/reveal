@@ -58,8 +58,8 @@ def verify_config_checks(hosts, checks):
                         running.append(s.Name)
                     else:
                         not_running.append(s.Name)
-                    if s.StartMode not in ["Disabled", "Manual"]:
-                        s.disabled = False
+                    if s.StartMode in ["Disabled", "Manual"]:
+                        disabled.append(s.Name)
                 if "running" in ssc and "names" in ssc["running"]:
                     for r in ssc["running"]["names"]:
                         if r not in running:
@@ -79,11 +79,18 @@ def verify_config_checks(hosts, checks):
                                      f"Service ({r}) is running"])
                         else:
                             results.append([h.Hostname, h.SystemGroup, "service status checks (not running) ", r, "Pass", ""])
+
+                ssc = checks["system"]["service_startmode_checks"]
                 if "disabled" in ssc and "names" in ssc["disabled"]:
                     for r in ssc["disabled"]["names"]:
                         if r not in disabled:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (disabled)", r, "Failed",
-                                            f"Service ({r}) not disabled"])
+                            if r not in running:
+                                results.append(
+                                    [h.Hostname, h.SystemGroup, "service status checks (disabled)", r, "Pass",
+                                     f"Service ({r}) does not exist"])
+                            else:
+                                results.append([h.Hostname, h.SystemGroup, "service status checks (disabled)", r, "Failed",
+                                     f"Service ({r}) is running"])
                         else:
                             results.append([h.Hostname, h.SystemGroup, "service status checks (disabled) ", r, "Pass",""])
             if "firewall_checks" in checks["system"]:
