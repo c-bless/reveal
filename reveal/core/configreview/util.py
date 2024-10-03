@@ -11,11 +11,16 @@ from reveal.core.configreview.checks.servicechecks import verfiy_services_disabl
 from reveal.core.configreview.checks.servicechecks import verify_services_not_running
 
 from reveal.core.configreview.checks.hardeningchecks import verify_wsus_https
-from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_enabled, verify_smb_signing_disabled
-from reveal.core.configreview.checks.hardeningchecks import verify_smbv1_disabled, verify_smbv1_enabled
-from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_required, verify_smb_signing_not_required
+from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_enabled
+from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_disabled
+from reveal.core.configreview.checks.hardeningchecks import verify_smbv1_disabled
+from reveal.core.configreview.checks.hardeningchecks import verify_smbv1_enabled
+from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_required
+from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_not_required
 from reveal.core.configreview.checks.hardeningchecks import verify_firewall_enabled
 from reveal.core.configreview.checks.hardeningchecks import verify_firewall_disabled
+from reveal.core.configreview.checks.hardeningchecks import verify_configchecks
+
 from reveal.core.configreview import ConfigReviewResult
 
 class ConfigReviewResults(object):
@@ -100,6 +105,9 @@ def verify_config_checks(hosts, checks):
                     https_enabled = checks["system"]["WSUS"]["https_enabled"]
                     if https_enabled is True:
                         results.append(verify_wsus_https(h))
+            if "configcheck_results" in checks["system"]:
+                cc_checks = checks["system"]["configcheck_results"]
+                results.extend(verify_configchecks(h, cc_checks))
         result_class.results.extend(results)
     return result_class
 
@@ -124,7 +132,6 @@ def generate_configreview_excel(result: ConfigReviewResults):
     col = 0
     # Iterate over the data and write it out row by row.
     for res in result.results:
-        print(res)
         worksheet.write(row, 0, res.hostname)
         worksheet.write(row, 1, res.systemgroup)
         worksheet.write(row, 2, res.check)

@@ -166,3 +166,28 @@ def verify_wsus_https(host: Host) -> ConfigReviewResult:
         result.compliant = False
         result.message = f"WSUS URI: {host.WUServer}"
     return result
+
+
+def verify_configchecks(host: Host, checks: list) -> list[ConfigReviewResult]:
+    results = []
+    performed_checks = []
+    for c_in in host.ConfigChecks:
+        performed_checks.append(c_in.Name)
+    for c in checks:
+        if "name" in c and "result" in c:
+            result = ConfigReviewResult(check=c["name"], component="ConfigCheck", hostname=host.Hostname,
+                                        systemgroup=host.SystemGroup)
+            if c["name"] in performed_checks:
+                for cc in host.ConfigChecks:
+                    if c["name"] == cc.Name:
+                        if c["result"] == cc.Result:
+                            result.compliant = True
+                            result.message = "Result matches"
+                        else:
+                            result.compliant = False
+                            result.message = "Result does not match"
+            else:
+                result.compliant = False
+                result.message = "Data not collected"
+            results.append(result)
+    return results
