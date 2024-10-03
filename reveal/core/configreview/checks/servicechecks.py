@@ -15,16 +15,21 @@ def verfiy_services_disabled(host: Host, services: list[str]) -> list[ConfigRevi
     :return: list of results of compliance checks. `result.compliant` is True if service is disabled False otherwise.
     """
     results = []
+    found_services = []
     disabled = []
     for s in host.Services:
-        if s.StartMode not in ["Disabled", "Manual"]:
-            s.disabled = False
+        found_services.append(s.Name)
+        if s.StartMode in ["Disabled", "Manual"]:
+            disabled.append(s.Name)
     for s_in in services:
         result = ConfigReviewResult(component=s_in, check="service status checks (disabled)", hostname=host.Hostname,
                                     systemgroup=host.SystemGroup)
         if s_in in disabled:
             result.compliant = True
             result.message = f"Service ({s_in}) is disabled"
+        elif s_in not in found_services:
+            result.compliant = True
+            result.message = f"Service ({s_in}) does not exist"
         else:
             result.compliant = False
             result.message = f"Service ({s_in}) not disabled"

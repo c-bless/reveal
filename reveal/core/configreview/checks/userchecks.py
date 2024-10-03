@@ -27,7 +27,7 @@ def verify_user_disabled(host: Host, username: str, accept_removed=True) -> Conf
             result.message = f"User {username} is not disabled."
     if accept_removed is True and username not in users:
         result.compliant = True
-        result.message = "user does not exist"
+        result.message = "User does not exist"
     return result
 
 

@@ -67,6 +67,8 @@ def verify_config_checks(hosts, checks):
                 if "not_running" in ssc and "names" in ssc["running"]:
                     names = ssc["not_running"]["names"]
                     results.extend(verify_services_not_running(h, names))
+            if "service_startmode_checks" in checks["system"]:
+                ssc = checks["system"]["service_startmode_checks"]
                 if "disabled" in ssc and "names" in ssc["disabled"]:
                     names = ssc["disabled"]["names"]
                     results.extend(verfiy_services_disabled(h, names))
