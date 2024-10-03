@@ -1,19 +1,8 @@
-from sqlalchemy import and_
-
-from reveal.core.sids import SID_LOCAL_ADMIN_GROUP
-from reveal.core.sids import SID_BUILTIN_REMOTE_DESKTOP_USERS
-from reveal.core.sids import SID_BUILTIN_REMOTE_MANAGEMENT_USERS
-from reveal.core.sids import SID_BUILTIN_DCOM_USERS
-from reveal.core.sids import SID_BUILTIN_PERFORMANCE_MONITOR_USERS
-
-from reveal.core.models.sysinfo import Group
-from reveal.core.models.sysinfo import GroupMember
+from reveal.core.configreview import ConfigReviewResult
 from reveal.core.models.sysinfo import Host
-from reveal.core.models.sysinfo import User
-from reveal.core.compliance import ComplianceResult
 
 
-def verify_user_disabled(host: Host, username: str, accept_removed=True) -> ComplianceResult:
+def verify_user_disabled(host: Host, username: str, accept_removed=True) -> ConfigReviewResult:
     """
     Verifies if the specified user is disabled on the given host.
 
@@ -26,21 +15,23 @@ def verify_user_disabled(host: Host, username: str, accept_removed=True) -> Comp
 
     :return: result of compliance check. `result.compliant` is `True` if user is disabled `False` otherwise.
     """
-    result = ComplianceResult(compliant=False)
+    result = ConfigReviewResult(check="User disabled check", component=username, hostname=host.Hostname, systemgroup=host.SystemGroup)
     users = []
     for u in host.Users:
         users.append(u.Name)
         if u.Name == username and u.Disabled:
             result.compliant = True
+            result.message = f"User {username} is disabled."
+        elif u.Name == username:
+            result.compliant = False
+            result.message = f"User {username} is not disabled."
     if accept_removed is True and username not in users:
         result.compliant = True
-        result = True
-    if result.compliant is False:
-        result.messages.append(f"User {username} is not disabled.")
+        result.message = "user does not exist"
     return result
 
 
-def verify_user_exists(host: Host, username: str, accept_disabled=False) -> ComplianceResult:
+def verify_user_exists(host: Host, username: str, accept_disabled=False) -> ConfigReviewResult:
     """
     Verifies if the given account exists.
 
@@ -52,18 +43,24 @@ def verify_user_exists(host: Host, username: str, accept_disabled=False) -> Comp
     :param accept_disabled:
     :return:
     """
-    result = ComplianceResult(compliant=False)
+    result = ConfigReviewResult(check="User exist check", component=username, hostname=host.Hostname, systemgroup=host.SystemGroup)
+    found = False
     for u in host.Users:
         if u.Name == username:
+            found = True
             if u.Disabled is False:
                 # user account is activated
-                return result
+                result.compliant = True
+                result.compliant = f"user {username} is active"
             # user account has been found but it is disabled.
             elif accept_disabled is True:
                 # disabled accounts are accepted
-                return result
+                result.compliant = True
+                result.message =  f"user {username} exists but is disabled"
             else:
-                result.messages.append(f"User {username} exist but is disabled.")
-    # user account has not been found
-    result.messages.append(f"User {username} does not exist.")
+                result.compliant = False
+                result.message = f"User {username} exists but is disabled."
+    if found is False:
+        # user account has not been found
+        result.message = f"User {username} does not exist."
     return result

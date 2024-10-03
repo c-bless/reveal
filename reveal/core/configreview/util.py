@@ -6,6 +6,17 @@ from io import BytesIO
 import xlsxwriter
 import yaml
 
+from reveal.core.configreview.checks.servicechecks import verify_services_running
+from reveal.core.configreview.checks.servicechecks import verfiy_services_disabled
+from reveal.core.configreview.checks.servicechecks import verify_services_not_running
+
+from reveal.core.configreview.checks.hardeningchecks import verify_wsus_https
+from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_enabled, verify_smb_signing_disabled
+from reveal.core.configreview.checks.hardeningchecks import verify_smbv1_disabled, verify_smbv1_enabled
+from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_required, verify_smb_signing_not_required
+from reveal.core.configreview.checks.hardeningchecks import verify_firewall_enabled
+from reveal.core.configreview.checks.hardeningchecks import verify_firewall_disabled
+from reveal.core.configreview import ConfigReviewResult
 
 class ConfigReviewResults(object):
 
@@ -50,111 +61,48 @@ def verify_config_checks(hosts, checks):
         if "system" in checks:
             if "service_status_checks" in checks["system"]:
                 ssc = checks["system"]["service_status_checks"]
-                running = []
-                not_running = []
-                disabled = []
-                for s in h.Services:
-                    if s.Started is True:
-                        running.append(s.Name)
-                    else:
-                        not_running.append(s.Name)
-                    if s.StartMode not in ["Disabled", "Manual"]:
-                        s.disabled = False
                 if "running" in ssc and "names" in ssc["running"]:
-                    for r in ssc["running"]["names"]:
-                        if r not in running:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (running) ", r, "Failed",
-                                            f"Service ({r}) is not running"])
-                        else:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (running) ", r, "Pass",""])
+                    names = ssc["running"]["names"]
+                    results.extend(verify_services_running(h, names))
                 if "not_running" in ssc and "names" in ssc["running"]:
-                    for r in ssc["not_running"]["names"]:
-                        if r not in not_running:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (not running)", r, "Failed",
-                                 f"Service ({r}) is running"])
-                        else:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (not running) ", r, "Pass", ""])
+                    names = ssc["not_running"]["names"]
+                    results.extend(verify_services_not_running(h, names))
                 if "disabled" in ssc and "names" in ssc["disabled"]:
-                    for r in ssc["disabled"]["names"]:
-                        if r not in disabled:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (disabled)", r, "Failed",
-                                            f"Service ({r}) not disabled"])
-                        else:
-                            results.append([h.Hostname, h.SystemGroup, "service status checks (disabled) ", r, "Pass",""])
+                    names = ssc["disabled"]["names"]
+                    results.extend(verfiy_services_disabled(h, names))
             if "firewall_checks" in checks["system"]:
                 fwc = checks["system"]["firewall_checks"]
                 if "enabled_profiles" in fwc:
-                    profiles = ["public", "private", "domain"]
-                    for p in profiles:
-                        if p in fwc["enabled_profiles"]:
-                            fw_result = True
-                            if p == "public" and h.FwProfilePublic is False: fw_result = False
-                            if p == "private" and h.FwProfilePrivate is False: fw_result = False
-                            if p == "domain" and h.FwProfileDomain is False: fw_result = False
-                            if fw_result is False:
-                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Failed",
-                                                f"Firewall is disabled for profile ({p})"])
-                            else:
-                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Pass", ""])
+                    results.extend(verify_firewall_enabled(h, fwc["enabled_profiles"]))
                 if "disabled_profiles" in fwc:
-                    profiles = ["public", "private", "domain"]
-                    for p in profiles:
-                        if p in fwc["disabled_profiles"]:
-                            fw_result = True
-                            if p == "public" and h.FwProfilePublic is True: fw_result = False
-                            if p == "private" and h.FwProfilePrivate is True: fw_result = False
-                            if p == "domain" and h.FwProfileDomain is True: fw_result = False
-                            if fw_result is False:
-                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Failed",
-                                                f"Firewall is enabled for profile ({p})"])
-                            else:
-                                results.append([h.Hostname, h.SystemGroup, "Firewall status check", p, "Pass", ""])
+                    results.extend(verify_firewall_disabled(h, fwc["disabled_profiles"]))
             if "SMB" in checks["system"]:
                 smb = checks["system"]["SMB"]
-                if "v1" in smb:
-                    if smb["v1"] != h.SMBv1Enabled:
-                        if h.SMBv1Enabled is True:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 was expected to be disabled"])
-                        else:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 was expected to be enabled"])
+                if "v1_enabled" in smb:
+                    if smb["v1_enabled"] is False:
+                        results.append(verify_smbv1_disabled(h))
                     else:
-                        results.append([h.Hostname, h.SystemGroup, "SMBv1 enabled check", "SMBv1", "Pass", ""])
+                        results.append(verify_smbv1_enabled(h))
                 if "signing_enabled" in smb:
-                    if smb["signing_enabled"] != h.SMBEnableSecuritySignature:
-                        if h.SMBEnableSecuritySignature is True:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be disabled"])
-                        else:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Failed",
-                                            f"SMBv1 signing was expected to be enabled"])
+                    if smb["signing_enabled"] is False:
+                        results.append(verify_smb_signing_disabled(h))
                     else:
-                        results.append([h.Hostname, h.SystemGroup, "SMBv1 signing enabled check", "SMBv1", "Pass", ""])
+                        results.append(verify_smb_signing_enabled(h))
                 if "signing_required" in smb:
-                    if smb["signing_required"] != h.SMBRequireSecuritySignature:
-                        if h.SMBRequireSecuritySignature is True:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1",
-                                            "Failed", f"SMBv1 signing was not expected to be required (optional)"])
-                        else:
-                            results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1",
-                                            "Failed", f"SMBv1 signing was expected to be required"])
+                    if smb["signing_required"] is False:
+                        results.append(verify_smb_signing_not_required(h))
                     else:
-                        results.append([h.Hostname, h.SystemGroup, "SMBv1 signing required check", "SMBv1", "Pass", ""])
+                        results.append(verify_smb_signing_required(h))
             if "WSUS" in checks["system"]:
                 if "https_enabled" in checks["system"]["WSUS"]:
                     https_enabled = checks["system"]["WSUS"]["https_enabled"]
-                    server = h.WUServer
-                    if not server.startswith("https://"):
-                        results.append([h.Hostname, h.SystemGroup, "WSUS via http", server, "Failed",
-                                        "WSUS is not configured for https"])
-                    else:
-                        results.append([h.Hostname, h.SystemGroup, "WSUS via http", server, "Pass", ""])
+                    if https_enabled is True:
+                        results.append(verify_wsus_https(h))
         result_class.results.extend(results)
     return result_class
 
 
-def generate_configreview_excel(results=[]):
+def generate_configreview_excel(result: ConfigReviewResults):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {"in_memory": True})
     worksheet = workbook.add_worksheet()
@@ -173,11 +121,17 @@ def generate_configreview_excel(results=[]):
     row = 1
     col = 0
     # Iterate over the data and write it out row by row.
-    for res in results:
-        for c in res:
-            worksheet.write(row, col, str(c))
-            col += 1
-        col = 0
+    for res in result.results:
+        print(res)
+        worksheet.write(row, 0, res.hostname)
+        worksheet.write(row, 1, res.systemgroup)
+        worksheet.write(row, 2, res.check)
+        worksheet.write(row, 3, res.component)
+        if res.compliant is True:
+            worksheet.write(row, 4, "Pass")
+        else:
+            worksheet.write(row, 4, "Failed")
+        worksheet.write(row, 5, res.message)
         row += 1
 
     worksheet.autofilter("A1:F1")

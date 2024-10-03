@@ -102,7 +102,7 @@ system:
     disabled_profiles: [ ]
 
   SMB:
-    v1: False
+    v1_enabled: False
     signing_enabled: True
     signing_required: True
 
