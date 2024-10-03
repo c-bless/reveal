@@ -73,6 +73,7 @@ system:
 
   service_startmode_checks:
     disabled:
+      reference: "6.2.1 Deaktivieren von Diensten"
       names:
         - "BTAGService"       # Bluetooth-Audiogateway-Dienst (BTAGService)
         - "bthserv"
@@ -102,9 +103,21 @@ system:
     disabled_profiles: [ ]
 
   SMB:
-    v1: False
+    v1_enabled: False
     signing_enabled: True
     signing_required: True
+
+  TLS:
+    ssl2_0_Client: Disabled
+    ssl2_0_Server: Disabled
+    ssl3_0_Client: Disabled
+    ssl3_0_Server: Disabled
+    tls1_0_Client: Disabled
+    tls1_0_Server: Disabled
+    tls1_1_Client: Disabled
+    tls1_1_Server: Disabled
+    tls1_2_Client: Enabled
+    tls1_2_Server: Enabled
 
   configcheck_results:
     - name: "SSL 2.0 - disabled (Client)"
