@@ -1,11 +1,237 @@
-﻿#  REVEAL Sysinfo-Collector
-#  This script collects information about the host system and writes it to an XML file or CSV
-#  Author:     Christoph Bless (github@cbless.de)
-#  Version:    0.6
-#  License:    GPLv3
-#
-#
-#
+﻿<#
+    .SYNOPSIS
+    This PowerShell script is to fetch system information.
+
+    .DESCRIPTION
+    This PowerShell script is to fetch system information. The collector script is published as part of "REVEAL".
+    https://github.com/c-bless/reveal
+
+    Author:     Christoph Bless (github@cbless.de)
+    Version:    0.6
+    License:    GPLv3
+
+    .INPUTS
+    None
+
+    .OUTPUTS
+    This script will create a XML-file with the collected system information.
+
+    .EXAMPLE
+    .\sysinfo-collector.ps1
+
+    .Example
+    .\sysinfo-collector.ps1 -Systemgroup PCS7 -Location "Control room" -Label "Inventory Number"
+#>
+param (
+    # optional parameter to specify the systemgroup the host belongs to
+    [Parameter(Mandatory=$false)]
+    [string]$Systemgroup = "N/A",
+
+    # name of the location
+    [Parameter(Mandatory=$false)]
+    [string]$Location = "N/A",
+
+    # option for additional label
+    [Parameter(Mandatory=$false)]
+    [string]$Label = "N/A"
+)
+
+
+# version number of this script used as attribute in XML root tag
+$version="0.6"
+
+$date = Get-Date -Format "yyyyMMdd_HHmmss"
+$hostname = $env:COMPUTERNAME
+
+# can be generated with helper script ./genkey.py
+$encKey = (7, 16, 166, 10, 141, 23, 37, 94, 240, 162, 206, 168, 181, 97, 19, 170)
+
+$path = Get-Location
+
+
+###################################################################################################################
+# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags at the end of the
+# XML file between a ConfigChecks-Tag. All Custom objects that are added should follow the following structure
+# $result = [PSCustomObject]@{
+#     Component = 'AFFECT COMPONENT'
+#     Name = 'NAME'
+#     Method       = 'Registry'
+#     Key   = 'KEY'
+#     Value      = 'VALUE'
+#     Result = 'RESULT'
+#     Message = 'MESSAGE'
+# }
+$config_check_results = New-Object System.Collections.ArrayList
+###################################################################################################################
+
+
+###################################################################################################################
+# ArrayList to store results from file existence checks. Those will be added as FileExistence-Tags.
+###################################################################################################################
+# All Custom objects that are added should follow the following structure
+# $result = [PSCustomObject]@{
+#     Name = 'NAME of the check'
+#     File   = 'Pathname'
+#     ExpectedHASH  = 'HASH'
+# }
+$file_checks = New-Object System.Collections.ArrayList
+$file_checks_results = New-Object System.Collections.ArrayList
+
+# Template for file checks
+# generate expected hash via: Get-FileHash -Path C:\temp\testfile.txt -Algorithm SHA256
+
+#[void]$file_checks.Add(
+#    [PSCustomObject]@{
+#        Name = 'Testfile'
+#        File   =  'C:\temp\testfile.txt'
+#        ExpectedHASH  = 'D37B9395C2BAF168F977CE9FF9EC007D7270FC84CBF1549324BFC8DFC34333A9'
+#    }
+#)
+
+# [MODIFY ME: ADD ADDITIONAL FILES HERE]
+
+
+###################################################################################################################
+
+
+###################################################################################################################
+# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags at the end of the
+###################################################################################################################
+
+$registry_checks = New-Object System.Collections.ArrayList
+
+# Sticky Keys
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Sticky Keys disabled'
+        Description = 'Checks if Sticky Keys are disabled (Press SHIFT 5 times)'
+        Path        = 'HKCU:\Control Panel\Accessibility\StickyKeys\'
+        Key         = 'Flags'
+        Expected    = '506'
+    }
+)
+
+# Filter Keys
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Filter Keys disabled'
+        Description = 'Checks if Filter Keys are disabled (Hold right SHIFT for 12 seconds)'
+        Path        = 'HKCU:\Control Panel\Accessibility\Keyboard Response\'
+        Key         = 'Flags'
+        Expected    = '122'
+    }
+)
+
+# Toggle Keys
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Toggle Keys disabled'
+        Description = 'Checks if Toggle Keys are disabled (Hold NUMLOCK for 5 seconds)'
+        Path        = 'HKCU:\Control Panel\Accessibility\ToggleKeys\'
+        Key         = 'Flags'
+        Expected    = '58'
+    }
+)
+
+# Mouse Keys
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Mouse Keys disabled'
+        Description = 'Checks if Mouse Keys are disabled (SHIFT + ALT + NUMLOCK)'
+        Path        = 'HKCU:\Control Panel\Accessibility\MouseKeys\'
+        Key         = 'Flags'
+        Expected    = '59'
+    }
+)
+
+# Windows Key Disabled
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Windows Key disabled'
+        Description = 'Checks if Windows Keys are disabled.'
+        Path        = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
+        Key         = 'NoWinKeys'
+        Expected    = 0x1
+    }
+)
+
+# Access to CMD blocked
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'CMD Blocked'
+        Description = 'Checks if access to CMD is blocked.'
+        Path        = 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\System\'
+        Key         = 'DisableCMD'
+        Expected    = '2'
+    }
+)
+
+# Access to Registry Tools blocked
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Registry Tools Blocked'
+        Description = 'Checks if access to Registry tools is blocked.'
+        Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
+        Key         = 'DisableRegistryTools'
+        Expected    = '1'
+    }
+)
+
+# Access to control panel blocked
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'Control Panel Blocked'
+        Description = 'Checks if access to control panel is blocked.'
+        Path        = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
+        Key         = 'NoControlPanel'
+        Expected    = '1'
+    }
+)
+
+# Access to TaskManager blocked
+[void]$registry_checks.Add(
+    [PSCustomObject]@{
+        Category    = 'Hardening'
+        Tags        = 'HMI Hardening, CITRIX Hardening'
+        Name        = 'TaskManager Blocked'
+        Description = 'Checks if access to task manager is blocked.'
+        Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
+        Key         = 'DisableTaskMgr'
+        Expected    = '1'
+    }
+)
+
+# [MODIFY ME: ADD ADDITIONAL REGISTRY CHECKS HERE]
+
+###################################################################################################################
+
+###################################################################################################################
+# ArrayList of pathes that should be checked for ACLs
+###################################################################################################################
+# ArrayList of pathes that should be checked
+$acl_path_checks = New-Object System.Collections.ArrayList
+
+[void]$acl_path_checks.Add('C:\')
+[void]$acl_path_checks.Add('C:\Program Files\')
+[void]$acl_path_checks.Add('C:\Program Files (x86)\')
+
+# [MODIFY ME: ADD ADDITIONAL PATHES HERE]
 
 ###################################################################################################################
 # Function to get the results of the registry checks
@@ -262,7 +488,7 @@ function Collect-HostInfo {
     $hostInfo = Collect-HostInfo
     #>
     $host_info = [PSCustomObject]@{}
-    if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
+    if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
         $compInfo = Get-ComputerInfo
 
         $osversion = ""
@@ -321,7 +547,11 @@ function Collect-HostInfo {
         $osname = ""
         $timezoneString = ""
         try{
-            $cs = Get-WmiObject -Class win32_ComputerSystem -Property *
+            if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
+                $cs = Get-CimInstance -Class win32_ComputerSystem -Property *
+            }else{
+                $cs = Get-WmiObject -Class win32_ComputerSystem -Property *
+            }
             $domainRole = [string] $cs.DomainRole;
             $hypervisor = [string]$cs.HypervisorPresent;
             $installDate = [string] $cs.InstallDate;
@@ -330,7 +560,11 @@ function Collect-HostInfo {
             $PrimaryOwnerName = [string] $cs.PrimaryOwnerName;
         } catch{}
         try {
-            $timezone = Get-WmiObject -Class win32_timezone
+            if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
+                $os = Get-CimInstance -Class win32_OperatingSystem -Property *
+            }else{
+                $timezone = Get-WmiObject -Class win32_timezone
+            }
             $timezoneString =  $timezone.Caption;
         }catch{}
 
@@ -419,8 +653,11 @@ function Collect-BIOSInfo {
     [PSCustomObject]
     A custom object containing the collected BIOS information.
     #>
-
-    $bios = Get-WmiObject -Class win32_bios
+    if (Get-Command CimInstance -ErrorAction SilentlyContinue){
+        $bios = Get-CimInstance -Class win32_bios
+    }else{
+        $bios = Get-WmiObject -Class win32_bios
+    }
     $biosInfo = [PSCustomObject]@{
         Manufacturer = [string] $bios.Manufacturer;
         Name = [string] $bios.Name;
@@ -458,16 +695,19 @@ function Collect-Hotfixes {
             $hotfixes = Get-HotFix
         }
     } else {
-        try{
-            $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
-        } catch {
+
+        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
+            $hotfixes = Get-CimInstance -Class win32_QuickFixEngineering
+        } else {
             $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering
         }
-
-        if ( $hotfixes.Length -gt 0 ){
-            $lastUpdate = $hotfixes[0]
-            $host_info.LastUpdate = [string] $lastUpdate.InstalledOn;
-        }
+        try{
+            $hotfixes = $hotfixes | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
+            if ( $hotfixes.Length -gt 0 ){
+                $lastUpdate = $hotfixes[0]
+                $host_info.LastUpdate = [string] $lastUpdate.InstalledOn;
+            }
+        } catch {}
     }
     return $hotfixes
 }
@@ -494,7 +734,11 @@ function Hotfixes-ToXML {
 
 
 function Collect-InstalledProducts {
-    $products = Get-WmiObject  -class win32_product
+    if (Get-Command CimInstance -ErrorAction SilentlyContinue){
+        $products = Get-CimInstance -Class win32_product
+    }else{
+        $products = Get-WmiObject  -class win32_product
+    }
     return $products
 }
 
@@ -526,7 +770,7 @@ function Collect-NetAdapter {
         $netadapters = Get-NetAdapter
         # Add an alias property to the object to make it compatible with the get-wmiobject object
         foreach ($n in $netadapters ) {
-            $n | Add-Member -MemberType -Name Type -Value "N/A"
+            $n | Add-Member -MemberType NoteProperty -Name Type -Value "N/A" -Force
         }
     }else{
         $netadapters = get-wmiobject -Class win32_networkadapter
@@ -652,7 +896,11 @@ function NetIPAddress-ToXML {
 
 function Collect-LocalUserAccounts {
     # using WMI to be compatible with older PS versions
-    $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
+    if (Get-Command CimInstance -ErrorAction SilentlyContinue) {
+        $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
+    } else {
+        $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
+    }
     return $users
 }
 
@@ -701,23 +949,29 @@ function Collect-LocalGroups {
     .EXAMPLE
     $groups = Collect-LocalGroups
     #>
-    $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
-    foreach ($g in $groups ) {
-        $groupname = [string] $g.Name
-        $query="Associators of {Win32_Group.Domain='$hostname',Name='$groupname'} where Role=GroupComponent"
-        $members = get-wmiobject -query $query -ComputerName $hostname
-        $member_objects = New-Object System.Collections.ArrayList
-        foreach ($m in $members){
-            $member_objects.Add([PSCustomObject]@{
-                AccountType = [string] $m.AccountType;
-                Domain = [string] $m.Domain;
-                Name = [string] $m.Name;
-                SID = [string] $m.SID;
-                Caption = [string] $m.Caption;
-            })
-        }
-        $g | Add-Member -MemberType NoteProperty -Name Members -Value $member_objects
+    if (Get-Command CimInstance -ErrorAction SilentlyContinue) {
+        $groups = Get-CimInstance -class win32_group -Filter "LocalAccount=True"
+    } else {
+        $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
     }
+    try {
+        foreach ($g in $groups ) {
+            $groupname = [string] $g.Name
+            $query="Associators of {Win32_Group.Domain='$hostname',Name='$groupname'} where Role=GroupComponent"
+            $members = get-wmiobject -query $query -ComputerName $hostname
+            $member_objects = New-Object System.Collections.ArrayList
+            foreach ($m in $members){
+                $member_objects.Add([PSCustomObject]@{
+                    AccountType = [string] $m.AccountType;
+                    Domain = [string] $m.Domain;
+                    Name = [string] $m.Name;
+                    SID = [string] $m.SID;
+                    Caption = [string] $m.Caption;
+                })
+            }
+            $g | Add-Member -MemberType NoteProperty -Name Members -Value $member_objects
+        }
+    } catch {}
     return $groups
 }
 
@@ -858,7 +1112,11 @@ function Collect-Shares {
     .EXAMPLE
     $shares = Collect-Shares
     #>
-    $shares = Get-WmiObject -class win32_share
+    if (Get-Command CimInstance -ErrorAction SilentlyContinue) {
+        $shares = Get-CimInstance -class win32_share
+    } else {
+        $shares = Get-WmiObject -class win32_share
+    }
     $sharesInfo = New-Object System.Collections.ArrayList
     foreach ($s in $shares ) {
         $shareInfo = [PSCustomObject]@{
@@ -993,6 +1251,7 @@ function Collect-WSUSSettings {
     if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
         $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
         $wsusSettings | Add-Member -MemberType NoteProperty -Name TargetGroup -Value $wsus.TargetGroup
+    }
     if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
         $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
         $wsusSettings | Add-Member -MemberType NoteProperty -Name TargetGroup -Value $wsus.TargetGroup
@@ -1337,7 +1596,7 @@ function Collect-PSVersions {
             [void]$config_checks.Add($result)
         }
     }
-    $hostInfo | Add-Member -MemberType NoteProperty -Name PSVersion2Installed -Value $v2installed
+    $hostInfo.PSVersion2Installed = $v2installed
     return $psVersions
 }
 
@@ -2069,243 +2328,6 @@ function ConfigChecks-ToXML {
 }
 
 
-<#
-    .SYNOPSIS
-    This PowerShell script is to fetch system information.
-
-    .DESCRIPTION
-    This PowerShell script is to fetch system information. The collector script is published as part of "REVEAL".
-    https://github.com/c-bless/reveal
-
-    Author:     Christoph Bless (github@cbless.de)
-    Version:    0.6
-    License:    GPLv3
-
-    .INPUTS
-    None
-
-    .OUTPUTS
-    This script will create a XML-file with the collected system information.
-
-    .EXAMPLE
-    .\sysinfo-collector.ps1
-
-    .Example
-    .\sysinfo-collector.ps1 -Systemgroup PCS7 -Location "Control room" -Label "Inventory Number"
-#>
-param (
-    # optional parameter to specify the systemgroup the host belongs to
-    [Parameter(Mandatory=$false)]
-    [string]$Systemgroup = "N/A",
-
-    # name of the location
-    [Parameter(Mandatory=$false)]
-    [string]$Location = "N/A",
-
-    # option for additional label
-    [Parameter(Mandatory=$false)]
-    [string]$Label = "N/A"
-)
-
-
-# version number of this script used as attribute in XML root tag
-$version="0.6"
-
-$date = Get-Date -Format "yyyyMMdd_HHmmss"
-$hostname = $env:COMPUTERNAME
-
-# can be generated with helper script ./genkey.py
-$encKey = (7, 16, 166, 10, 141, 23, 37, 94, 240, 162, 206, 168, 181, 97, 19, 170)
-
-$path = Get-Location
-
-
-
-###################################################################################################################
-# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags at the end of the
-# XML file between a ConfigChecks-Tag. All Custom objects that are added should follow the following structure
-# $result = [PSCustomObject]@{
-#     Component = 'AFFECT COMPONENT'
-#     Name = 'NAME'
-#     Method       = 'Registry'
-#     Key   = 'KEY'
-#     Value      = 'VALUE'
-#     Result = 'RESULT'
-#     Message = 'MESSAGE'
-# }
-$config_check_results = New-Object System.Collections.ArrayList
-###################################################################################################################
-
-
-###################################################################################################################
-# ArrayList to store results from file existence checks. Those will be added as FileExistence-Tags.
-###################################################################################################################
-# All Custom objects that are added should follow the following structure
-# $result = [PSCustomObject]@{
-#     Name = 'NAME of the check'
-#     File   = 'Pathname'
-#     ExpectedHASH  = 'HASH'
-# }
-$file_checks = New-Object System.Collections.ArrayList
-$file_checks_results = New-Object System.Collections.ArrayList
-
-# Template for file checks
-# generate expected hash via: Get-FileHash -Path C:\temp\testfile.txt -Algorithm SHA256
-
-#[void]$file_checks.Add(
-#    [PSCustomObject]@{
-#        Name = 'Testfile'
-#        File   =  'C:\temp\testfile.txt'
-#        ExpectedHASH  = 'D37B9395C2BAF168F977CE9FF9EC007D7270FC84CBF1549324BFC8DFC34333A9'
-#    }
-#)
-
-# [MODIFY ME: ADD ADDITIONAL FILES HERE]
-
-
-###################################################################################################################
-
-
-###################################################################################################################
-# ArrayList to store results from configuration checks. Those will be added as ConfigCheck-Tags at the end of the
-###################################################################################################################
-
-$registry_checks = New-Object System.Collections.ArrayList
-
-# Sticky Keys
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Sticky Keys disabled'
-        Description = 'Checks if Sticky Keys are disabled (Press SHIFT 5 times)'
-        Path        = 'HKCU:\Control Panel\Accessibility\StickyKeys\'
-        Key         = 'Flags'
-        Expected    = '506'
-    }
-)
-
-# Filter Keys
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Filter Keys disabled'
-        Description = 'Checks if Filter Keys are disabled (Hold right SHIFT for 12 seconds)'
-        Path        = 'HKCU:\Control Panel\Accessibility\Keyboard Response\'
-        Key         = 'Flags'
-        Expected    = '122'
-    }
-)
-
-# Toggle Keys
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Toggle Keys disabled'
-        Description = 'Checks if Toggle Keys are disabled (Hold NUMLOCK for 5 seconds)'
-        Path        = 'HKCU:\Control Panel\Accessibility\ToggleKeys\'
-        Key         = 'Flags'
-        Expected    = '58'
-    }
-)
-
-# Mouse Keys
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Mouse Keys disabled'
-        Description = 'Checks if Mouse Keys are disabled (SHIFT + ALT + NUMLOCK)'
-        Path        = 'HKCU:\Control Panel\Accessibility\MouseKeys\'
-        Key         = 'Flags'
-        Expected    = '59'
-    }
-)
-
-# Windows Key Disabled
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Windows Key disabled'
-        Description = 'Checks if Windows Keys are disabled.'
-        Path        = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
-        Key         = 'NoWinKeys'
-        Expected    = 0x1
-    }
-)
-
-# Access to CMD blocked
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'CMD Blocked'
-        Description = 'Checks if access to CMD is blocked.'
-        Path        = 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\System\'
-        Key         = 'DisableCMD'
-        Expected    = '2'
-    }
-)
-
-# Access to Registry Tools blocked
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Registry Tools Blocked'
-        Description = 'Checks if access to Registry tools is blocked.'
-        Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
-        Key         = 'DisableRegistryTools'
-        Expected    = '1'
-    }
-)
-
-# Access to control panel blocked
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'Control Panel Blocked'
-        Description = 'Checks if access to control panel is blocked.'
-        Path        = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
-        Key         = 'NoControlPanel'
-        Expected    = '1'
-    }
-)
-
-# Access to TaskManager blocked
-[void]$registry_checks.Add(
-    [PSCustomObject]@{
-        Category    = 'Hardening'
-        Tags        = 'HMI Hardening, CITRIX Hardening'
-        Name        = 'TaskManager Blocked'
-        Description = 'Checks if access to task manager is blocked.'
-        Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
-        Key         = 'DisableTaskMgr'
-        Expected    = '1'
-    }
-)
-
-# [MODIFY ME: ADD ADDITIONAL REGISTRY CHECKS HERE]
-
-###################################################################################################################
-
-###################################################################################################################
-# ArrayList of pathes that should be checked for ACLs
-###################################################################################################################
-# ArrayList of pathes that should be checked
-$acl_path_checks = New-Object System.Collections.ArrayList
-
-[void]$acl_path_checks.Add('C:\')
-[void]$acl_path_checks.Add('C:\Program Files\')
-[void]$acl_path_checks.Add('C:\Program Files (x86)\')
-
-# [MODIFY ME: ADD ADDITIONAL PATHES HERE]
-
-
 ###############################################################################################################
 # Collecting general computer information
 ###############################################################################################################
@@ -2385,7 +2407,7 @@ $firewallInfo = Collect-FirewallInfo -config_check_results $config_check_results
 # Perform: Additional checks for entries in Windows Registry
 #######################################################################
 Write-Host "[*] Checking additional entries in Windows Registry"
-$registry_check_results = Collect-RegistryCheck -RegistryChecks $registry_checks
+$registry_check_results = Collect-RegistryChecks -RegistryChecks $registry_checks
 
 ###############################################################################################################
 # Collecting Share information
@@ -2417,7 +2439,7 @@ Collect-TlsSettings -config_checks $config_check_results
 # Collecting PS Versions
 ##############################################################################################################
 Write-Host "[*] Checking PS Versions"
-$psVersions = Collect-PSVersions -config_checks $config_check_results
+$psVersions = Collect-PSVersions -config_checks $config_check_results -hostInfo $hostInfo
 
 ###############################################################################################################
 # Collecting WSH Settings
@@ -2498,30 +2520,78 @@ try {
         $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteAttributeString("version", "$version")
             $xmlWriter.WriteStartElement("Host")
-                HostInfo-ToXML -xmlWriter $xmlWriter -hostInfo $hostInfo
-                BIOSInfo-ToXML -xmlWriter $xmlWriter -biosInfo $biosInfo
-                Hotfixes-ToXML -xmlWriter $xmlWriter -hotfixes $hotfixes
-                InstalledProducts-ToXML -xmlWriter $xmlWriter -products $products
-                NetAdapter-ToXML -xmlWriter $xmlWriter -netadapters $netadapters
-                NetRoute-ToXML -xmlWriter $xmlWriter -routes $routes
-                NetIPAddress-ToXML -xmlWriter $xmlWriter -netips $netips
-                LocalUserAccounts-ToXML -xmlWriter $xmlWriter -users $users
-                LocalGroups-ToXML -xmlWriter $xmlWriter -groups $groups
-                FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
-                FirewallInfo-ToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
-                RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
-                SharesInfo-ToXML -xmlWriter $xmlWriter -shares $shares
-                WSUSSettings-ToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
-                Winlogon-ToXML -xmlWriter $xmlWriter -winlogon $winlogon
-                PSVersions-ToXML -xmlWriter $xmlWriter -psVersions $psVersions
-                WSHSettings-ToXML -xmlWriter $xmlWriter -wshSettings $wshSettings
-                NTPSettings-ToXML -xmlWriter $xmlWriter -ntpSettings $ntpSettings
-                PSLogging-ToXML -xmlWriter $xmlWriter -psLogging $psLogging
-                SMBConfig-ToXML -xmlWriter $xmlWriter -smbConfig $smbConfig
-                DefenderInfo-ToXML -xmlWriter $xmlWriter -defenderInfo $defenderInfo
-                Printers-ToXML -xmlWriter $xmlWriter -printers $printers
-                AclPathChecks-ToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
-                ConfigChecks-ToXML -xmlWriter $xmlWriter -configChecks $config_check_results
+                try {
+                    HostInfo-ToXML -xmlWriter $xmlWriter -hostInfo $hostInfo
+                } catch { Write-host "[-] HostInfo could not be written to XML" }
+                try {
+                    BIOSInfo-ToXML -xmlWriter $xmlWriter -biosInfo $biosInfo
+                } catch { Write-host "[-] BIOSInfo could not be written to XML" }
+                try {
+                    Hotfixes-ToXML -xmlWriter $xmlWriter -hotfixes $hotfixes
+                } catch { Write-host "[-] Hotfixes could not be written to XML" }
+                try {
+                    InstalledProducts-ToXML -xmlWriter $xmlWriter -products $products
+                } catch { Write-host "[-] InstalledProducts could not be written to XML" }
+                try {
+                    NetAdapter-ToXML -xmlWriter $xmlWriter -netadapters $netadapter
+                } catch { Write-host "[-] NetAdapter could not be written to XML" }
+                try {
+                    NetRoute-ToXML -xmlWriter $xmlWriter -routes $routes
+                } catch { Write-host "[-] NetRoute could not be written to XML" }
+                try {
+                    NetIPAddress-ToXML -xmlWriter $xmlWriter -netips $netips
+                } catch { Write-host "[-] NetIPAddress could not be written to XML" }
+                try {
+                    LocalUserAccounts-ToXML -xmlWriter $xmlWriter -users $users
+                } catch { Write-host "[-] LocalUserAccounts could not be written to XML" }
+                try {
+                    LocalGroups-ToXML -xmlWriter $xmlWriter -groups $groups
+                } catch { Write-host "[-] LocalGroups could not be written to XML" }
+                try {
+                    FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
+                } catch { Write-host "[-] FileExistChecks could not be written to XML" }
+                try {
+                    FirewallInfo-ToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
+                } catch { Write-host "[-] FirewallInfo could not be written to XML" }
+                try {
+                    RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
+                } catch { Write-host "[-] RegistryChecks could not be written to XML" }
+                try {
+                    SharesInfo-ToXML -xmlWriter $xmlWriter -shares $shares
+                } catch { Write-host "[-] SharesInfo could not be written to XML" }
+                try {
+                    WSUSSettings-ToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
+                } catch { Write-host "[-] WSUSSettings could not be written to XML" }
+                try {
+                    Winlogon-ToXML -xmlWriter $xmlWriter -winlogon $winlogon
+                } catch { Write-host "[-] Winlogon could not be written to XML" }
+                try {
+                    PSVersions-ToXML -xmlWriter $xmlWriter -psVersions $psVersions
+                } catch { Write-host "[-] PSVersions could not be written to XML" }
+                try {
+                    WSHSettings-ToXML -xmlWriter $xmlWriter -wshSettings $wshSettings
+                } catch { Write-host "[-] WSHSettings could not be written to XML" }
+                try {
+                    NTPSettings-ToXML -xmlWriter $xmlWriter -ntpSettings $ntpSettings
+                } catch { Write-host "[-] NTPSettings could not be written to XML" }
+                try {
+                    PSLogging-ToXML -xmlWriter $xmlWriter -psLogging $psLogging
+                } catch { Write-host "[-] PSLogging could not be written to XML" }
+                try {
+                    SMBConfig-ToXML -xmlWriter $xmlWriter -smbConfig $smbConfig
+                } catch { Write-host "[-] SMBConfig could not be written to XML" }
+                try {
+                    DefenderInfo-ToXML -xmlWriter $xmlWriter -defenderInfo $defenderInfo
+                } catch { Write-host "[-] DefenderInfo could not be written to XML" }
+                try {
+                    Printers-ToXML -xmlWriter $xmlWriter -printers $printers
+                } catch { Write-host "[-] Printers could not be written to XML" }
+                try {
+                    AclPathChecks-ToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
+                } catch { Write-host "[-] AclPathChecks could not be written to XML" }
+                try {
+                    ConfigChecks-ToXML -xmlWriter $xmlWriter -config_check_results $config_check_results
+                } catch { Write-host "[-] ConfigChecks could not be written to XML" }
             $xmlWriter.WriteEndElement() # Host
         $xmlWriter.WriteEndElement() # SystemInfoCollector
     $xmlWriter.WriteEndDocument()
