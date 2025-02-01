@@ -653,7 +653,7 @@ function Collect-BIOSInfo {
     [PSCustomObject]
     A custom object containing the collected BIOS information.
     #>
-    if (Get-Command CimInstance -ErrorAction SilentlyContinue){
+    if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
         $bios = Get-CimInstance -Class win32_bios
     }else{
         $bios = Get-WmiObject -Class win32_bios
@@ -723,22 +723,29 @@ function Hotfixes-ToXML {
 
     $xmlWriter.WriteStartElement("Hotfixes")
     foreach ($h in $hotfixes ) {
-        $xmlWriter.WriteStartElement("Hotfix")
-        $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
-        $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
-        $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
-        $xmlWriter.WriteEndElement() # hotfix
+        try{
+            $xmlWriter.WriteStartElement("Hotfix")
+            $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
+            $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
+            $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
+            $xmlWriter.WriteEndElement() # hotfix
+        } catch {}
     }
     $xmlWriter.WriteEndElement() # hotfixes
 }
 
 
 function Collect-InstalledProducts {
-    if (Get-Command CimInstance -ErrorAction SilentlyContinue){
-        $products = Get-CimInstance -Class win32_product
-    }else{
-        $products = Get-WmiObject  -class win32_product
-    }
+    $products = New-Object System.Collections.ArrayList
+    try {
+        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
+            $products = Get-CimInstance -class win32_product
+            Write-Host "[***] Debug: InstalledProducts - CIM"
+        }else{
+            $products = Get-WmiObject  -class win32_product
+            Write-Host "[***] Debug: InstalledProducts - WMI"
+        }
+    }catch {}
     return $products
 }
 
@@ -750,15 +757,17 @@ function InstalledProducts-ToXML {
 
     $xmlWriter.WriteStartElement("Products")
     foreach ($p in $products ) {
-        $xmlWriter.WriteStartElement("Product")
-        $xmlWriter.WriteElementString("Caption", [string] $p.Caption);
-        $xmlWriter.WriteElementString("InstallDate", [string]$p.InstallDate);
-        $xmlWriter.WriteElementString("Description",[string]$p.Description);
-        $xmlWriter.WriteElementString("Vendor",[string]$p.Vendor);
-        $xmlWriter.WriteElementString("Name",[string]$p.Name);
-        $xmlWriter.WriteElementString("Version",[string]$p.Version);
-        $xmlWriter.WriteElementString("InstallLocation",[string]$p.InstallLocation);
-        $xmlWriter.WriteEndElement() # product
+        try{
+            $xmlWriter.WriteStartElement("Product")
+            $xmlWriter.WriteElementString("Caption", [string] $p.Caption);
+            $xmlWriter.WriteElementString("InstallDate", [string]$p.InstallDate);
+            $xmlWriter.WriteElementString("Description",[string]$p.Description);
+            $xmlWriter.WriteElementString("Vendor",[string]$p.Vendor);
+            $xmlWriter.WriteElementString("Name",[string]$p.Name);
+            $xmlWriter.WriteElementString("Version",[string]$p.Version);
+            $xmlWriter.WriteElementString("InstallLocation",[string]$p.InstallLocation);
+            $xmlWriter.WriteEndElement() # product
+        }catch{}
     }
     $xmlWriter.WriteEndElement() # products
 }
@@ -766,6 +775,7 @@ function InstalledProducts-ToXML {
 
 
 function Collect-NetAdapter {
+    $netadapters = New-Object System.Collections.ArrayList
     if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
         $netadapters = Get-NetAdapter
         # Add an alias property to the object to make it compatible with the get-wmiobject object
@@ -806,7 +816,7 @@ function NetAdapter-ToXML {
 
 
 function Collect-NetRoute {
-
+    $routes = New-Object System.Collections.ArrayList
     if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
         $routes = Get-NetRoute
     }else{
@@ -843,29 +853,31 @@ function NetRoute-ToXML {
 function Collect-NetIPAddress {
     $netips = New-Object System.Collections.ArrayList
     if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
-        $netipaddresses = Get-NetIPAddress
-        foreach ($n in $netipaddresses ) {
-            $netips.Add([PSCustomObject]@{
-                AddressFamily = [string] $n.AddressFamily;
-                Type = [string] $n.Type;
-                IP = [string] $n.IPAddress;
-                Prefix = [string] $n.PrefixLength;
-                InterfaceAlias = [string] $n.InterfaceAlias;
-                DHCP = [string] "";
-            })
-        }
+        try {
+            $netipaddresses = Get-NetIPAddress
+            foreach ($n in $netipaddresses ) {
+                $netips.Add([PSCustomObject]@{
+                    AddressFamily = [string] $n.AddressFamily
+                    Type = [string] $n.Type
+                    IP = [string] $n.IPAddress
+                    Prefix = [string] $n.PrefixLength
+                    InterfaceAlias = [string] $n.InterfaceAlias
+                    DHCP = [string] ""
+                })
+            }
+        }catch{}
     } else {
         try{
             $netadapters = get-wmiobject -Class win32_networkadapterconfiguration -Filter "IPEnabled = 'True'"
             foreach ($n in $netadapters ) {
                 foreach ($i in $n.IPAddress){
                     $netips.Add([PSCustomObject]@{
-                        AddressFamily = [string] "";
-                        Type = [string] "";
-                        IP = [string] $i;
-                        Prefix = [string] "";
-                        InterfaceAlias = [string] $n.Caption;
-                        DHCP = [string] $n.DHCPEnabled;
+                        AddressFamily = [string] ""
+                        Type = [string] ""
+                        IP = [string] $i
+                        Prefix = [string] ""
+                        InterfaceAlias = [string] $n.Caption
+                        DHCP = [string] $n.DHCPEnabled
                     })
                 }
             }
@@ -882,25 +894,30 @@ function NetIPAddress-ToXML {
 
     $xmlWriter.WriteStartElement("NetIPAddresses")
     foreach ($n in $netips ) {
-        $xmlWriter.WriteStartElement("NetIPAddress")
-        $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily);
-        $xmlWriter.WriteAttributeString("Type", [string] $n.Type);
-        $xmlWriter.WriteAttributeString("IP", [string] $n.IP);
-        $xmlWriter.WriteAttributeString("Prefix", [string] $n.Prefix);
-        $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias);
-        $xmlWriter.WriteAttributeString("DHCP", [string] $n.DHCP);
-        $xmlWriter.WriteEndElement() # NetIPAddress
+        try {
+            $xmlWriter.WriteStartElement("NetIPAddress")
+            $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily);
+            $xmlWriter.WriteAttributeString("Type", [string] $n.Type);
+            $xmlWriter.WriteAttributeString("IP", [string] $n.IP);
+            $xmlWriter.WriteAttributeString("Prefix", [string] $n.Prefix);
+            $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias);
+            $xmlWriter.WriteAttributeString("DHCP", [string] $n.DHCP);
+            $xmlWriter.WriteEndElement() # NetIPAddress
+        }catch {}
     }
     $xmlWriter.WriteEndElement() # NetIPAddresses
 }
 
 function Collect-LocalUserAccounts {
     # using WMI to be compatible with older PS versions
-    if (Get-Command CimInstance -ErrorAction SilentlyContinue) {
-        $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
-    } else {
-        $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
-    }
+    $users = New-Object System.Collections.ArrayList
+    try {
+        if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
+            $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
+        } else {
+            $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
+        }
+    } catch{}
     return $users
 }
 
@@ -914,20 +931,22 @@ function LocalUserAccounts-ToXML {
 
         $xmlWriter.WriteStartElement("Users")
         foreach ($u in $users ) {
-            $xmlWriter.WriteStartElement("User")
-            $xmlWriter.WriteElementString("AccountType", [string] $u.AccountType);
-            $xmlWriter.WriteElementString("Domain", [string]$u.Domain);
-            $xmlWriter.WriteElementString("Disabled",[string]$u.Disabled);
-            $xmlWriter.WriteElementString("LocalAccount",[string]$u.LocalAccount);
-            $xmlWriter.WriteElementString("Name",[string]$u.Name);
-            $xmlWriter.WriteElementString("FullName",[string]$u.FullName);
-            $xmlWriter.WriteElementString("Description",[string]$u.Description);
-            $xmlWriter.WriteElementString("SID",[string]$u.SID);
-            $xmlWriter.WriteElementString("Lockout",[string]$u.Lockout);
-            $xmlWriter.WriteElementString("PasswordChangeable",[string]$u.PasswordChangeable);
-            $xmlWriter.WriteElementString("PasswordExpires",[string]$u.PasswordExpires);
-            $xmlWriter.WriteElementString("PasswordRequired",[string]$u.PasswordRequired);
-            $xmlWriter.WriteEndElement() # user
+            try{
+                $xmlWriter.WriteStartElement("User")
+                $xmlWriter.WriteElementString("AccountType", [string] $u.AccountType);
+                $xmlWriter.WriteElementString("Domain", [string]$u.Domain);
+                $xmlWriter.WriteElementString("Disabled",[string]$u.Disabled);
+                $xmlWriter.WriteElementString("LocalAccount",[string]$u.LocalAccount);
+                $xmlWriter.WriteElementString("Name",[string]$u.Name);
+                $xmlWriter.WriteElementString("FullName",[string]$u.FullName);
+                $xmlWriter.WriteElementString("Description",[string]$u.Description);
+                $xmlWriter.WriteElementString("SID",[string]$u.SID);
+                $xmlWriter.WriteElementString("Lockout",[string]$u.Lockout);
+                $xmlWriter.WriteElementString("PasswordChangeable",[string]$u.PasswordChangeable);
+                $xmlWriter.WriteElementString("PasswordExpires",[string]$u.PasswordExpires);
+                $xmlWriter.WriteElementString("PasswordRequired",[string]$u.PasswordRequired);
+                $xmlWriter.WriteEndElement() # user
+            }catch{}
         }
         $xmlWriter.WriteEndElement() # users
 }
@@ -949,7 +968,7 @@ function Collect-LocalGroups {
     .EXAMPLE
     $groups = Collect-LocalGroups
     #>
-    if (Get-Command CimInstance -ErrorAction SilentlyContinue) {
+    if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
         $groups = Get-CimInstance -class win32_group -Filter "LocalAccount=True"
     } else {
         $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
@@ -997,24 +1016,26 @@ function LocalGroups-ToXML {
 
     $xmlWriter.WriteStartElement("Groups")
     foreach ($g in $groups ) {
-        $xmlWriter.WriteStartElement("Group")
-        $xmlWriter.WriteElementString("Name",[string]$g.Name);
-        $xmlWriter.WriteElementString("Caption", [string] $g.Caption);
-        $xmlWriter.WriteElementString("Description",[string]$g.Description);
-        $xmlWriter.WriteElementString("LocalAccount",[string]$g.LocalAccount);
-        $xmlWriter.WriteElementString("SID",[string]$g.SID);
-        $xmlWriter.WriteStartElement("Members")
-        foreach ($m in $g.Members){
-            $xmlWriter.WriteStartElement("Member")
-            $xmlWriter.WriteElementString("AccountType", [string] $m.AccountType);
-            $xmlWriter.WriteElementString("Domain", [string] $m.Domain);
-            $xmlWriter.WriteElementString("Name", [string] $m.Name);
-            $xmlWriter.WriteElementString("SID", [string] $m.SID);
-            $xmlWriter.WriteElementString("Caption", [string] $m.Caption);
-            $xmlWriter.WriteEndElement()
-        }
-        $xmlWriter.WriteEndElement() #Members
-        $xmlWriter.WriteEndElement() # group
+        try {
+            $xmlWriter.WriteStartElement("Group")
+            $xmlWriter.WriteElementString("Name",[string]$g.Name);
+            $xmlWriter.WriteElementString("Caption", [string] $g.Caption);
+            $xmlWriter.WriteElementString("Description",[string]$g.Description);
+            $xmlWriter.WriteElementString("LocalAccount",[string]$g.LocalAccount);
+            $xmlWriter.WriteElementString("SID",[string]$g.SID);
+            $xmlWriter.WriteStartElement("Members")
+            foreach ($m in $g.Members){
+                $xmlWriter.WriteStartElement("Member")
+                $xmlWriter.WriteElementString("AccountType", [string] $m.AccountType);
+                $xmlWriter.WriteElementString("Domain", [string] $m.Domain);
+                $xmlWriter.WriteElementString("Name", [string] $m.Name);
+                $xmlWriter.WriteElementString("SID", [string] $m.SID);
+                $xmlWriter.WriteElementString("Caption", [string] $m.Caption);
+                $xmlWriter.WriteEndElement()
+            }
+            $xmlWriter.WriteEndElement() #Members
+            $xmlWriter.WriteEndElement() # group
+       }catch{}
     }
     $xmlWriter.WriteEndElement() # groups
 }
@@ -1112,41 +1133,41 @@ function Collect-Shares {
     .EXAMPLE
     $shares = Collect-Shares
     #>
-    if (Get-Command CimInstance -ErrorAction SilentlyContinue) {
+    if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
         $shares = Get-CimInstance -class win32_share
     } else {
         $shares = Get-WmiObject -class win32_share
     }
-    $sharesInfo = New-Object System.Collections.ArrayList
+    $sharesInfo_results = New-Object System.Collections.ArrayList
     foreach ($s in $shares ) {
         $shareInfo = [PSCustomObject]@{
-            Name = [string] $s.Name;
-            Path = [string] $s.Path;
-            Description = [string] $s.Description;
-            NTFSPermissions = @()
-            SharePermissions = @()
+            Name = [string] $s.Name
+            Path = [string] $s.Path
+            Description = [string] $s.Description
         }
         $path = [string] $s.Path
         try {
             $acl = get-acl -Path $path -ErrorAction SilentlyContinue
             foreach ($a in $acl.Access) {
-                $shareInfo.NTFSPermissions += [PSCustomObject]@{
-                    AccountName = [string] $a.IdentityReference;
-                    AccessControlType = [string] $a.AccessControlType;
-                    AccessRight = [string] $a.FileSystemRights;
+                $perm = [PSCustomObject]@{
+                    AccountName = [string] $a.IdentityReference
+                    AccessControlType = [string] $a.AccessControlType
+                    AccessRight = [string] $a.FileSystemRights
                 }
+                $shareInfo | Add-Member -MemberType NoteProperty -Name NTFSPermissions -Value $perm -Force
             }
         } catch {}
         if (Get-Command Get-SmbShareAccess -ErrorAction SilentlyContinue) {
             try {
                 $acl = Get-SmbShareAccess -Name $s.Name -ErrorAction SilentlyContinue
                 foreach ($a in $acl) {
-                    $shareInfo.SharePermissions += [PSCustomObject]@{
-                        ScopeName = [string] $a.ScopeName;
-                        AccountName = [string] $a.AccountName;
-                        AccessControlType = [string] $a.AccessControlType;
-                        AccessRight = [string] $a.AccessRight;
+                    $perm = [PSCustomObject]@{
+                        ScopeName = [string] $a.ScopeName
+                        AccountName = [string] $a.AccountName
+                        AccessControlType = [string] $a.AccessControlType
+                        AccessRight = [string] $a.AccessRight
                     }
+                    $shareInfo | Add-Member -MemberType NoteProperty -Name SharePermissions -Value $perm -Force
                 }
             } catch {}
         }else{
@@ -1154,18 +1175,19 @@ function Collect-Shares {
                 $share = "\\" + $hostname  +"\"+  [string]$s.Name
                 $acl = get-acl -Path $share -ErrorAction SilentlyContinue
                 foreach ($a in $acl.Access) {
-                    $shareInfo.SharePermissions += [PSCustomObject]@{
+                    $perm = [PSCustomObject]@{
                         ScopeName = "";
-                        AccountName = [string] $a.IdentityReference;
-                        AccessControlType = [string] $a.AccessControlType;
-                        AccessRight = [string] $a.FileSystemRights;
+                        AccountName = [string] $a.IdentityReference
+                        AccessControlType = [string] $a.AccessControlType
+                        AccessRight = [string] $a.FileSystemRights
                     }
+                    $shareInfo | Add-Member -MemberType NoteProperty -Name SharePermissions -Value $perm -Force
                 }
             } catch {}
         }
-        $sharesInfo.Add($shareInfo)
+        $sharesInfo_results.Add($shareInfo)
     }
-    return $shares
+    return $sharesInfo_results
 }
 
 function ShareInfo-ToXML{
@@ -1195,24 +1217,28 @@ function ShareInfo-ToXML{
         $xmlWriter.WriteElementString("Path",[string] $s.Path);
         $xmlWriter.WriteElementString("Description",[string] $s.Description);
         $xmlWriter.WriteStartElement("NTFSPermissions")
-        foreach ($a in $s.NTFSPermissions) {
-            $xmlWriter.WriteStartElement("Permission")
-            $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
-            $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
-            $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
-            $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
-            $xmlWriter.WriteEndElement() # Permission
+        if ($s.PSObject.Properties.Name -contains "NTFSPermissions") {
+            foreach ($a in $s.NTFSPermissions) {
+                $xmlWriter.WriteStartElement("Permission")
+                $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
+                $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
+                $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
+                $xmlWriter.WriteEndElement() # Permission
+            }
         }
         $xmlWriter.WriteEndElement() # NTFSPermissions
         $xmlWriter.WriteStartElement("SharePermissions")
-        foreach ($a in $s.SharePermissions) {
-            $xmlWriter.WriteStartElement("Permission")
-            $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
-            $xmlWriter.WriteAttributeString("ScopeName", [string] $a.ScopeName);
-            $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
-            $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
-            $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
-            $xmlWriter.WriteEndElement() # Permission
+        if ($s.PSObject.Properties.Name -contains "SharePermissions") {
+            foreach ($a in $s.SharePermissions) {
+                $xmlWriter.WriteStartElement("Permission")
+                $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
+                $xmlWriter.WriteAttributeString("ScopeName", [string] $a.ScopeName);
+                $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
+                $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
+                $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
+                $xmlWriter.WriteEndElement() # Permission
+            }
         }
         $xmlWriter.WriteEndElement() # SharePermissions
         $xmlWriter.WriteEndElement() # share
@@ -2413,7 +2439,7 @@ $registry_check_results = Collect-RegistryChecks -RegistryChecks $registry_check
 # Collecting Share information
 #######################################################################
 Write-Host "[*] Collecting information about shares"
-$shares = Collect-Shares -ErrorAction SilentlyContinue
+$shares = Collect-Shares
 
 ###############################################################################################################
 # Collecting WSUS Settings in Registry
@@ -2530,7 +2556,9 @@ try {
                     Hotfixes-ToXML -xmlWriter $xmlWriter -hotfixes $hotfixes
                 } catch { Write-host "[-] Hotfixes could not be written to XML" }
                 try {
+                    write-host "Before InstalledProducts"
                     InstalledProducts-ToXML -xmlWriter $xmlWriter -products $products
+                    write-host "After InstalledProducts"
                 } catch { Write-host "[-] InstalledProducts could not be written to XML" }
                 try {
                     NetAdapter-ToXML -xmlWriter $xmlWriter -netadapters $netadapter
@@ -2548,16 +2576,13 @@ try {
                     LocalGroups-ToXML -xmlWriter $xmlWriter -groups $groups
                 } catch { Write-host "[-] LocalGroups could not be written to XML" }
                 try {
-                    FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
-                } catch { Write-host "[-] FileExistChecks could not be written to XML" }
-                try {
                     FirewallInfo-ToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
                 } catch { Write-host "[-] FirewallInfo could not be written to XML" }
                 try {
                     RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
                 } catch { Write-host "[-] RegistryChecks could not be written to XML" }
                 try {
-                    SharesInfo-ToXML -xmlWriter $xmlWriter -shares $shares
+                    ShareInfo-ToXML -xmlWriter $xmlWriter -shares $shares
                 } catch { Write-host "[-] SharesInfo could not be written to XML" }
                 try {
                     WSUSSettings-ToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
@@ -2586,6 +2611,10 @@ try {
                 try {
                     Printers-ToXML -xmlWriter $xmlWriter -printers $printers
                 } catch { Write-host "[-] Printers could not be written to XML" }
+
+                try {
+                    FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
+                } catch { Write-host "[-] FileExistChecks could not be written to XML" }
                 try {
                     AclPathChecks-ToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
                 } catch { Write-host "[-] AclPathChecks could not be written to XML" }
