@@ -1,6 +1,4 @@
-
 class ReportInfo(object):
-
     _name =""
     _category =""
     _tags = []

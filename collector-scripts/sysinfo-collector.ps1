@@ -236,7 +236,7 @@ $acl_path_checks = New-Object System.Collections.ArrayList
 ###################################################################################################################
 # Function to get the results of the registry checks
 ###################################################################################################################
-function Collect-RegistryChecks {
+function Get-RegistryChecks {
     <#
     .SYNOPSIS
     This function checks the registry for specific keys and values.
@@ -315,12 +315,12 @@ function Collect-RegistryChecks {
 }
 
 
-function RegistryChecksToXML{
+function Add-RegistryChecksToXML{
     <#
     .SYNOPSIS
     This function writes the results of the registry checks to an XML file.
     .DESCRIPTION
-    The RegistryChecksToXML function is designed to write the results of the registry checks to an XML file. It takes
+    The Add-RegistryChecksToXML function is designed to write the results of the registry checks to an XML file. It takes
     an array list containing the results of the registry checks and an XML writer object as input.
     .PARAMETER xmlWriter (System.Xml.XmlWriter)
     An XML writer object used to write the results of the registry checks to an XML file.
@@ -363,12 +363,12 @@ function RegistryChecksToXML{
     $xmlWriter.WriteEndElement() # AdditionalRegistryChecks
 }
 
-function Collect-FileExistCheck {
+function Get-FileExistCheck {
     <#
     .SYNOPSIS
     This function checks if a file exists and if the hash of the file matches the expected hash.
     .DESCRIPTION
-    The Collect-FileExistCheck function is designed to check if a file exists and if the hash of the file matches the
+    The Get-FileExistCheck function is designed to check if a file exists and if the hash of the file matches the
     expected hash. It takes an array list containing file check definitions as input and returns an array list
     containing the results of the file checks.
     .PARAMETER file_checks (System.Collections.ArrayList)
@@ -407,7 +407,7 @@ function Collect-FileExistCheck {
         try{
             $path = [string] $c.File
             if (Test-Path $path){
-                write-host "[!] Found file: "$path
+                Write-Output "[!] Found file: "$path
                 $result.FileExist = $true
                 if (Get-Command Get-FileHash -ErrorAction SilentlyContinue){
                     $expectedHash = [string] $c.ExpectedHASH
@@ -430,12 +430,12 @@ function Collect-FileExistCheck {
 }
 
 
-function FileExistChecksToXML{
+function Add-FileExistChecksToXML{
     <#
     .SYNOPSIS
     This function writes the results of the file existence checks to an XML file.
     .DESCRIPTION
-    The FileExistChecksToXML function is designed to write the results of the file existence checks to an XML file. It
+    The Add-FileExistChecksToXML function is designed to write the results of the file existence checks to an XML file. It
     takes an array list containing the results of the file existence checks and an XML writer object as input.
     .PARAMETER xmlWriter (System.Xml.XmlWriter)
     An XML writer object used to write the results of the file existence checks to an XML file.
@@ -470,13 +470,13 @@ function FileExistChecksToXML{
 }
 
 
-function Collect-HostInfo {
+function Get-HostInfo {
     <#
     .SYNOPSIS
     Collects general information about the host system.
 
     .DESCRIPTION
-    The Collect-HostInfo function gathers various details about the host system, such as OS version, domain information,
+    The Get-HostInfo function gathers various details about the host system, such as OS version, domain information,
     and user details. It uses the Get-ComputerInfo cmdlet if available, otherwise, it falls back to WMI queries for
     older PowerShell versions.
 
@@ -485,7 +485,7 @@ function Collect-HostInfo {
     A custom object containing the collected host information.
 
     .EXAMPLE
-    $hostInfo = Collect-HostInfo
+    $hostInfo = Get-HostInfo
     #>
     $host_info = [PSCustomObject]@{}
     if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
@@ -494,19 +494,19 @@ function Collect-HostInfo {
         $osversion = ""
         if ([string]::IsNullOrEmpty($compInfo.OSVersion)){
             try{
-                $osversion = [string] $compInfo.WindowsVersion;
+                $osversion = [string] $compInfo.WindowsVersion
             }catch{}
         }else{
-                $osversion = [string] $compInfo.OSVersion;
+                $osversion = [string] $compInfo.OSVersion
         }
         $osname = ""
 
         if ([string]::IsNullOrEmpty($compInfo.OSName)){
             try{
-                $osname = [string] $compInfo.WindowsProductName;
+                $osname = [string] $compInfo.WindowsProductName
             }catch{}
         }else{
-            $osname = [string] $compInfo.OSName;
+            $osname = [string] $compInfo.OSName
         }
 
         $host_info = [PSCustomObject]@{
@@ -536,7 +536,7 @@ function Collect-HostInfo {
             LastUpdate = [string] "N/A"
         }
     }else{
-        $domain = [string] [System.Environment]::UserDomainName;
+        $domain = [string] [System.Environment]::UserDomainName
         $domainRole = ""
         $hypervisor = ""
         $installDate = ""
@@ -552,20 +552,20 @@ function Collect-HostInfo {
             }else{
                 $cs = Get-WmiObject -Class win32_ComputerSystem -Property *
             }
-            $domainRole = [string] $cs.DomainRole;
-            $hypervisor = [string]$cs.HypervisorPresent;
-            $installDate = [string] $cs.InstallDate;
-            $manufacturer = [string] $cs.CsManufacturer;
-            $model = [string] $cs.CsModel;
-            $PrimaryOwnerName = [string] $cs.PrimaryOwnerName;
+            $domainRole = [string] $cs.DomainRole
+            $hypervisor = [string]$cs.HypervisorPresent
+            $installDate = [string] $cs.InstallDate
+            $manufacturer = [string] $cs.CsManufacturer
+            $model = [string] $cs.CsModel
+            $PrimaryOwnerName = [string] $cs.PrimaryOwnerName
         } catch{}
         try {
             if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
-                $os = Get-CimInstance -Class win32_OperatingSystem -Property *
+                $timezone = Get-CimInstance -Class win32_timezone
             }else{
                 $timezone = Get-WmiObject -Class win32_timezone
             }
-            $timezoneString =  $timezone.Caption;
+            $timezoneString =  $timezone.Caption
         }catch{}
 
         $host_info = [PSCustomObject]@{
@@ -596,12 +596,12 @@ function Collect-HostInfo {
     return $host_info
 }
 
-function HostInfo-ToXML {
+function Add-HostInfoToXML {
     <#
     .SYNOPSIS
     Writes the host information to an XML file.
     .DESCRIPTION
-    The HostInfo-ToXML function is designed to write the host information to an XML file. It takes a custom object
+    The Add-HostInfoToXML function is designed to write the host information to an XML file. It takes a custom object
     containing the host information and an XML writer object as input.
     .PARAMETER xmlWriter (System.Xml.XmlWriter)
     An XML writer object used to write the host information to an XML file.
@@ -618,23 +618,23 @@ function HostInfo-ToXML {
     $xmlWriter.WriteElementString("Label",[string] $hostInfo.Label)
     $xmlWriter.WriteElementString("Hostname",[string] $hostInfo.Hostname)
     $xmlWriter.WriteElementString("Domain",[string] $hostInfo.Domain)
-    $xmlWriter.WriteElementString("DomainRole",[string] $hostInfo.DomainRole);
+    $xmlWriter.WriteElementString("DomainRole",[string] $hostInfo.DomainRole)
     $xmlWriter.WriteElementString("OSBuildNumber",[string] $hostInfo.OSBuildNumber)
-    $xmlWriter.WriteElementString("OSVersion",[string] $hostInfo.OSVersion);
-    $xmlWriter.WriteElementString("OSName", [string] $hostInfo.OSName);
-    $xmlWriter.WriteElementString("OSInstallDate",[string] $hostInfo.OSInstallDate);
-    $xmlWriter.WriteElementString("OSProductType",[string] $hostInfo.OSProductType);
-    $xmlWriter.WriteElementString("LogonServer", [string] $hostInfo.LogonServer);
-    $xmlWriter.WriteElementString("TimeZone",[string]$hostInfo.TimeZone);
-    $xmlWriter.WriteElementString("KeyboardLayout",[string]$hostInfo.KeyboardLayout);
-    $xmlWriter.WriteElementString("HyperVisorPresent",[string]$hostInfo.HyperVisorPresent);
-    $xmlWriter.WriteElementString("DeviceGuardSmartStatus",[string]$hostInfo.DeviceGuardSmartStatus);
-    $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $hostInfo.CSPrimaryOwnerName);
-    $xmlWriter.WriteElementString("Whoami", [string] $hostInfo.Whoami);
-    $xmlWriter.WriteElementString("WhoamiIsAdmin", [string] $hostInfo.WhoamiIsAdmin);
-    $xmlWriter.WriteElementString("PSVersion",[string]$hostInfo.PSVersion);
-    $xmlWriter.WriteElementString("PSVersion2Installed",[string]$hostInfo.PSVersion2Installed);
-    $xmlWriter.WriteElementString("LastUpdate",[string] $hostInfo.LastUpdate);
+    $xmlWriter.WriteElementString("OSVersion",[string] $hostInfo.OSVersion)
+    $xmlWriter.WriteElementString("OSName", [string] $hostInfo.OSName)
+    $xmlWriter.WriteElementString("OSInstallDate",[string] $hostInfo.OSInstallDate)
+    $xmlWriter.WriteElementString("OSProductType",[string] $hostInfo.OSProductType)
+    $xmlWriter.WriteElementString("LogonServer", [string] $hostInfo.LogonServer)
+    $xmlWriter.WriteElementString("TimeZone",[string]$hostInfo.TimeZone)
+    $xmlWriter.WriteElementString("KeyboardLayout",[string]$hostInfo.KeyboardLayout)
+    $xmlWriter.WriteElementString("HyperVisorPresent",[string]$hostInfo.HyperVisorPresent)
+    $xmlWriter.WriteElementString("DeviceGuardSmartStatus",[string]$hostInfo.DeviceGuardSmartStatus)
+    $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $hostInfo.CSPrimaryOwnerName)
+    $xmlWriter.WriteElementString("Whoami", [string] $hostInfo.Whoami)
+    $xmlWriter.WriteElementString("WhoamiIsAdmin", [string] $hostInfo.WhoamiIsAdmin)
+    $xmlWriter.WriteElementString("PSVersion",[string]$hostInfo.PSVersion)
+    $xmlWriter.WriteElementString("PSVersion2Installed",[string]$hostInfo.PSVersion2Installed)
+    $xmlWriter.WriteElementString("LastUpdate",[string] $hostInfo.LastUpdate)
 }
 
 
@@ -642,12 +642,12 @@ function HostInfo-ToXML {
 ###################################################################################################################
 # Functions collect and export BIOS information
 ###################################################################################################################
-function Collect-BIOSInfo {
+function Get-BIOSInfo {
     <#
     .SYNOPSIS
     Collects BIOS information from the host system.
     .DESCRIPTION
-    The Collect-BIOSInfo function gathers information about the BIOS of the host system, such as the manufacturer,
+    The Get-BIOSInfo function gathers information about the BIOS of the host system, such as the manufacturer,
     version, and serial number. It uses the Get-WmiObject cmdlet to query the win32_bios class for this information.
     .OUTPUTS
     [PSCustomObject]
@@ -659,30 +659,30 @@ function Collect-BIOSInfo {
         $bios = Get-WmiObject -Class win32_bios
     }
     $biosInfo = [PSCustomObject]@{
-        Manufacturer = [string] $bios.Manufacturer;
-        Name = [string] $bios.Name;
-        Version = [string] $bios.Version;
-        SerialNumber = [string] $bios.SerialNumber;
+        Manufacturer = [string] $bios.Manufacturer
+        Name = [string] $bios.Name
+        Version = [string] $bios.Version
+        SerialNumber = [string] $bios.SerialNumber
     }
     return $biosInfo
 }
 
-function BIOSInfo-ToXML {
+function Add-BIOSInfoToXML {
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [PSCustomObject]$biosInfo
     )
 
     $xmlWriter.WriteStartElement("BIOS")
-    $xmlWriter.WriteAttributeString("Manufacturer", [string] $biosInfo.Manufacturer);
-    $xmlWriter.WriteAttributeString("Name", [string] $biosInfo.Name);
-    $xmlWriter.WriteAttributeString("Version", [string] $biosInfo.Version);
-    $xmlWriter.WriteAttributeString("SerialNumber", [string] $biosInfo.SerialNumber);
+    $xmlWriter.WriteAttributeString("Manufacturer", [string] $biosInfo.Manufacturer)
+    $xmlWriter.WriteAttributeString("Name", [string] $biosInfo.Name)
+    $xmlWriter.WriteAttributeString("Version", [string] $biosInfo.Version)
+    $xmlWriter.WriteAttributeString("SerialNumber", [string] $biosInfo.SerialNumber)
     $xmlWriter.WriteEndElement() # BIOS
 }
 
 
-function Collect-Hotfixes {
+function Get-HotfixesInfo {
 
     param (
         [PSCustomObject]$host_info
@@ -705,7 +705,7 @@ function Collect-Hotfixes {
             $hotfixes = $hotfixes | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
             if ( $hotfixes.Length -gt 0 ){
                 $lastUpdate = $hotfixes[0]
-                $host_info.LastUpdate = [string] $lastUpdate.InstalledOn;
+                $host_info.LastUpdate = [string] $lastUpdate.InstalledOn
             }
         } catch {}
     }
@@ -713,7 +713,7 @@ function Collect-Hotfixes {
 }
 
 
-function Hotfixes-ToXML {
+function Add-HotfixesToXML {
 
     param (
         [System.Xml.XmlWriter]$xmlWriter,
@@ -723,33 +723,37 @@ function Hotfixes-ToXML {
 
     $xmlWriter.WriteStartElement("Hotfixes")
     foreach ($h in $hotfixes ) {
-        try{
-            $xmlWriter.WriteStartElement("Hotfix")
-            $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID);
-            $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn);
-            $xmlWriter.WriteAttributeString("Description",[string] $h.Description);
-            $xmlWriter.WriteEndElement() # hotfix
-        } catch {}
+        $xmlWriter.WriteStartElement("Hotfix")
+        $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID)
+        $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn)
+        $xmlWriter.WriteAttributeString("Description",[string] $h.Description)
+        $xmlWriter.WriteEndElement() # hotfix
     }
     $xmlWriter.WriteEndElement() # hotfixes
 }
 
 
-function Collect-InstalledProducts {
-    $products = New-Object System.Collections.ArrayList
-    try {
+function Get-InstalledProductsInfo {
+    $product_list = New-Object System.Collections.ArrayList
+    try{
         if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
             $products = Get-CimInstance -class win32_product
-            Write-Host "[***] Debug: InstalledProducts - CIM"
+            foreach ($p in $products){
+                $p | Add-Member -MemberType NoteProperty -Name CollectionMethod -Value "CIM" -Force
+                [void] $product_list.Add($p)
+            }
         }else{
             $products = Get-WmiObject  -class win32_product
-            Write-Host "[***] Debug: InstalledProducts - WMI"
+            foreach ($p in $products){
+                $p | Add-Member -MemberType NoteProperty -Name CollectionMethod -Value "WMI" -Force
+                [void] $product_list.Add($p)
+            }
         }
     }catch {}
-    return $products
+    return $product_list
 }
 
-function InstalledProducts-ToXML {
+function Add-InstalledProductsToXML {
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [System.Collections.ArrayList]$products
@@ -759,13 +763,27 @@ function InstalledProducts-ToXML {
     foreach ($p in $products ) {
         try{
             $xmlWriter.WriteStartElement("Product")
-            $xmlWriter.WriteElementString("Caption", [string] $p.Caption);
-            $xmlWriter.WriteElementString("InstallDate", [string]$p.InstallDate);
-            $xmlWriter.WriteElementString("Description",[string]$p.Description);
-            $xmlWriter.WriteElementString("Vendor",[string]$p.Vendor);
-            $xmlWriter.WriteElementString("Name",[string]$p.Name);
-            $xmlWriter.WriteElementString("Version",[string]$p.Version);
-            $xmlWriter.WriteElementString("InstallLocation",[string]$p.InstallLocation);
+            if ($p.PSObject.Properties.Name -contains "Caption") {
+                $xmlWriter.WriteElementString("Caption", [string] $p.Caption)
+            }
+            if ($p.PSObject.Properties.Name -contains "InstallDate") {
+                $xmlWriter.WriteElementString("InstallDate", [string]$p.InstallDate)
+            }
+            if ($p.PSObject.Properties.Name -contains "Description") {
+                $xmlWriter.WriteElementString("Description",[string]$p.Description)
+            }
+            if ($p.PSObject.Properties.Name -contains "Vendor") {
+                $xmlWriter.WriteElementString("Vendor",[string]$p.Vendor)
+            }
+            if ($p.PSObject.Properties.Name -contains "Name") {
+                $xmlWriter.WriteElementString("Name",[string]$p.Name)
+            }
+            if ($p.PSObject.Properties.Name -contains "Version") {
+                $xmlWriter.WriteElementString("Version",[string]$p.Version)
+            }
+            if ($p.PSObject.Properties.Name -contains "InstallLocation") {
+                $xmlWriter.WriteElementString("InstallLocation",[string]$p.InstallLocation)
+            }
             $xmlWriter.WriteEndElement() # product
         }catch{}
     }
@@ -774,26 +792,29 @@ function InstalledProducts-ToXML {
 
 
 
-function Collect-NetAdapter {
-    $netadapters = New-Object System.Collections.ArrayList
+function Get-NetAdapterInfo {
+   $result_list = New-Object System.Collections.ArrayList
     if (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue) {
         $netadapters = Get-NetAdapter
         # Add an alias property to the object to make it compatible with the get-wmiobject object
         foreach ($n in $netadapters ) {
             $n | Add-Member -MemberType NoteProperty -Name Type -Value "N/A" -Force
+            [void]$result_list.add($n)
         }
     }else{
+
         $netadapters = get-wmiobject -Class win32_networkadapter
         # Add an alias property to the object to make it compatible with the Get-NetAdapter object
         foreach ($n in $netadapters ) {
             $n | Add-Member -MemberType AliasProperty -Name InterfaceDescription -Value $n.Description
+            [void]$result_list.add($n)
         }
     }
-    return $netadapters
+    return $result_list
 }
 
 
-function NetAdapter-ToXML {
+function Add-NetAdapterToXML {
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [System.Collections.ArrayList]$netadapters
@@ -802,21 +823,21 @@ function NetAdapter-ToXML {
     $xmlWriter.WriteStartElement("Netadapters")
     foreach ($n in $netadapters ) {
         $xmlWriter.WriteStartElement("Netadapter")
-        $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress);
+        $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress)
         try {
-            $xmlWriter.WriteAttributeString("Type",[string] $n.AdapterType);
+            $xmlWriter.WriteAttributeString("Type",[string] $n.AdapterType)
         } catch {}
-        $xmlWriter.WriteAttributeString("Status",[string] $n.Status);
-        $xmlWriter.WriteAttributeString("Name",[string] $n.Name);
-        $xmlWriter.WriteAttributeString("InterfaceDescription",[string] $n.InterfaceDescription);
+        $xmlWriter.WriteAttributeString("Status",[string] $n.Status)
+        $xmlWriter.WriteAttributeString("Name",[string] $n.Name)
+        $xmlWriter.WriteAttributeString("InterfaceDescription",[string] $n.InterfaceDescription)
         $xmlWriter.WriteEndElement() # netadapter
     }
     $xmlWriter.WriteEndElement() # netadapters
 }
 
 
-function Collect-NetRoute {
-    $routes = New-Object System.Collections.ArrayList
+function Get-NetRouteInfo {
+
     if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
         $routes = Get-NetRoute
     }else{
@@ -825,7 +846,7 @@ function Collect-NetRoute {
     return $routes
 }
 
-function NetRoute-ToXML {
+function Add-NetRouteToXML {
 
     param (
         [System.Xml.XmlWriter]$xmlWriter,
@@ -835,43 +856,41 @@ function NetRoute-ToXML {
     $xmlWriter.WriteStartElement("Routes")
     foreach ($r in $routes ) {
         $xmlWriter.WriteStartElement("Route")
-        $xmlWriter.WriteElementString("AddressFamily", [string] $r.AddressFamily);
-        $xmlWriter.WriteElementString("DestinationPrefix", [string]$r.DestinationPrefix);
-        $xmlWriter.WriteElementString("InterfaceAlias", [string]$r.InterfaceAlias);
-        $xmlWriter.WriteElementString("NextHop", [string]$r.NextHop);
-        $xmlWriter.WriteElementString("RouteMetric", [string]$r.RouteMetric);
-        $xmlWriter.WriteElementString("ifIndex", [string]$r.ifIndex);
-        $xmlWriter.WriteElementString("InterfaceMetric", [string]$r.InterfaceMetric);
-        $xmlWriter.WriteElementString("IsStatic", [string]$r.IsStatic);
-        $xmlWriter.WriteElementString("AdminDistance", [string]$r.AdminDistance);
+        $xmlWriter.WriteElementString("AddressFamily", [string] $r.AddressFamily)
+        $xmlWriter.WriteElementString("DestinationPrefix", [string]$r.DestinationPrefix)
+        $xmlWriter.WriteElementString("InterfaceAlias", [string]$r.InterfaceAlias)
+        $xmlWriter.WriteElementString("NextHop", [string]$r.NextHop)
+        $xmlWriter.WriteElementString("RouteMetric", [string]$r.RouteMetric)
+        $xmlWriter.WriteElementString("ifIndex", [string]$r.ifIndex)
+        $xmlWriter.WriteElementString("InterfaceMetric", [string]$r.InterfaceMetric)
+        $xmlWriter.WriteElementString("IsStatic", [string]$r.IsStatic)
+        $xmlWriter.WriteElementString("AdminDistance", [string]$r.AdminDistance)
         $xmlWriter.WriteEndElement() # Route
     }
     $xmlWriter.WriteEndElement() # Routes
 
 }
 
-function Collect-NetIPAddress {
+function Get-NetIPAddressInfo {
     $netips = New-Object System.Collections.ArrayList
     if (Get-Command Get-NetIPAddress -ErrorAction SilentlyContinue ) {
-        try {
-            $netipaddresses = Get-NetIPAddress
-            foreach ($n in $netipaddresses ) {
-                $netips.Add([PSCustomObject]@{
-                    AddressFamily = [string] $n.AddressFamily
-                    Type = [string] $n.Type
-                    IP = [string] $n.IPAddress
-                    Prefix = [string] $n.PrefixLength
-                    InterfaceAlias = [string] $n.InterfaceAlias
-                    DHCP = [string] ""
-                })
-            }
-        }catch{}
+        $netipaddresses = Get-NetIPAddress
+        foreach ($n in $netipaddresses ) {
+            [void]$netips.Add([PSCustomObject]@{
+                AddressFamily = [string] $n.AddressFamily
+                Type = [string] $n.Type
+                IP = [string] $n.IPAddress
+                Prefix = [string] $n.PrefixLength
+                InterfaceAlias = [string] $n.InterfaceAlias
+                DHCP = [string] ""
+            })
+        }
     } else {
         try{
             $netadapters = get-wmiobject -Class win32_networkadapterconfiguration -Filter "IPEnabled = 'True'"
             foreach ($n in $netadapters ) {
                 foreach ($i in $n.IPAddress){
-                    $netips.Add([PSCustomObject]@{
+                    [void]$netips.Add([PSCustomObject]@{
                         AddressFamily = [string] ""
                         Type = [string] ""
                         IP = [string] $i
@@ -886,7 +905,7 @@ function Collect-NetIPAddress {
     return $netips
 }
 
-function NetIPAddress-ToXML {
+function Add-NetIPAddressToXML {
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [System.Collections.ArrayList]$netips
@@ -894,71 +913,64 @@ function NetIPAddress-ToXML {
 
     $xmlWriter.WriteStartElement("NetIPAddresses")
     foreach ($n in $netips ) {
-        try {
-            $xmlWriter.WriteStartElement("NetIPAddress")
-            $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily);
-            $xmlWriter.WriteAttributeString("Type", [string] $n.Type);
-            $xmlWriter.WriteAttributeString("IP", [string] $n.IP);
-            $xmlWriter.WriteAttributeString("Prefix", [string] $n.Prefix);
-            $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias);
-            $xmlWriter.WriteAttributeString("DHCP", [string] $n.DHCP);
-            $xmlWriter.WriteEndElement() # NetIPAddress
-        }catch {}
+        $xmlWriter.WriteStartElement("NetIPAddress")
+        $xmlWriter.WriteAttributeString("AddressFamily", [string] $n.AddressFamily)
+        $xmlWriter.WriteAttributeString("Type", [string] $n.Type)
+        $xmlWriter.WriteAttributeString("IP", [string] $n.IP)
+        $xmlWriter.WriteAttributeString("Prefix", [string] $n.Prefix)
+        $xmlWriter.WriteAttributeString("InterfaceAlias", [string] $n.InterfaceAlias)
+        $xmlWriter.WriteAttributeString("DHCP", [string] $n.DHCP)
+        $xmlWriter.WriteEndElement() # NetIPAddress
     }
     $xmlWriter.WriteEndElement() # NetIPAddresses
 }
 
-function Collect-LocalUserAccounts {
+function Get-LocalUserAccountsInfo {
     # using WMI to be compatible with older PS versions
-    $users = New-Object System.Collections.ArrayList
-    try {
-        if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
-            $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
-        } else {
-            $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
-        }
-    } catch{}
+    if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
+        $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
+    } else {
+        $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
+    }
     return $users
 }
 
 
-function LocalUserAccounts-ToXML {
+function Add-LocalUserAccountsToXML {
 
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [System.Collections.ArrayList]$users
-        )
+    )
 
-        $xmlWriter.WriteStartElement("Users")
-        foreach ($u in $users ) {
-            try{
-                $xmlWriter.WriteStartElement("User")
-                $xmlWriter.WriteElementString("AccountType", [string] $u.AccountType);
-                $xmlWriter.WriteElementString("Domain", [string]$u.Domain);
-                $xmlWriter.WriteElementString("Disabled",[string]$u.Disabled);
-                $xmlWriter.WriteElementString("LocalAccount",[string]$u.LocalAccount);
-                $xmlWriter.WriteElementString("Name",[string]$u.Name);
-                $xmlWriter.WriteElementString("FullName",[string]$u.FullName);
-                $xmlWriter.WriteElementString("Description",[string]$u.Description);
-                $xmlWriter.WriteElementString("SID",[string]$u.SID);
-                $xmlWriter.WriteElementString("Lockout",[string]$u.Lockout);
-                $xmlWriter.WriteElementString("PasswordChangeable",[string]$u.PasswordChangeable);
-                $xmlWriter.WriteElementString("PasswordExpires",[string]$u.PasswordExpires);
-                $xmlWriter.WriteElementString("PasswordRequired",[string]$u.PasswordRequired);
-                $xmlWriter.WriteEndElement() # user
-            }catch{}
-        }
-        $xmlWriter.WriteEndElement() # users
+    $xmlWriter.WriteStartElement("Users")
+    foreach ($u in $users ) {
+        $xmlWriter.WriteStartElement("User")
+        $xmlWriter.WriteElementString("AccountType", [string] $u.AccountType)
+        $xmlWriter.WriteElementString("Domain", [string]$u.Domain)
+        $xmlWriter.WriteElementString("Disabled",[string]$u.Disabled)
+        $xmlWriter.WriteElementString("LocalAccount",[string]$u.LocalAccount)
+        $xmlWriter.WriteElementString("Name",[string]$u.Name)
+        $xmlWriter.WriteElementString("FullName",[string]$u.FullName)
+        $xmlWriter.WriteElementString("Description",[string]$u.Description)
+        $xmlWriter.WriteElementString("SID",[string]$u.SID)
+        $xmlWriter.WriteElementString("Lockout",[string]$u.Lockout)
+        $xmlWriter.WriteElementString("PasswordChangeable",[string]$u.PasswordChangeable)
+        $xmlWriter.WriteElementString("PasswordExpires",[string]$u.PasswordExpires)
+        $xmlWriter.WriteElementString("PasswordRequired",[string]$u.PasswordRequired)
+        $xmlWriter.WriteEndElement() # user
+    }
+    $xmlWriter.WriteEndElement() # users
 }
 
 
-function Collect-LocalGroups {
+function Get-LocalGroupsInfo {
     <#
     .SYNOPSIS
     Collects information about local groups on the system.
 
     .DESCRIPTION
-    The Collect-LocalGroups function gathers details about local groups on the system, including their members. It
+    The Get-LocalGroups function gathers details about local groups on the system, including their members. It
     uses WMI to query the groups and their associated members.
 
     .OUTPUTS
@@ -966,8 +978,9 @@ function Collect-LocalGroups {
     An array list containing the local groups and their members.
 
     .EXAMPLE
-    $groups = Collect-LocalGroups
+    $groups = Get-LocalGroups
     #>
+    $group_list = New-Object System.Collections.ArrayList
     if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
         $groups = Get-CimInstance -class win32_group -Filter "LocalAccount=True"
     } else {
@@ -980,27 +993,28 @@ function Collect-LocalGroups {
             $members = get-wmiobject -query $query -ComputerName $hostname
             $member_objects = New-Object System.Collections.ArrayList
             foreach ($m in $members){
-                $member_objects.Add([PSCustomObject]@{
-                    AccountType = [string] $m.AccountType;
-                    Domain = [string] $m.Domain;
-                    Name = [string] $m.Name;
-                    SID = [string] $m.SID;
-                    Caption = [string] $m.Caption;
+                [void] $member_objects.Add([PSCustomObject]@{
+                    AccountType = [string] $m.AccountType
+                    Domain = [string] $m.Domain
+                    Name = [string] $m.Name
+                    SID = [string] $m.SID
+                    Caption = [string] $m.Caption
                 })
             }
             $g | Add-Member -MemberType NoteProperty -Name Members -Value $member_objects
+            [void] $group_list.Add($g)
         }
     } catch {}
-    return $groups
+    return $group_list
 }
 
-function LocalGroups-ToXML {
+function Add-LocalGroupsToXML {
     <#
     .SYNOPSIS
     Writes the local groups information to an XML file.
 
     .DESCRIPTION
-    The LocalGroups-ToXML function writes the details of local groups and their members to an XML file. It takes an
+    The Add-LocalGroupsToXML function writes the details of local groups and their members to an XML file. It takes an
     XML writer object and an array list of groups as input.
 
     .PARAMETER xmlWriter
@@ -1016,37 +1030,35 @@ function LocalGroups-ToXML {
 
     $xmlWriter.WriteStartElement("Groups")
     foreach ($g in $groups ) {
-        try {
-            $xmlWriter.WriteStartElement("Group")
-            $xmlWriter.WriteElementString("Name",[string]$g.Name);
-            $xmlWriter.WriteElementString("Caption", [string] $g.Caption);
-            $xmlWriter.WriteElementString("Description",[string]$g.Description);
-            $xmlWriter.WriteElementString("LocalAccount",[string]$g.LocalAccount);
-            $xmlWriter.WriteElementString("SID",[string]$g.SID);
-            $xmlWriter.WriteStartElement("Members")
-            foreach ($m in $g.Members){
-                $xmlWriter.WriteStartElement("Member")
-                $xmlWriter.WriteElementString("AccountType", [string] $m.AccountType);
-                $xmlWriter.WriteElementString("Domain", [string] $m.Domain);
-                $xmlWriter.WriteElementString("Name", [string] $m.Name);
-                $xmlWriter.WriteElementString("SID", [string] $m.SID);
-                $xmlWriter.WriteElementString("Caption", [string] $m.Caption);
-                $xmlWriter.WriteEndElement()
-            }
-            $xmlWriter.WriteEndElement() #Members
-            $xmlWriter.WriteEndElement() # group
-       }catch{}
+        $xmlWriter.WriteStartElement("Group")
+        $xmlWriter.WriteElementString("Name",[string]$g.Name)
+        $xmlWriter.WriteElementString("Caption", [string] $g.Caption)
+        $xmlWriter.WriteElementString("Description",[string]$g.Description)
+        $xmlWriter.WriteElementString("LocalAccount",[string]$g.LocalAccount)
+        $xmlWriter.WriteElementString("SID",[string]$g.SID)
+        $xmlWriter.WriteStartElement("Members")
+        foreach ($m in $g.Members){
+            $xmlWriter.WriteStartElement("Member")
+            $xmlWriter.WriteElementString("AccountType", [string] $m.AccountType)
+            $xmlWriter.WriteElementString("Domain", [string] $m.Domain)
+            $xmlWriter.WriteElementString("Name", [string] $m.Name)
+            $xmlWriter.WriteElementString("SID", [string] $m.SID)
+            $xmlWriter.WriteElementString("Caption", [string] $m.Caption)
+            $xmlWriter.WriteEndElement()
+        }
+        $xmlWriter.WriteEndElement() #Members
+        $xmlWriter.WriteEndElement() # group
     }
     $xmlWriter.WriteEndElement() # groups
 }
 
-function Collect-FirewallInfo {
+function Get-FirewallInfo {
     <#
     .SYNOPSIS
     Collects information about the firewall status on the system.
 
     .DESCRIPTION
-    The Collect-FirewallInfo function gathers information about the firewall status on the system, including the
+    The Get-FirewallInfo function gathers information about the firewall status on the system, including the
     enabled profiles and their settings. It uses the Get-NetFirewallProfile cmdlet to query the firewall profiles.
 
     .OUTPUTS
@@ -1057,7 +1069,7 @@ function Collect-FirewallInfo {
     An array list containing the results of the configuration checks. The function adds a result object to this list
 
     .EXAMPLE
-    $firewallInfo = Collect-FirewallInfo
+    $firewallInfo = Get-FirewallInfo
     #>
     param (
         [System.Collections.ArrayList]$config_check_results
@@ -1066,9 +1078,9 @@ function Collect-FirewallInfo {
     if (Get-Command Get-NetFirewallProfile -ErrorAction SilentlyContinue) {
         $profiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
         foreach ($p in $profiles ) {
-            $firewallInfo.Add([PSCustomObject]@{
-                Name = [string] $p.Name;
-                Enabled = [string] $p.Enabled;
+            [void]$firewallInfo.Add([PSCustomObject]@{
+                Name = [string] $p.Name
+                Enabled = [string] $p.Enabled
             })
             if (!$p.Enabled){
                 $result = [PSCustomObject]@{
@@ -1079,14 +1091,14 @@ function Collect-FirewallInfo {
                     Value      = $p.Enabled
                     Result = 'Firewall is not enabled for the profile'
                 }
-                $config_check_results.Add($result)
+                [void]$config_check_results.Add($result)
             }
         }
     }
     return $firewallInfo
 }
 
-function FirewallInfo-ToXML{
+function Add-FirewallInfoToXML{
     <#
     .SYNOPSIS
     Writes the firewall status information to an XML file.
@@ -1109,21 +1121,21 @@ function FirewallInfo-ToXML{
     $xmlWriter.WriteStartElement("NetFirewallProfiles")
     foreach ($f in $firewallInfo ) {
         $xmlWriter.WriteStartElement("FwProfile")
-        $xmlWriter.WriteAttributeString("Name",[string] $f.Name);
-        $xmlWriter.WriteAttributeString("Enabled",[string] $f.Enabled);
+        $xmlWriter.WriteAttributeString("Name",[string] $f.Name)
+        $xmlWriter.WriteAttributeString("Enabled",[string] $f.Enabled)
         $xmlWriter.WriteEndElement() # FwProfile
     }
     $xmlWriter.WriteEndElement() # NetFirewallProfiles
 }
 
 
-function Collect-Shares {
+function Get-SharesInfo {
     <#
     .SYNOPSIS
     Collects information about shares on the system.
 
     .DESCRIPTION
-    The Collect-Shares function gathers information about shares on the system, including their name, path, and
+    The Get-Shares function gathers information about shares on the system, including their name, path, and
     permissions. It uses the Get-WmiObject cmdlet to query the shares and their permissions.
 
     .OUTPUTS
@@ -1131,7 +1143,7 @@ function Collect-Shares {
     An array list containing the shares and their permissions.
 
     .EXAMPLE
-    $shares = Collect-Shares
+    $shares = Get-Shares
     #>
     if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
         $shares = Get-CimInstance -class win32_share
@@ -1144,6 +1156,8 @@ function Collect-Shares {
             Name = [string] $s.Name
             Path = [string] $s.Path
             Description = [string] $s.Description
+            NTFSPermissions = New-Object System.Collections.ArrayList
+            SharePermissions = New-Object System.Collections.ArrayList
         }
         $path = [string] $s.Path
         try {
@@ -1154,7 +1168,7 @@ function Collect-Shares {
                     AccessControlType = [string] $a.AccessControlType
                     AccessRight = [string] $a.FileSystemRights
                 }
-                $shareInfo | Add-Member -MemberType NoteProperty -Name NTFSPermissions -Value $perm -Force
+                [void]$shareInfo.NTFSPermissions.Add($perm)
             }
         } catch {}
         if (Get-Command Get-SmbShareAccess -ErrorAction SilentlyContinue) {
@@ -1167,7 +1181,7 @@ function Collect-Shares {
                         AccessControlType = [string] $a.AccessControlType
                         AccessRight = [string] $a.AccessRight
                     }
-                    $shareInfo | Add-Member -MemberType NoteProperty -Name SharePermissions -Value $perm -Force
+                    [void]$shareInfo.SharePermissions.Add($perm)
                 }
             } catch {}
         }else{
@@ -1176,27 +1190,27 @@ function Collect-Shares {
                 $acl = get-acl -Path $share -ErrorAction SilentlyContinue
                 foreach ($a in $acl.Access) {
                     $perm = [PSCustomObject]@{
-                        ScopeName = "";
+                        ScopeName = ""
                         AccountName = [string] $a.IdentityReference
                         AccessControlType = [string] $a.AccessControlType
                         AccessRight = [string] $a.FileSystemRights
                     }
-                    $shareInfo | Add-Member -MemberType NoteProperty -Name SharePermissions -Value $perm -Force
+                    [void]$shareInfo.SharePermissions.Add($perm)
                 }
             } catch {}
         }
-        $sharesInfo_results.Add($shareInfo)
+        [void]$sharesInfo_results.Add($shareInfo)
     }
     return $sharesInfo_results
 }
 
-function ShareInfo-ToXML{
+function Add-ShareInfoToXML{
     <#
     .SYNOPSIS
     Writes the share information to an XML file.
 
     .DESCRIPTION
-    The ShareInfo-ToXML function writes the details of the shares and their permissions to an XML file. It takes an XML
+    The Add-ShareInfoToXML function writes the details of the shares and their permissions to an XML file. It takes an XML
     writer object and an array list of shares as input.
 
     .PARAMETER xmlWriter
@@ -1213,17 +1227,17 @@ function ShareInfo-ToXML{
     $xmlWriter.WriteStartElement("Shares")
     foreach ($s in $shares ) {
         $xmlWriter.WriteStartElement("Share")
-        $xmlWriter.WriteElementString("Name",[string] $s.Name);
-        $xmlWriter.WriteElementString("Path",[string] $s.Path);
-        $xmlWriter.WriteElementString("Description",[string] $s.Description);
+        $xmlWriter.WriteElementString("Name",[string] $s.Name)
+        $xmlWriter.WriteElementString("Path",[string] $s.Path)
+        $xmlWriter.WriteElementString("Description",[string] $s.Description)
         $xmlWriter.WriteStartElement("NTFSPermissions")
         if ($s.PSObject.Properties.Name -contains "NTFSPermissions") {
             foreach ($a in $s.NTFSPermissions) {
                 $xmlWriter.WriteStartElement("Permission")
-                $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
-                $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
-                $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
-                $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
+                $xmlWriter.WriteAttributeString("Name", [string] $s.Name)
+                $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName)
+                $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType)
+                $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight)
                 $xmlWriter.WriteEndElement() # Permission
             }
         }
@@ -1232,11 +1246,11 @@ function ShareInfo-ToXML{
         if ($s.PSObject.Properties.Name -contains "SharePermissions") {
             foreach ($a in $s.SharePermissions) {
                 $xmlWriter.WriteStartElement("Permission")
-                $xmlWriter.WriteAttributeString("Name", [string] $s.Name);
-                $xmlWriter.WriteAttributeString("ScopeName", [string] $a.ScopeName);
-                $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName);
-                $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType);
-                $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight);
+                $xmlWriter.WriteAttributeString("Name", [string] $s.Name)
+                $xmlWriter.WriteAttributeString("ScopeName", [string] $a.ScopeName)
+                $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName)
+                $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType)
+                $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight)
                 $xmlWriter.WriteEndElement() # Permission
             }
         }
@@ -1246,22 +1260,22 @@ function ShareInfo-ToXML{
     $xmlWriter.WriteEndElement() # shares
 }
 
-function Collect-WSUSSettings {
+function Get-WSUSSettings {
     <#
     .SYNOPSIS
     Collects WSUS settings from the registry.
 
     .DESCRIPTION
-    The Collect-WSUSSettings function collects WSUS settings from the registry and returns them as a custom object.
+    The Get-WSUSSettings function collects WSUS settings from the registry and returns them as a custom object.
 
     .OUTPUTS
     [PSCustomObject]
     A custom object containing the WSUS settings.
 
     .EXAMPLE
-    $wsusSettings = Collect-WSUSSettings
+    $wsusSettings = Get-WSUSSettings
     #>
-    $wsusSettings = New-Object PSCustomObject
+    $wsusSettings = [PSCustomObject]@{}
     if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "AcceptTrustedPublisherCerts") {
         $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name AcceptTrustedPublisherCerts -ErrorAction SilentlyContinue
         $wsusSettings | Add-Member -MemberType NoteProperty -Name AcceptTrustedPublisherCerts -Value $wsus.AcceptTrustedPublisherCerts
@@ -1294,15 +1308,16 @@ function Collect-WSUSSettings {
         $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUStatusServer -ErrorAction SilentlyContinue
         $wsusSettings | Add-Member -MemberType NoteProperty -Name WUStatusServer -Value $wsus.WUStatusServer
     }
+    return $wsusSettings
 }
 
-function WSUSSettings-ToXML {
+function Add-WSUSSettingsToXML {
     <#
     .SYNOPSIS
     Writes the WSUS settings to an XML file.
 
     .DESCRIPTION
-    The WSUSSettings-ToXML function writes the WSUS settings to an XML file. It takes an XML writer object and a custom
+    The Add-WSUSSettingsToXML function writes the WSUS settings to an XML file. It takes an XML writer object and a custom
     object containing the WSUS settings as input.
 
     .PARAMETER xmlWriter
@@ -1342,13 +1357,13 @@ function WSUSSettings-ToXML {
 }
 
 
-function Collect-WinLogon {
+function Get-WinLogonInfo {
     <#
     .SYNOPSIS
     Collects information about Winlogon settings.
 
     .DESCRIPTION
-    The Collect-WinLogon function gathers information about Winlogon settings, including the autologon configuration.
+    The Get-WinLogon function gathers information about Winlogon settings, including the autologon configuration.
     It uses the Get-ItemProperty cmdlet to query the registry for the settings.
 
     .OUTPUTS
@@ -1356,13 +1371,13 @@ function Collect-WinLogon {
     A custom object containing the Winlogon settings.
 
     .EXAMPLE
-    $winlogon = Collect-WinLogon
+    $winlogon = Get-WinLogon
     #>
     param (
         [System.Collections.ArrayList]$config_checks
     )
 
-    $winlogon = New-Object PSCustomObject
+    $winlogon = [PSCustomObject]@{}
     if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultUserName") {
         $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultUserName -ErrorAction SilentlyContinue
         $winlogon | Add-Member -MemberType NoteProperty -Name DefaultUserName -Value $value.DefaultUserName
@@ -1422,15 +1437,16 @@ function Collect-WinLogon {
         $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomainName -ErrorAction SilentlyContinue
         $winlogon | Add-Member -MemberType NoteProperty -Name DefaultDomain -Value $value.DefaultDomain
     }
+    return $winlogon
 }
 
-function WinLogon-ToXML {
+function Add-WinLogonToXML {
     <#
     .SYNOPSIS
     Writes the Winlogon settings to an XML file.
 
     .DESCRIPTION
-    The WinLogon-ToXML function writes the details of the Winlogon settings to an XML file. It takes an XML writer object
+    The Add-WinLogonToXML function writes the details of the Winlogon settings to an XML file. It takes an XML writer object
     and a custom object containing the Winlogon settings as input.
 
     .PARAMETER xmlWriter
@@ -1472,7 +1488,7 @@ function WinLogon-ToXML {
 }
 
 
-function Collect-TlsSettings {
+function Test-TlsSettings {
     param (
         [System.Collections.ArrayList]$config_checks
     )
@@ -1571,13 +1587,13 @@ function Collect-TlsSettings {
     }
 }
 
-function Collect-PSVersions {
+function Get-PSVersionsInfo {
     <#
     .SYNOPSIS
     Collects information about installed PowerShell versions.
 
     .DESCRIPTION
-    The Collect-PSVersions function gathers information about installed PowerShell versions on the system. It uses the
+    The Get-PSVersions function gathers information about installed PowerShell versions on the system. It uses the
     Get-ItemProperty cmdlet to query the registry for the installed versions.
 
     .PARAMETER config_checks (System.Collections.ArrayList)
@@ -1588,7 +1604,7 @@ function Collect-PSVersions {
     An array list containing the installed PowerShell versions.
 
     .EXAMPLE
-    $psVersions = Collect-PSVersions -config_checks $config_checks_results
+    $psVersions = Get-PSVersions -config_checks $config_checks_results
     #>
     param (
         [System.Collections.ArrayList]$config_checks,
@@ -1600,12 +1616,12 @@ function Collect-PSVersions {
     foreach ( $id in $ids) {
         $entry =  Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\PowerShell\$id\PowerShellEngine -ErrorAction SilentlyContinue
         if ($entry) {
-            $psVersions.Add([PSCustomObject]@{
-                PowerShellVersion = [string] $entry.PowerShellVersion;
-                PSCompatibleVersion = [string] $entry.PSCompatibleVersion;
-                PSPath = [string] $entry.PSPath;
-                RuntimeVersion = [string] $entry.RuntimeVersion;
-                ConsoleHostModuleName = [string] $entry.ConsoleHostModuleName;
+            [void]$psVersions.Add([PSCustomObject]@{
+                PowerShellVersion = [string] $entry.PowerShellVersion
+                PSCompatibleVersion = [string] $entry.PSCompatibleVersion
+                PSPath = [string] $entry.PSPath
+                RuntimeVersion = [string] $entry.RuntimeVersion
+                ConsoleHostModuleName = [string] $entry.ConsoleHostModuleName
             })
         }
         if ($entry.PowerShellVersion -eq "2.0"){
@@ -1626,13 +1642,13 @@ function Collect-PSVersions {
     return $psVersions
 }
 
-function PSVersions-ToXML {
+function Add-PSVersionsToXML {
     <#
     .SYNOPSIS
     Writes the PowerShell versions to an XML file.
 
     .DESCRIPTION
-    The PSVersions-ToXML function writes the details of the installed PowerShell versions to an XML file. It takes an
+    The Add-PSVersionsToXML function writes the details of the installed PowerShell versions to an XML file. It takes an
     XML writer object and an array list of PowerShell versions as input.
 
     .PARAMETER xmlWriter
@@ -1645,15 +1661,14 @@ function PSVersions-ToXML {
         [System.Xml.XmlWriter]$xmlWriter,
         [System.Collections.ArrayList]$psVersions
     )
-    $v2installed = $false
     $xmlWriter.WriteStartElement("PSVersions")
     foreach ($p in $psVersions ) {
         $xmlWriter.WriteStartElement("PSVersion")
-        $xmlWriter.WriteAttributeString("Version",[string] $p.PowerShellVersion);
-        $xmlWriter.WriteAttributeString("PSCompatibleVersion",[string] $p.PSCompatibleVersion);
-        $xmlWriter.WriteAttributeString("PSPath",[string] $p.PSPath);
-        $xmlWriter.WriteAttributeString("RuntimeVersion",[string] $p.RuntimeVersion);
-        $xmlWriter.WriteAttributeString("ConsoleHostModuleName",[string] $p.ConsoleHostModuleName);
+        $xmlWriter.WriteAttributeString("Version",[string] $p.PowerShellVersion)
+        $xmlWriter.WriteAttributeString("PSCompatibleVersion",[string] $p.PSCompatibleVersion)
+        $xmlWriter.WriteAttributeString("PSPath",[string] $p.PSPath)
+        $xmlWriter.WriteAttributeString("RuntimeVersion",[string] $p.RuntimeVersion)
+        $xmlWriter.WriteAttributeString("ConsoleHostModuleName",[string] $p.ConsoleHostModuleName)
         $xmlWriter.WriteEndElement() # PSVersion
     }
     $xmlWriter.WriteEndElement() # PSVersions
@@ -1662,11 +1677,11 @@ function PSVersions-ToXML {
 #
 ###################################################################################################################
 
-function Collect-WSHSettings {
+function Get-WSHSettings {
     param (
         [System.Collections.ArrayList]$config_checks
     )
-    $wsh_result =  New-Object PSCustomObject
+    $wsh_result =  [PSCustomObject]@{}
     #######################################################################
     $wsh_trust_policy =""
     if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows Script Host\Settings\"  -ea SilentlyContinue).Property -contains "TrustPolicy") {
@@ -1752,7 +1767,7 @@ function Collect-WSHSettings {
     return $wsh_result
 }
 
-function WSHSettings-ToXML {
+function Add-WSHSettingsToXML {
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [PSCustomObject]$wshSettings
@@ -1771,13 +1786,13 @@ function WSHSettings-ToXML {
     $xmlWriter.WriteEndElement() # WSH
 }
 
-function Check-LLMNR {
+function Test-LLMNR {
     <#
     .SYNOPSIS
     Checks if LLMNR is enabled.
 
     .DESCRIPTION
-    The Check-LLMNR function checks if the Link-Local Multicast Name Resolution (LLMNR) protocol is enabled on the system.
+    The Test-LLMNR function checks if the Link-Local Multicast Name Resolution (LLMNR) protocol is enabled on the system.
     It uses the Get-ItemProperty cmdlet to query the registry for the LLMNR settings.
 
     .PARAMETER config_checks (System.Collections.ArrayList)
@@ -1788,7 +1803,7 @@ function Check-LLMNR {
     A custom object containing the LLMNR settings.
 
     .EXAMPLE
-    $llmnr = Check-LLMNR
+    $llmnr = Test-LLMNR
     #>
     param (
         [System.Collections.ArrayList]$config_checks
@@ -1823,7 +1838,7 @@ function Check-LLMNR {
     [void]$config_checks.Add($result)
 }
 
-function Check-SMBSigning{
+function Test-SMBSigning{
 
     param (
         [System.Collections.ArrayList]$config_checks
@@ -1834,8 +1849,8 @@ function Check-SMBSigning{
     $client_sign_result = ""
     $client_sign_msg = ""
     if ((get-item "HKLM:\System\CurrentControlSet\Services\LanManWorkstation\Parameters"  -ea SilentlyContinue).Property -contains "RequireSecuritySignature") {
-        $client_sign =  Get-ItemProperty -Path  "HKLM:\System\CurrentControlSet\Services\LanManWorkstation\Parameters"  -Name RequireSecuritySignature -ErrorAction SilentlyContinue
-        $client_sign_value = $ce.RequireSecuritySignature
+        $cs =  Get-ItemProperty -Path  "HKLM:\System\CurrentControlSet\Services\LanManWorkstation\Parameters"  -Name RequireSecuritySignature -ErrorAction SilentlyContinue
+        $client_sign_value = $cs.RequireSecuritySignature
         #  Data Type: REG_DWORD Data: 0 (disable), 1 (enable)
         if ($client_sign_value -eq 0){
             $client_sign_result = "Disabled"
@@ -1862,8 +1877,8 @@ function Check-SMBSigning{
     $srv_sign_result = ""
     $srv_sign_msg = ""
     if ((get-item "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters"  -ea SilentlyContinue).Property -contains "RequireSecuritySignature") {
-        $srv_sign =  Get-ItemProperty -Path  "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters"  -Name RequireSecuritySignature -ErrorAction SilentlyContinue
-        $srv_sign_value = $ce.RequireSecuritySignature
+        $se =  Get-ItemProperty -Path  "HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters"  -Name RequireSecuritySignature -ErrorAction SilentlyContinue
+        $srv_sign_value = $se.RequireSecuritySignature
         #  Data Type: REG_DWORD Data: 0 (disable), 1 (enable)
         if ($srv_sign_value -eq 0){
             $srv_sign_result = "Disabled"
@@ -1890,13 +1905,13 @@ function Check-SMBSigning{
 
 
 
-function Collect-NTPSettings {
+function Get-NTPSettings {
     <#
     .SYNOPSIS
     Collects information about NTP settings.
 
     .DESCRIPTION
-    The Collect-NTPSettings function gathers information about the NTP settings on the system. It uses the
+    The Get-NTPSettings function gathers information about the NTP settings on the system. It uses the
     Get-ItemProperty cmdlet to query the registry for the NTP settings.
 
     .OUTPUTS
@@ -1904,9 +1919,9 @@ function Collect-NTPSettings {
     A custom object containing the NTP settings.
 
     .EXAMPLE
-    $ntpSettings = Collect-NTPSettings
+    $ntpSettings = Get-NTPSettings
     #>
-    $ntpSettings = New-Object PSCustomObject
+    $ntpSettings = [PSCustomObject]@{}
     if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "NtpServer") {
         $ntpServer =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name NtpServer -ErrorAction SilentlyContinue
         $ntpSettings | Add-Member -MemberType NoteProperty -Name Server -Value $ntpServer.NtpServer
@@ -1922,13 +1937,13 @@ function Collect-NTPSettings {
     return $ntpSettings
 }
 
-function NTPSettings-ToXML {
+function Add-NTPSettings-ToXML {
     <#
     .SYNOPSIS
     Writes the NTP settings to an XML file.
 
     .DESCRIPTION
-    The NTPSettings-ToXML function writes the details of the NTP settings to an XML file. It takes an XML writer object
+    The Add-NTPSettings-ToXML function writes the details of the NTP settings to an XML file. It takes an XML writer object
     and a custom object containing the NTP settings as input.
 
     .PARAMETER xmlWriter
@@ -1956,13 +1971,13 @@ function NTPSettings-ToXML {
 }
 
 
-function Collect-PSLogging {
+function Get-PSLoggingInfo {
     <#
     .SYNOPSIS
     Collects information about PowerShell logging settings.
 
     .DESCRIPTION
-    The Collect-PSLogging function gathers information about the PowerShell logging settings on the system. It uses the
+    The Get-PSLogging function gathers information about the PowerShell logging settings on the system. It uses the
     Get-ItemProperty cmdlet to query the registry for the PowerShell logging settings.
 
     .OUTPUTS
@@ -1970,9 +1985,9 @@ function Collect-PSLogging {
     A custom object containing the PowerShell logging settings.
 
     .EXAMPLE
-    $psLogging = Collect-PSLogging
+    $psLogging = Get-PSLogging
     #>
-    $psLogging = New-Object PSCustomObject
+    $psLogging = [PSCustomObject]@{}
     if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"  -ea SilentlyContinue).Property -contains "EnableScriptBlockLogging") {
         $logging =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -ErrorAction SilentlyContinue
         $psLogging | Add-Member -MemberType NoteProperty -Name ScriptBlockLogging -Value $logging.EnableScriptBlockLogging
@@ -1981,13 +1996,13 @@ function Collect-PSLogging {
 }
 
 
-function PSLogging-ToXML {
+function Add-PSLoggingToXML {
     <#
     .SYNOPSIS
     Writes the PowerShell logging settings to an XML file.
 
     .DESCRIPTION
-    The PSLogging-ToXML function writes the details of the PowerShell logging settings to an XML file. It takes an XML
+    The Add-PSLoggingToXML function writes the details of the PowerShell logging settings to an XML file. It takes an XML
     writer object and a custom object containing the PowerShell logging settings as input. The PSScriptBlockLogging Tag
     will be added to root element (Host).
 
@@ -2011,13 +2026,13 @@ function PSLogging-ToXML {
     }
 }
 
-function Collect-SMBConfig {
+function Get-SMBConfig {
     <#
     .SYNOPSIS
     Collects information about the SMB configuration.
 
     .DESCRIPTION
-    The Collect-SMBConfig function gathers information about the SMB configuration on the system. It uses the
+    The Get-SMBConfig function gathers information about the SMB configuration on the system. It uses the
     Get-SmbServerConfiguration cmdlet to query the SMB configuration. If Get-SmbServerConfiguration is not available,
     the function queries the registry for the SMB configuration.
 
@@ -2026,10 +2041,10 @@ function Collect-SMBConfig {
     A custom object containing the SMB configuration.
 
     .EXAMPLE
-    $smbConfig = Collect-SMBConfig
+    $smbConfig = Get-SMBConfig
 
     #>
-    $smbConfig = New-Object PSCustomObject
+    $smbConfig = [PSCustomObject]@{}
     if (Get-Command Get-SmbServerConfiguration -ea SilentlyContinue) {
         # Cmdlet has been introduced in Windows 8, Windows Server 2012
         $smb = Get-SmbServerConfiguration
@@ -2064,15 +2079,16 @@ function Collect-SMBConfig {
             $smbConfig | Add-Member -MemberType NoteProperty -Name SMB2Enabled -Value $true
         }
     }
+    return $smbConfig
 }
 
-function SMBConfig-ToXML {
+function Add-SMBConfigToXML {
     <#
     .SYNOPSIS
     Writes the SMB configuration to an XML file.
 
     .DESCRIPTION
-    The SMBConfig-ToXML function writes the details of the SMB configuration to an XML file. It takes an XML writer object
+    The Add-SMBConfigToXML function writes the details of the SMB configuration to an XML file. It takes an XML writer object
     and a custom object containing the SMB configuration as input.
 
     .PARAMETER xmlWriter
@@ -2105,13 +2121,13 @@ function SMBConfig-ToXML {
     $xmlWriter.WriteEndElement() # SMBSettings
 }
 
-function Collect-DefenderInfo {
+function Get-DefenderInfo {
     <#
     .SYNOPSIS
     Collects information about Windows Defender settings.
 
     .DESCRIPTION
-    The Collect-DefenderInfo function gathers information about Windows Defender settings on the system. It uses
+    The Get-DefenderInfo function gathers information about Windows Defender settings on the system. It uses
     the Get-MpComputerStatus and Get-MpPreference cmdlets to query the Windows Defender settings.
 
     .OUTPUTS
@@ -2119,9 +2135,9 @@ function Collect-DefenderInfo {
     A custom object containing the Windows Defender settings.
 
     .EXAMPLE
-    $defenderInfo = Collect-DefenderInfo
+    $defenderInfo = Get-DefenderInfo
     #>
-    $defenderInfo = New-Object PSCustomObject
+    $defenderInfo = [PSCustomObject]@{}
     if (Get-Command Get-MpComputerStatus -ea SilentlyContinue) {
         $status = Get-MpComputerStatus
         $defenderInfo | Add-Member -MemberType NoteProperty -Name MpComputerStatus -Value $status
@@ -2133,13 +2149,13 @@ function Collect-DefenderInfo {
     return $defenderInfo
 }
 
-function DefenderInfo-ToXML {
+function Add-DefenderInfoToXML {
     <#
     .SYNOPSIS
     Writes the Windows Defender settings to an XML file.
 
     .DESCRIPTION
-    The DefenderInfo-ToXML function writes the details of the Windows Defender settings to an XML file. It takes an XML
+    The Add-DefenderInfoToXML function writes the details of the Windows Defender settings to an XML file. It takes an XML
     writer object and a custom object containing the Windows Defender settings as input.
 
     .PARAMETER xmlWriter
@@ -2203,13 +2219,13 @@ function DefenderInfo-ToXML {
     }
 }
 
-function Printers-ToXML {
+function Add-PrintersToXML {
     <#
     .SYNOPSIS
     Writes the printer information to an XML file.
 
     .DESCRIPTION
-    The Printers-ToXML function writes the details of the printer information to an XML file. It takes an XML writer
+    The Add-PrintersToXML function writes the details of the printer information to an XML file. It takes an XML writer
     object and an array list of printers as input.
 
     .PARAMETER xmlWriter
@@ -2239,13 +2255,13 @@ function Printers-ToXML {
 }
 
 
-function Collect-AclPathChecks {
+function Get-AclPathChecks {
     <#
     .SYNOPSIS
     Collects information about ACL checks for specified paths.
 
     .DESCRIPTION
-    The Collect-AclPathChecks function gathers information about ACL checks for specified paths on the system. It uses
+    The Get-AclPathChecks function gathers information about ACL checks for specified paths on the system. It uses
     the Get-Acl cmdlet to query the ACL settings for the specified paths.
 
     .PARAMETER acl_path_checks
@@ -2256,7 +2272,7 @@ function Collect-AclPathChecks {
     A custom object containing the ACL checks for specified paths.
 
     .EXAMPLE
-    $aclPathChecks = Collect-AclPathChecks
+    $aclPathChecks = Get-AclPathChecks
     #>
     param (
         [System.Collections.ArrayList]$acl_path_checks
@@ -2266,22 +2282,22 @@ function Collect-AclPathChecks {
         $path = [string] $c
         if (Test-Path $path) {
             $acl = Get-Acl -Path $path -ErrorAction SilentlyContinue
-            $result = New-Object PSCustomObject
+            $result = [PSCustomObject]@{}
             $result | Add-Member -MemberType NoteProperty -Name Path -Value $path
             $result | Add-Member -MemberType NoteProperty -Name ACLs -Value $acl.Access
-            $results.Add($result) | Out-Null
+            [void]$results.Add($result)
         }
     }
     return $results
 }
 
-function AclPathChecks-ToXML {
+function Add-AclPathChecksToXML {
     <#
     .SYNOPSIS
     Writes the ACL checks for specified paths to an XML file.
 
     .DESCRIPTION
-    The AclPathChecks-ToXML function writes the details of the ACL checks for specified paths to an XML file. It takes
+    The Add-AclPathChecksToXML function writes the details of the ACL checks for specified paths to an XML file. It takes
     an XML writer object and an array list of ACL checks as input.
 
     .PARAMETER xmlWriter
@@ -2302,7 +2318,7 @@ function AclPathChecks-ToXML {
         $xmlWriter.WriteStartElement("ACLs")
         foreach ($a in $c.ACLs) {
             $xmlWriter.WriteStartElement("ACL")
-            $xmlWriter.WriteAttributeString("path", [string] $c.Path);
+            $xmlWriter.WriteAttributeString("path", [string] $c.Path)
             $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference)
             $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType)
             $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights)
@@ -2314,13 +2330,13 @@ function AclPathChecks-ToXML {
     $xmlWriter.WriteEndElement() # PathACLChecks
 }
 
-function ConfigChecks-ToXML {
+function Add-ConfigChecksToXML {
     <#
     .SYNOPSIS
     Writes the configuration checks to an XML file.
 
     .DESCRIPTION
-    The ConfigChecks-ToXML function writes the details of the configuration checks to an XML file. It takes an XML writer
+    The Add-ConfigChecksToXML function writes the details of the configuration checks to an XML file. It takes an XML writer
     object and an array list of configuration checks as input.
 
     .PARAMETER xmlWriter
@@ -2336,30 +2352,157 @@ function ConfigChecks-ToXML {
     try{
         $xmlWriter.WriteStartElement("ConfigChecks")
         foreach ($c in $configChecks) {
-            $xmlWriter.WriteStartElement("ConfigCheck")
-            $xmlWriter.WriteElementString("Component", [string] $c.Component)
-            $xmlWriter.WriteElementString("Name", [string] $c.Name)
-            $xmlWriter.WriteElementString("Method", [string] $c.Method)
-            $xmlWriter.WriteElementString("Key", [string] $c.Key)
-            $xmlWriter.WriteElementString("Value", [string] $c.Value)
-            $xmlWriter.WriteElementString("Result", [string] $c.Result)
-            $xmlWriter.WriteElementString("Message", [string] $c.Message)
-            $xmlWriter.WriteEndElement() # ConfigCheck
+            try{
+                $xmlWriter.WriteStartElement("ConfigCheck")
+                $xmlWriter.WriteElementString("Component", [string] $c.Component)
+                $xmlWriter.WriteElementString("Name", [string] $c.Name)
+                $xmlWriter.WriteElementString("Method", [string] $c.Method)
+                $xmlWriter.WriteElementString("Key", [string] $c.Key)
+                $xmlWriter.WriteElementString("Value", [string] $c.Value)
+                $xmlWriter.WriteElementString("Result", [string] $c.Result)
+                $xmlWriter.WriteElementString("Message", [string] $c.Message)
+                $xmlWriter.WriteEndElement() # ConfigCheck
+            } catch{}
         }
         $xmlWriter.WriteEndElement() # ConfigChecks
     }catch {
-        Write-Host "[-] Config Checks could not be written to XML"
+        Write-Output "[-] Config Checks could not be written to XML"
     }
 
 }
 
+function Get-ServicesInfo {
+
+    $service_list = New-Object System.Collections.ArrayList
+
+    if (Get-Command Get-CimInstance -ea SilentlyContinue) {
+        $services = Get-CimInstance -ClassName win32_service
+    } else {
+        $services = Get-WmiObject  -class win32_service
+    }
+    foreach ($s in $services ) {
+        $service = [PSCustomObject]@{
+            Caption = $s.Caption
+            Description = $s.Description
+            Name = $s.Name
+            StartMode = $s.StartMode
+            PathName = $s.PathName
+            Started = $s.Started
+            StartName = $s.StartName
+            SystemName = $s.SystemName
+            DisplayName = $s.DisplayName
+            AcceptPause = $s.AcceptPause
+            AcceptStop = $s.AcceptStop
+            ProcessId = $s.ProcessId
+            DelayedAutoStart = $s.DelayedAutoStart
+        }
+        try {
+            # check permissions of binary. Therefore parameters needed to be stripped from path, otherwise
+            # Get-ACL will not work.
+            $folder = Split-Path -Path $s.PathName
+            $leaf = Split-Path -Path $s.PathName -Leaf
+            $space = $leaf.IndexOf(" ")
+            if ($space -eq -1) {
+                $bin = $s.PathName
+            }else{
+                $bin = $folder+"\"+$leaf.Substring(0,$space)
+            }
+            $service | Add-Member -MemberType NoteProperty -Name Executable -Value $bin
+
+
+            $space2 = $bin.IndexOf('"')
+            if ($space2 -ne -1){
+                $bin =$bin.Replace('"','')
+            }
+
+            $acl = get-acl -Path $bin -ErrorAction SilentlyContinue
+            $bin_perms = New-Object System.Collections.ArrayList
+            foreach ($a in $acl.Access) {
+                try{
+                    $perm = [PSCustomObject]@{
+                        Name = $s.Name
+                        IdentityReference = $a.IdentityReference
+                        AccessControlType = $a.AccessControlType
+                        FileSystemRights = $a.FileSystemRights
+                    }
+                    [void] $bin_perms.Add($perm)
+                }catch{}
+            }
+            $service | Add-Member -MemberType NoteProperty -Name BinaryPermissions -Value $bin_perms
+
+
+        } catch {}
+        [void] $service_list.Add($service)
+    }
+    return $service_list
+}
+
+function Add-ServicesInfoToXML {
+    <#
+    .SYNOPSIS
+    Writes the service information to an XML file.
+
+    .DESCRIPTION
+    The Add-ServicesInfoToXML function writes the details of the service information to an XML file. It takes an XML writer
+    object and an array list of services as input.
+
+    .PARAMETER xmlWriter
+    An XML writer object used to write the service information to an XML file.
+
+    .PARAMETER services
+    An array list containing the service information.
+    #>
+    param (
+        [System.Xml.XmlWriter]$xmlWriter,
+        [System.Collections.ArrayList]$services
+    )
+
+    $xmlWriter.WriteStartElement("Services")
+    foreach ($s in $services) {
+        try{
+            $xmlWriter.WriteStartElement("Service")
+            $xmlWriter.WriteElementString("Caption", [string] $s.Caption)
+            $xmlWriter.WriteElementString("Description",[string]$s.Description)
+            $xmlWriter.WriteElementString("Name",[string]$s.Name)
+            $xmlWriter.WriteElementString("StartMode",[string]$s.StartMode)
+            $xmlWriter.WriteElementString("PathName", [string]$s.PathName)
+            $xmlWriter.WriteElementString("Started",[string]$s.Started)
+            $xmlWriter.WriteElementString("StartName",[string]$s.StartName)
+            $xmlWriter.WriteElementString("SystemName",[string]$s.SystemName)
+            $xmlWriter.WriteElementString("DisplayName",[string]$s.DisplayName)
+            #$xmlWriter.WriteElementString("Running",[string]$s.Running)
+            $xmlWriter.WriteElementString("AcceptStop",[string]$s.AcceptStop)
+            $xmlWriter.WriteElementString("AcceptPause",[string]$s.AcceptPause)
+            $xmlWriter.WriteElementString("ProcessId",[string]$s.ProcessId)
+            $xmlWriter.WriteElementString("DelayedAutoStart",[string]$s.DelayedAutoStart)
+
+            if ($s.PSObject.Properties.Name -contains "Executable") {
+                $xmlWriter.WriteElementString("Executable",[string]$s.Executable)
+            }
+            if ($s.PSObject.Properties.Name -contains "BinaryPermissions") {
+                $xmlWriter.WriteStartElement("BinaryPermissions")
+                foreach ($a in $s.BinaryPermissions) {
+                    $xmlWriter.WriteStartElement("Permission")
+                    $xmlWriter.WriteAttributeString("Name", [string] $a.Name)
+                    $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference)
+                    $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType)
+                    $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights)
+                    $xmlWriter.WriteEndElement() # Permission
+                }
+                $xmlWriter.WriteEndElement() # BinaryPermissions
+            }
+            $xmlWriter.WriteEndElement() # service
+        }catch{}
+    }
+    $xmlWriter.WriteEndElement() # services
+}
 
 ###############################################################################################################
 # Collecting general computer information
 ###############################################################################################################
-Write-Host "[*] Collecting general computer infos."
+Write-Output "[*] Collecting general computer infos."
 
-$hostInfo = Collect-HostInfo
+$hostInfo = Get-HostInfo
 
 # Adding Hostname and infos from parameters to hostInfo object
 $hostInfo.Hostname = $hostname
@@ -2370,155 +2513,165 @@ $hostInfo.Label = $Label
 ###############################################################################################################
 # Collecting BIOS information
 ###############################################################################################################
-Write-Host "[*] Collecting BIOS information"
-$biosInfo = Collect-BIOSInfo
+Write-Output "[*] Collecting BIOS information"
+$biosInfo = Get-BIOSInfo
 
 ###############################################################################################################
 # Collecting information about installed hotfixes / patches
 ###############################################################################################################
-Write-Host "[*] Collecting installed hotfixes"
-$hotfixes = Collect-Hotfixes -host_info $hostInfo
+Write-Output "[*] Collecting installed hotfixes"
+$hotfixes = Get-HotfixesInfo -host_info $hostInfo
 
 ###############################################################################################################
 # Collecting information about installed products / applications
 ###############################################################################################################
-Write-Host "[*] Collecting installed products"
-$products = Collect-InstalledProducts
+Write-Output "[*] Collecting installed products"
+$installedProducts = Get-InstalledProductsInfo
 
 ###############################################################################################################
 # Collecting information about network adapters
 ###############################################################################################################
-Write-Host "[*] Collecting available network adapters"
-$netadapters = Collect-NetAdapter
+Write-Output "[*] Collecting available network adapters"
+$netadapters = Get-NetAdapterInfo
 
 ###############################################################################################################
 # Collecting information about IP addresses
 ###############################################################################################################
-Write-Host "[*] Collecting IP addresses"
-$netips = Collect-NetIPAddress
+Write-Output "[*] Collecting IP addresses"
+$netips = Get-NetIPAddressInfo
 
 ###############################################################################################################
 # Collecting information about available routes (routing table)
 ###############################################################################################################
-Write-Host "[*] Collecting routing table"
-$routes = Collect-NetRoute
+Write-Output "[*] Collecting routing table"
+$routes = Get-NetRouteInfo
 
 ###############################################################################################################
 # Collecting information about local user accounts
 ###############################################################################################################
-Write-Host "[*] Collecting local user accounts"
-$users = Collect-LocalUserAccounts
+Write-Output "[*] Collecting local user accounts"
+$users = Get-LocalUserAccountsInfo
 
 ###############################################################################################################
 # Collecting information about local groups
 ###############################################################################################################
-Write-Host "[*] Collecting local groups"
-$groups = Collect-LocalGroups
+Write-Output "[*] Collecting local groups"
+$groups = Get-LocalGroupsInfo
 
 ###############################################################################################################
 # Perform: File Existence Checks
 # This will check if specified files exist on the system and if they are matching a predefined hash.
 # The matching of HASH is only performed in recent PowerShell versions by using Get-FileHash
 ###############################################################################################################
-Write-Host "[*] Checking for existence of specified files"
-$file_checks_results = Collect-FileExistCheck -FileChecks $file_checks
+Write-Output "[*] Checking for existence of specified files"
+$file_checks_results = Get-FileExistCheck -FileChecks $file_checks
 
 ###############################################################################################################
 # Collecting information about firewall status
 ###############################################################################################################
-Write-Host "[*] Collecting firewall status"
-$firewallInfo = Collect-FirewallInfo -config_check_results $config_check_results
+Write-Output "[*] Collecting firewall status"
+$firewallInfo = Get-FirewallInfo -config_check_results $config_check_results
 
 ###############################################################################################################
 # Perform: Additional checks for entries in Windows Registry
 #######################################################################
-Write-Host "[*] Checking additional entries in Windows Registry"
-$registry_check_results = Collect-RegistryChecks -RegistryChecks $registry_checks
+Write-Output "[*] Checking additional entries in Windows Registry"
+$registry_check_results = Get-RegistryChecks -RegistryChecks $registry_checks
 
 ###############################################################################################################
 # Collecting Share information
 #######################################################################
-Write-Host "[*] Collecting information about shares"
-$shares = Collect-Shares
+Write-Output "[*] Collecting information about shares"
+$shares = Get-SharesInfo
 
 ###############################################################################################################
 # Collecting WSUS Settings in Registry
 ###############################################################################################################
-Write-Host "[*] Checking WSUS configuration"
-$wsusSettings = Collect-WSUSSettings
+Write-Output "[*] Checking WSUS configuration"
+$wsusSettings = Get-WSUSSettings
 
 ###############################################################################################################
 # Collecting autologon settings
 ###############################################################################################################
-Write-Host "[*] Checking autologon settings"
-$winlogon = Collect-WinLogon -config_checks $config_check_results
+Write-Output "[*] Checking autologon settings"
+$winlogon = Get-WinLogonInfo -config_checks $config_check_results
 
 
 ###############################################################################################################
 # Collecting SSL / TLS settings
 ##############################################################################################################
-Write-Host "[*] Checking SSL/TLS settings"
-Collect-TlsSettings -config_checks $config_check_results
+Write-Output "[*] Checking SSL/TLS settings"
+Test-TlsSettings -config_checks $config_check_results
 
 
 ###############################################################################################################
 # Collecting PS Versions
 ##############################################################################################################
-Write-Host "[*] Checking PS Versions"
-$psVersions = Collect-PSVersions -config_checks $config_check_results -hostInfo $hostInfo
+Write-Output "[*] Checking PS Versions"
+$psVersions = Get-PSVersionsInfo -config_checks $config_check_results -hostInfo $hostInfo
 
 ###############################################################################################################
 # Collecting WSH Settings
 ##############################################################################################################
-Write-Host "[*] Checking WSH settings"
-$wshSettings = Collect-WSHSettings -config_checks $config_check_results
+Write-Output "[*] Checking WSH settings"
+$wshSettings = Get-WSHSettings -config_checks $config_check_results
 
 ###############################################################################################################
 # Check if LLMNR is enabled
 ###############################################################################################################
-Write-Host "[*] Checking if LLMNR is enabled"
-Check-LLMNR -config_checks $config_check_results
+Write-Output "[*] Checking if LLMNR is enabled"
+Test-LLMNR -config_checks $config_check_results
 
 ###############################################################################################################
 # Check if SMB Signing is required
 # https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-signing-overview
 ###############################################################################################################
-Write-Host "[*] Checking if SMB Signing is enabled"
-Check-SMBSigning -config_checks $config_check_results
+Write-Output "[*] Checking if SMB Signing is enabled"
+Test-SMBSigning -config_checks $config_check_results
 
 
 ###############################################################################################################
 # Collecting information about NTP configuration
 ###############################################################################################################
-Write-Host "[*] Checking NTP configuration"
-$ntpSettings = Collect-NTPSettings
+Write-Output "[*] Checking NTP configuration"
+$ntpSettings = Get-NTPSettings
 
 ###############################################################################################################
 # Collecting information about PowerShell (PS Logging enabled ?)
 ###############################################################################################################
 
 # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_logging?view=powershell-5.1
-Write-Host "[*] Checking PS Logging is enabled"
-$psLogging = Collect-PSLogging
+Write-Output "[*] Checking PS Logging is enabled"
+$psLogging = Get-PSLoggingInfo
 
 ###############################################################################################################
 # Collecting information about SMB (Check if SMBv1 is enabled)
 ###############################################################################################################
-Write-Host "[*] Checking if SMBv1 is enabled"
-$smbConfig = Collect-SMBConfig
+Write-Output "[*] Checking if SMBv1 is enabled"
+$smbConfig = Get-SMBConfig
 
 
 ###############################################################################################################
 # Collecting information about Defender (Status / Settings)
 ###############################################################################################################
-Write-Host "[*] Checking Defender settings"
-$defenderInfo = Collect-DefenderInfo
+Write-Output "[*] Checking Defender settings"
+$defenderInfo = Get-DefenderInfo
 
 
+###############################################################################################################
+# Collecting information about services
+###############################################################################################################
+
+Write-Output "[*] Collecting service information"
+$services = Get-ServicesInfo
+
+#
+# TODO: Scheduled Task Checks
+# TODO: fix Share permissions  and installed products to XML
 ###############################################################################################################
 # Collecting information about Printer
 ###############################################################################################################
-Write-Host "[*] Checking if printers are installed"
+Write-Output "[*] Checking if printers are installed"
 $printers = New-Object System.Collections.ArrayList
 if (Get-Command Get-Printer -ea SilentlyContinue) {
     try {
@@ -2529,8 +2682,8 @@ if (Get-Command Get-Printer -ea SilentlyContinue) {
 ###############################################################################################################
 # Perform: Path ACL Checks
 ###############################################################################################################
-Write-Host "[*] Checking ACLs for specified pathes"
-$aclPathChecks = Collect-AclPathChecks -acl_path_checks $acl_path_checks
+Write-Output "[*] Checking ACLs for specified pathes"
+$aclPathChecks = Get-AclPathChecks -acl_path_checks $acl_path_checks
 
 ###############################################################################################################
 # Writing collected information to XML file
@@ -2542,96 +2695,101 @@ try {
     $settings.Indent = $true
     $settings.IndentChars = $(" "*4)
     $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
+    Write-Output "[*] Exporting data as XML"
     $xmlWriter.WriteStartDocument()
         $xmlWriter.WriteStartElement("SystemInfoCollector")
             $xmlWriter.WriteAttributeString("version", "$version")
             $xmlWriter.WriteStartElement("Host")
                 try {
-                    HostInfo-ToXML -xmlWriter $xmlWriter -hostInfo $hostInfo
-                } catch { Write-host "[-] HostInfo could not be written to XML" }
+                    Add-HostInfoToXML -xmlWriter $xmlWriter -hostInfo $hostInfo
+                } catch { Write-Output "[-] HostInfo could not be written to XML" }
                 try {
-                    BIOSInfo-ToXML -xmlWriter $xmlWriter -biosInfo $biosInfo
-                } catch { Write-host "[-] BIOSInfo could not be written to XML" }
+                    Add-BIOSInfoToXML -xmlWriter $xmlWriter -biosInfo $biosInfo
+                } catch { Write-Output "[-] BIOSInfo could not be written to XML" }
                 try {
-                    Hotfixes-ToXML -xmlWriter $xmlWriter -hotfixes $hotfixes
-                } catch { Write-host "[-] Hotfixes could not be written to XML" }
+                    Add-HotfixesToXML -xmlWriter $xmlWriter -hotfixes $hotfixes
+                } catch { Write-Output "[-] Hotfixes could not be written to XML" }
                 try {
-                    write-host "Before InstalledProducts"
-                    InstalledProducts-ToXML -xmlWriter $xmlWriter -products $products
-                    write-host "After InstalledProducts"
-                } catch { Write-host "[-] InstalledProducts could not be written to XML" }
+                    # TODO: fix me
+                    Add-InstalledProductsToXML -xmlWriter $xmlWriter -products $installedProducts
+                } catch { Write-Output "[-] InstalledProducts could not be written to XML" }
                 try {
-                    NetAdapter-ToXML -xmlWriter $xmlWriter -netadapters $netadapter
-                } catch { Write-host "[-] NetAdapter could not be written to XML" }
+                    Add-NetAdapterToXML -xmlWriter $xmlWriter -netadapters $netadapters
+                } catch { Write-Output "[-] NetAdapter could not be written to XML" }
                 try {
-                    NetRoute-ToXML -xmlWriter $xmlWriter -routes $routes
-                } catch { Write-host "[-] NetRoute could not be written to XML" }
+                    Add-NetRouteToXML -xmlWriter $xmlWriter -routes $routes
+                } catch { Write-Output "[-] NetRoute could not be written to XML" }
                 try {
-                    NetIPAddress-ToXML -xmlWriter $xmlWriter -netips $netips
-                } catch { Write-host "[-] NetIPAddress could not be written to XML" }
+                    Add-NetIPAddressToXML -xmlWriter $xmlWriter -netips $netips
+                } catch { Write-Output "[-] NetIPAddress could not be written to XML" }
                 try {
-                    LocalUserAccounts-ToXML -xmlWriter $xmlWriter -users $users
-                } catch { Write-host "[-] LocalUserAccounts could not be written to XML" }
+                    Add-LocalUserAccountsToXML -xmlWriter $xmlWriter -users $users
+                } catch { Write-Output "[-] LocalUserAccounts could not be written to XML" }
                 try {
-                    LocalGroups-ToXML -xmlWriter $xmlWriter -groups $groups
-                } catch { Write-host "[-] LocalGroups could not be written to XML" }
+                    Add-LocalGroupsToXML -xmlWriter $xmlWriter -groups $groups
+                } catch { Write-Output "[-] LocalGroups could not be written to XML" }
                 try {
-                    FirewallInfo-ToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
-                } catch { Write-host "[-] FirewallInfo could not be written to XML" }
+                    Add-FirewallInfoToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
+                } catch { Write-Output "[-] FirewallInfo could not be written to XML" }
                 try {
-                    RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
-                } catch { Write-host "[-] RegistryChecks could not be written to XML" }
+                    Add-RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
+                } catch { Write-Output "[-] RegistryChecks could not be written to XML" }
                 try {
-                    ShareInfo-ToXML -xmlWriter $xmlWriter -shares $shares
-                } catch { Write-host "[-] SharesInfo could not be written to XML" }
+                    Add-ShareInfoToXML -xmlWriter $xmlWriter -shares $shares
+                } catch { Write-Output "[-] SharesInfo could not be written to XML" }
                 try {
-                    WSUSSettings-ToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
-                } catch { Write-host "[-] WSUSSettings could not be written to XML" }
+                    # Todo: check on system with WSUS config
+                    Add-WSUSSettingsToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
+                } catch { Write-Output "[-] WSUSSettings could not be written to XML" }
                 try {
-                    Winlogon-ToXML -xmlWriter $xmlWriter -winlogon $winlogon
-                } catch { Write-host "[-] Winlogon could not be written to XML" }
+                    Add-WinLogonToXML -xmlWriter $xmlWriter -winlogon $winlogon
+                } catch { Write-Output "[-] Winlogon could not be written to XML" }
                 try {
-                    PSVersions-ToXML -xmlWriter $xmlWriter -psVersions $psVersions
-                } catch { Write-host "[-] PSVersions could not be written to XML" }
+                    Add-PSVersionsToXML -xmlWriter $xmlWriter -psVersions $psVersions
+                } catch { Write-Output "[-] PSVersions could not be written to XML" }
                 try {
-                    WSHSettings-ToXML -xmlWriter $xmlWriter -wshSettings $wshSettings
-                } catch { Write-host "[-] WSHSettings could not be written to XML" }
+                    Add-WSHSettingsToXML -xmlWriter $xmlWriter -wshSettings $wshSettings
+                } catch { Write-Output "[-] WSHSettings could not be written to XML" }
                 try {
-                    NTPSettings-ToXML -xmlWriter $xmlWriter -ntpSettings $ntpSettings
-                } catch { Write-host "[-] NTPSettings could not be written to XML" }
+                    Add-NTPSettings-ToXML -xmlWriter $xmlWriter -ntpSettings $ntpSettings
+                } catch { Write-Output "[-] NTPSettings could not be written to XML" }
                 try {
-                    PSLogging-ToXML -xmlWriter $xmlWriter -psLogging $psLogging
-                } catch { Write-host "[-] PSLogging could not be written to XML" }
+                    Add-PSLoggingToXML -xmlWriter $xmlWriter -psLogging $psLogging
+                } catch { Write-Output "[-] PSLogging could not be written to XML" }
                 try {
-                    SMBConfig-ToXML -xmlWriter $xmlWriter -smbConfig $smbConfig
-                } catch { Write-host "[-] SMBConfig could not be written to XML" }
+                    Add-SMBConfigToXML -xmlWriter $xmlWriter -smbConfig $smbConfig
+                } catch { Write-Output "[-] SMBConfig could not be written to XML" }
                 try {
-                    DefenderInfo-ToXML -xmlWriter $xmlWriter -defenderInfo $defenderInfo
-                } catch { Write-host "[-] DefenderInfo could not be written to XML" }
+                    Add-DefenderInfoToXML -xmlWriter $xmlWriter -defenderInfo $defenderInfo
+                } catch { Write-Output "[-] DefenderInfo could not be written to XML" }
                 try {
-                    Printers-ToXML -xmlWriter $xmlWriter -printers $printers
-                } catch { Write-host "[-] Printers could not be written to XML" }
-
+                    Add-PrintersToXML -xmlWriter $xmlWriter -printers $printers
+                } catch { Write-Output "[-] Printers could not be written to XML" }
                 try {
-                    FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
-                } catch { Write-host "[-] FileExistChecks could not be written to XML" }
+                    Add-ServicesInfoToXML -xmlWriter $xmlWriter -services $services
+                } catch { Write-Output "[-] Services could not be written to XML" }
                 try {
-                    AclPathChecks-ToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
-                } catch { Write-host "[-] AclPathChecks could not be written to XML" }
+                    Add-FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
+                } catch { Write-Output "[-] FileExistChecks could not be written to XML" }
                 try {
-                    ConfigChecks-ToXML -xmlWriter $xmlWriter -config_check_results $config_check_results
-                } catch { Write-host "[-] ConfigChecks could not be written to XML" }
+                    Add-AclPathChecksToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
+                } catch { Write-Output "[-] AclPathChecks could not be written to XML" }
+                try {
+                    # TODO: not exported yet
+                    Add-ConfigChecksToXML -xmlWriter $xmlWriter -configChecks $config_check_results
+                } catch { Write-Output "[-] ConfigChecks could not be written to XML" }
             $xmlWriter.WriteEndElement() # Host
         $xmlWriter.WriteEndElement() # SystemInfoCollector
     $xmlWriter.WriteEndDocument()
     $xmlWriter.Flush()
     $xmlWriter.Close()
+
+
+    Write-Output "[+] XML file written to: $xmlfile"
 }catch {
-    Write-Host "[-] XML file could not be written"
-    Write-Host "[*] Exporting to CSV file"
+    Write-Output "[-] XML file could not be written"
+    Write-Output "[*] Exporting to CSV file"
 
     # TODO:  Export to CSV
 }
-
-
 
