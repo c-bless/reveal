@@ -687,8 +687,12 @@ function Get-HotfixesInfo {
     param (
         [PSCustomObject]$host_info
     )
+    
+    $hotfix_list = New-Object System.Collections.ArrayList
+    $collectionMethod = ""
 
     if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
+        $collectionMethod = "Get-HotFix"
         try{
             $hotfixes = Get-HotFix | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
         } catch{
@@ -697,8 +701,10 @@ function Get-HotfixesInfo {
     } else {
 
         if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
+            $collectionMethod = "CIM"
             $hotfixes = Get-CimInstance -Class win32_QuickFixEngineering
         } else {
+            $collectionMethod = "WMI"
             $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering
         }
         try{
@@ -709,7 +715,18 @@ function Get-HotfixesInfo {
             }
         } catch {}
     }
-    return $hotfixes
+
+    foreach ($h in $hotfixes){
+        $hotfix = [PSCustomObject]@{
+            CollectionMethod = $collectionMethod
+            id = [string] $h.HotFixID
+            InstalledOn = [string] $h.InstalledOn
+            Description = [string] $h.Description
+        }
+        [void] $hotfix_list.Add($hotfix)
+    }
+
+    return $hotfix_list
 }
 
 
@@ -739,21 +756,43 @@ function Get-InstalledProductsInfo {
         if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
             $products = Get-CimInstance -class win32_product
             foreach ($p in $products){
-                $p | Add-Member -MemberType NoteProperty -Name CollectionMethod -Value "CIM" -Force
-                [void] $product_list.Add($p)
+                $product = [PSCustomObject]@{
+                    IdentifyingNumber = [string] $p.IdentifyingNumber
+                    Name = [string] $p.Name
+                    Caption = [string] $p.Caption
+                    InstallDate = [string] $p.InstallDate
+                    Description = [string] $p.Description
+                    Vendor = [string] $p.Vendor
+                    Version = [string] $p.Version
+                    InstallLocation = [string] $p.InstallLocation
+                    CollectionMethod =  "CIM"
+                }
+                [void] $product_list.Add($product)
             }
         }else{
             $products = Get-WmiObject  -class win32_product
             foreach ($p in $products){
-                $p | Add-Member -MemberType NoteProperty -Name CollectionMethod -Value "WMI" -Force
-                [void] $product_list.Add($p)
+                $product = [PSCustomObject]@{
+                    IdentifyingNumber = [string] $p.IdentifyingNumber
+                    Name = [string] $p.Name
+                    Caption = [string] $p.Caption
+                    InstallDate = [string] $p.InstallDate
+                    Description = [string] $p.Description
+                    Vendor = [string] $p.Vendor
+                    Version = [string] $p.Version
+                    InstallLocation = [string] $p.InstallLocation
+                    CollectionMethod =  "WMI"
+                }
+                 [void] $product_list.Add($product)
             }
         }
     }catch {}
     return $product_list
 }
 
+
 function Add-InstalledProductsToXML {
+
     param (
         [System.Xml.XmlWriter]$xmlWriter,
         [System.Collections.ArrayList]$products
@@ -798,16 +837,33 @@ function Get-NetAdapterInfo {
         $netadapters = Get-NetAdapter
         # Add an alias property to the object to make it compatible with the get-wmiobject object
         foreach ($n in $netadapters ) {
-            $n | Add-Member -MemberType NoteProperty -Name Type -Value "N/A" -Force
+            $n = [PSCustomObject]@{
+                CollectionMethod = "Get-NetAdapter"
+                Type = "N/A"
+                MacAddress = [string] $n.MacAddress
+                Status = [string] $n.Status
+                Name = [string] $n.Name
+                InterfaceDescription = [string] $n.InterfaceDescription
+            }
+            #$n | Add-Member -MemberType NoteProperty -Name Type -Value "N/A" -Force
             [void]$result_list.add($n)
         }
     }else{
-
-        $netadapters = get-wmiobject -Class win32_networkadapter
-        # Add an alias property to the object to make it compatible with the Get-NetAdapter object
-        foreach ($n in $netadapters ) {
-            $n | Add-Member -MemberType AliasProperty -Name InterfaceDescription -Value $n.Description
-            [void]$result_list.add($n)
+        if (Get-Command Get-WmiObject -ErrorAction SilentlyContinue){
+            $netadapters = get-wmiobject -Class win32_networkadapter
+            # Add an alias property to the object to make it compatible with the Get-NetAdapter object
+            foreach ($n in $netadapters ) {
+                $n = [PSCustomObject]@{
+                    CollectionMethod = "WMI"
+                    Type = [string] $n.AdapterType
+                    MacAddress = [string] $n.MacAddress
+                    Status = [string] $n.Status
+                    Name = [string] $n.Name
+                    InterfaceDescription = [string] $n.Description
+                }
+                #$n | Add-Member -MemberType AliasProperty -Name InterfaceDescription -Value $n.Description
+                [void]$result_list.add($n)
+            }
         }
     }
     return $result_list
@@ -825,7 +881,7 @@ function Add-NetAdapterToXML {
         $xmlWriter.WriteStartElement("Netadapter")
         $xmlWriter.WriteAttributeString("MacAddress", [string] $n.MacAddress)
         try {
-            $xmlWriter.WriteAttributeString("Type",[string] $n.AdapterType)
+            $xmlWriter.WriteAttributeString("Type",[string] $n.Type)
         } catch {}
         $xmlWriter.WriteAttributeString("Status",[string] $n.Status)
         $xmlWriter.WriteAttributeString("Name",[string] $n.Name)
@@ -837,13 +893,28 @@ function Add-NetAdapterToXML {
 
 
 function Get-NetRouteInfo {
+    $route_list =  New-Object System.Collections.ArrayList
 
     if (Get-Command Get-NetRoute -ErrorAction SilentlyContinue) {
         $routes = Get-NetRoute
     }else{
         $routes = New-Object System.Collections.ArrayList
     }
-    return $routes
+    foreach ($r in $routes) {
+        $route = [PSCustomObject]@{
+            AddressFamily = [string] $r.AddressFamily
+            DestinationPrefix = [string]$r.DestinationPrefix
+            InterfaceAlias = [string]$r.InterfaceAlias
+            NextHop =[string]$r.NextHop
+            RouteMetric = [string]$r.RouteMetric
+            ifIndex = [string]$r.ifIndex
+            InterfaceMetric = [string]$r.InterfaceMetric
+            IsStatic = [string]$r.IsStatic
+            AdminDistance = [string]$r.AdminDistance
+        }
+        [void] $route_list.Add($route)
+    }
+    return $route_list
 }
 
 function Add-NetRouteToXML {
@@ -926,13 +997,31 @@ function Add-NetIPAddressToXML {
 }
 
 function Get-LocalUserAccountsInfo {
+    $user_list = New-Object System.Collections.ArrayList
     # using WMI to be compatible with older PS versions
     if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
         $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
     } else {
         $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
+    } 
+    foreach ($u in $users ) {
+        $user = [PSCustomObject]@{  
+            AccountType = [string] $u.AccountType
+            Domain = [string]$u.Domain
+            Disabled = [string]$u.Disabled
+            LocalAccount = [string]$u.LocalAccount
+            Name = [string]$u.Name
+            ullName = [string]$u.ullName
+            Description = [string]$u.Description
+            SID = [string]$u.SID
+            Lockout = [string]$u.Lockout
+            PasswordChangeable = [string]$u.PasswordChangeable
+            PasswordExpires = [string]$u.PasswordExpires
+            PasswordRequired = [string]$u.PasswordRequired
+        }
+        [void] $user_list.Add($user)
     }
-    return $users
+    return $user_list
 }
 
 
@@ -1001,8 +1090,16 @@ function Get-LocalGroupsInfo {
                     Caption = [string] $m.Caption
                 })
             }
-            $g | Add-Member -MemberType NoteProperty -Name Members -Value $member_objects
-            [void] $group_list.Add($g)
+            $group = [PSCustomObject]@{
+                Name = $groupname
+                Caption = [string] $g.Caption
+                Description = [string]$g.Description
+                LocalAccount = [string]$g.LocalAccount
+                SID = [string]$g.SID
+                Members =  $member_objects
+            }
+            # $g | Add-Member -MemberType NoteProperty -Name Members -Value $member_objects
+            [void] $group_list.Add($group)
         }
     } catch {}
     return $group_list
@@ -2675,7 +2772,18 @@ Write-Output "[*] Checking if printers are installed"
 $printers = New-Object System.Collections.ArrayList
 if (Get-Command Get-Printer -ea SilentlyContinue) {
     try {
-        $printers = Get-Printer -ea SilentlyContinue
+        foreach ($p in Get-Printer -ea SilentlyContinue){
+            $printer = [PSCustomObject]@{
+                Name = [string] $p.Name
+                ShareName = [string] $p.ShareName
+                Type = [string] $p.Type
+                DriverName = [string] $p.DriverName
+                PortName = [string] $p.PortName
+                Shared = [string] $p.Shared
+                Published = [string] $p.Published   
+            }
+            [void] $printers.Add($printer)
+       }
     }catch{}
 }
 
@@ -2685,111 +2793,41 @@ if (Get-Command Get-Printer -ea SilentlyContinue) {
 Write-Output "[*] Checking ACLs for specified pathes"
 $aclPathChecks = Get-AclPathChecks -acl_path_checks $acl_path_checks
 
+
+
+
+
 ###############################################################################################################
-# Writing collected information to XML file
+# Writing collected information to JSON file
 ###############################################################################################################
-$xmlfile = $path.Path + "\" + $date + "_SystemInfoCollector_"+$version+"_" + $hostname + ".xml"
+$jsonfile = $path.Path + "\" + $date + "_SystemInfoCollector_"+$version+"_" + $hostname + ".json"
 
-try {
-    $settings =  New-Object System.Xml.XmlWriterSettings
-    $settings.Indent = $true
-    $settings.IndentChars = $(" "*4)
-    $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
-    Write-Output "[*] Exporting data as XML"
-    $xmlWriter.WriteStartDocument()
-        $xmlWriter.WriteStartElement("SystemInfoCollector")
-            $xmlWriter.WriteAttributeString("version", "$version")
-            $xmlWriter.WriteStartElement("Host")
-                try {
-                    Add-HostInfoToXML -xmlWriter $xmlWriter -hostInfo $hostInfo
-                } catch { Write-Output "[-] HostInfo could not be written to XML" }
-                try {
-                    Add-BIOSInfoToXML -xmlWriter $xmlWriter -biosInfo $biosInfo
-                } catch { Write-Output "[-] BIOSInfo could not be written to XML" }
-                try {
-                    Add-HotfixesToXML -xmlWriter $xmlWriter -hotfixes $hotfixes
-                } catch { Write-Output "[-] Hotfixes could not be written to XML" }
-                try {
-                    # TODO: fix me
-                    Add-InstalledProductsToXML -xmlWriter $xmlWriter -products $installedProducts
-                } catch { Write-Output "[-] InstalledProducts could not be written to XML" }
-                try {
-                    Add-NetAdapterToXML -xmlWriter $xmlWriter -netadapters $netadapters
-                } catch { Write-Output "[-] NetAdapter could not be written to XML" }
-                try {
-                    Add-NetRouteToXML -xmlWriter $xmlWriter -routes $routes
-                } catch { Write-Output "[-] NetRoute could not be written to XML" }
-                try {
-                    Add-NetIPAddressToXML -xmlWriter $xmlWriter -netips $netips
-                } catch { Write-Output "[-] NetIPAddress could not be written to XML" }
-                try {
-                    Add-LocalUserAccountsToXML -xmlWriter $xmlWriter -users $users
-                } catch { Write-Output "[-] LocalUserAccounts could not be written to XML" }
-                try {
-                    Add-LocalGroupsToXML -xmlWriter $xmlWriter -groups $groups
-                } catch { Write-Output "[-] LocalGroups could not be written to XML" }
-                try {
-                    Add-FirewallInfoToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
-                } catch { Write-Output "[-] FirewallInfo could not be written to XML" }
-                try {
-                    Add-RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
-                } catch { Write-Output "[-] RegistryChecks could not be written to XML" }
-                try {
-                    Add-ShareInfoToXML -xmlWriter $xmlWriter -shares $shares
-                } catch { Write-Output "[-] SharesInfo could not be written to XML" }
-                try {
-                    # Todo: check on system with WSUS config
-                    Add-WSUSSettingsToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
-                } catch { Write-Output "[-] WSUSSettings could not be written to XML" }
-                try {
-                    Add-WinLogonToXML -xmlWriter $xmlWriter -winlogon $winlogon
-                } catch { Write-Output "[-] Winlogon could not be written to XML" }
-                try {
-                    Add-PSVersionsToXML -xmlWriter $xmlWriter -psVersions $psVersions
-                } catch { Write-Output "[-] PSVersions could not be written to XML" }
-                try {
-                    Add-WSHSettingsToXML -xmlWriter $xmlWriter -wshSettings $wshSettings
-                } catch { Write-Output "[-] WSHSettings could not be written to XML" }
-                try {
-                    Add-NTPSettings-ToXML -xmlWriter $xmlWriter -ntpSettings $ntpSettings
-                } catch { Write-Output "[-] NTPSettings could not be written to XML" }
-                try {
-                    Add-PSLoggingToXML -xmlWriter $xmlWriter -psLogging $psLogging
-                } catch { Write-Output "[-] PSLogging could not be written to XML" }
-                try {
-                    Add-SMBConfigToXML -xmlWriter $xmlWriter -smbConfig $smbConfig
-                } catch { Write-Output "[-] SMBConfig could not be written to XML" }
-                try {
-                    Add-DefenderInfoToXML -xmlWriter $xmlWriter -defenderInfo $defenderInfo
-                } catch { Write-Output "[-] DefenderInfo could not be written to XML" }
-                try {
-                    Add-PrintersToXML -xmlWriter $xmlWriter -printers $printers
-                } catch { Write-Output "[-] Printers could not be written to XML" }
-                try {
-                    Add-ServicesInfoToXML -xmlWriter $xmlWriter -services $services
-                } catch { Write-Output "[-] Services could not be written to XML" }
-                try {
-                    Add-FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
-                } catch { Write-Output "[-] FileExistChecks could not be written to XML" }
-                try {
-                    Add-AclPathChecksToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
-                } catch { Write-Output "[-] AclPathChecks could not be written to XML" }
-                try {
-                    # TODO: not exported yet
-                    Add-ConfigChecksToXML -xmlWriter $xmlWriter -configChecks $config_check_results
-                } catch { Write-Output "[-] ConfigChecks could not be written to XML" }
-            $xmlWriter.WriteEndElement() # Host
-        $xmlWriter.WriteEndElement() # SystemInfoCollector
-    $xmlWriter.WriteEndDocument()
-    $xmlWriter.Flush()
-    $xmlWriter.Close()
+$json_obj = [PSCustomObject]@{
+    HostInfo = $hostInfo
+    BiosInfo = $biosInfo
+    Hotfixes = $hotfixes
+    InstalledProducts = $installedProducts
+    NetAdapter = $netadapters
+    NetIPs = $netips 
+    Routes = $routes
+    Users = $users
+    Groups = $groups
+    FileChecksResults = $file_checks_results
+    FirewallInfo = $firewallInfo
+    RegistryCheckResults = $registry_check_results 
+    Shares = $shares
+    WsusSettings = $wsusSettings
+    Winlogon = $winlogon
+    PSVersions = $psVersions
+    WSHSettings = $wshSettings 
+    NTPSettings = $ntpSettings
+    PSLogging = $psLogging
+    SMBConfig = $smbConfig
+    ConfigCheckResults = $config_check_results
+    DefenderInfo = $defenderInfo
+    Services = $services
+    Printers = $printers
 
-
-    Write-Output "[+] XML file written to: $xmlfile"
-}catch {
-    Write-Output "[-] XML file could not be written"
-    Write-Output "[*] Exporting to CSV file"
-
-    # TODO:  Export to CSV
 }
 
+$json_obj | ConvertTo-Json  -depth 4 | Out-File -FilePath $jsonfile 
