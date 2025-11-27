@@ -1,4 +1,5 @@
-FROM python:3.12.1-bookworm
+FROM python:3.14.0-bookworm
+#FROM python:3.12.1-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1

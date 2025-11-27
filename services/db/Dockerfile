@@ -1,4 +1,4 @@
-FROM library/postgres
+FROM library/postgres:17
 ENV POSTGRES_USER revealuser
 ENV POSTGRES_PASSWORD CHANGEMEREVEALPW
 ENV POSTGRES_DB reveal
