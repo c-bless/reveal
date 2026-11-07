@@ -46,7 +46,7 @@ pytz==2025.2
 PyYAML==6.0.3
 setuptools==80.9.0
 six==1.17.0
-soupsieve==2.8
+soupsieve==2.9
 SQLAlchemy==2.0.44
 tomlkit==0.13.3
 typing-inspection==0.4.2
