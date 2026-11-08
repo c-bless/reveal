@@ -24,7 +24,7 @@ def get_product_by_id(product_id):
 
 @bp.post("/products/search/")
 @bp.auth_required(auth)
-@bp.input(schema=ProductNameSearchSchema, location="json")
+@bp.input(schema=ProductNameSearchSchema, location="json", arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=ProductSchema(many=True))
 @bp.doc(description="Return an installed product based on specified search filter",
         summary="Find product by name",

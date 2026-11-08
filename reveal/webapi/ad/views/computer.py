@@ -70,7 +70,7 @@ def get_ad_computer_list():
 
 @bp.post("/computer/by-spn/")
 @bp.auth_required(auth)
-@bp.input(schema=ADComputerBySPNSchema)
+@bp.input(schema=ADComputerBySPNSchema, arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADComputerSchema(many=True),
            description="List of Active Directory computer with specified SPN")
@@ -104,7 +104,7 @@ def get_ad_computer_by_spn_list(search_data):
 
 @bp.post("/computer/search/")
 @bp.auth_required(auth)
-@bp.input(schema=ADComputerSearchSchema)
+@bp.input(schema=ADComputerSearchSchema, arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADComputerSchema(many=True),
            description="List of Active Directory computer matching specified filters")
@@ -174,7 +174,7 @@ def post_ad_computer_search(search_data):
 
 @bp.post("/computer/by-domain/")
 @bp.auth_required(auth)
-@bp.input(schema=ADComputerByDomainSearchSchema)
+@bp.input(schema=ADComputerByDomainSearchSchema, arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADComputerSchema(many=True),
            description="List of Active Directory computer with specified Domain")
@@ -228,7 +228,7 @@ def get_dc_list():
 
 @bp.post("/DCs/search")
 @bp.auth_required(auth)
-@bp.input(schema=ADDCSearchSchema)
+@bp.input(schema=ADDCSearchSchema, arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=ADDomainControllerSchema(many=True),
            description="List of DCs across all domains. If no DCs are found an empty list is returned")
 @bp.doc(description="Returns a list DCs across all domains. If no DCs are found an empty list is returned",

@@ -8,7 +8,7 @@
 
 {% block download_links %}
     {{ super() }}
-    <a href="{{url_for('ad.export_computer_excel')}}" class="btn btn-block btn-secondary">
+    <a href="{{url_for('ad.export_computer_excel')}}" class="btn w-100 btn-secondary">
         <i class="fas fa-download"> Full Export (Excel)</i>
     </a>
 {% endblock download_links %}
@@ -41,7 +41,7 @@
                             <td> {{ c.OperatingSystem }} </td>
                             <td> {{ c.OperatingSystemVersion }} </td>
                             <td class="actions">
-                                <a href="{{url_for('ad.computer_detail',id=c.id)}}" class="btn btn-default btn-xs">
+                                <a href="{{url_for('ad.computer_detail',id=c.id)}}" class="btn btn-outline-secondary btn-xs">
                                     <i class="fa fa-eye"></i> View
                                 </a>
                             </td>

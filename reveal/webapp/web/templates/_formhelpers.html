@@ -1,5 +1,5 @@
 {% macro render_check_field(field) %}
-<div class="form-group row">
+<div class="mb-3 row">
     <div class="offset-sm-1 col-sm-10">
         <div class="form-check">
             {{ field(class="form-check-input", **kwargs)|safe }}
@@ -10,17 +10,15 @@
 {% endmacro %}
 
 {% macro render_file_field(field) %}
-<div class="form-group row">
-    <div class="form-check">
-        {{ field(class="custom-file-input", **kwargs)|safe }}
-        {{ field.label(class="custom-file-label") | safe }}
-    </div>
+<div class="mb-3">
+    {{ field.label(class="form-label") | safe }}
+    {{ field(class="form-control", **kwargs)|safe }}
 </div>
 {% endmacro %}
 
 {% macro render_check_field_sm2(field) %}
-<div class="form-group row">
-    <div class="offset-sm-2 col-sm-10">
+<div class="mb-3 row">
+    <div class="offset-sm-4 col-sm-8">
         <div class="form-check">
             {{ field(class="form-check-input", **kwargs)|safe }}
             {{ field.label(class="form-check-label") | safe }}
@@ -30,7 +28,7 @@
 {% endmacro %}
 
 {% macro render_field(field) %}
-<div class="form-group row">
+<div class="mb-3 row">
     {{ field.label(class="col-sm-1 col-form-label") | safe }}
     <div class="col-sm-6">
         {{ field(class="form-control")|safe }}
@@ -45,9 +43,9 @@
 
 
 {% macro render_field_sm2(field) %}
-<div class="form-group row">
-    {{ field.label(class="col-sm-2 col-form-label") | safe }}
-    <div class="col-sm-6">
+<div class="mb-3 row">
+    {{ field.label(class="col-sm-4 col-form-label") | safe }}
+    <div class="col-sm-8">
         {{ field(class="form-control")|safe }}
         {% if field.errors %}
         {% for error in field.errors %}
@@ -60,7 +58,7 @@
 
 
 {% macro render_pw_field(field) %}
-<div class="form-group row">
+<div class="mb-3 row">
     {{ field.label(class="col-sm-1 col-form-label") | safe }}
     <div class="col-sm-6">
         {{ field(class="form-control", type="password")|safe }}
@@ -75,9 +73,9 @@
 
 
 {% macro render_pw_field_sm2(field) %}
-<div class="form-group row">
-    {{ field.label(class="col-sm-2 col-form-label") | safe }}
-    <div class="col-sm-6">
+<div class="mb-3 row">
+    {{ field.label(class="col-sm-4 col-form-label") | safe }}
+    <div class="col-sm-8">
         {{ field(class="form-control", type="password")|safe }}
         {% if field.errors %}
         {% for error in field.errors %}

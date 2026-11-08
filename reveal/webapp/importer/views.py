@@ -29,14 +29,15 @@ def upload_post():
         for file in form.Files.data:
             filename = secure_filename(file.filename)
             if filename != '':
-                file_ext = os.path.splitext(filename)[1]
+                file_ext = os.path.splitext(filename)[1].lower()
                 if file_ext not in current_app.config['UPLOAD_EXTENSIONS']:
                     flash('File: {0} -> invalid file type'.format(filename))
                     continue
 
                 try:
                     uid = str(uuid.uuid4())
-                    fullpath = os.path.join(current_app.config['UPLOAD_DIR'], uid + ".xml")
+                    # keep the file extension (XML or JSON). The importer detects the format by the content.
+                    fullpath = os.path.join(current_app.config['UPLOAD_DIR'], uid + file_ext)
                     file.save(fullpath)
 
                     upload_file = UploadedFile()
@@ -104,10 +105,12 @@ def delete_file_by_uid(uid):
     else:
         if not uploaded_file.Imported:
             try:
+                # read the path before the object is deleted (attributes are expired after commit)
+                fullpath = uploaded_file.Fullpath
                 db.session.delete(uploaded_file)
                 db.session.commit()
-                fullpath = os.path.join(current_app.config['UPLOAD_DIR'], uid_str + ".xml")
-                os.remove(fullpath)
+                if fullpath and os.path.exists(fullpath):
+                    os.remove(fullpath)
             except SQLAlchemyError as e:
                 db.session.rollback()
         else:

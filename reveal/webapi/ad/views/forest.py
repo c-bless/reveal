@@ -39,7 +39,7 @@ def get_ad_forest_by_id(id):
 
 @bp.post("/forest/by-name/")
 @bp.auth_required(auth)
-@bp.input(schema=ADForestByNameSchema, location='json')
+@bp.input(schema=ADForestByNameSchema, location='json', arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=ADForestSchema(many=True), description="List of forests")
 @bp.doc(description="Returns a list of forests containing the specified name.",
         summary="Find forest by name",

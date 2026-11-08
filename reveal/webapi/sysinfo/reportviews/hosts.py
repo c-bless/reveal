@@ -107,13 +107,13 @@ def report_winlogon():
 @bp.output(status_code=HTTPStatus.OK, schema=PrinterMatchSchema(many=True))
 def report_file_printer():
     filters = FILE_PRINTER_LIST
-    results = get_hosts_by_printers(filters=filters)
+    results = get_hosts_by_printers(printer_filter=filters)
     return results
 
 
 @bp.route("/printer/")
 @bp.auth_required(auth)
-@bp.input(PrinterMatchSearchSchema)
+@bp.input(PrinterMatchSearchSchema, arg_name="filters")
 @bp.doc(description="Returns a list of printer and hosts that match the specified search query.",
         summary="Find a list of printer and hosts that match the specified search query.",
         security='ApiKeyAuth',
@@ -123,5 +123,5 @@ def report_printer(filters):
     errors = PrinterMatchSearchSchema().validate(filters)
     if errors:
         return HTTPError(HTTPStatus.BAD_REQUEST, str(errors))
-    results = get_hosts_by_printers(filters=filters['names'])
+    results = get_hosts_by_printers(printer_filter=filters['names'])
     return results

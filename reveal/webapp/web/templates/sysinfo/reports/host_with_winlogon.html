@@ -31,36 +31,26 @@
 
 {% block datatable %}
 {{ super() }}
-    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
-                       aria-describedby="table1_info">
+    <table id="table1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
+                    <th aria-label="Hostname" width="15%">Hostname
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="SystemGroup" width="15%">SystemGroup
+                    <th aria-label="SystemGroup" width="15%">SystemGroup
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Location" width="10%">Location
+                    <th aria-label="Location" width="10%">Location
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Domain" width="5%">AutoAdminLogon
+                    <th aria-label="Domain" width="5%">AutoAdminLogon
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="OSName" width="5%">ForceAutoLogon
+                    <th aria-label="OSName" width="5%">ForceAutoLogon
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User" width="15">DefaultDomain
+                    <th aria-label="User" width="15">DefaultDomain
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User" width="15">DefaultUserName
+                    <th aria-label="User" width="15">DefaultUserName
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User" width="15">DefaultPassword
+                    <th aria-label="User" width="15">DefaultPassword
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Details" width="5%">Details
+                    <th aria-label="Details" width="5%">Details
                     </th>
                 </tr>
                 </thead>
@@ -77,7 +67,7 @@
                         <td> {{ h.DefaultUserName }} </td>
                         <td> {{ h.DefaultPassword }} </td>
                         <td class="actions">
-                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-default btn-xs">
+                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-outline-secondary btn-xs">
                                 <i class="fa fa-eye"></i> View
                             </a>
                         </td>

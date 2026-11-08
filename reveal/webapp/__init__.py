@@ -13,7 +13,6 @@ from reveal.core.extentions import db
 
 from reveal.config import AppConfig
 from reveal.webapp.extentions import babel
-from reveal.webapp.extentions import bootstrap
 from reveal.webapp.extentions import csrf
 from reveal.webapp.extentions import login_manager
 
@@ -61,7 +60,6 @@ def register_extentisons(app: Flask, config_class):
         return AuthUser.query.get(id)
 
     # initialize extensions
-    bootstrap.init_app(app)
     babel.init_app(app)
     if config_class.DEBUG:
         toolbar.init_app(app)

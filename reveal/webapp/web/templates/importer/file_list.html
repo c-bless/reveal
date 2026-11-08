@@ -26,10 +26,10 @@
                 <td> {{ u.Imported }} </td>
                 <td>
                     {% if not u.Imported %}
-                    <a href="{{ url_for('importer.import_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
-                            <i class="glyphicon glyphicon-eye-open"></i> Import</a>
-                    <a href="{{ url_for('importer.delete_file_by_uid', uid=u.UUID) }}" class="btn btn-default btn-xs">
-                        <i class="glyphicon glyphicon-eye-open"></i> Delete</a>
+                    <a href="{{ url_for('importer.import_file_by_uid', uid=u.UUID) }}" class="btn btn-outline-secondary btn-xs">
+                            <i class="fa fa-eye"></i> Import</a>
+                    <a href="{{ url_for('importer.delete_file_by_uid', uid=u.UUID) }}" class="btn btn-outline-secondary btn-xs">
+                        <i class="fa fa-eye"></i> Delete</a>
                   {% endif %}
 
                 </td>

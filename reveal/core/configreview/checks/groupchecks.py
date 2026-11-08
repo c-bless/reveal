@@ -1,10 +1,22 @@
-
 from reveal.core.models.sysinfo import Host
-from reveal.core.compliance import ComplianceResult
+from reveal.core.configreview import ComplianceResult
 
 
 def verify_group_member(host: Host, group: str, user_members = [], nested_group_members = [],
                         others_accepted=True) -> ComplianceResult:
+    """
+    Verifies if specified users and nested groups are members of a given group on a host.
+
+    Args:
+        host (Host): The host object containing group information.
+        group (str): The name of the group to verify.
+        user_members (list, optional): List of user names to check for membership in the group. Defaults to [].
+        nested_group_members (list, optional): List of nested group names to check for membership in the group. Defaults to [].
+        others_accepted (bool, optional): Flag indicating if other members are accepted. Defaults to True.
+
+    Returns:
+        ComplianceResult: The result of the compliance check, indicating if the group membership is compliant.
+    """
     result = ComplianceResult(compliant=False)
     group_found = False
     result_status = True

@@ -8,8 +8,19 @@ from reveal.core.extentions import db
 from reveal.core.models.eol import EoL
 from reveal.core.models.files import UploadedFile
 
-from reveal.core.importer.hosts import import_host, import_sysinfo_collector
+# legacy importer for files of the SystemInfoCollector < 0.7
+from reveal.core.importer.hosts import import_host as legacy_import_host
+from reveal.core.importer.hosts import import_sysinfo_collector as legacy_import_sysinfo_collector
 from reveal.core.importer.domain import import_domain_collector
+# importer for XML and JSON files of the SystemInfoCollector >= 0.7
+from reveal.core.importer.sysinfo import is_sysinfo_json
+from reveal.core.importer.sysinfo import is_sysinfo_xml
+from reveal.core.importer.sysinfo import import_sysinfo_json
+from reveal.core.importer.sysinfo import import_sysinfo_xml
+from reveal.core.importer.sysinfo import load_json
+
+# file types that can be imported
+IMPORT_EXTENSIONS = ('.xml', '.json')
 
 BUF_SIZE = 65536
 
@@ -70,32 +81,64 @@ def import_file_once(filename):
         return False
 
 
+def _is_json(content: bytes) -> bool:
+    """ JSON files start with '{' or '[' (after an optional BOM / whitespace). """
+    for bom in (b'\xef\xbb\xbf', b'\xff\xfe', b'\xfe\xff'):
+        if content.startswith(bom):
+            return content[len(bom):].replace(b'\x00', b'').lstrip()[:1] in (b'{', b'[')
+    return content.lstrip()[:1] in (b'{', b'[')
+
+
+def import_xml(root):
+    """
+    Imports a parsed XML document. Files of the SystemInfoCollector >= 0.7 are imported with the new importer, older
+    files with the legacy importer.
+    """
+    if root.tag == "SystemInfoCollector":
+        if is_sysinfo_xml(root):
+            import_sysinfo_xml(root=root)
+        else:
+            legacy_import_sysinfo_collector(root=root)
+    elif root.tag == "Host":
+        # initial version of SystemCollector
+        legacy_import_host(root=root)
+    elif root.tag == "DomainCollector":
+        import_domain_collector(root=root)
+    else:
+        raise ValueError("Unknown XML format (root element: {0})".format(root.tag))
+
+
+def import_json(data):
+    """
+    Imports the content of a JSON file (SystemInfoCollector >= 0.7).
+    """
+    if is_sysinfo_json(data):
+        import_sysinfo_json(data)
+    else:
+        raise ValueError("Unknown JSON format")
+
+
 # File has been uploaded via web interface
 def import_file(filename):
+    """
+    Imports a XML or JSON file. The format is detected by the content of the file (not by the file extension).
+    """
     with open(filename, 'rb') as f:
-        xml = f.read()
+        content = f.read()
 
-    root = etree.XML(xml)
-    if etree.iselement(root):
-        if root.tag == "SystemInfoCollector":
-            import_sysinfo_collector(root=root)
-        if root.tag == "Host":
-            import_host(root=root)
-        if root.tag == "DomainCollector":
-            import_domain_collector(root=root)
+    if _is_json(content):
+        import_json(load_json(content))
+    else:
+        root = etree.XML(content)
+        if etree.iselement(root):
+            import_xml(root)
 
 
 def import_host(filename):
-    with open(filename, 'rb') as f:
-        xml = f.read()
-    root = etree.XML(xml)
-    if etree.iselement(root):
-        if root.tag == "SystemInfoCollector":
-            import_sysinfo_collector(root=root)
-        elif root.tag == "Host":
-            # initial version of SystemCollector
-            print("[*] Importing SystemInfoCollector output")
-            import_host(root=root)
+    """
+    Imports the output (XML or JSON) of the SystemInfoCollector.
+    """
+    import_file(filename)
 
 
 def import_domain(filename):
@@ -108,7 +151,7 @@ def import_domain(filename):
 
 def import_dir(name):
     for filename in os.listdir(name):
-        if filename.endswith('.xml'):
+        if filename.lower().endswith(IMPORT_EXTENSIONS):
             fullname = os.path.join(name, filename)
             print("[*] Importing file: {0}".format(filename))
             if import_file_once(fullname):

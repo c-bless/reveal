@@ -1,15 +1,13 @@
-{% import "bootstrap/wtf.html" as wtf %}
 {% extends "layout/base_layout.html" %}
 
 {% block body %}
-<body class="hold-transition login-page">
-<div class="login-box">
-  <!-- /.login-logo -->
+<body class="login-page bg-body-secondary">
+<main class="login-box">
   <div class="card card-outline card-primary">
     <div class="card-header text-center">
-      <a href="{{ url_for('auth.index') }}" class="h1"><b>REVEAL</b></a>
+      <a href="{{ url_for('auth.index') }}" class="h1 link-dark text-decoration-none"><b>REVEAL</b></a>
     </div>
-    <div class="card-body">
+    <div class="card-body login-card-body">
 
       {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -19,49 +17,41 @@
           {% endif %}
         {% endwith %}
 
-
       <form action="{{ url_for('auth.login_post') }}" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <label class="visually-hidden" for="{{ form.username.id }}">Username</label>
         <div class="input-group mb-3">
           {{ form.username(class="form-control", placeholder="Username") }}
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
+          <div class="input-group-text">
+            <span class="fas fa-user"></span>
           </div>
-
         </div>
+        <label class="visually-hidden" for="{{ form.password.id }}">Password</label>
         <div class="input-group mb-3">
           {{ form.password(class="form-control", type="password", placeholder="Password") }}
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
+          <div class="input-group-text">
+            <span class="fas fa-lock"></span>
           </div>
         </div>
         <div class="row">
-
-          <!-- /.col -->
           <div class="col-4">
-            {{ form.signIn(class="btn btn-primary btn-block") }}
+            <div class="d-grid gap-2">
+              {{ form.signIn(class="btn btn-primary") }}
+            </div>
           </div>
-          <!-- /.col -->
         </div>
       </form>
 
     </div>
-    <!-- /.card-body -->
+    <!-- /.login-card-body -->
   </div>
   <!-- /.card -->
-</div>
+</main>
 <!-- /.login-box -->
 
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap 5 (incl. Popper) -->
+<script src="{{ url_for('static', filename='vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
 <!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
 </body>
-
 {% endblock body %}

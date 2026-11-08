@@ -39,7 +39,7 @@ def get_domain_user_list_all():
 
 @bp.post("/users/by-domain/")
 @bp.auth_required(auth)
-@bp.input(schema=UserByDomainSearchSchema, location="json")
+@bp.input(schema=UserByDomainSearchSchema, location="json", arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADUserSchema(many=True),
            description="List of users in the domain. If no users are assigned to the domain an empty list is returned.")

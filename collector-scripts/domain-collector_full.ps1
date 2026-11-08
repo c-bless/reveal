@@ -56,7 +56,7 @@ try{
         Write-Host "[*] Collecting Domain information."
         $start_of_script = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
-        $domain = Get-ADDomain -Current LocalComputer;
+        $domain = Get-ADDomain;
         $path = Get-Location
 
         $name = [string] $domain.NetBIOSName
@@ -643,6 +643,64 @@ try{
             }
 
 
+            #############################################################################################################
+            #    Collecting Organisational Units
+            #    Note: Failed executions will be ignored and no ADOrganizationalUnit tags will be added
+            #############################################################################################################
+            if (Get-Command Get-ADOrganizationalUnit -ErrorAction SilentlyContinue) {
+                Write-Host "[*] Collecting information about AD OUs." 
+                $start_of_ou = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+
+                $xmlWriter.WriteStartElement("ADOrganizationalUnits")
+
+                try {
+                    $ous = Get-ADOrganizationalUnit  -Filter * 
+                    foreach ($ou in $ous) {
+                        $xmlWriter.WriteStartElement("ADOU"); 
+                        $xmlWriter.WriteElementString("Name", [string] $ou."Name");
+                        $xmlWriter.WriteElementString("ObjectGUID", [string] $ou."ObjectGUID");
+                        $xmlWriter.WriteElementString("DistinguishedName", [string] $ou."DistinguishedName");
+                             
+                        if (Get-Command Get-GPInheritance -ErrorAction SilentlyContinue) {   
+                            try{ 
+                                $gpoi = Get-GPInheritance -Target $ou
+                                $xmlWriter.WriteElementString("Path", [string] $gpoi."Path");
+                                $xmlWriter.WriteElementString("GpoInheritanceBlocked", [string] $gpoi."GpoInheritanceBlocked");
+                                $xmlWriter.WriteElementString("Path", [string] $gpoi."Path");
+                            
+                                $xmlWriter.WriteStartElement("GPOLinks");
+                                foreach ($l in $gpoi.GpoLinks) {
+                                    $xmlWriter.WriteStartElement("GPOLink");
+                                    $xmlWriter.WriteAttributeString("GpoId", [string] $l.GpoId)
+                                    $xmlWriter.WriteAttributeString("DisplayName", [string] $l.DisplayName)
+                                    $xmlWriter.WriteAttributeString("Enabled", [string] $l.Enabled)
+                                    $xmlWriter.WriteAttributeString("Enforced", [string] $l.Enforced)
+                                    $xmlWriter.WriteAttributeString("Order", [string] $l.Order)
+                                    $xmlWriter.WriteEndElement()
+                                }
+                                $xmlWriter.WriteEndElement()
+
+                                $xmlWriter.WriteStartElement("InheritedGpoLinks");
+                                foreach ($l in $gpoi.InheritedGpoLinks) {
+                                    $xmlWriter.WriteStartElement("GPOLink");
+                                    $xmlWriter.WriteAttributeString("GpoId", [string] $l.GpoId)
+                                    $xmlWriter.WriteAttributeString("DisplayName", [string] $l.DisplayName)
+                                    $xmlWriter.WriteAttributeString("Enabled", [string] $l.Enabled)
+                                    $xmlWriter.WriteAttributeString("Enforced", [string] $l.Enforced)
+                                    $xmlWriter.WriteAttributeString("Order", [string] $l.Order)
+                                    $xmlWriter.WriteEndElement()
+                                }
+                                $xmlWriter.WriteEndElement()
+
+                            }catch{}
+                        }
+                        $xmlWriter.WriteEndElement(); # ADOU
+                    }
+                } catch {} 
+                $xmlWriter.WriteEndElement() # ADOrganizationalUnits
+                $end_of_ou = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+            }
+
         $xmlWriter.WriteEndElement() # DomainCollector
         $xmlWriter.WriteEndDocument()
         $xmlWriter.Flush()
@@ -675,3 +733,8 @@ Write-Host "[*] - finished: $end_of_users_addon"
 Write-Host "[*] Collection of group list:"
 Write-Host "[*] - started: $start_of_groups"
 Write-Host "[*] - finished: $end_of_groups"
+
+
+Write-Host "[*] Collection of OU list:"
+Write-Host "[*] - started: $start_of_ou"
+Write-Host "[*] - finished: $end_of_ou"

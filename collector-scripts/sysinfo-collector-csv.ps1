@@ -80,7 +80,7 @@ Write-Host "[*] Collecting general computer infos."
 $host_info = [PSCustomObject]@{}
 # if Get-ComputerInfo is available this command will be used to collect basic computer information.
 # This cmdlet was introduced in Windows PowerShell 5.1. Thus, for older versions a combination of WMI querries is used.
-if (Get-Command Get-ComputerInfoTEST -ErrorAction SilentlyContinue){
+if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
     # we have at least PowerShell 5.1
     $compInfo = Get-ComputerInfo
 

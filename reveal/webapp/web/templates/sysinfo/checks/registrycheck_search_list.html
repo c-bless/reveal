@@ -9,7 +9,7 @@
 {% block download_links %}
     {{ super() }}
     {% if download_url %}
-    <a href="{{ download_url }}" class="btn btn-block btn-secondary btn-sm">
+    <a href="{{ download_url }}" class="btn w-100 btn-secondary btn-sm">
         <i class="fas fa-download"> Download (Excel)</i>
     </a>
     {% endif %}
@@ -71,38 +71,28 @@
 
 {% block datatable %}
 {{ super() }}
-    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
-                       aria-describedby="table1_info">
+    <table id="table1" class="table table-bordered table-striped">
             <thead>
             <tr>
 
 
-                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                <th aria-label="Name" width="15%">Name
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="10%">Category
+                <th aria-label="DisplayName" width="10%">Category
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Path" width="30%">Path
+                <th aria-label="Path" width="30%">Path
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Key" width="10%">Key
+                <th aria-label="Key" width="10%">Key
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="KeyExist" width="5%">KeyExist
+                <th aria-label="KeyExist" width="5%">KeyExist
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="ValueMatch" width="5%">ValueMatch
+                <th aria-label="ValueMatch" width="5%">ValueMatch
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="ValueMatch" width="5%">CurrentValue
+                <th aria-label="ValueMatch" width="5%">CurrentValue
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Host" width="10%">Host
+                <th aria-label="Host" width="10%">Host
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Actions" width="5%">Actions
+                <th aria-label="Actions" width="5%">Actions
                 </th>
             </tr>
             </thead>
@@ -119,7 +109,7 @@
                     <td> {{ c.CurrentValue }} </td>
                     <td> {{ c.Host }} </td>
                     <td class="actions">
-                        <a href="{{ url_for('sysinfo.registrycheck_detail', id=c.id) }}" class="btn btn-default btn-xs">
+                        <a href="{{ url_for('sysinfo.registrycheck_detail', id=c.id) }}" class="btn btn-outline-secondary btn-xs">
                             <i class="fa fa-eye"></i> View
                         </a>
                     </td>
