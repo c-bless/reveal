@@ -53,7 +53,7 @@
         if (!table) { return; }
         const body = table.tBodies[0];
         if (body && body.rows.length === 1 && body.rows[0].cells.length === 1 && body.rows[0].cells[0].colSpan > 1) {
-          const message = body.rows[0].cells[0].textContent.trim();
+          const message = body.rows[0].cells[0].innerHTML.trim();
           body.rows[0].remove();
           options.language = Object.assign({ emptyTable: message }, options.language || {});
         }
