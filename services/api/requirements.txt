@@ -21,7 +21,7 @@ cachetools==7.2.0
 cachy==0.3.0
 capstone==5.0.9
 cattrs==26.2.1
-certifi==2026.7.22
+certifi==2026.10.18
 cffi==2.1.1
 charset-normalizer==3.5.1
 cleo==2.1.0
@@ -40,7 +40,7 @@ duplicity==3.2.0.2
 fasteners==0.20
 fastjsonschema==2.21.2
 filebytes==0.10.2
-filelock==4.0.1
+filelock==4.2.1
 findpython==0.8.0
 fluidity-sm==0.2.1
 google-api-core==2.40.0
@@ -83,7 +83,7 @@ markdown-it-py==4.2.0
 MarkupSafe==3.0.4
 mdurl==0.1.2
 more-itertools==11.1.0
-msgpack==1.1.2
+msgpack==1.2.3
 nanobind==3.1.0
 netsnmp-python==1.0a1
 nftables==0.1
@@ -96,7 +96,7 @@ pacman_mirrors==5.3
 paramiko==5.0.0
 pbs-installer==2026.10.3
 pexpect==4.9.0
-pillow==12.3.0
+pillow==13.0.0
 pipx==1.15.0
 pkg_resources==81.0.0
 pkginfo==1.13
@@ -109,7 +109,7 @@ protobuf==7.36.1
 psycopg2==2.9.13
 ptyprocess==0.7.0
 pwquality==1.4.5
-pyasn1==0.6.4
+pyasn1==0.6.5
 pyasn1_modules==0.4.2
 pybind11==3.1.0
 pycairo==1.29.2
@@ -173,7 +173,7 @@ urllib3==2.8.0
 userpath==1.9.2
 VapourSynth==80
 vici==6.1.0
-virtualenv==21.14.5
+virtualenv==21.14.13
 volatility==2.6.1
 wcwidth==0.9.2
 webencodings==0.5.1
