@@ -28,7 +28,7 @@ def get_registrychecks_by_host(host_id):
 
 @bp.post("/registrychecks/by-name/")
 @bp.auth_required(auth)
-@bp.input(schema=RegistryCheckByNameSearchSchema, location='json')
+@bp.input(schema=RegistryCheckByNameSearchSchema, location='json', arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=RegistryCheckMatchSchema(many=True))
 @bp.doc(description="Returns a list of performed registry checks and corresponding hosts where the RegistryCheck "
                     "contains the specified name.",
@@ -58,7 +58,7 @@ def get_configchecks_by_host(host_id):
 
 @bp.post("/configchecks/by-name/")
 @bp.auth_required(auth)
-@bp.input(schema=ConfigCheckByNameSearchSchema, location='json')
+@bp.input(schema=ConfigCheckByNameSearchSchema, location='json', arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=ConfigCheckMatchSchema(many=True))
 @bp.doc(description="Returns a list of performed config checks and corresponding hosts where the ConfigCheck "
                     "contains the specified name.",

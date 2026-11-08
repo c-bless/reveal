@@ -5,8 +5,6 @@ REVEAL_SRC = $(BASEDIR)/reveal
 WEBAPP_SRC  = $(REVEAL_SRC)/webapp
 WEBAPI_SRC  = $(REVEAL_SRC)/webapi
 STATIC_DIR   = $(BASEDIR)/data-directories/static
-DISTDIR     = $(STATIC_DIR)dist
-PLUGINDIR   = $(STATIC_DIR)plugins
 
 
 DOCKER_WEBAPP                   = $(BASEDIR)/services/web
@@ -27,11 +25,6 @@ DOCKER_NGINX                    = $(BASEDIR)/services/nginx
 DOCKER_WEBAPI                   = $(BASEDIR)/services/api
 DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/reveal
 
-TMP_ADMIN_LTE_URL = https://github.com/ColorlibHQ/AdminLTE/archive/refs/tags/v3.2.0.zip
-TMP_ADMIN_LTE_ZIP = "admin-lte.zip"
-TMP_ADMIN_LTE_DIR = "$(TMP_DIR)/admin-lte"
-TMP_ADMIN_LTE_DIST = "$(TMP_DIR)/AdminLTE-3.2.0/dist"
-TMP_ADMIN_LTE_PLUGINS = "$(TMP_DIR)/AdminLTE-3.2.0/plugins"
 
 # Check if docker compose (v2) is available
 ifeq ($(shell docker compose version 2>/dev/null),)
@@ -41,8 +34,10 @@ else
 endif
 
 
+# all targets are commands, not files (otherwise e.g. "tmp" is skipped because the directory tmp/ exists)
+.PHONY: tmp help clean fix-permissions build run stop init-db clear-data reset-admin
+
 tmp:
-	@$(shell mkdir -p $(TMP_ADMIN_LTE_DIR) )
 	@$(shell mkdir -p $(UPLOAD_DIR) )
 	@$(shell mkdir -p $(STATIC_DIR) )
 	./download-dependencies.sh
@@ -52,6 +47,7 @@ help:
 	@echo
 	@echo tmp          	: download dependencies
 	@echo build         : build docker container
+	@echo fix-permissions : reset ownership of directories created as root by docker
 	@echo clean		    : cleanup temporary directories
 	@echo run		    : start docker container
 	@echo stop		    : stop docker container and drives
@@ -71,13 +67,21 @@ clean:
 	@$(shell rm -r $(DOCKER_WEBAPI_SRC))
 
 
-build: tmp
+# Docker creates missing mount points (e.g. for named volumes inside the ./services/web bind mount) as root. This
+# breaks the cp commands in "build". The ownership is reset via a container, so no sudo is needed.
+fix-permissions:
+	docker run --rm -v "$(DOCKER_WEBAPP):/data" alpine:3 sh -c 'for d in update-data uploads reports; do if [ -e "/data/$$d" ]; then chown -R $(shell id -u):$(shell id -g) "/data/$$d"; fi; done'
+
+# The static files are replaced (not merged), so no outdated libraries (e.g. AdminLTE 3 plugins) remain in the images.
+build: tmp fix-permissions
 	@$(shell cp -r $(REPORT_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(UPLOAD_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(CONFIGREVIEW_DIR) $(DOCKER_WEBAPP))
-	@$(shell cp -r $(UPDATE_DATA_DIR) $(DOCKER_WEBAPP))
-	@$(shell cp -r $(STATIC_DIR) $(DOCKER_WEBAPP))
-	@$(shell cp -r $(STATIC_DIR) $(DOCKER_NGINX))
+	mkdir -p $(DOCKER_UPDATE_DATA_DIR)
+	cp -r $(UPDATE_DATA_DIR)/. $(DOCKER_UPDATE_DATA_DIR)/
+	rm -rf $(DOCKER_WEB_STATIC_DATA_DIR) $(DOCKER_NGINX_STATIC_DATA_DIR)
+	cp -r $(STATIC_DIR) $(DOCKER_WEB_STATIC_DATA_DIR)
+	cp -r $(STATIC_DIR) $(DOCKER_NGINX_STATIC_DATA_DIR)
 	@$(shell cp -r $(REVEAL_SRC) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(REVEAL_SRC) $(DOCKER_WEBAPI))
 	$(DOCKER_COMPOSE) build
@@ -88,9 +92,10 @@ run:
 stop:
 	$(DOCKER_COMPOSE) down -v
 
+# The EoL CSV is passed via stdin, so the import does not depend on files copied into the container / volumes.
 init-db:
 	$(DOCKER_COMPOSE) exec webapp flask -e webapp.env user create admin
-	$(DOCKER_COMPOSE) exec webapp flask -e webapp.env import eol "/app/update-data/win-support-dates.csv"
+	$(DOCKER_COMPOSE) exec -T webapp flask -e webapp.env import eol /dev/stdin < "$(UPDATE_DATA_DIR)/win-support-dates.csv"
 
 clear-data:
 	$(DOCKER_COMPOSE) exec webapp flask -e webapp.env db clear

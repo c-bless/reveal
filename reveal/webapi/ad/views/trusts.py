@@ -53,7 +53,7 @@ def get_domain_trust_list(domain_id):
 
 @bp.post("/trusts/search/")
 @bp.auth_required(auth)
-@bp.input(schema=TrustSearchSchema)
+@bp.input(schema=TrustSearchSchema, arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADTrustSchema(many=True),
            description="List of password policies in the domain. ")

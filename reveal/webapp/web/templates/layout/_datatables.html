@@ -1,0 +1,66 @@
+{# DataTables 3 (Bootstrap 5 styling, Responsive and Buttons extension). DataTables 3 does not require jQuery. #}
+
+{% macro stylesheets() %}
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
+{% endmacro %}
+
+
+{#
+  table1: main result table (with export buttons), table2: optional second table
+  The options are merged with the defaults below and passed to "new DataTable(...)".
+#}
+{% macro scripts(table1={}, table2={}) %}
+  <!-- DataTables -->
+  <script src="{{ url_for('static', filename='vendor/datatables.net/js/dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+  <!-- export buttons (Excel export requires JSZip) -->
+  <script src="{{ url_for('static', filename='vendor/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const table1Defaults = {
+        responsive: true,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 100, { label: 'All', value: -1 }],
+        layout: { topStart: ['pageLength', 'buttons'] },
+        buttons: ['copy', 'csv', 'excel']
+      };
+      const table2Defaults = {
+        paging: true,
+        lengthChange: false,
+        searching: false,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true
+      };
+      // The templates render a placeholder row (e.g. <td colspan="10">No services found!</td>) if there are no
+      // results. DataTables does not support colspan in the table body (warning tn/4), so the row is removed and its
+      // text is shown as DataTables' own "empty table" message instead.
+      function initTable(id, options) {
+        const table = document.getElementById(id);
+        if (!table) { return; }
+        const body = table.tBodies[0];
+        if (body && body.rows.length === 1 && body.rows[0].cells.length === 1 && body.rows[0].cells[0].colSpan > 1) {
+          const message = body.rows[0].cells[0].textContent.trim();
+          body.rows[0].remove();
+          options.language = Object.assign({ emptyTable: message }, options.language || {});
+        }
+        new DataTable(table, options);
+      }
+      initTable('table1', Object.assign(table1Defaults, {{ table1 | tojson }}));
+      initTable('table2', Object.assign(table2Defaults, {{ table2 | tojson }}));
+    });
+  </script>
+{% endmacro %}

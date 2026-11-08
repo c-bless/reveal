@@ -1,77 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     {% block head %}
         {% block meta %}
           <meta charset="utf-8">
-          <meta http-equiv="X-UA-Compatible" content="IE=edge">
           <title>{% block title %} REVEAL {% endblock title %}</title>
           <!-- Tell the browser to be responsive to screen width -->
           <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta name="color-scheme" content="light dark">
         {% endblock meta %}
 
         {% block stylesheets %}
           <!-- Font Awesome -->
-          <link rel="stylesheet" href="{{ url_for('static', filename='plugins/fontawesome-free/css/all.min.css')}}">
-          <!-- Ionicons -->
-          <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-          <!-- overlayScrollbars -->
-          <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte.min.css')}}">
-          <!-- Google Font: Source Sans Pro -->
-          <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+          <link rel="stylesheet" href="{{ url_for('static', filename='vendor/@fortawesome/fontawesome-free/css/all.min.css') }}">
+          <!-- AdminLTE 4 (includes Bootstrap 5) -->
+          <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte.min.css') }}">
+          <!-- AdminLTE 3 color palette (card-olive, bg-olive, ...) -->
+          <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte-colors-v3.min.css') }}">
+          <!-- REVEAL specific styles (classes of Bootstrap 4 / AdminLTE 3 that are no longer available) -->
+          <style>
+            .btn-xs { padding: .125rem .375rem; font-size: .75rem; line-height: 1.5; border-radius: .2rem; }
+            .card-title { margin-bottom: 0; }
+            .app-sidebar .nav-header { font-size: .8rem; padding: .75rem 1rem .25rem; }
+            /* keep long group labels clear of the expand arrow */
+            .sidebar-menu .nav-link > p:has(> .nav-arrow) { padding-right: 1.75rem; }
+          </style>
         {% endblock stylesheets %}
     {% endblock head %}
 </head>
 
 
 {% block body %}
-<body class="hold-transition sidebar-mini">
-<!-- Site wrapper -->
-<div class="wrapper">
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="app-wrapper">
 
     {% block navbar %}
         {% include "layout/_navbar.html" %}
     {% endblock navbar %}
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <!-- Brand Logo -->
-    <a href="/" class="brand-link">
-      <!-- <img src="{{ url_for('static', filename='dist/img/AdminLTELogo.png')}}"
-           alt="AdminLTE Logo"
-           class="brand-image img-circle elevation-3"
-           style="opacity: .8"> -->
-      <span class="brand-text font-weight-bold">REVEAL</span>
-    </a>
-
+    <div class="sidebar-brand">
+      <a href="/" class="brand-link">
+        <span class="brand-text fw-bold">REVEAL</span>
+      </a>
+    </div>
 
     {% block sidebar %}
         {% include "layout/_sidebar.html" %}
     {% endblock sidebar %}
   </aside>
 
-    <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <!-- Content Wrapper. Contains page content -->
+  <main class="app-main">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <div class="app-content-header">
       <div class="container-fluid">
-        <div class="row mb-2">
+        <div class="row">
           <div class="col-sm-6">
-            <h1>{% block page_title %}{% endblock page_title %}</h1>
+            <h1 class="mb-0 fs-3">{% block page_title %}{% endblock page_title %}</h1>
           </div>
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">{% block menu_l1 %}{% endblock menu_l1 %}</a></li>
-              <li class="breadcrumb-item active">{% block menu_l2 %}{% endblock menu_l2 %}</li>
-            </ol>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb float-sm-end">
+                <li class="breadcrumb-item"><a href="#">{% block menu_l1 %}{% endblock menu_l1 %}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% block menu_l2 %}{% endblock menu_l2 %}</li>
+              </ol>
+            </nav>
           </div>
         </div>
-      </div><!-- /.container-fluid -->
-    </section>
+      </div>
+    </div>
 
-
-
-     <section class="content">
+    <div class="app-content">
+      <div class="container-fluid">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             <div class="row">
@@ -81,7 +84,7 @@
                             <strong class="card-title">Messages</strong>
                         </div>
                         <div class="card-body">
-                            <ul class=flashes>
+                            <ul class="flashes mb-0">
                             {% for message in messages %}
                               <li>{{ message }}</li>
                             {% endfor %}
@@ -93,44 +96,29 @@
           {% endif %}
         {% endwith %}
 
-    {% block content %}
-        {% include "layout/_content.html" %}
-    {% endblock content %}
-
-      </section>
-
-  </div>
-  <!-- /.content-wrapper -->
-
-
-    <footer class="main-footer">
-    <div class="float-right d-none d-sm-block">
-      <b>REVEAL </b>v0.6-dev
+        {% block content %}
+            {% include "layout/_content.html" %}
+        {% endblock content %}
+      </div>
     </div>
-    <strong>Copyright &copy; 2023 Christoph Bless</strong> (Copyright of Template: <a href="http://adminlte.io">AdminLTE.io</a>)
-  </footer>
+  </main>
+  <!-- /.app-main -->
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+  <footer class="app-footer">
+    <div class="float-end d-none d-sm-inline">
+      <b>REVEAL </b>v0.7-dev
+    </div>
+    <strong>Copyright &copy; 2023 Christoph Bless</strong> (Copyright of Template: <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>)
+  </footer>
 </div>
-<!-- ./wrapper -->
+<!-- ./app-wrapper -->
 
 
     {% block javascripts %}
-    <!-- jQuery -->
-    <script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js')}}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <!-- Bootstrap 5 (incl. Popper) -->
+    <script src="{{ url_for('static', filename='vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
-    <script src="{{ url_for('static', filename='dist/js/adminlte.min.js')}}"></script>
-    <script>
-     $(document).ready(function(){
-        $('.dropdown-toggle').dropdown()
-    });
-    </script>
+    <script src="{{ url_for('static', filename='dist/js/adminlte.min.js') }}"></script>
     {% endblock javascripts %}
 
 </body>

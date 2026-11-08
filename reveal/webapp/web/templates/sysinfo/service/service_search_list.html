@@ -59,40 +59,29 @@
 
 {% block datatable %}
 {{ super() }}
-    <table id="table1" class="table table-bordered table-striped dataTable dtr-inliUserne"
-                       aria-describedby="table1_info">
+    <table id="table1" class="table table-bordered table-striped">
             <thead>
             <tr>
-                <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-sort="ascending" aria-label="Name" width="15%">Name
+                <th aria-label="Name" width="15%">Name
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="DisplayName" width="15%">DisplayName
+                <th aria-label="DisplayName" width="15%">DisplayName
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartMode" width="5%">StartMode
+                <th aria-label="StartMode" width="5%">StartMode
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="StartName" width="5%">StartName
+                <th aria-label="StartName" width="5%">StartName
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Started" width="5%">Started
+                <th aria-label="Started" width="5%">Started
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="PathName" width="35%">PathName
+                <th aria-label="PathName" width="35%">PathName
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="SystemName" width="5%">SystemName
+                <th aria-label="SystemName" width="5%">SystemName
                 </th>
 
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="SystemName" width="5%">Systemgroup
+                <th aria-label="SystemName" width="5%">Systemgroup
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="SystemName" width="5%">Location
+                <th aria-label="SystemName" width="5%">Location
                 </th>
-                <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                    aria-label="Details" width="5%">Details
+                <th aria-label="Details" width="5%">Details
                 </th>
             </tr>
             </thead>
@@ -110,7 +99,7 @@
                     <td> {{ s.Host.SystemGroup }}</td>
                     <td> {{ s.Host.Location }}</td>
                     <td class="actions">
-                        <a href="{{url_for('sysinfo.service_detail',id=s.id)}}" class="btn btn-default btn-xs">
+                        <a href="{{url_for('sysinfo.service_detail',id=s.id)}}" class="btn btn-outline-secondary btn-xs">
                             <i class="fa fa-eye"></i> View
                         </a>
                     </td>

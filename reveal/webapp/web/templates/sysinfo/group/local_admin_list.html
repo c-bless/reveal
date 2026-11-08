@@ -38,30 +38,22 @@
 
 {% block datatable %}
 {{ super() }}
-    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
-                       aria-describedby="table1_info">
+    <table id="table1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-sort="ascending" aria-label="Hostname" width="15%">Hostname
+                    <th aria-label="Hostname" width="15%">Hostname
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Group" width="15%">Local Group
+                    <th aria-label="Group" width="15%">Local Group
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Domain" width="15%">Domain (User)
+                    <th aria-label="Domain" width="15%">Domain (User)
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="User">Members
+                    <th aria-label="User">Members
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="SystemGroup">SystemGroup
+                    <th aria-label="SystemGroup">SystemGroup
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Location">Location
+                    <th aria-label="Location">Location
                     </th>
-                    <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                        aria-label="Details">Details
+                    <th aria-label="Details">Details
                     </th>
                 </tr>
                 </thead>
@@ -76,7 +68,7 @@
                         <td> {{ m.Group.Host.SystemGroup }} </td>
                         <td> {{ m.Group.Host.Location }} </td>
                         <td class="actions">
-                            <a href="{{ url_for('sysinfo.group_detail', id=m.Group_id) }}" class="btn btn-default btn-xs">
+                            <a href="{{ url_for('sysinfo.group_detail', id=m.Group_id) }}" class="btn btn-outline-secondary btn-xs">
                                 <i class="fa fa-eye"></i> View
                             </a>
                         </td>

@@ -25,8 +25,8 @@ def get_service_by_host(host_id):
         summary="Find service by ID",
         security='ApiKeyAuth')
 @bp.output(status_code=HTTPStatus.OK, schema=ServiceSchema)
-def get_service_by_id(id):
-    return Service.query.get_or_404(id)
+def get_service_by_id(service_id):
+    return Service.query.get_or_404(service_id)
 
 
 @bp.get("/services/")
@@ -54,7 +54,7 @@ def get_service_acl_list():
 @bp.doc(description="Returns a list of all ACLs for services based on specified search filter",
          summary="Find product by permission",
     security='ApiKeyAuth')
-@bp.input(schema=ServicePermissionSearchSchema, location="json")
+@bp.input(schema=ServicePermissionSearchSchema, location="json", arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=ServiceACLSchema(many=True))
 def get_service_acls_by_permission(search_data):
     services = ServiceACL.query.filter(and_(ServiceACL.AccountName.like("%" + search_data['Accountname'] + "%"),

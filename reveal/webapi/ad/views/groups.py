@@ -64,7 +64,7 @@ def get_groups():
 
 @bp.post("/groups/search/")
 @bp.auth_required(auth)
-@bp.input(schema=GroupSearchSchema, location="json")
+@bp.input(schema=GroupSearchSchema, location="json", arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADGroupWithMembersSchema(many=True),
            description="Group with nested member objects.")

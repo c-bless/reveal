@@ -38,7 +38,7 @@ def get_domain_by_id(id):
 
 @bp.post("/domain/by-name/")
 @bp.auth_required(auth)
-@bp.input(schema=ADDomainByNameSchema, location='json')
+@bp.input(schema=ADDomainByNameSchema, location='json', arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=ADDomainSchema(many=True),
            description="An views matching specified criteria.")

@@ -14,13 +14,22 @@
     None
 
     .OUTPUTS
-    This script will create a XML-file with the collected system information.
+    This script will create a XML-file (default), a JSON-file or both with the collected system information
+    (see parameter -OutputFormat). Both formats contain the same information.
 
     .EXAMPLE
     .\sysinfo-collector.ps1
 
     .Example
     .\sysinfo-collector.ps1 -Systemgroup PCS7 -Location "Control room" -Label "Inventory Number"
+
+    .EXAMPLE
+    .\sysinfo-collector.ps1 -OutputFormat Both
+    Writes the collected information to a XML file and to a JSON file.
+
+    .EXAMPLE
+    .\sysinfo-collector.ps1 -OutputFormat JSON
+    Writes the collected information only to a JSON file.
 #>
 param (
     # optional parameter to specify the systemgroup the host belongs to
@@ -33,20 +42,57 @@ param (
 
     # option for additional label
     [Parameter(Mandatory=$false)]
-    [string]$Label = "N/A"
+    [string]$Label = "N/A",
+
+    # output format: XML (default), JSON or Both
+    [Parameter(Mandatory=$false)]
+    [ValidateSet('XML', 'JSON', 'Both')]
+    [string]$OutputFormat = 'XML'
 )
 
 
 # version number of this script used as attribute in XML root tag
-$version="0.6"
+$version="0.7"
 
 $date = Get-Date -Format "yyyyMMdd_HHmmss"
 $hostname = $env:COMPUTERNAME
 
 # can be generated with helper script ./genkey.py
-$encKey = (7, 16, 166, 10, 141, 23, 37, 94, 240, 162, 206, 168, 181, 97, 19, 170)
+[byte[]] $encKey = (7, 16, 166, 10, 141, 23, 37, 94, 240, 162, 206, 168, 181, 97, 19, 170)
 
 $path = Get-Location
+
+# check only once whether CIM cmdlets are available (instead of in every function). Get-CimInstance is available
+# since PowerShell 3.0, Get-WmiObject is not available anymore in PowerShell 6+.
+$script:UseCim = [bool](Get-Command Get-CimInstance -ErrorAction SilentlyContinue)
+$script:UseWmi = [bool](Get-Command Get-WmiObject -ErrorAction SilentlyContinue)
+
+function Get-WmiData {
+    <#
+    .SYNOPSIS
+    Queries a WMI class via Get-CimInstance (if available) or Get-WmiObject.
+
+    .PARAMETER Class
+    Name of the WMI class (e.g. Win32_Service)
+
+    .PARAMETER Filter
+    Optional WQL filter (e.g. "LocalAccount=True")
+    #>
+    param (
+        [Parameter(Mandatory=$true)][string]$Class,
+        [string]$Filter
+    )
+    $params = @{ ErrorAction = 'Stop' }
+    if ($Filter) { $params.Filter = $Filter }
+    try {
+        if ($script:UseCim) { return Get-CimInstance -ClassName $Class @params }
+        if ($script:UseWmi) { return Get-WmiObject -Class $Class @params }
+    } catch {
+        # Write-Host instead of Write-Output: the message must not become part of the return value
+        Write-Host "[-] $Class could not be queried: $($_.Exception.Message)"
+    }
+    return $null
+}
 
 
 ###################################################################################################################
@@ -311,7 +357,7 @@ function Get-RegistryChecks {
             [void]$registry_check_results.Add($result)
         } catch {}
     }
-    return $registry_check_results
+    return ,$registry_check_results
 }
 
 
@@ -407,14 +453,15 @@ function Get-FileExistCheck {
         try{
             $path = [string] $c.File
             if (Test-Path $path){
-                Write-Output "[!] Found file: "$path
+                # Write-Host instead of Write-Output: otherwise the message becomes part of the return value
+                Write-Host "[!] Found file: $path"
                 $result.FileExist = $true
                 if (Get-Command Get-FileHash -ErrorAction SilentlyContinue){
                     $expectedHash = [string] $c.ExpectedHASH
                     $hash = Get-FileHash -Path $path -Algorithm SHA256
+                    $result.HashChecked = $true
                     if ($expectedHash -eq $hash.HASH){
                         $result.HashMatch = $true
-                        $result.HashChecked = $true
                     } else{
                         $result.HashMatch = $false
                     }
@@ -426,7 +473,7 @@ function Get-FileExistCheck {
             [void]$file_checks_results.Add($result)
         } catch {}
     }
-    return $file_checks_results
+    return ,$file_checks_results
 }
 
 
@@ -528,7 +575,9 @@ function Get-HostInfo {
             KeyboardLayout = [string]$compInfo.KeyboardLayout
             HyperVisorPresent = [string]$compInfo.HyperVisorPresent
             DeviceGuardSmartStatus = [string]$compInfo.DeviceGuardSmartStatus
-            PrimaryOwnerName = [string] $compInfo.CSPrimaryOwnerName
+            Manufacturer = [string] $compInfo.CsManufacturer
+            Model = [string] $compInfo.CsModel
+            PrimaryOwnerName = [string] $compInfo.CsPrimaryOwnerName
             Whoami = [string] [System.Environment]::UserName
             WhoamiIsAdmin = [string] ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
             PSVersion = [string]$PSVersionTable.PSVersion
@@ -545,27 +594,37 @@ function Get-HostInfo {
         $PrimaryOwnerName = ""
         $osversion = ""
         $osname = ""
+        $osProductType = ""
         $timezoneString = ""
         try{
-            if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
-                $cs = Get-CimInstance -Class win32_ComputerSystem -Property *
-            }else{
-                $cs = Get-WmiObject -Class win32_ComputerSystem -Property *
-            }
-            $domainRole = [string] $cs.DomainRole
+            $cs = Get-WmiData -Class Win32_ComputerSystem
+            $domainRoles = @('StandaloneWorkstation', 'MemberWorkstation', 'StandaloneServer', 'MemberServer',
+                             'BackupDomainController', 'PrimaryDomainController')
+            $role = [int] $cs.DomainRole
+            if ($role -ge 0 -and $role -lt $domainRoles.Count) { $domainRole = $domainRoles[$role] } else { $domainRole = [string] $cs.DomainRole }
+            if ($cs.Domain) { $domain = [string] $cs.Domain }
             $hypervisor = [string]$cs.HypervisorPresent
-            $installDate = [string] $cs.InstallDate
-            $manufacturer = [string] $cs.CsManufacturer
-            $model = [string] $cs.CsModel
+            $manufacturer = [string] $cs.Manufacturer
+            $model = [string] $cs.Model
             $PrimaryOwnerName = [string] $cs.PrimaryOwnerName
         } catch{}
-        try {
-            if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
-                $timezone = Get-CimInstance -Class win32_timezone
-            }else{
-                $timezone = Get-WmiObject -Class win32_timezone
+        try{
+            $os = Get-WmiData -Class Win32_OperatingSystem
+            $osversion = [string] $os.Version
+            $osname = [string] $os.Caption
+            # WMI returns a DMTF string (Get-WmiObject), CIM a DateTime
+            $osInstall = $os.InstallDate
+            if ($osInstall -is [string]) {
+                try { $osInstall = [System.Management.ManagementDateTimeConverter]::ToDateTime($osInstall) } catch {}
             }
-            $timezoneString =  $timezone.Caption
+            $installDate = [string] $osInstall
+            $productTypes = @{ 1 = 'WorkStation'; 2 = 'DomainController'; 3 = 'Server' }
+            $pt = [int] $os.ProductType
+            if ($productTypes.ContainsKey($pt)) { $osProductType = $productTypes[$pt] } else { $osProductType = [string] $os.ProductType }
+        } catch{}
+        try {
+            $timezone = Get-WmiData -Class Win32_TimeZone
+            $timezoneString = [string] $timezone.Caption
         }catch{}
 
         $host_info = [PSCustomObject]@{
@@ -581,10 +640,14 @@ function Get-HostInfo {
             OSVersion = $osversion
             OSName = $osname
             OSInstallDate = $installDate
-            Manufacturer = $manufacturer
+            OSProductType = $osProductType
+            LogonServer = [string] $env:LOGONSERVER
             TimeZone = $timezoneString
-            Model = $model
+            KeyboardLayout = ""
             HyperVisorPresent = $hypervisor
+            DeviceGuardSmartStatus = ""
+            Manufacturer = $manufacturer
+            Model = $model
             PrimaryOwnerName = $PrimaryOwnerName
             Whoami = [string] [System.Environment]::UserName
             WhoamiIsAdmin = [string] ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -629,7 +692,9 @@ function Add-HostInfoToXML {
     $xmlWriter.WriteElementString("KeyboardLayout",[string]$hostInfo.KeyboardLayout)
     $xmlWriter.WriteElementString("HyperVisorPresent",[string]$hostInfo.HyperVisorPresent)
     $xmlWriter.WriteElementString("DeviceGuardSmartStatus",[string]$hostInfo.DeviceGuardSmartStatus)
-    $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $hostInfo.CSPrimaryOwnerName)
+    $xmlWriter.WriteElementString("PrimaryOwnerName",[string] $hostInfo.PrimaryOwnerName)
+    $xmlWriter.WriteElementString("Manufacturer",[string] $hostInfo.Manufacturer)
+    $xmlWriter.WriteElementString("Model",[string] $hostInfo.Model)
     $xmlWriter.WriteElementString("Whoami", [string] $hostInfo.Whoami)
     $xmlWriter.WriteElementString("WhoamiIsAdmin", [string] $hostInfo.WhoamiIsAdmin)
     $xmlWriter.WriteElementString("PSVersion",[string]$hostInfo.PSVersion)
@@ -648,16 +713,12 @@ function Get-BIOSInfo {
     Collects BIOS information from the host system.
     .DESCRIPTION
     The Get-BIOSInfo function gathers information about the BIOS of the host system, such as the manufacturer,
-    version, and serial number. It uses the Get-WmiObject cmdlet to query the win32_bios class for this information.
+    version, and serial number. It queries the Win32_BIOS class (CIM or WMI) for this information.
     .OUTPUTS
     [PSCustomObject]
     A custom object containing the collected BIOS information.
     #>
-    if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
-        $bios = Get-CimInstance -Class win32_bios
-    }else{
-        $bios = Get-WmiObject -Class win32_bios
-    }
+    $bios = Get-WmiData -Class Win32_BIOS
     $biosInfo = [PSCustomObject]@{
         Manufacturer = [string] $bios.Manufacturer
         Name = [string] $bios.Name
@@ -678,6 +739,8 @@ function Add-BIOSInfoToXML {
     $xmlWriter.WriteAttributeString("Name", [string] $biosInfo.Name)
     $xmlWriter.WriteAttributeString("Version", [string] $biosInfo.Version)
     $xmlWriter.WriteAttributeString("SerialNumber", [string] $biosInfo.SerialNumber)
+    # the REVEAL importer reads the attribute "Serial"
+    $xmlWriter.WriteAttributeString("Serial", [string] $biosInfo.SerialNumber)
     $xmlWriter.WriteEndElement() # BIOS
 }
 
@@ -691,29 +754,22 @@ function Get-HotfixesInfo {
     $hotfix_list = New-Object System.Collections.ArrayList
     $collectionMethod = ""
 
+    $hotfixes = @()
     if (Get-Command Get-HotFix -ErrorAction SilentlyContinue){
         $collectionMethod = "Get-HotFix"
-        try{
-            $hotfixes = Get-HotFix | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
-        } catch{
-            $hotfixes = Get-HotFix
-        }
-    } else {
-
-        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
-            $collectionMethod = "CIM"
-            $hotfixes = Get-CimInstance -Class win32_QuickFixEngineering
-        } else {
-            $collectionMethod = "WMI"
-            $hotfixes = Get-WmiObject -Class win32_QuickFixEngineering
-        }
-        try{
-            $hotfixes = $hotfixes | Sort-Object -Property InstalledOn -Descending -ErrorAction SilentlyContinue
-            if ( $hotfixes.Length -gt 0 ){
-                $lastUpdate = $hotfixes[0]
-                $host_info.LastUpdate = [string] $lastUpdate.InstalledOn
-            }
-        } catch {}
+        try { $hotfixes = @(Get-HotFix -ErrorAction Stop) } catch {}
+    }
+    if ($hotfixes.Count -eq 0) {
+        if ($script:UseCim) { $collectionMethod = "CIM" } else { $collectionMethod = "WMI" }
+        try { $hotfixes = @(Get-WmiData -Class Win32_QuickFixEngineering) } catch {}
+    }
+    try{
+        $hotfixes = @($hotfixes | Sort-Object -Property InstalledOn -Descending -ErrorAction Stop)
+    } catch {}
+    # most recent installation date (entries without InstalledOn are skipped)
+    $lastUpdate = $hotfixes | Where-Object { $_.InstalledOn } | Select-Object -First 1
+    if ($lastUpdate) {
+        $host_info.LastUpdate = [string] $lastUpdate.InstalledOn
     }
 
     foreach ($h in $hotfixes){
@@ -726,7 +782,7 @@ function Get-HotfixesInfo {
         [void] $hotfix_list.Add($hotfix)
     }
 
-    return $hotfix_list
+    return ,$hotfix_list
 }
 
 
@@ -734,14 +790,17 @@ function Add-HotfixesToXML {
 
     param (
         [System.Xml.XmlWriter]$xmlWriter,
-        [System.Collections.ArrayList]$hotfixes
+        [System.Collections.ArrayList]$hotfixes,
+        [PSCustomObject]$hostInfo
     )
 
 
     $xmlWriter.WriteStartElement("Hotfixes")
+    # the REVEAL importer reads the date of the last update from this attribute
+    $xmlWriter.WriteAttributeString("LastUpdate", [string] $hostInfo.LastUpdate)
     foreach ($h in $hotfixes ) {
         $xmlWriter.WriteStartElement("Hotfix")
-        $xmlWriter.WriteAttributeString("id",  [string] $h.HotFixID)
+        $xmlWriter.WriteAttributeString("id",  [string] $h.id)
         $xmlWriter.WriteAttributeString("InstalledOn",[string] $h.InstalledOn)
         $xmlWriter.WriteAttributeString("Description",[string] $h.Description)
         $xmlWriter.WriteEndElement() # hotfix
@@ -753,8 +812,8 @@ function Add-HotfixesToXML {
 function Get-InstalledProductsInfo {
     $product_list = New-Object System.Collections.ArrayList
     try{
-        if (Get-Command Get-CimInstance -ErrorAction SilentlyContinue){
-            $products = Get-CimInstance -class win32_product
+        if ($script:UseCim){
+            $products = Get-WmiData -Class Win32_Product
             foreach ($p in $products){
                 $product = [PSCustomObject]@{
                     IdentifyingNumber = [string] $p.IdentifyingNumber
@@ -770,7 +829,7 @@ function Get-InstalledProductsInfo {
                 [void] $product_list.Add($product)
             }
         }else{
-            $products = Get-WmiObject  -class win32_product
+            $products = Get-WmiData -Class Win32_Product
             foreach ($p in $products){
                 $product = [PSCustomObject]@{
                     IdentifyingNumber = [string] $p.IdentifyingNumber
@@ -787,7 +846,7 @@ function Get-InstalledProductsInfo {
             }
         }
     }catch {}
-    return $product_list
+    return ,$product_list
 }
 
 
@@ -849,24 +908,23 @@ function Get-NetAdapterInfo {
             [void]$result_list.add($n)
         }
     }else{
-        if (Get-Command Get-WmiObject -ErrorAction SilentlyContinue){
-            $netadapters = get-wmiobject -Class win32_networkadapter
-            # Add an alias property to the object to make it compatible with the Get-NetAdapter object
+        try {
+            $netadapters = Get-WmiData -Class Win32_NetworkAdapter
+            # create objects with the same properties as the Get-NetAdapter objects
             foreach ($n in $netadapters ) {
                 $n = [PSCustomObject]@{
-                    CollectionMethod = "WMI"
+                    CollectionMethod = $(if ($script:UseCim) { "CIM" } else { "WMI" })
                     Type = [string] $n.AdapterType
                     MacAddress = [string] $n.MacAddress
                     Status = [string] $n.Status
                     Name = [string] $n.Name
                     InterfaceDescription = [string] $n.Description
                 }
-                #$n | Add-Member -MemberType AliasProperty -Name InterfaceDescription -Value $n.Description
                 [void]$result_list.add($n)
             }
-        }
+        } catch {}
     }
-    return $result_list
+    return ,$result_list
 }
 
 
@@ -907,14 +965,14 @@ function Get-NetRouteInfo {
             InterfaceAlias = [string]$r.InterfaceAlias
             NextHop =[string]$r.NextHop
             RouteMetric = [string]$r.RouteMetric
-            ifIndex = [string]$r.ifIndex
+            IfIndex = [string]$r.ifIndex
             InterfaceMetric = [string]$r.InterfaceMetric
             IsStatic = [string]$r.IsStatic
             AdminDistance = [string]$r.AdminDistance
         }
         [void] $route_list.Add($route)
     }
-    return $route_list
+    return ,$route_list
 }
 
 function Add-NetRouteToXML {
@@ -932,7 +990,8 @@ function Add-NetRouteToXML {
         $xmlWriter.WriteElementString("InterfaceAlias", [string]$r.InterfaceAlias)
         $xmlWriter.WriteElementString("NextHop", [string]$r.NextHop)
         $xmlWriter.WriteElementString("RouteMetric", [string]$r.RouteMetric)
-        $xmlWriter.WriteElementString("ifIndex", [string]$r.ifIndex)
+        # the REVEAL importer reads "IfIndex"
+        $xmlWriter.WriteElementString("IfIndex", [string]$r.IfIndex)
         $xmlWriter.WriteElementString("InterfaceMetric", [string]$r.InterfaceMetric)
         $xmlWriter.WriteElementString("IsStatic", [string]$r.IsStatic)
         $xmlWriter.WriteElementString("AdminDistance", [string]$r.AdminDistance)
@@ -958,7 +1017,7 @@ function Get-NetIPAddressInfo {
         }
     } else {
         try{
-            $netadapters = get-wmiobject -Class win32_networkadapterconfiguration -Filter "IPEnabled = 'True'"
+            $netadapters = Get-WmiData -Class Win32_NetworkAdapterConfiguration -Filter "IPEnabled = 'True'"
             foreach ($n in $netadapters ) {
                 foreach ($i in $n.IPAddress){
                     [void]$netips.Add([PSCustomObject]@{
@@ -973,7 +1032,7 @@ function Get-NetIPAddressInfo {
             }
         }catch{}
     }
-    return $netips
+    return ,$netips
 }
 
 function Add-NetIPAddressToXML {
@@ -998,12 +1057,7 @@ function Add-NetIPAddressToXML {
 
 function Get-LocalUserAccountsInfo {
     $user_list = New-Object System.Collections.ArrayList
-    # using WMI to be compatible with older PS versions
-    if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
-        $users = Get-CimInstance -class win32_useraccount -Filter "LocalAccount=True"
-    } else {
-        $users = Get-WmiObject -class win32_useraccount -Filter "LocalAccount=True"
-    } 
+    $users = Get-WmiData -Class Win32_UserAccount -Filter "LocalAccount=True"
     foreach ($u in $users ) {
         $user = [PSCustomObject]@{  
             AccountType = [string] $u.AccountType
@@ -1011,7 +1065,7 @@ function Get-LocalUserAccountsInfo {
             Disabled = [string]$u.Disabled
             LocalAccount = [string]$u.LocalAccount
             Name = [string]$u.Name
-            ullName = [string]$u.ullName
+            FullName = [string]$u.FullName
             Description = [string]$u.Description
             SID = [string]$u.SID
             Lockout = [string]$u.Lockout
@@ -1021,7 +1075,7 @@ function Get-LocalUserAccountsInfo {
         }
         [void] $user_list.Add($user)
     }
-    return $user_list
+    return ,$user_list
 }
 
 
@@ -1070,16 +1124,19 @@ function Get-LocalGroupsInfo {
     $groups = Get-LocalGroups
     #>
     $group_list = New-Object System.Collections.ArrayList
-    if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
-        $groups = Get-CimInstance -class win32_group -Filter "LocalAccount=True"
-    } else {
-        $groups = Get-WmiObject -class win32_group -Filter "LocalAccount=True"
-    }
+    $groups = Get-WmiData -Class Win32_Group -Filter "LocalAccount=True"
     try {
         foreach ($g in $groups ) {
             $groupname = [string] $g.Name
-            $query="Associators of {Win32_Group.Domain='$hostname',Name='$groupname'} where Role=GroupComponent"
-            $members = get-wmiobject -query $query -ComputerName $hostname
+            $members = @()
+            try {
+                if ($script:UseCim) {
+                    $members = @(Get-CimAssociatedInstance -InputObject $g -Association Win32_GroupUser -ErrorAction Stop)
+                } else {
+                    $query="Associators of {Win32_Group.Domain='$($g.Domain)',Name='$groupname'} where AssocClass=Win32_GroupUser Role=GroupComponent"
+                    $members = @(Get-WmiObject -Query $query -ErrorAction Stop)
+                }
+            } catch {}
             $member_objects = New-Object System.Collections.ArrayList
             foreach ($m in $members){
                 [void] $member_objects.Add([PSCustomObject]@{
@@ -1102,7 +1159,7 @@ function Get-LocalGroupsInfo {
             [void] $group_list.Add($group)
         }
     } catch {}
-    return $group_list
+    return ,$group_list
 }
 
 function Add-LocalGroupsToXML {
@@ -1192,7 +1249,7 @@ function Get-FirewallInfo {
             }
         }
     }
-    return $firewallInfo
+    return ,$firewallInfo
 }
 
 function Add-FirewallInfoToXML{
@@ -1233,7 +1290,7 @@ function Get-SharesInfo {
 
     .DESCRIPTION
     The Get-Shares function gathers information about shares on the system, including their name, path, and
-    permissions. It uses the Get-WmiObject cmdlet to query the shares and their permissions.
+    permissions. It queries the Win32_Share class (CIM or WMI) and the permissions of the shares.
 
     .OUTPUTS
     [System.Collections.ArrayList]
@@ -1242,11 +1299,7 @@ function Get-SharesInfo {
     .EXAMPLE
     $shares = Get-Shares
     #>
-    if (Get-Command Get-CimInstance  -ErrorAction SilentlyContinue) {
-        $shares = Get-CimInstance -class win32_share
-    } else {
-        $shares = Get-WmiObject -class win32_share
-    }
+    $shares = Get-WmiData -Class Win32_Share
     $sharesInfo_results = New-Object System.Collections.ArrayList
     foreach ($s in $shares ) {
         $shareInfo = [PSCustomObject]@{
@@ -1298,7 +1351,7 @@ function Get-SharesInfo {
         }
         [void]$sharesInfo_results.Add($shareInfo)
     }
-    return $sharesInfo_results
+    return ,$sharesInfo_results
 }
 
 function Add-ShareInfoToXML{
@@ -1373,37 +1426,15 @@ function Get-WSUSSettings {
     $wsusSettings = Get-WSUSSettings
     #>
     $wsusSettings = [PSCustomObject]@{}
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "AcceptTrustedPublisherCerts") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name AcceptTrustedPublisherCerts -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name AcceptTrustedPublisherCerts -Value $wsus.AcceptTrustedPublisherCerts
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "DisableWindowsUpdateAccess") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name DisableWindowsUpdateAccess -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name DisableWindowsUpdateAccess -Value $wsus.DisableWindowsUpdateAccess
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "ElevateNonAdmins") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name ElevateNonAdmins -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name ElevateNonAdmins -Value $wsus.ElevateNonAdmins
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name TargetGroup -Value $wsus.TargetGroup
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroup") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroup -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name TargetGroup -Value $wsus.TargetGroup
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "TargetGroupEnabled") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name TargetGroupEnabled -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name TargetGroupEnabled -Value $wsus.TargetGroupEnabled
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUServer") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUServer -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name WUServer -Value $wsus.WUServer
-    }
-    if ((get-item "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"  -ea SilentlyContinue).Property -contains "WUStatusServer") {
-        $wsus =  Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate" -Name WUStatusServer -ErrorAction SilentlyContinue
-        $wsusSettings | Add-Member -MemberType NoteProperty -Name WUStatusServer -Value $wsus.WUStatusServer
+    $wsusKey = "HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate"
+    $wsus = Get-ItemProperty -Path $wsusKey -ErrorAction SilentlyContinue
+    if ($wsus) {
+        foreach ($name in @('AcceptTrustedPublisherCerts', 'DisableWindowsUpdateAccess', 'ElevateNonAdmins', 'TargetGroup',
+                            'TargetGroupEnabled', 'WUServer', 'WUStatusServer')) {
+            if ($wsus.PSObject.Properties.Name -contains $name) {
+                $wsusSettings | Add-Member -MemberType NoteProperty -Name $name -Value $wsus.$name
+            }
+        }
     }
     return $wsusSettings
 }
@@ -1488,7 +1519,7 @@ function Get-WinLogonInfo {
             $aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CBC
             $aesManaged.Padding = [System.Security.Cryptography.PaddingMode]::PKCS7
             $aesManaged.BlockSize = 128
-            $aesManaged.KeySize = 256
+            # KeySize is derived from the key (16 bytes -> AES-128), matching IMPORT_KEY of REVEAL
             $aesManaged.Key = $encKey
             $plainBytes = [Text.Encoding]::UTF8.GetBytes($value.DefaultPassword)
             $encryptor = $aesManaged.CreateEncryptor()
@@ -1519,8 +1550,6 @@ function Get-WinLogonInfo {
             Message = 'Password for autologon user stored in Registry'
         }
         [void]$config_checks.Add($result)
-
-        $winlogon | Add-Member -MemberType NoteProperty -Name DefaultPassword -Value $defaultPWObject
     }
     if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "AutoAdminLogon") {
         $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -ErrorAction SilentlyContinue
@@ -1532,7 +1561,7 @@ function Get-WinLogonInfo {
     }
     if ((get-item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"  -ea SilentlyContinue).Property -contains "DefaultDomainName") {
         $value =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name DefaultDomainName -ErrorAction SilentlyContinue
-        $winlogon | Add-Member -MemberType NoteProperty -Name DefaultDomain -Value $value.DefaultDomain
+        $winlogon | Add-Member -MemberType NoteProperty -Name DefaultDomainName -Value $value.DefaultDomainName
     }
     return $winlogon
 }
@@ -1563,11 +1592,12 @@ function Add-WinLogonToXML {
     }
     if ($winlogon.PSObject.Properties.Name -contains "DefaultPassword") {
         $xmlWriter.WriteStartElement("DefaultPassword")
+        # the REVEAL importer reads the lower case attributes "base64" and "encrypted" (XML is case sensitive)
         if ($winlogon.PSObject.Properties.Name -contains "DefaultPasswordBase64") {
-            $xmlWriter.WriteAttributeString("Base64", [string] $winlogon.DefaultPasswordBase64)
+            $xmlWriter.WriteAttributeString("base64", [string] $winlogon.DefaultPasswordBase64)
         }
         if ($winlogon.PSObject.Properties.Name -contains "DefaultPasswordEncrypted") {
-            $xmlWriter.WriteAttributeString("Encrypted", [string] $winlogon.DefaultPasswordEncrypted)
+            $xmlWriter.WriteAttributeString("encrypted", [string] $winlogon.DefaultPasswordEncrypted)
         }
         $xmlWriter.WriteString([string] $winlogon.DefaultPassword)
         $xmlWriter.WriteEndElement() # DefaultPassword
@@ -1578,8 +1608,9 @@ function Add-WinLogonToXML {
     if ($winlogon.PSObject.Properties.Name -contains "ForceAutoLogon") {
         $xmlWriter.WriteElementString("ForceAutoLogon", [string] $winlogon.ForceAutoLogon)
     }
-    if ($winlogon.PSObject.Properties.Name -contains "DefaultDomain") {
-        $xmlWriter.WriteElementString("DefaultDomain", [string] $winlogon.DefaultDomain)
+    # the REVEAL importer reads "DefaultDomainName"
+    if ($winlogon.PSObject.Properties.Name -contains "DefaultDomainName") {
+        $xmlWriter.WriteElementString("DefaultDomainName", [string] $winlogon.DefaultDomainName)
     }
     $xmlWriter.WriteEndElement() # Winlogon
 }
@@ -1709,6 +1740,7 @@ function Get-PSVersionsInfo {
     )
 
     $psVersions = New-Object System.Collections.ArrayList
+    $v2installed = $false
     $ids = (1..5)
     foreach ( $id in $ids) {
         $entry =  Get-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\PowerShell\$id\PowerShellEngine -ErrorAction SilentlyContinue
@@ -1736,7 +1768,7 @@ function Get-PSVersionsInfo {
         }
     }
     $hostInfo.PSVersion2Installed = $v2installed
-    return $psVersions
+    return ,$psVersions
 }
 
 function Add-PSVersionsToXML {
@@ -1762,6 +1794,8 @@ function Add-PSVersionsToXML {
     foreach ($p in $psVersions ) {
         $xmlWriter.WriteStartElement("PSVersion")
         $xmlWriter.WriteAttributeString("Version",[string] $p.PowerShellVersion)
+        # the REVEAL importer reads the attribute "PSVersion"
+        $xmlWriter.WriteAttributeString("PSVersion",[string] $p.PowerShellVersion)
         $xmlWriter.WriteAttributeString("PSCompatibleVersion",[string] $p.PSCompatibleVersion)
         $xmlWriter.WriteAttributeString("PSPath",[string] $p.PSPath)
         $xmlWriter.WriteAttributeString("RuntimeVersion",[string] $p.RuntimeVersion)
@@ -2025,7 +2059,7 @@ function Get-NTPSettings {
     }
     if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters"  -ea SilentlyContinue).Property -contains "Type") {
         $ntpType =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters" -Name Type -ErrorAction SilentlyContinue
-        $ntpSettings | Add-Member -MemberType NoteProperty -Name NtpType -Value $ntpType.Type
+        $ntpSettings | Add-Member -MemberType NoteProperty -Name Type -Value $ntpType.Type
     }
     if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config"  -ea SilentlyContinue).Property -contains "UpdateInterval") {
         $interval =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Config" -Name UpdateInterval -ErrorAction SilentlyContinue
@@ -2055,11 +2089,11 @@ function Add-NTPSettings-ToXML {
     )
 
     $xmlWriter.WriteStartElement("NTP")
-    if ($ntpSettings.PSObject.Properties.Name -contains "NtpServer") {
+    if ($ntpSettings.PSObject.Properties.Name -contains "Server") {
         $xmlWriter.WriteElementString("Server", [string] $ntpSettings.Server)
     }
-    if ($ntpSettings.PSObject.Properties.Name -contains "NtpType") {
-        $xmlWriter.WriteElementString("Type", [string] $ntpSettings.NtpType)
+    if ($ntpSettings.PSObject.Properties.Name -contains "Type") {
+        $xmlWriter.WriteElementString("Type", [string] $ntpSettings.Type)
     }
     if ($ntpSettings.PSObject.Properties.Name -contains "UpdateInterval") {
         $xmlWriter.WriteElementString("UpdateInterval", [string] $ntpSettings.UpdateInterval)
@@ -2088,6 +2122,8 @@ function Get-PSLoggingInfo {
     if ((get-item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"  -ea SilentlyContinue).Property -contains "EnableScriptBlockLogging") {
         $logging =  Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -ErrorAction SilentlyContinue
         $psLogging | Add-Member -MemberType NoteProperty -Name ScriptBlockLogging -Value $logging.EnableScriptBlockLogging
+        $state = if ($logging.EnableScriptBlockLogging -eq 1) { "Enabled" } else { "Disabled" }
+        $psLogging | Add-Member -MemberType NoteProperty -Name PSScriptBlockLogging -Value $state
     }
     return $psLogging
 }
@@ -2114,12 +2150,8 @@ function Add-PSLoggingToXML {
         [PSCustomObject]$psLogging
     )
 
-    if ($psLogging.PSObject.Properties.Name -contains "ScriptBlockLogging") {
-        if ($logging -eq 1){
-            $xmlWriter.WriteElementString("PSScriptBlockLogging", "Enabled")
-        }else{
-            $xmlWriter.WriteElementString("PSScriptBlockLogging", "Disabled")
-        }
+    if ($psLogging.PSObject.Properties.Name -contains "PSScriptBlockLogging") {
+        $xmlWriter.WriteElementString("PSScriptBlockLogging", [string] $psLogging.PSScriptBlockLogging)
     }
 }
 
@@ -2154,7 +2186,7 @@ function Get-SMBConfig {
         # older Windows versions can check the registry.
         if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB1") {
             $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB1 -ErrorAction SilentlyContinue
-            if ($smb1 -eq 0){
+            if ($smb1.SMB1 -eq 0){
                 $smbConfig | Add-Member -MemberType NoteProperty -Name SMB1Enabled -Value $false
             } else{
                 $smbConfig | Add-Member -MemberType NoteProperty -Name SMB1Enabled -Value $true
@@ -2165,8 +2197,8 @@ function Get-SMBConfig {
         }
 
         if ((get-item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -ea SilentlyContinue).Property -contains "SMB2") {
-            $smb1 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB2 -ErrorAction SilentlyContinue
-            if ($smb1 -eq 0){
+            $smb2 =  Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name SMB2 -ErrorAction SilentlyContinue
+            if ($smb2.SMB2 -eq 0){
                 $smbConfig | Add-Member -MemberType NoteProperty -Name SMB2Enabled -Value $false
             } else{
                 $smbConfig | Add-Member -MemberType NoteProperty -Name SMB2Enabled -Value $true
@@ -2234,14 +2266,36 @@ function Get-DefenderInfo {
     .EXAMPLE
     $defenderInfo = Get-DefenderInfo
     #>
+    $statusProperties = @('AMEngineVersion', 'AMProductVersion', 'AMServiceEnabled', 'AMServiceVersion',
+        'AntispywareEnabled', 'AntispywareSignatureLastUpdated', 'AntispywareSignatureVersion', 'AntivirusEnabled',
+        'AntivirusSignatureLastUpdated', 'AntivirusSignatureVersion', 'BehaviorMonitorEnabled', 'IoavProtectionEnabled',
+        'IsVirtualMachine', 'NISEnabled', 'NISEngineVersion', 'NISSignatureLastUpdated', 'NISSignatureVersion',
+        'OnAccessProtectionEnabled', 'RealTimeProtectionEnabled')
+    $preferenceProperties = @('DisableArchiveScanning', 'DisableAutoExclusions', 'DisableBehaviorMonitoring',
+        'DisableBlockAtFirstSeen', 'DisableCatchupFullScan', 'DisableCatchupQuickScan', 'DisableEmailScanning',
+        'DisableIntrusionPreventionSystem', 'DisableIOAVProtection', 'DisableRealtimeMonitoring',
+        'DisableRemovableDriveScanning', 'DisableRestorePoint', 'DisableScanningMappedNetworkDrivesForFullScan',
+        'DisableScanningNetworkFiles', 'DisableScriptScanning', 'EnableNetworkProtection', 'ExclusionPath',
+        'ExclusionProcess')
+
+    # The raw CIM objects are converted to plain objects with string values. This way the JSON export contains
+    # exactly the values written to the XML file (and not the complete CIM object).
     $defenderInfo = [PSCustomObject]@{}
     if (Get-Command Get-MpComputerStatus -ea SilentlyContinue) {
-        $status = Get-MpComputerStatus
-        $defenderInfo | Add-Member -MemberType NoteProperty -Name MpComputerStatus -Value $status
+        try {
+            $status = Get-MpComputerStatus -ErrorAction Stop
+            $obj = [ordered]@{}
+            foreach ($n in $statusProperties) { $obj[$n] = [string] $status.$n }
+            $defenderInfo | Add-Member -MemberType NoteProperty -Name MpComputerStatus -Value ([PSCustomObject]$obj)
+        } catch {}
     }
     if (Get-Command Get-MpPreference -ea SilentlyContinue) {
-        $preferences = Get-MpPreference
-        $defenderInfo | Add-Member -MemberType NoteProperty -Name MpPreference -Value $preferences
+        try {
+            $preferences = Get-MpPreference -ErrorAction Stop
+            $obj = [ordered]@{}
+            foreach ($n in $preferenceProperties) { $obj[$n] = [string] $preferences.$n }
+            $defenderInfo | Add-Member -MemberType NoteProperty -Name MpPreference -Value ([PSCustomObject]$obj)
+        } catch {}
     }
     return $defenderInfo
 }
@@ -2266,7 +2320,8 @@ function Add-DefenderInfoToXML {
         [PSCustomObject]$defenderInfo
     )
 
-    $xmlWriter.WriteStartElement("Defender")
+    # DefenderStatus and Defender (settings) are written as separate child elements of Host - this is the structure
+    # the REVEAL importer expects.
     if ($defenderInfo.PSObject.Properties.Name -contains "MpComputerStatus") {
         $status = $defenderInfo.MpComputerStatus
         $xmlWriter.WriteStartElement("DefenderStatus")
@@ -2289,7 +2344,7 @@ function Add-DefenderInfoToXML {
         $xmlWriter.WriteElementString("NISSignatureVersion",  [string] $status.NISSignatureVersion)
         $xmlWriter.WriteElementString("OnAccessProtectionEnabled",  [string] $status.OnAccessProtectionEnabled)
         $xmlWriter.WriteElementString("RealTimeProtectionEnabled",  [string] $status.RealTimeProtectionEnabled)
-        $xmlWriter.WriteEndElement() # Defender
+        $xmlWriter.WriteEndElement() # DefenderStatus
     }
     if ($defenderInfo.PSObject.Properties.Name -contains "MpPreference") {
         $xmlWriter.WriteStartElement("Defender")
@@ -2379,13 +2434,22 @@ function Get-AclPathChecks {
         $path = [string] $c
         if (Test-Path $path) {
             $acl = Get-Acl -Path $path -ErrorAction SilentlyContinue
-            $result = [PSCustomObject]@{}
-            $result | Add-Member -MemberType NoteProperty -Name Path -Value $path
-            $result | Add-Member -MemberType NoteProperty -Name ACLs -Value $acl.Access
+            $acl_list = New-Object System.Collections.ArrayList
+            foreach ($a in $acl.Access) {
+                [void]$acl_list.Add([PSCustomObject]@{
+                    AccountName = [string] $a.IdentityReference
+                    AccessControlType = [string] $a.AccessControlType
+                    AccessRight = [string] $a.FileSystemRights
+                })
+            }
+            $result = [PSCustomObject]@{
+                Path = $path
+                ACLs = $acl_list
+            }
             [void]$results.Add($result)
         }
     }
-    return $results
+    return ,$results
 }
 
 function Add-AclPathChecksToXML {
@@ -2416,9 +2480,9 @@ function Add-AclPathChecksToXML {
         foreach ($a in $c.ACLs) {
             $xmlWriter.WriteStartElement("ACL")
             $xmlWriter.WriteAttributeString("path", [string] $c.Path)
-            $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference)
+            $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName)
             $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType)
-            $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights)
+            $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight)
             $xmlWriter.WriteEndElement() # ACL
         }
         $xmlWriter.WriteEndElement() # ACLs
@@ -2451,6 +2515,10 @@ function Add-ConfigChecksToXML {
         foreach ($c in $configChecks) {
             try{
                 $xmlWriter.WriteStartElement("ConfigCheck")
+                # the REVEAL importer reads Component, Name and Method as attributes
+                $xmlWriter.WriteAttributeString("Component", [string] $c.Component)
+                $xmlWriter.WriteAttributeString("Name", [string] $c.Name)
+                $xmlWriter.WriteAttributeString("Method", [string] $c.Method)
                 $xmlWriter.WriteElementString("Component", [string] $c.Component)
                 $xmlWriter.WriteElementString("Name", [string] $c.Name)
                 $xmlWriter.WriteElementString("Method", [string] $c.Method)
@@ -2463,7 +2531,7 @@ function Add-ConfigChecksToXML {
         }
         $xmlWriter.WriteEndElement() # ConfigChecks
     }catch {
-        Write-Output "[-] Config Checks could not be written to XML"
+        Write-Host "[-] Config Checks could not be written to XML"
     }
 
 }
@@ -2472,11 +2540,7 @@ function Get-ServicesInfo {
 
     $service_list = New-Object System.Collections.ArrayList
 
-    if (Get-Command Get-CimInstance -ea SilentlyContinue) {
-        $services = Get-CimInstance -ClassName win32_service
-    } else {
-        $services = Get-WmiObject  -class win32_service
-    }
+    $services = Get-WmiData -Class Win32_Service
     foreach ($s in $services ) {
         $service = [PSCustomObject]@{
             Caption = $s.Caption
@@ -2517,10 +2581,10 @@ function Get-ServicesInfo {
             foreach ($a in $acl.Access) {
                 try{
                     $perm = [PSCustomObject]@{
-                        Name = $s.Name
-                        IdentityReference = $a.IdentityReference
-                        AccessControlType = $a.AccessControlType
-                        FileSystemRights = $a.FileSystemRights
+                        Name = [string] $s.Name
+                        AccountName = [string] $a.IdentityReference
+                        AccessControlType = [string] $a.AccessControlType
+                        AccessRight = [string] $a.FileSystemRights
                     }
                     [void] $bin_perms.Add($perm)
                 }catch{}
@@ -2531,7 +2595,7 @@ function Get-ServicesInfo {
         } catch {}
         [void] $service_list.Add($service)
     }
-    return $service_list
+    return ,$service_list
 }
 
 function Add-ServicesInfoToXML {
@@ -2581,9 +2645,9 @@ function Add-ServicesInfoToXML {
                 foreach ($a in $s.BinaryPermissions) {
                     $xmlWriter.WriteStartElement("Permission")
                     $xmlWriter.WriteAttributeString("Name", [string] $a.Name)
-                    $xmlWriter.WriteAttributeString("AccountName", [string] $a.IdentityReference)
+                    $xmlWriter.WriteAttributeString("AccountName", [string] $a.AccountName)
                     $xmlWriter.WriteAttributeString("AccessControlType", [string] $a.AccessControlType)
-                    $xmlWriter.WriteAttributeString("AccessRight", [string] $a.FileSystemRights)
+                    $xmlWriter.WriteAttributeString("AccessRight", [string] $a.AccessRight)
                     $xmlWriter.WriteEndElement() # Permission
                 }
                 $xmlWriter.WriteEndElement() # BinaryPermissions
@@ -2776,6 +2840,7 @@ if (Get-Command Get-Printer -ea SilentlyContinue) {
             $printer = [PSCustomObject]@{
                 Name = [string] $p.Name
                 ShareName = [string] $p.ShareName
+                #Shareervice and ACL permissions. It's now -Depth 10.Name = [string] $p.ShareName
                 Type = [string] $p.Type
                 DriverName = [string] $p.DriverName
                 PortName = [string] $p.PortName
@@ -2798,36 +2863,154 @@ $aclPathChecks = Get-AclPathChecks -acl_path_checks $acl_path_checks
 
 
 ###############################################################################################################
-# Writing collected information to JSON file
+# Writing collected information to XML file
 ###############################################################################################################
-$jsonfile = $path.Path + "\" + $date + "_SystemInfoCollector_"+$version+"_" + $hostname + ".json"
+$basename = $path.Path + "\" + $date + "_SystemInfoCollector_" + $version + "_" + $hostname
+$xmlfile  = $basename + ".xml"
+$jsonfile = $basename + ".json"
 
-$json_obj = [PSCustomObject]@{
-    HostInfo = $hostInfo
-    BiosInfo = $biosInfo
-    Hotfixes = $hotfixes
-    InstalledProducts = $installedProducts
-    NetAdapter = $netadapters
-    NetIPs = $netips 
-    Routes = $routes
-    Users = $users
-    Groups = $groups
-    FileChecksResults = $file_checks_results
-    FirewallInfo = $firewallInfo
-    RegistryCheckResults = $registry_check_results 
-    Shares = $shares
-    WsusSettings = $wsusSettings
-    Winlogon = $winlogon
-    PSVersions = $psVersions
-    WSHSettings = $wshSettings 
-    NTPSettings = $ntpSettings
-    PSLogging = $psLogging
-    SMBConfig = $smbConfig
-    ConfigCheckResults = $config_check_results
-    DefenderInfo = $defenderInfo
-    Services = $services
-    Printers = $printers
-
+if ($OutputFormat -in @('XML', 'Both')) {
+    $xmlWriter = $null
+    try {
+        $settings =  New-Object System.Xml.XmlWriterSettings
+        $settings.Indent = $true
+        $settings.IndentChars = $(" "*4)
+        $xmlWriter = [System.Xml.XmlWriter]::Create($xmlfile, $settings)
+        Write-Output "[*] Exporting data as XML"
+        $xmlWriter.WriteStartDocument()
+            $xmlWriter.WriteStartElement("SystemInfoCollector")
+                $xmlWriter.WriteAttributeString("version", "$version")
+                $xmlWriter.WriteStartElement("Host")
+                    try {
+                        Add-HostInfoToXML -xmlWriter $xmlWriter -hostInfo $hostInfo
+                    } catch { Write-Output "[-] HostInfo could not be written to XML" }
+                    try {
+                        Add-BIOSInfoToXML -xmlWriter $xmlWriter -biosInfo $biosInfo
+                    } catch { Write-Output "[-] BIOSInfo could not be written to XML" }
+                    try {
+                        Add-HotfixesToXML -xmlWriter $xmlWriter -hotfixes $hotfixes -hostInfo $hostInfo
+                    } catch { Write-Output "[-] Hotfixes could not be written to XML" }
+                    try {
+                        Add-InstalledProductsToXML -xmlWriter $xmlWriter -products $installedProducts
+                    } catch { Write-Output "[-] InstalledProducts could not be written to XML" }
+                    try {
+                        Add-NetAdapterToXML -xmlWriter $xmlWriter -netadapters $netadapters
+                    } catch { Write-Output "[-] NetAdapter could not be written to XML" }
+                    try {
+                        Add-NetRouteToXML -xmlWriter $xmlWriter -routes $routes
+                    } catch { Write-Output "[-] NetRoute could not be written to XML" }
+                    try {
+                        Add-NetIPAddressToXML -xmlWriter $xmlWriter -netips $netips
+                    } catch { Write-Output "[-] NetIPAddress could not be written to XML" }
+                    try {
+                        Add-LocalUserAccountsToXML -xmlWriter $xmlWriter -users $users
+                    } catch { Write-Output "[-] LocalUserAccounts could not be written to XML" }
+                    try {
+                        Add-LocalGroupsToXML -xmlWriter $xmlWriter -groups $groups
+                    } catch { Write-Output "[-] LocalGroups could not be written to XML" }
+                    try {
+                        Add-FirewallInfoToXML -xmlWriter $xmlWriter -firewallInfo $firewallInfo
+                    } catch { Write-Output "[-] FirewallInfo could not be written to XML" }
+                    try {
+                        Add-RegistryChecksToXML -xmlWriter $xmlWriter -registry_check_results $registry_check_results
+                    } catch { Write-Output "[-] RegistryChecks could not be written to XML" }
+                    try {
+                        Add-ShareInfoToXML -xmlWriter $xmlWriter -shares $shares
+                    } catch { Write-Output "[-] SharesInfo could not be written to XML" }
+                    try {
+                        Add-WSUSSettingsToXML -xmlWriter $xmlWriter -wsusSettings $wsusSettings
+                    } catch { Write-Output "[-] WSUSSettings could not be written to XML" }
+                    try {
+                        Add-WinLogonToXML -xmlWriter $xmlWriter -winlogon $winlogon
+                    } catch { Write-Output "[-] Winlogon could not be written to XML" }
+                    try {
+                        Add-PSVersionsToXML -xmlWriter $xmlWriter -psVersions $psVersions
+                    } catch { Write-Output "[-] PSVersions could not be written to XML" }
+                    try {
+                        Add-WSHSettingsToXML -xmlWriter $xmlWriter -wshSettings $wshSettings
+                    } catch { Write-Output "[-] WSHSettings could not be written to XML" }
+                    try {
+                        Add-NTPSettings-ToXML -xmlWriter $xmlWriter -ntpSettings $ntpSettings
+                    } catch { Write-Output "[-] NTPSettings could not be written to XML" }
+                    try {
+                        Add-PSLoggingToXML -xmlWriter $xmlWriter -psLogging $psLogging
+                    } catch { Write-Output "[-] PSLogging could not be written to XML" }
+                    try {
+                        Add-SMBConfigToXML -xmlWriter $xmlWriter -smbConfig $smbConfig
+                    } catch { Write-Output "[-] SMBConfig could not be written to XML" }
+                    try {
+                        Add-DefenderInfoToXML -xmlWriter $xmlWriter -defenderInfo $defenderInfo
+                    } catch { Write-Output "[-] DefenderInfo could not be written to XML" }
+                    try {
+                        Add-PrintersToXML -xmlWriter $xmlWriter -printers $printers
+                    } catch { Write-Output "[-] Printers could not be written to XML" }
+                    try {
+                        Add-ServicesInfoToXML -xmlWriter $xmlWriter -services $services
+                    } catch { Write-Output "[-] Services could not be written to XML" }
+                    try {
+                        Add-FileExistChecksToXML -xmlWriter $xmlWriter -file_checks_results $file_checks_results
+                    } catch { Write-Output "[-] FileExistChecks could not be written to XML" }
+                    try {
+                        Add-AclPathChecksToXML -xmlWriter $xmlWriter -aclPathChecks $aclPathChecks
+                    } catch { Write-Output "[-] AclPathChecks could not be written to XML" }
+                    try {
+                        Add-ConfigChecksToXML -xmlWriter $xmlWriter -configChecks $config_check_results
+                    } catch { Write-Output "[-] ConfigChecks could not be written to XML" }
+                $xmlWriter.WriteEndElement() # Host
+            $xmlWriter.WriteEndElement() # SystemInfoCollector
+        $xmlWriter.WriteEndDocument()
+        $xmlWriter.Flush()
+        Write-Output "[+] XML file written to: $xmlfile"
+    } catch {
+        Write-Output "[-] XML file could not be written: $($_.Exception.Message)"
+    } finally {
+        if ($xmlWriter) { $xmlWriter.Close() }
+    }
 }
 
-$json_obj | ConvertTo-Json  -depth 4 | Out-File -FilePath $jsonfile 
+###############################################################################################################
+# Writing collected information to JSON file
+# The JSON file contains the same sections as the XML file. All collected objects are plain PSCustomObjects (no
+# CIM/WMI objects), so the JSON file contains the same values as the XML file.
+###############################################################################################################
+if ($OutputFormat -in @('JSON', 'Both')) {
+    try {
+        Write-Output "[*] Exporting data as JSON"
+        $json_obj = [PSCustomObject]@{
+            Version = $version
+            HostInfo = $hostInfo
+            BiosInfo = $biosInfo
+            Hotfixes = $hotfixes
+            InstalledProducts = $installedProducts
+            NetAdapter = $netadapters
+            NetIPs = $netips
+            Routes = $routes
+            Users = $users
+            Groups = $groups
+            FileChecksResults = $file_checks_results
+            FirewallInfo = $firewallInfo
+            RegistryCheckResults = $registry_check_results
+            Shares = $shares
+            WsusSettings = $wsusSettings
+            Winlogon = $winlogon
+            PSVersions = $psVersions
+            WSHSettings = $wshSettings
+            NTPSettings = $ntpSettings
+            PSLogging = $psLogging
+            SMBConfig = $smbConfig
+            DefenderInfo = $defenderInfo
+            Printers = $printers
+            Services = $services
+            AclPathChecks = $aclPathChecks
+            ConfigCheckResults = $config_check_results
+        }
+        # depth 10: the deepest nesting (e.g. Shares -> Share -> NTFSPermissions -> Permission) needs 5 levels.
+        # The default depth of 2 (or the previously used 4) truncates nested objects to strings.
+        $json = ConvertTo-Json -InputObject $json_obj -Depth 10
+        # write UTF-8 without BOM (Out-File in PowerShell 5 writes UTF-16 by default)
+        [System.IO.File]::WriteAllText($jsonfile, $json, (New-Object System.Text.UTF8Encoding($false)))
+        Write-Output "[+] JSON file written to: $jsonfile"
+    } catch {
+        Write-Output "[-] JSON file could not be written: $($_.Exception.Message)"
+    }
+}

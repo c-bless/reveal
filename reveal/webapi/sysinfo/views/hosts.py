@@ -50,7 +50,7 @@ def get_host_by_id(host_id):
 
 @bp.post("/hosts/by-name/")
 @bp.auth_required(auth)
-@bp.input(schema=HostByNameSearchSchema, location='json')
+@bp.input(schema=HostByNameSearchSchema, location='json', arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK, schema=HostSchema(many=True))
 @bp.doc(description="Returns a list of hosts containing the specified hostname.",
         summary="Find a host by hostname",
@@ -61,7 +61,7 @@ def get_host_by_name(search_data):
 
 @bp.post("/hosts/by-ip/")
 @bp.auth_required(auth)
-@bp.input(schema=HostByIPSearchSchema)
+@bp.input(schema=HostByIPSearchSchema, arg_name="search_data")
 @bp.output(status_code=HTTPStatus.OK,
            schema=HostSchema(many=True))
 @bp.doc(description="Returns a list of hosts containing the specified hostname.",

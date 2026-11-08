@@ -12,24 +12,18 @@
 
 {% block datatable %}
 {{ super() }}
-    <table id="table1" class="table table-bordered table-striped dataTable dtr-inline"
-                       aria-describedby="table1_info">
+    <table id="table1" class="table table-bordered table-striped">
         <thead>
         <tr>
-            <th class="sorting sorting_asc" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                aria-sort="ascending" aria-label="Name" width="15%">Category
+            <th aria-label="Name" width="15%">Category
             </th>
-            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                aria-sort="ascending" aria-label="Name" width="15%">Name
+            <th aria-label="Name" width="15%">Name
             </th>
-            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                aria-label="Description">Description
+            <th aria-label="Description">Description
             </th>
-            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                aria-label="Description"  width="15%">tags
+            <th aria-label="Description"  width="15%">tags
             </th>
-            <th class="sorting" tabindex="0" aria-controls="table1" rowspan="1" colspan="1"
-                aria-label="Details" width="15%">Details
+            <th aria-label="Details" width="15%">Details
             </th>
         </tr>
         </thead>
@@ -43,13 +37,13 @@
                     <td> {{ r.description }} </td>
                     <td>
                     {% for t in r.tags %}
-                        <span class="badge badge-secondary">{{ t }}</span>
+                        <span class="badge text-bg-secondary">{{ t }}</span>
                     {% endfor %}
                     </td>
                     <td class="actions">
                     {% for title, link in r.views %}
 
-                        <a href="{{ link }}" class="btn btn-default btn-xs">
+                        <a href="{{ link }}" class="btn btn-outline-secondary btn-xs">
                         <i class="fa fa-eye"></i> {{ title }}
                         </a>
 

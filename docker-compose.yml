@@ -6,7 +6,6 @@ services:
       - ./services/web/:/app
       - upload_volume:/app/uploads/
       - report_volume:/app/reports/
-      - update-data:/app/update-data/
     env_file:
       - ./services/web/webapp.env
     depends_on:
@@ -24,7 +23,8 @@ services:
   db:
     build: ./services/db
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      # PostgreSQL 18+ stores the data below /var/lib/postgresql/<major version>/docker
+      - postgres_data:/var/lib/postgresql
   nginx:
     build: ./services/nginx
     ports:
@@ -39,5 +39,4 @@ volumes:
   postgres_data:
   upload_volume:
   report_volume:
-  update-data:
   ssl_volume:

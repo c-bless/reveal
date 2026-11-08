@@ -1,4 +1,3 @@
-{% import "bootstrap/utils.html" as utils %}
 {% extends "layout/base_layout.html" %}
 
 {% from "_formhelpers.html" import render_file_field, render_submit_field %}
@@ -25,7 +24,7 @@
                         <div class="card-body">
                             <dl class="row">
                                 <dt class="col-sm-1">Allowed files:</dt>
-                                <dd class="col-sm-8">Output of collector scripts (.xml) or compliance checks (.yml)</dd>
+                                <dd class="col-sm-8">Output of collector scripts (.xml, .json) or compliance checks (.yml)</dd>
                             </dl>
                             {{ render_file_field(form.Files) }}
                             {{ form.hidden_tag() }}
@@ -45,19 +44,3 @@
 
 </section>
 {% endblock content %}
-
-
-{% block javascripts %}
-{{ super() }}
-<!-- Specific Page Vendor -->
-
-
-<!-- jQuery -->
-<script src="{{ url_for('static', filename='plugins/jquery/jquery.min.js')}}"></script>
-<!-- Bootstrap 4 -->
-<script src="{{ url_for('static', filename='plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-<!-- AdminLTE App -->
-<script src="{{ url_for('static', filename='dist/js/adminlte.min.js')}}"></script>
-
-
-{% endblock javascripts %}
