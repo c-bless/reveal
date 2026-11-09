@@ -1,0 +1,55 @@
+# Builds the Docker images (webapp, webapi, nginx, db) to check that the build works.
+# Nothing is pushed to a registry.
+#
+# The build uses the same steps as a local "make build": the static frontend dependencies are downloaded
+# (download-dependencies.sh), the data directories and the source code are copied to services/*, and the images are
+# built with docker compose.
+name: Docker build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+# a newer push to the same branch / pull request cancels the running build
+concurrency:
+  group: docker-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Docker images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      # image names (reveal-webapp, ...) independent of the checkout directory (repository name)
+      COMPOSE_PROJECT_NAME: reveal
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Build images (make build)
+        run: make build
+
+      - name: Check images
+        run: |
+          set -euo pipefail
+          for image in reveal-webapp reveal-webapi; do
+            echo "[*] ${image}: dependencies and imports"
+            docker run --rm -e DATABASE_URL=sqlite:////tmp/check.sqlite "${image}" \
+              sh -c 'pip check && python -c "import reveal.app, reveal.api"'
+          done
+          echo "[*] reveal-nginx: configuration"
+          docker run --rm --add-host webapp:127.0.0.1 --add-host webapi:127.0.0.1 reveal-nginx nginx -t
+          echo "[*] reveal-db: version"
+          docker run --rm --entrypoint postgres reveal-db --version
+
+      - name: List images
+        if: always()
+        run: docker image ls --filter "reference=reveal-*"
