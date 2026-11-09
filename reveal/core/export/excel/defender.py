@@ -93,3 +93,53 @@ def generate_defender_excel(hosts=[]):
     # Rewind the buffer.
     output.seek(0)
     return output
+
+
+def _write_table(header, rows):
+    """
+    Writes a table to a new Excel workbook. All values are written as text (write_string), so values collected from
+    the hosts (e.g. exclusion paths starting with "=") are not interpreted as formulas.
+    """
+    output = BytesIO()
+    workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+    worksheet = workbook.add_worksheet()
+    header_format = workbook.add_format({'bold': True, 'bottom': 2, 'bg_color': '#CCCCCC'})
+    for col, title in enumerate(header):
+        worksheet.write_string(0, col, title, header_format)
+    for row, values in enumerate(rows, start=1):
+        for col, value in enumerate(values):
+            worksheet.write_string(row, col, "" if value is None else str(value))
+    worksheet.autofilter(0, 0, max(len(rows), 1), len(header) - 1)
+    worksheet.autofit()
+    workbook.close()
+    output.seek(0)
+    return output
+
+
+def _host_columns(h):
+    return [h.Hostname, h.Domain, h.OSName, h.SystemGroup, h.Location, h.Label]
+
+
+HOST_HEADER = ["Hostname", "Domain", "OSName", "SystemGroup", "Location", "Label"]
+
+
+def generate_defender_protection_excel(hosts, status_by_host):
+    """ Hosts with the state of all protection components and the list of disabled components. """
+    from reveal.core.querries.defender import PROTECTION_COMPONENTS, disabled_components
+    header = HOST_HEADER + [field for field, _ in PROTECTION_COMPONENTS] + ["Disabled components"]
+    rows = []
+    for h in hosts:
+        for s in status_by_host.get(h.id, []):
+            rows.append(_host_columns(h) + [getattr(s, field) for field, _ in PROTECTION_COMPONENTS]
+                        + [", ".join(disabled_components(s))])
+    return _write_table(header, rows)
+
+
+def generate_defender_exclusions_excel(hosts, settings_by_host):
+    """ Hosts with the configured exclusion paths and processes. """
+    header = HOST_HEADER + ["ExclusionPath", "ExclusionProcess"]
+    rows = []
+    for h in hosts:
+        for s in settings_by_host.get(h.id, []):
+            rows.append(_host_columns(h) + [s.ExclusionPath, s.ExclusionProcess])
+    return _write_table(header, rows)

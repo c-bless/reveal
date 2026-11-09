@@ -65,6 +65,8 @@ RE_SYSINFO_REGISTRYCHECK_KEY = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_REGISTRYCHECK_EXPECTED = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 RE_SYSINFO_REGISTRYCHECK_CURRENTVALUE = r"^([a-zA-Z0-9 \.\-\_]+)?$"
 
+# Defender exclusions: paths / processes (e.g. C:\Temp\*, %ProgramData%\x, powershell.exe)
+RE_SYSINFO_DEFENDER_EXCLUSION = r'^([a-zA-Z0-9 \\\.\-\:\(\)\_\*\$\%\~\{\}]+)?$'
 RE_SYSINFO_FILENAME = r'^([a-zA-Z0-9 \\\.\-\:\(\)\_"]+)?$'
 
 RE_AD_GROUP_SCOPE = r"^([a-zA-Z0-9 \.\-\_]+)?$"

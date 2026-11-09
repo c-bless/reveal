@@ -32,6 +32,9 @@ from reveal.webapp.sysinfo.reports.services import ReportServiceByUsercontext
 from reveal.webapp.sysinfo.reports.printers import ReportFilePrinterInstalled
 from reveal.webapp.sysinfo.reports.services import ReportModifiableServices
 from reveal.webapp.sysinfo.reports.hardening import ReportHotkeysEnabled
+from reveal.webapp.sysinfo.reports.defender import ReportDefenderProtectionDisabled
+from reveal.webapp.sysinfo.reports.defender import ReportDefenderExclusions
+from reveal.webapp.sysinfo.reports.defender import ReportDefenderNoData
 
 
 def get_usermgmt_report_list():
@@ -78,6 +81,9 @@ def get_systemhardening_report_list():
     report_plugin_list.append(ReportHotkeysEnabled())
     report_plugin_list.append(ReportModifiableServices())
     report_plugin_list.append(ReportLLMNREnabled())
+    report_plugin_list.append(ReportDefenderProtectionDisabled())
+    report_plugin_list.append(ReportDefenderExclusions())
+    report_plugin_list.append(ReportDefenderNoData())
 
     return report_plugin_list
 

@@ -1,0 +1,35 @@
+{% extends "layout/report_search_list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+
+{% block page_title %} Report: {{ report_name }} {% endblock page_title %}
+{% block menu_l1 %} System Reviews {% endblock menu_l1 %}
+{% block menu_l2 %} Reports {% endblock menu_l2 %}
+
+{% block datatable %}
+{{ super() }}
+    <table id="table1" class="table table-bordered table-striped">
+        {{ helper.table_head([("Hostname", "12%"), ("Domain", "10%"), ("OS Name", "15%"), ("Disabled protection components", "25%"), "Product version", "SystemGroup", "Location", "Label", "Details"]) }}
+        <tbody>
+        {% if hosts %}
+            {% for h in hosts %}
+            <tr>
+                <td> {{ h.Hostname }} </td>
+                <td> {{ h.Domain }} </td>
+                <td> {{ h.OSName }} </td>
+                <td> {% for s in status_by_host.get(h.id, []) %}{{ disabled_components(s) | join(", ") }}{% endfor %} </td>
+                <td> {% for s in status_by_host.get(h.id, []) %}{{ s.AMProductVersion }} {% endfor %}</td>
+                <td> {{ h.SystemGroup }} </td>
+                <td> {{ h.Location }} </td>
+                <td> {{ h.Label }} </td>
+                <td class="actions">{{ helper.view_button(url_for('sysinfo.host_detail', id=h.id)) }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="9">No hosts found!</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock datatable %}

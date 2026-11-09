@@ -3,6 +3,17 @@
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% set title = "Defender Overview" %}
+
+{# select field with label (Bootstrap 5 form-select) #}
+{% macro select_field(field) %}
+<div class="mb-3 row">
+    {{ field.label(class="col-sm-6 col-form-label") }}
+    <div class="col-sm-6">{{ field(class="form-select") }}</div>
+</div>
+{% endmacro %}
+
+{# shows the exclusion values; "None" (legacy importer) is not shown #}
+{% macro exclusion_value(value) %}{% if value and value != "None" %}{{ value }}{% endif %}{% endmacro %}
 {% block page_title %} Defender Status {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Defender Status List {% endblock menu_l2 %}
@@ -30,6 +41,47 @@
             </div>
         </div>
 
+        {% set defender_filter_active = form.AnyProtectionDisabled.data or form.HasExclusions.data or form.ExclusionContains.data
+            or form.RealTimeProtectionEnabled.data or form.AntivirusEnabled.data or form.AMServiceEnabled.data
+            or form.BehaviorMonitorEnabled.data or form.IoavProtectionEnabled.data or form.OnAccessProtectionEnabled.data
+            or form.NISEnabled.data %}
+        <div class="border-top pt-3 mt-2">
+            <a class="fw-bold text-decoration-none" data-bs-toggle="collapse" href="#defenderFilters" role="button"
+               aria-expanded="{{ 'true' if defender_filter_active else 'false' }}" aria-controls="defenderFilters">
+                <i class="fas fa-shield-halved me-1"></i> Defender filters
+            </a>
+            <div class="collapse {{ 'show' if defender_filter_active }} mt-3" id="defenderFilters">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h6 class="text-secondary">Protection status</h6>
+                        {{ select_field(form.RealTimeProtectionEnabled) }}
+                        {{ select_field(form.AntivirusEnabled) }}
+                        {{ select_field(form.AMServiceEnabled) }}
+                        {{ select_field(form.BehaviorMonitorEnabled) }}
+                        {{ select_field(form.IoavProtectionEnabled) }}
+                        {{ select_field(form.OnAccessProtectionEnabled) }}
+                        {{ select_field(form.NISEnabled) }}
+                        <div class="form-check mb-3">
+                            {{ form.AnyProtectionDisabled(class="form-check-input") }}
+                            {{ form.AnyProtectionDisabled.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <h6 class="text-secondary">Exclusions</h6>
+                        {{ select_field(form.HasExclusions) }}
+                        <div class="mb-3 row">
+                            {{ form.ExclusionContains.label(class="col-sm-6 col-form-label") }}
+                            <div class="col-sm-6">
+                                {{ form.ExclusionContains(class="form-control" + (" is-invalid" if form.ExclusionContains.errors else ""), placeholder="e.g. C:\Temp or powershell.exe") }}
+                                {% for error in form.ExclusionContains.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                            </div>
+                        </div>
+                        <p class="form-text">Hosts without collected Defender data match only if the filter is set to "Any".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- /.card-body -->
     <div class="card-footer">
@@ -45,7 +97,7 @@
 {% block datatable %}
 {{ super() }}
 <table id="table1" class="table table-bordered table-striped">
-    {{ helper.table_head([("Hostname", "15%"), ("Domain", "10%"), ("OS Name", "15%"), "DisableBehaviorMonitoring", "DisableScriptScanning", "DisableIOAVProtection", "DisableRealtimeMonitoring", "SystemGroup", "Location", "Label", "Details"]) }}
+    {{ helper.table_head([("Hostname", "15%"), ("Domain", "10%"), ("OS Name", "15%"), "Real-time protection", "Antivirus", "Behavior monitoring", "Download scanning (IOAV)", "On-access protection", "Network inspection (NIS)", "DisableBehaviorMonitoring", "DisableScriptScanning", "DisableIOAVProtection", "DisableRealtimeMonitoring", "Exclusions", "SystemGroup", "Location", "Label", "Details"]) }}
     <tbody>
     {% if hosts %}
     {% for h in hosts %}
@@ -53,10 +105,17 @@
         <td> {{ h.Hostname }} </td>
         <td> {{ h.Domain }} </td>
         <td> {{ h.OSName }} </td>
+        <td> {% for st in status_by_host.get(h.id, []) %} {{ st.RealTimeProtectionEnabled }}{% endfor %}</td>
+        <td> {% for st in status_by_host.get(h.id, []) %} {{ st.AntivirusEnabled }}{% endfor %}</td>
+        <td> {% for st in status_by_host.get(h.id, []) %} {{ st.BehaviorMonitorEnabled }}{% endfor %}</td>
+        <td> {% for st in status_by_host.get(h.id, []) %} {{ st.IoavProtectionEnabled }}{% endfor %}</td>
+        <td> {% for st in status_by_host.get(h.id, []) %} {{ st.OnAccessProtectionEnabled }}{% endfor %}</td>
+        <td> {% for st in status_by_host.get(h.id, []) %} {{ st.NISEnabled }}{% endfor %}</td>
         <td> {% for d in settings_by_host.get(h.id, []) %} {{ d.DisableBehaviorMonitoring }}{% endfor %}</td>
         <td> {% for d in settings_by_host.get(h.id, []) %} {{ d.DisableScriptScanning }}{% endfor %}</td>
         <td> {% for d in settings_by_host.get(h.id, []) %} {{ d.DisableIOAVProtection }}{% endfor %}</td>
         <td> {% for d in settings_by_host.get(h.id, []) %} {{ d.DisableRealtimeMonitoring }}{% endfor %}</td>
+        <td class="text-break"> {% for d in settings_by_host.get(h.id, []) %}{{ exclusion_value(d.ExclusionPath) }} {{ exclusion_value(d.ExclusionProcess) }}{% endfor %}</td>
         <td> {{ h.SystemGroup }} </td>
         <td> {{ h.Location }} </td>
         <td> {{ h.Label }} </td>

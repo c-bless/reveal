@@ -5,7 +5,7 @@ from sqlalchemy import and_
 from reveal.webapp.sysinfo import sysinfo_bp
 from reveal.webapp.sysinfo.forms.defender import DefenderSearchForm
 from reveal.core.models.sysinfo import Host
-from reveal.core.models.sysinfo import DefenderSettings
+from reveal.core.querries import defender as defender_queries
 from reveal.core.export.excel.hosts import generate_hosts_excel
 from reveal.core.export.excel.defender import generate_defender_excel
 
@@ -61,6 +61,26 @@ def defender_search_list():
                     host_filter.append(Host.Label.ilike("%"+label+"%"))
                 else:
                     host_filter.append(Host.Label.notilike("%"+label+"%"))
+
+            # Defender status: protection components (any / enabled / disabled)
+            for field, _ in defender_queries.PROTECTION_COMPONENTS:
+                value = getattr(form, field).data
+                if value in ("true", "false"):
+                    host_filter.append(defender_queries.protection_component_filter(field, value == "true"))
+            if form.AnyProtectionDisabled.data:
+                host_filter.append(defender_queries.any_protection_disabled_filter())
+
+            # Defender exclusions
+            if form.HasExclusions.data == "yes":
+                host_filter.append(defender_queries.has_exclusions_filter())
+            elif form.HasExclusions.data == "no":
+                host_filter.append(defender_queries.no_exclusions_filter())
+            elif form.HasExclusions.data == "not_readable":
+                host_filter.append(defender_queries.exclusions_not_readable_filter())
+            exclusion_text = (form.ExclusionContains.data or "").strip()
+            if exclusion_text:
+                host_filter.append(defender_queries.exclusion_contains_filter(exclusion_text))
+
             hosts = Host.query.filter(and_(*host_filter)).all()
 
             if 'full' in request.form:
@@ -79,12 +99,8 @@ def defender_search_list():
     else:
         hosts = Host.query.all()
 
-    # one query for the Defender settings of all hosts (instead of several queries per host via the dynamic
-    # relationship Host.DefenderSettings in the template)
-    settings_by_host = {}
-    host_ids = [h.id for h in hosts]
-    if host_ids:
-        for d in DefenderSettings.query.filter(DefenderSettings.Host_id.in_(host_ids)).order_by(DefenderSettings.id):
-            settings_by_host.setdefault(d.Host_id, []).append(d)
+    # Defender status and settings of all hosts with two queries (instead of several queries per host via the
+    # dynamic relationships Host.DefenderStatus / Host.DefenderSettings in the template)
+    status_by_host, settings_by_host = defender_queries.get_defender_data(hosts)
     return render_template('sysinfo/defender/defender_search_list.html', form=form, hosts=hosts,
-                           settings_by_host=settings_by_host)
+                           status_by_host=status_by_host, settings_by_host=settings_by_host)
