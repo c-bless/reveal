@@ -30,6 +30,11 @@
     .EXAMPLE
     .\sysinfo-collector.ps1 -OutputFormat JSON
     Writes the collected information only to a JSON file.
+
+    .EXAMPLE
+    .\sysinfo-collector.ps1 -UseWin32Product
+    Collects the installed products via Win32_Product instead of the registry (slow, only MSI packages, triggers a
+    Windows Installer consistency check for every MSI package).
 #>
 param (
     # optional parameter to specify the systemgroup the host belongs to
@@ -47,7 +52,13 @@ param (
     # output format: XML (default), JSON or Both
     [Parameter(Mandatory=$false)]
     [ValidateSet('XML', 'JSON', 'Both')]
-    [string]$OutputFormat = 'XML'
+    [string]$OutputFormat = 'XML',
+
+    # collect installed products via Win32_Product instead of the Uninstall keys in the registry. Win32_Product is
+    # very slow, only returns MSI packages and causes Windows Installer to run a consistency check (and possibly a
+    # repair) for every MSI package (Event-ID 1035 / 1040).
+    [Parameter(Mandatory=$false)]
+    [switch]$UseWin32Product
 )
 
 
@@ -809,43 +820,168 @@ function Add-HotfixesToXML {
 }
 
 
-function Get-InstalledProductsInfo {
-    $product_list = New-Object System.Collections.ArrayList
-    try{
-        if ($script:UseCim){
-            $products = Get-WmiData -Class Win32_Product
-            foreach ($p in $products){
-                $product = [PSCustomObject]@{
-                    IdentifyingNumber = [string] $p.IdentifyingNumber
-                    Name = [string] $p.Name
-                    Caption = [string] $p.Caption
-                    InstallDate = [string] $p.InstallDate
-                    Description = [string] $p.Description
-                    Vendor = [string] $p.Vendor
-                    Version = [string] $p.Version
-                    InstallLocation = [string] $p.InstallLocation
-                    CollectionMethod =  "CIM"
-                }
-                [void] $product_list.Add($product)
-            }
-        }else{
-            $products = Get-WmiData -Class Win32_Product
-            foreach ($p in $products){
-                $product = [PSCustomObject]@{
-                    IdentifyingNumber = [string] $p.IdentifyingNumber
-                    Name = [string] $p.Name
-                    Caption = [string] $p.Caption
-                    InstallDate = [string] $p.InstallDate
-                    Description = [string] $p.Description
-                    Vendor = [string] $p.Vendor
-                    Version = [string] $p.Version
-                    InstallLocation = [string] $p.InstallLocation
-                    CollectionMethod =  "WMI"
-                }
-                 [void] $product_list.Add($product)
+function Get-UninstallEntries {
+    <#
+    .SYNOPSIS
+    Reads the products below one Uninstall key of the registry.
+
+    .DESCRIPTION
+    Entries are skipped in the same way as in "Apps & Features": entries without DisplayName, system components
+    (SystemComponent = 1) and updates / patches (ParentKeyName or ReleaseType Update, Hotfix, Security Update).
+    Errors in single entries are ignored, the remaining entries are still collected.
+
+    .PARAMETER BaseKey
+    Opened registry base key (e.g. HKLM in the 64-bit or 32-bit view, or HKEY_USERS)
+
+    .PARAMETER SubKey
+    Path of the Uninstall key below the base key
+
+    .PARAMETER Architecture
+    Architecture of the registry view (x64 / x86). Empty for per user installations.
+
+    .PARAMETER Scope
+    "Machine" for installations for all users, otherwise the SID of the user
+    #>
+    param (
+        [Microsoft.Win32.RegistryKey]$BaseKey,
+        [string]$SubKey,
+        [string]$Architecture,
+        [string]$Scope
+    )
+    $entries = New-Object System.Collections.ArrayList
+    $uninstallKey = $null
+    try { $uninstallKey = $BaseKey.OpenSubKey($SubKey) } catch {}
+    if (-not $uninstallKey) { return ,$entries }
+    try {
+        foreach ($name in $uninstallKey.GetSubKeyNames()) {
+            $key = $null
+            try {
+                $key = $uninstallKey.OpenSubKey($name)
+                if (-not $key) { continue }
+                $displayName = [string] $key.GetValue('DisplayName')
+                if ([string]::IsNullOrEmpty($displayName)) { continue }
+                if ([string] $key.GetValue('SystemComponent') -eq '1') { continue }
+                if ($key.GetValue('ParentKeyName')) { continue }
+                if (@('Update', 'Hotfix', 'Security Update') -contains [string] $key.GetValue('ReleaseType')) { continue }
+                [void] $entries.Add([PSCustomObject]@{
+                    IdentifyingNumber = [string] $name
+                    Name = $displayName
+                    Caption = $displayName
+                    InstallDate = [string] $key.GetValue('InstallDate')
+                    Description = [string] $key.GetValue('Comments')
+                    Vendor = [string] $key.GetValue('Publisher')
+                    Version = [string] $key.GetValue('DisplayVersion')
+                    InstallLocation = [string] $key.GetValue('InstallLocation')
+                    Architecture = $Architecture
+                    Scope = $Scope
+                    CollectionMethod = "Registry"
+                })
+            } catch {
+                # ignore broken entries, continue with the next one
+            } finally {
+                if ($key) { $key.Close() }
             }
         }
-    }catch {}
+    } finally {
+        $uninstallKey.Close()
+    }
+    return ,$entries
+}
+
+
+function Get-InstalledProductsInfo {
+    <#
+    .SYNOPSIS
+    Collects the installed products.
+
+    .DESCRIPTION
+    By default the products are read from the Uninstall keys of the registry (same source as "Apps & Features"):
+      - HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall              (64-bit view, all users)
+      - HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall  (32-bit view, all users)
+      - HKU\<SID>\Software\Microsoft\Windows\CurrentVersion\Uninstall          (per user, loaded profiles only)
+    Reading the registry is read-only, fast and also covers products that have not been installed via MSI.
+    The 64-bit and 32-bit views are opened explicitly, so the 64-bit products are also found if the script runs in a
+    32-bit PowerShell on a 64-bit system (registry redirection). Products of users that are not logged on are not
+    collected (their registry hive is not loaded).
+
+    With -UseWin32Product the Win32_Product class is used instead (slow, only MSI packages, triggers a Windows
+    Installer consistency check for every MSI package).
+
+    .PARAMETER UseWin32Product
+    Use Win32_Product instead of the registry.
+
+    .OUTPUTS
+    [System.Collections.ArrayList] of products
+    #>
+    param (
+        [switch]$UseWin32Product
+    )
+    $product_list = New-Object System.Collections.ArrayList
+
+    if ($UseWin32Product) {
+        $method = if ($script:UseCim) { "CIM" } else { "WMI" }
+        foreach ($p in @(Get-WmiData -Class Win32_Product)) {
+            try {
+                [void] $product_list.Add([PSCustomObject]@{
+                    IdentifyingNumber = [string] $p.IdentifyingNumber
+                    Name = [string] $p.Name
+                    Caption = [string] $p.Caption
+                    InstallDate = [string] $p.InstallDate
+                    Description = [string] $p.Description
+                    Vendor = [string] $p.Vendor
+                    Version = [string] $p.Version
+                    InstallLocation = [string] $p.InstallLocation
+                    Architecture = ""
+                    Scope = "Machine"
+                    CollectionMethod = $method
+                })
+            } catch {}
+        }
+        return ,$product_list
+    }
+
+    $uninstallPath = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
+    $sources = New-Object System.Collections.ArrayList
+
+    # installations for all users (64-bit and 32-bit view of HKLM)
+    try {
+        if ([Environment]::Is64BitOperatingSystem) {
+            $views = @(@{ View = [Microsoft.Win32.RegistryView]::Registry64; Arch = 'x64' },
+                       @{ View = [Microsoft.Win32.RegistryView]::Registry32; Arch = 'x86' })
+        } else {
+            $views = @(@{ View = [Microsoft.Win32.RegistryView]::Default; Arch = 'x86' })
+        }
+        foreach ($v in $views) {
+            $hklm = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $v.View)
+            [void] $sources.Add(@{ Base = $hklm; SubKey = $uninstallPath; Arch = $v.Arch; Scope = 'Machine' })
+        }
+    } catch {
+        Write-Host "[-] Registry of the local machine could not be opened: $($_.Exception.Message)"
+    }
+
+    # per user installations of the loaded user profiles (S-1-5-21-...: local and domain accounts, without *_Classes)
+    try {
+        $users = [Microsoft.Win32.Registry]::Users
+        foreach ($sid in $users.GetSubKeyNames()) {
+            if ($sid -match '^S-1-5-21-[\d-]+$') {
+                [void] $sources.Add(@{ Base = $users; SubKey = "$sid\$uninstallPath"; Arch = ''; Scope = $sid })
+            }
+        }
+    } catch {}
+
+    # the same product can be registered more than once (e.g. MSI package and setup bootstrapper)
+    $seen = @{}
+    foreach ($src in $sources) {
+        foreach ($e in (Get-UninstallEntries -BaseKey $src.Base -SubKey $src.SubKey -Architecture $src.Arch -Scope $src.Scope)) {
+            $id = "{0}|{1}|{2}|{3}" -f $e.Name, $e.Version, $e.Architecture, $e.Scope
+            if ($seen.ContainsKey($id)) { continue }
+            $seen[$id] = $true
+            [void] $product_list.Add($e)
+        }
+    }
+    foreach ($src in $sources) {
+        if ($src.Scope -eq 'Machine') { try { $src.Base.Close() } catch {} }
+    }
     return ,$product_list
 }
 
@@ -857,31 +993,18 @@ function Add-InstalledProductsToXML {
         [System.Collections.ArrayList]$products
     )
 
+    # all product objects are created by Get-InstalledProductsInfo and have the same properties
     $xmlWriter.WriteStartElement("Products")
     foreach ($p in $products ) {
         try{
             $xmlWriter.WriteStartElement("Product")
-            if ($p.PSObject.Properties.Name -contains "Caption") {
-                $xmlWriter.WriteElementString("Caption", [string] $p.Caption)
-            }
-            if ($p.PSObject.Properties.Name -contains "InstallDate") {
-                $xmlWriter.WriteElementString("InstallDate", [string]$p.InstallDate)
-            }
-            if ($p.PSObject.Properties.Name -contains "Description") {
-                $xmlWriter.WriteElementString("Description",[string]$p.Description)
-            }
-            if ($p.PSObject.Properties.Name -contains "Vendor") {
-                $xmlWriter.WriteElementString("Vendor",[string]$p.Vendor)
-            }
-            if ($p.PSObject.Properties.Name -contains "Name") {
-                $xmlWriter.WriteElementString("Name",[string]$p.Name)
-            }
-            if ($p.PSObject.Properties.Name -contains "Version") {
-                $xmlWriter.WriteElementString("Version",[string]$p.Version)
-            }
-            if ($p.PSObject.Properties.Name -contains "InstallLocation") {
-                $xmlWriter.WriteElementString("InstallLocation",[string]$p.InstallLocation)
-            }
+            $xmlWriter.WriteElementString("Caption", [string] $p.Caption)
+            $xmlWriter.WriteElementString("InstallDate", [string] $p.InstallDate)
+            $xmlWriter.WriteElementString("Description", [string] $p.Description)
+            $xmlWriter.WriteElementString("Vendor", [string] $p.Vendor)
+            $xmlWriter.WriteElementString("Name", [string] $p.Name)
+            $xmlWriter.WriteElementString("Version", [string] $p.Version)
+            $xmlWriter.WriteElementString("InstallLocation", [string] $p.InstallLocation)
             $xmlWriter.WriteEndElement() # product
         }catch{}
     }
@@ -2687,7 +2810,7 @@ $hotfixes = Get-HotfixesInfo -host_info $hostInfo
 # Collecting information about installed products / applications
 ###############################################################################################################
 Write-Output "[*] Collecting installed products"
-$installedProducts = Get-InstalledProductsInfo
+$installedProducts = Get-InstalledProductsInfo -UseWin32Product:$UseWin32Product
 
 ###############################################################################################################
 # Collecting information about network adapters
