@@ -32,7 +32,8 @@ def renew_token():
     user.API_TOKEN = gen_api_token()
     db.session.add(user)
     db.session.commit()
-    return render_template('auth/profile.html', user=user)
+    form = ChangePasswordForm()
+    return render_template('auth/profile.html', form=form, user=user)
 
 @auth_bp.route("/change-pw", methods=['POST'])
 @login_required

@@ -1,5 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% set title = "User List" %}
 {% block page_title %} User List {% endblock page_title %}
@@ -7,36 +8,28 @@
 {% block menu_l2 %} User List {% endblock menu_l2 %}
 
 {% block searchform %}
-<form class="form-horizontal" method="post">
+<form method="post">
     {{ form.hidden_tag() }}
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                {{ render_field_sm2(form.SAMAccountName) }}
-                {{ render_check_field_sm2(form.InvertSAMAccountName) }}
+                {{ render_search_field(form.SAMAccountName, form.InvertSAMAccountName) }}
 
-                {{ render_field_sm2(form.GivenName) }}
-                {{ render_check_field_sm2(form.InvertGivenName) }}
+                {{ render_search_field(form.GivenName, form.InvertGivenName) }}
 
-                {{ render_field_sm2(form.Surname) }}
-                {{ render_check_field_sm2(form.InvertSurname) }}
+                {{ render_search_field(form.Surname, form.InvertSurname) }}
 
-                {{ render_field_sm2(form.DisplayName) }}
-                {{ render_check_field_sm2(form.InvertDisplayName) }}
+                {{ render_search_field(form.DisplayName, form.InvertDisplayName) }}
 
-                {{ render_field_sm2(form.Name) }}
-                {{ render_check_field_sm2(form.InvertName) }}
+                {{ render_search_field(form.Name, form.InvertName) }}
             </div>
             <div class="col-sm-6">
 
-                {{ render_field_sm2(form.SID) }}
-                {{ render_check_field_sm2(form.InvertSID) }}
+                {{ render_search_field(form.SID, form.InvertSID) }}
 
-                {{ render_field_sm2(form.Domain) }}
-                {{ render_check_field_sm2(form.InvertDomain) }}
+                {{ render_search_field(form.Domain, form.InvertDomain) }}
 
-                {{ render_field_sm2(form.DistinguishedName) }}
-                {{ render_check_field_sm2(form.InvertDistinguishedName) }}
+                {{ render_search_field(form.DistinguishedName, form.InvertDistinguishedName) }}
 
                 {{ render_check_field_sm2(form.Enabled) }}
                 {{ render_check_field_sm2(form.Disabled) }}
@@ -58,19 +51,7 @@
 {% block datatable %}
 {{ super() }}
 <table id="table1" class="table table-striped table-bordered">
-    <thead>
-    <tr>
-        <th width="15%"> SAMAccountName</th>
-        <th width="10%"> Domain</th>
-        <th width="5%"> Enabled</th>
-        <th width="20%"> SID</th>
-        <th width="10%"> GivenName</th>
-        <th width="10%"> Surname</th>
-        <th width="5">DisplayName</th>
-        <th width="20">Description</th>
-        <th width="5">Action</th>
-    </tr>
-    </thead>
+    {{ helper.table_head([("SAMAccountName", "15%"), ("Domain", "10%"), ("Enabled", "5%"), ("SID", "20%"), ("GivenName", "10%"), ("Surname", "10%"), ("DisplayName", "5"), ("Description", "20"), ("Action", "5")]) }}
     <tbody>
     {% if users %}
     {% for u in users %}
@@ -84,9 +65,7 @@
         <td> {{ u.DisplayName }}</td>
         <td> {{ u.Description }}</td>
         <td class="actions">
-            <a href="{{url_for('ad.user_detail',id=u.id)}}" class="btn btn-outline-secondary btn-xs">
-                <i class="fa fa-eye"></i> View
-            </a>
+            {{ helper.view_button(url_for('ad.user_detail',id=u.id)) }}
         </td>
     </tr>
     {% endfor %}

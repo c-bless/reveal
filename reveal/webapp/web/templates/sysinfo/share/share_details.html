@@ -54,15 +54,7 @@
               <div class="card-body p-0">
                 <table class="table table-striped">
                   {% if share.SharePermissions %}
-                    <thead>
-                        <tr>
-                          <th>Share Name</th>
-                          <th>AccountName</th>
-                          <th>ScopeName</th>
-                          <th>AccessControlType</th>
-                          <th>AccessRight</th>
-                        </tr>
-                      </thead>
+                    {{ helper.table_head(["Share Name", "AccountName", "ScopeName", "AccessControlType", "AccessRight"]) }}
                       <tbody>
                         {% for p in share.SharePermissions %}
 
@@ -76,11 +68,7 @@
                         {% endfor %}
                       </tbody>
                     {% else %}
-                      <thead>
-                        <tr>
-                          <th>ACL</th>
-                        </tr>
-                        </thead>
+                      {{ helper.table_head(["ACL"]) }}
                       <tbody>
                         <tr>
                           <td colspan="4">No Permissions found</td>
@@ -103,14 +91,7 @@
               <div class="card-body p-0">
                 <table class="table table-striped">
                     {% if share.NTFSPermissions %}
-                    <thead>
-                        <tr>
-                          <th>Share Name</th>
-                          <th>AccountName</th>
-                          <th>AccessControlType</th>
-                          <th>AccessRight</th>
-                        </tr>
-                      </thead>
+                    {{ helper.table_head(["Share Name", "AccountName", "AccessControlType", "AccessRight"]) }}
                       <tbody>
                         {% for p in share.NTFSPermissions %}
                           <tr>
@@ -122,11 +103,7 @@
                         {% endfor %}
                       </tbody>
                     {% else %}
-                      <thead>
-                        <tr>
-                          <th>ACL</th>
-                        </tr>
-                        </thead>
+                      {{ helper.table_head(["ACL"]) }}
                       <tbody>
                         <tr>
                           <td colspan="4">No Permissions found</td>

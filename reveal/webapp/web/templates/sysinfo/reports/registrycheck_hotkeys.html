@@ -1,30 +1,12 @@
 {% extends "layout/report_search_list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-
-
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="ValueMatch" width="5%">Expected / Current Value
-                </th>
-                <th aria-label="Host" width="10%">Host
-                </th>
-                <th aria-label="Host" width="10%">Systemgroup
-                </th>
-                <th aria-label="Host" width="10%">Location
-                </th>
-                <th aria-label="Host" width="10%">User Context
-                </th>
-                <th aria-label="Actions" width="5%">Actions
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("Expected / Current Value", "5%"), ("Host", "10%"), ("Systemgroup", "10%"), ("Location", "10%"), ("User Context", "10%"), ("Actions", "5%")]) }}
             <tbody>
             {% if hotkey_dict %}
                 {% for h in hotkey_dict %}
@@ -38,9 +20,7 @@
                         <td> {{ c.Host.Location }} </td>
                         <td> {{ c.Host.Whoami }} </td>
                         <td class="actions">
-                            <a href="{{ url_for('sysinfo.registrycheck_detail', id=c.id) }}" class="btn btn-outline-secondary btn-xs">
-                                <i class="fa fa-eye"></i> View
-                            </a>
+                            {{ helper.view_button(url_for('sysinfo.registrycheck_detail', id=c.id)) }}
                         </td>
                       </tr>
                         {% endfor %}

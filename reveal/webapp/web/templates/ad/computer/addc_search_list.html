@@ -1,5 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% set title = "Domain Controller List" %}
 {% block page_title %} Domain List {% endblock page_title %}
@@ -9,37 +10,29 @@
 
 
 {% block searchform %}
-    <form class="form-horizontal" method="post">
+    <form method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Hostname) }}
-                            {{ render_check_field_sm2(form.InvertHostname) }}
+                            {{ render_search_field(form.Hostname, form.InvertHostname) }}
 
-                            {{ render_field_sm2(form.OperatingSystem) }}
-                            {{ render_check_field_sm2(form.InvertOperatingSystem) }}
+                            {{ render_search_field(form.OperatingSystem, form.InvertOperatingSystem) }}
 
-                            {{ render_field_sm2(form.IPv4Address) }}
-                            {{ render_check_field_sm2(form.InvertIPv4Address) }}
+                            {{ render_search_field(form.IPv4Address, form.InvertIPv4Address) }}
 
-                            {{ render_field_sm2(form.IPv6Address) }}
-                            {{ render_check_field_sm2(form.InvertIPv6Address) }}
+                            {{ render_search_field(form.IPv6Address, form.InvertIPv6Address) }}
 
-                            {{ render_field_sm2(form.LDAP_port) }}
-                            {{ render_check_field_sm2(form.InvertLDAP_port) }}
+                            {{ render_search_field(form.LDAP_port, form.InvertLDAP_port) }}
 
-                            {{ render_field_sm2(form.SSL_port) }}
-                            {{ render_check_field_sm2(form.InvertSSL_port) }}
+                            {{ render_search_field(form.SSL_port, form.InvertSSL_port) }}
                         </div>
                         <div class="col-sm-6">
 
-                            {{ render_field_sm2(form.Domain) }}
-                            {{ render_check_field_sm2(form.InvertDomain) }}
+                            {{ render_search_field(form.Domain, form.InvertDomain) }}
 
 
-                            {{ render_field_sm2(form.DistinguishedName) }}
-                            {{ render_check_field_sm2(form.InvertDistinguishedName) }}
+                            {{ render_search_field(form.DistinguishedName, form.InvertDistinguishedName) }}
 
                             <br/>
 
@@ -64,17 +57,7 @@
 {% block datatable %}
 {{ super() }}
       <table id="table1" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th width="15%"> Name </th>
-                        <th width="15%"> Domain </th>
-                        <th width="15%"> IPv4Address</th>
-                        <td width="30%">OperatingSystem</td>
-                        <th width="10%"> IsGlobalCatalog </th>
-                        <th width="10%"> IsReadOnly </th>
-                        <th width="5%"> Actions </th>
-                    </tr>
-                </thead>
+                {{ helper.table_head([("Name", "15%"), ("Domain", "15%"), ("IPv4Address", "15%"), ("OperatingSystem", "30%"), ("IsGlobalCatalog", "10%"), ("IsReadOnly", "10%"), ("Actions", "5%")]) }}
                 <tbody>
                     {% if dc_list %}
                         {% for dc in dc_list %}
@@ -86,9 +69,7 @@
                             <td> {{ dc.IsGlobalCatalog }} </td>
                             <td> {{ dc.IsReadOnly }} </td>
                             <td class="actions">
-                                <a href="{{ url_for('ad.dc_detail', id=dc.id) }}" class="btn btn-outline-secondary btn-xs">
-                                    <i class="fa fa-eye"></i> View
-                                </a>
+                                {{ helper.view_button(url_for('ad.dc_detail', id=dc.id)) }}
                             </td>
                           </tr>
                         {% endfor %}

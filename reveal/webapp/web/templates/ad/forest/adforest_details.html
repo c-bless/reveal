@@ -58,11 +58,7 @@
         <!-- /.card-header -->
         <div class="card-body p-0">
           <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Name</th>
-              </tr>
-            </thead>
+            {{ helper.table_head(["Name"]) }}
             <tbody>
             {% if forest.Sites %}
               {% for s in forest.Sites %}
@@ -92,11 +88,7 @@
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                    </tr>
-                  </thead>
+                  {{ helper.table_head(["Name"]) }}
                   <tbody>
                   {% if gc_list %}
                     {% for gc in gc_list %}

@@ -1,5 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% set title = "Products" %}
 {% block page_title %} Products {% endblock page_title %}
@@ -8,26 +9,21 @@
 
 
 {% block searchform %}
-    <form class="form-horizontal" method="post">
+    <form method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Caption) }}
-                            {{ render_check_field_sm2(form.InvertCaption) }}
+                            {{ render_search_field(form.Caption, form.InvertCaption) }}
 
-                            {{ render_field_sm2(form.Name) }}
-                            {{ render_check_field_sm2(form.InvertName) }}
+                            {{ render_search_field(form.Name, form.InvertName) }}
 
-                            {{ render_field_sm2(form.Version) }}
-                            {{ render_check_field_sm2(form.InvertVersion) }}
+                            {{ render_search_field(form.Version, form.InvertVersion) }}
                         </div>
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Host) }}
-                            {{ render_check_field_sm2(form.InvertHost) }}
+                            {{ render_search_field(form.Host, form.InvertHost) }}
 
-                            {{ render_field_sm2(form.InstallLocation) }}
-                            {{ render_check_field_sm2(form.InvertInstallLocation) }}
+                            {{ render_search_field(form.InstallLocation, form.InvertInstallLocation) }}
 
                         </div>
                     </div>
@@ -46,24 +42,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Caption
-                </th>
-                <th aria-label="DisplayName" width="15%">InstallDate
-                </th>
-                <th aria-label="StartMode" width="20%">Name
-                </th>
-                <th aria-label="StartName" width="5%">Version
-                </th>
-                <th aria-label="Started" width="5%">Host
-                </th>
-                <th aria-label="PathName" width="25%">InstallLocation
-                </th>
-                <th aria-label="Details" width="5%">Details
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Caption", "15%"), ("InstallDate", "15%"), ("Name", "20%"), ("Version", "5%"), ("Host", "5%"), ("InstallLocation", "25%"), ("Details", "5%")]) }}
             <tbody>
             {% if products %}
                 {% for p in products %}
@@ -75,9 +54,7 @@
                     <td> {{ p.Host }} </td>
                     <td> {{ p.InstallLocation }} </td>
                     <td class="actions">
-                        <a href="{{url_for('sysinfo.host_detail',id=p.Host_id)}}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View Host
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.host_detail',id=p.Host_id), "View Host") }}
                     </td>
                   </tr>
                 {% endfor %}

@@ -33,3 +33,24 @@
     <span class="text-danger">False</span>
   {% endif %}
 {% endmacro %}
+
+{#
+  Table header. columns: list of column titles or (title, width) tuples, e.g.
+    {{ helper.table_head(["Name", ("Path", "35%"), "Details"]) }}
+  The width is set as "width" attribute: DataTables reads the column width from this attribute (not from style).
+#}
+{% macro table_head(columns) %}
+<thead>
+<tr>
+{%- for c in columns %}
+    {% if c is string %}<th>{{ c }}</th>{% else %}<th width="{{ c[1] }}">{{ c[0] }}</th>{% endif %}
+{%- endfor %}
+</tr>
+</thead>
+{%- endmacro %}
+
+
+{# Button to the detail page of an entry (used in the "Details" column of the result tables). #}
+{% macro view_button(url, label="View", icon="fa fa-eye") %}
+<a href="{{ url }}" class="btn btn-outline-secondary btn-xs"><i class="{{ icon }}"></i> {{ label }}</a>
+{%- endmacro %}

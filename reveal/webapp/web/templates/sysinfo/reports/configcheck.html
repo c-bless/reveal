@@ -1,32 +1,12 @@
 {% extends "layout/report_search_list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-
-
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="Component" width="15%">Component
-                </th>
-                <th aria-label="Method" width="10%">Method
-                </th>
-                <th aria-label="Result" width="15%">Result
-                </th>
-                <th aria-label="Key" width="15%">Key
-                </th>
-                <th aria-label="Host" width="5%">Host
-                </th>
-                <th aria-label="Message" width="20%">Message
-                </th>
-                <th aria-label="Actions" width="5%">Actions
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("Component", "15%"), ("Method", "10%"), ("Result", "15%"), ("Key", "15%"), ("Host", "5%"), ("Message", "20%"), ("Actions", "5%")]) }}
             <tbody>
             {% if checks %}
                 {% for c in checks %}
@@ -39,9 +19,7 @@
                     <td> {{ c.Host }} </td>
                     <td> {{ c.Message }} </td>
                     <td class="actions">
-                        <a href="{{ url_for('sysinfo.configcheck_detail', id=c.id) }}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.configcheck_detail', id=c.id)) }}
                     </td>
                   </tr>
                 {% endfor %}

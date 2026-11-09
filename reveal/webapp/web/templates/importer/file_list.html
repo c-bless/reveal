@@ -8,15 +8,8 @@
 
 {% block datatable %}
 {{ super() }}
-<table class="table table-bordered table-striped mb-none" id="datatable-editable">
-    <thead>
-        <tr>
-            <th width="60%"> Filename </th>
-            <th width="20%"> UUID </th>
-            <th width="10%"> Imported </th>
-            <th width="20%"> Actions </th>
-        </tr>
-    </thead>
+<table class="table table-bordered table-striped" id="datatable-editable">
+    {{ helper.table_head([("Filename", "60%"), ("UUID", "20%"), ("Imported", "10%"), ("Actions", "20%")]) }}
     <tbody>
         {% if uploaded_files %}
             {% for u in uploaded_files %}
@@ -26,10 +19,8 @@
                 <td> {{ u.Imported }} </td>
                 <td>
                     {% if not u.Imported %}
-                    <a href="{{ url_for('importer.import_file_by_uid', uid=u.UUID) }}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> Import</a>
-                    <a href="{{ url_for('importer.delete_file_by_uid', uid=u.UUID) }}" class="btn btn-outline-secondary btn-xs">
-                        <i class="fa fa-eye"></i> Delete</a>
+                    {{ helper.view_button(url_for('importer.import_file_by_uid', uid=u.UUID), "Import") }}
+                    {{ helper.view_button(url_for('importer.delete_file_by_uid', uid=u.UUID), "Delete") }}
                   {% endif %}
 
                 </td>
@@ -43,7 +34,7 @@
         {% endif %}
     </tbody>
 </table>
-<form class="form-horizontal" method="post" action="{{ url_for('importer.import_all') }}"
+<form method="post" action="{{ url_for('importer.import_all') }}"
                                   enctype="multipart/form-data">
     {{ form.csrf_token }}
     {{ form.Submit }}

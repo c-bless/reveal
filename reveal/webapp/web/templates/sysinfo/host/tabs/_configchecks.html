@@ -1,0 +1,37 @@
+{# Host details: tab "configchecks" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">ConfigChecks</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "Component", "Method", "Key", "Value", "Result", "Message"]) }}
+                    <tbody>
+                    {% if host.ConfigChecks %}
+                    {% for c in host.ConfigChecks %}
+                    <tr>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.Component }}</td>
+                        <td>{{ c.Method }}</td>
+                        <td>{{ c.Key }}</td>
+                        <td>{{ c.Value }}</td>
+                        <td>{{ c.Result }}</td>
+                        <td>{{ c.Message }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No config checks performed!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+{# Host details: tab "routes" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row m-1">
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Routes</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["AddressFamily", "DestinationPrefix", "NextHop", "RouteMetric", "IfIndex", "InterfaceMetric", "AdminDistance", "AdminDistance"]) }}
+                    <tbody>
+                    {% if host.Routes %}
+                    {% for r in host.Routes %}
+                    <tr>
+                        <td>{{ r.AddressFamily }}</td>
+                        <td>{{ r.DestinationPrefix}}</td>
+                        <td>{{ r.NextHop }}</td>
+                        <td>{{ r.RouteMetric }}</td>
+                        <td>{{ r.IfIndex }}</td>
+                        <td>{{ r.InterfaceMetric }}</td>
+                        <td>{{ r.AdminDistance }}</td>
+                        <td>{{ r.AdminDistance }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4">No routes found.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+    <!-- /.card -->
+</div>

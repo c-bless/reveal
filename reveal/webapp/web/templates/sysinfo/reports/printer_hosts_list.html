@@ -1,18 +1,12 @@
 {% extends "layout/report_search_list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="70%">Printer Search Query
-                </th>
-                <th aria-label="StartMode" width="30%">Host Count
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Printer Search Query", "70%"), ("Host Count", "30%")]) }}
             <tbody>
             {% if printer_matches %}
                 {% for m in printer_matches %}

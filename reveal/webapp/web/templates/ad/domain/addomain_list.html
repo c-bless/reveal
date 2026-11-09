@@ -1,4 +1,5 @@
 {% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 
 {% set title = "Domain List" %}
 {% block page_title %} Domain List {% endblock page_title %}
@@ -8,16 +9,7 @@
 {% block datatable %}
 {{ super() }}
       <table id="table1" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th width="15%"> Name </th>
-                        <th width="15%"> NetBIOSName</th>
-                        <th width="35%"> SID </th>
-                        <th width="15%"> Forest </th>
-                        <th width="15%"> ParentDomain </th>
-                        <th width="5%"> Details</th>
-                    </tr>
-                </thead>
+                {{ helper.table_head([("Name", "15%"), ("NetBIOSName", "15%"), ("SID", "35%"), ("Forest", "15%"), ("ParentDomain", "15%"), ("Details", "5%")]) }}
                 <tbody>
                     {% if domains %}
                         {% for d in domains %}
@@ -28,12 +20,8 @@
                             <td> {{ d.Forest }} </td>
                             <td> {{ d.ParentDomain }} </td>
                             <td class="actions">
-                                <a href="{{url_for('ad.domain_detail',id=d.id)}}" class="btn btn-outline-secondary btn-xs">
-                                    <i class="fa fa-eye"></i> View
-                                </a>
-                                <a href="{{url_for('ad.domain_export_excel', id=d.id)}}" class="btn btn-outline-secondary btn-xs">
-                                    <i class="far fa-file-excel"></i> Download
-                                </a>
+                                {{ helper.view_button(url_for('ad.domain_detail',id=d.id)) }}
+                                {{ helper.view_button(url_for('ad.domain_export_excel', id=d.id), "Download", icon="far fa-file-excel") }}
                             </td>
                           </tr>
                         {% endfor %}

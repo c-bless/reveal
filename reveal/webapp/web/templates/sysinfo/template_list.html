@@ -6,20 +6,14 @@
 
 {% block datatable %}
 {{ super() }}
-<table class="table table-bordered table-striped mb-none" id="datatable-editable">
-    <thead>
-        <tr>
-            <th width="80%"> Template </th>
-            <th width="20%"> Actions </th>
-        </tr>
-    </thead>
+<table class="table table-bordered table-striped" id="datatable-editable">
+    {{ helper.table_head([("Template", "80%"), ("Actions", "20%")]) }}
     <tbody>
         {% for t in templates %}
           <tr>
             <td> {{ t }} </td>
             <td>
-                <a href="{{ url_for('sysinfo.hosts_export_docx', template=t) }}" class="btn btn-outline-secondary btn-xs">
-                    <i class="fa fa-eye"></i> Export</a>
+                {{ helper.view_button(url_for('sysinfo.hosts_export_docx', template=t), "Export") }}
             </td>
           </tr>
         {% endfor %}

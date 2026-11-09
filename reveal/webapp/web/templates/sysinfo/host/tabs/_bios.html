@@ -1,0 +1,24 @@
+{# Host details: tab "bios" (included by sysinfo/host/host_details.html, uses "host") #}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">BIOS</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Manufacturer</dt>
+                    <dd class="col-sm-8">{{ host.BiosManufacturer  }}</dd>
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">{{ host.BiosName }}</dd>
+                    <dt class="col-sm-4">Version</dt>
+                    <dd class="col-sm-8">{{ host.BiosVersion }}</dd>
+                    <dt class="col-sm-4">Serial</dt>
+                    <dd class="col-sm-8">{{ host.BiosSerial }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

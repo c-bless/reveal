@@ -5,6 +5,7 @@ from sqlalchemy import and_
 from reveal.webapp.sysinfo import sysinfo_bp
 from reveal.webapp.sysinfo.forms.defender import DefenderSearchForm
 from reveal.core.models.sysinfo import Host
+from reveal.core.models.sysinfo import DefenderSettings
 from reveal.core.export.excel.hosts import generate_hosts_excel
 from reveal.core.export.excel.defender import generate_defender_excel
 
@@ -78,4 +79,12 @@ def defender_search_list():
     else:
         hosts = Host.query.all()
 
-    return render_template('sysinfo/defender/defender_search_list.html', form=form, hosts=hosts)
+    # one query for the Defender settings of all hosts (instead of several queries per host via the dynamic
+    # relationship Host.DefenderSettings in the template)
+    settings_by_host = {}
+    host_ids = [h.id for h in hosts]
+    if host_ids:
+        for d in DefenderSettings.query.filter(DefenderSettings.Host_id.in_(host_ids)).order_by(DefenderSettings.id):
+            settings_by_host.setdefault(d.Host_id, []).append(d)
+    return render_template('sysinfo/defender/defender_search_list.html', form=form, hosts=hosts,
+                           settings_by_host=settings_by_host)

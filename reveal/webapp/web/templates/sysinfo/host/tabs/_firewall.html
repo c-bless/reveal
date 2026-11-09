@@ -1,0 +1,23 @@
+{# Host details: tab "firewall" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row m-1">
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Firewall Profiles</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Firewall (Domain)</dt>
+                    <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfileDomain) }}</dd>
+                    <dt class="col-sm-4">Firewall (Private)</dt>
+                    <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePrivate) }}</dd>
+                    <dt class="col-sm-4">Firewall (Public)</dt>
+                    <dd class="col-sm-8">{{ helper.render_isEnabled(host.FwProfilePublic) }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

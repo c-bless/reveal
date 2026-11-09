@@ -20,11 +20,15 @@ def get_direct_domainuser_assignments(host_filter=[]) -> list[tuple]:
     :return: list of tuple (Host object, Group object, GroupMember object)
     """
     result = []
-    groups = Group.query.join(Host).filter(and_(*host_filter)).all()
-    for g in groups:
-        for m in g.Members:
-            if (m.AccountType == "512") and (str(m.Domain).lower() !=  str(g.Host).lower()):
-                result.append((g.Host, g, m))
+    # one query for all members (instead of one query per group via the dynamic relationship Group.Members).
+    # Group and Host are loaded via the joined relationships GroupMember.Group / Group.Host.
+    members = (GroupMember.query.join(Group, GroupMember.Group_id == Group.id).join(Host, Group.Host_id == Host.id)
+               .filter(GroupMember.AccountType == "512").filter(and_(*host_filter))
+               .order_by(Group.id, GroupMember.id).all())
+    for m in members:
+        g = m.Group
+        if str(m.Domain).lower() != str(g.Host).lower():
+            result.append((g.Host, g, m))
 
     return result
 

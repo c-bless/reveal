@@ -66,13 +66,7 @@
             <!-- /.card-header -->
             <div class="card-body">
                 <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Group</th>
-                        <th>SID</th>
-                        <th>Caption</th>
-                    </tr>
-                    </thead>
+                    {{ helper.table_head(["Group", "SID", "Caption"]) }}
                     <tbody>
                     {% if groups %}
                     {% for g in groups %}

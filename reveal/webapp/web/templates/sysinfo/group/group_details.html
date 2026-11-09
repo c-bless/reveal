@@ -54,14 +54,7 @@
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Domain</th>
-                      <th>Caption</th>
-                      <th>SID</th>
-                      <th>AccountType</th>
-                    </tr>
-                  </thead>
+                  {{ helper.table_head(["Domain", "Caption", "SID", "AccountType"]) }}
                   <tbody>
                   {% if group.Members %}
                     {% for m in group.Members %}

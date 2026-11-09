@@ -16,12 +16,12 @@ class ADDomain(db.Model):
     ComputerContainer = db.Column(db.String(), unique=False)
     DistinguishedName = db.Column(db.String(), unique=False)
     InfrastructureMaster = db.Column(db.String(), unique=False)
-    PasswordPolicies = db.relationship('ADPasswordPolicy', backref='Domain', lazy='dynamic')
-    Trusts = db.relationship('ADTrust', backref='Domain', lazy='dynamic')
-    DCs = db.relationship('ADDomainController', backref='Domain', lazy='dynamic')
-    ComputerList = db.relationship('ADComputer', backref='Domain', lazy='dynamic')
-    Users = db.relationship('ADUser', backref='Domain', lazy='dynamic')
-    Groups = db.relationship('ADGroup', backref='Domain', lazy='dynamic')
+    PasswordPolicies = db.relationship('ADPasswordPolicy', backref=db.backref('Domain', lazy='joined'), lazy='dynamic')
+    Trusts = db.relationship('ADTrust', backref=db.backref('Domain', lazy='joined'), lazy='dynamic')
+    DCs = db.relationship('ADDomainController', backref=db.backref('Domain', lazy='joined'), lazy='dynamic')
+    ComputerList = db.relationship('ADComputer', backref=db.backref('Domain', lazy='joined'), lazy='dynamic')
+    Users = db.relationship('ADUser', backref=db.backref('Domain', lazy='joined'), lazy='dynamic')
+    Groups = db.relationship('ADGroup', backref=db.backref('Domain', lazy='joined'), lazy='dynamic')
 
     def __repr__(self):
         return self.Name
@@ -37,9 +37,9 @@ class ADForest(db.Model):
     Name = db.Column(db.String(1024), unique=False)
     RootDomain = db.Column(db.String(1024), unique=False, nullable=False)
     SchemaMaster = db.Column(db.String(1024), unique=False)
-    Sites = db.relationship('ADForestSite', backref='Forest', lazy='dynamic')
-    GlobalCatalogs = db.relationship('ADForestGlobalCatalog', backref='Forest', lazy='dynamic')
-    DCs = db.relationship('ADDomainController', backref='Forest', lazy='dynamic')
+    Sites = db.relationship('ADForestSite', backref=db.backref('Forest', lazy='joined'), lazy='dynamic')
+    GlobalCatalogs = db.relationship('ADForestGlobalCatalog', backref=db.backref('Forest', lazy='joined'), lazy='dynamic')
+    DCs = db.relationship('ADDomainController', backref=db.backref('Forest', lazy='joined'), lazy='dynamic')
 
     def __repr__(self):
         return self.Name
@@ -172,8 +172,8 @@ class ADDomainController(db.Model):
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
     Forest_id = db.Column(db.Integer, db.ForeignKey('ADForest.id'), nullable=False)
     # References
-    ServerRoles = db.relationship('ADDCServerRole', backref='DC', lazy='dynamic')
-    OperationMasterRoleRoles = db.relationship('ADOperationMasterRole', backref='DC', lazy='dynamic')
+    ServerRoles = db.relationship('ADDCServerRole', backref=db.backref('DC', lazy='joined'), lazy='dynamic')
+    OperationMasterRoleRoles = db.relationship('ADOperationMasterRole', backref=db.backref('DC', lazy='joined'), lazy='dynamic')
 
     def __repr__(self):
         return self.Hostname
@@ -202,7 +202,7 @@ class ADComputer(db.Model):
     OperatingSystem = db.Column(db.String(1024), unique=False)
     OperatingSystemVersion = db.Column(db.String(100), unique=False)
     Description = db.Column(db.String(2048), unique=False)
-    SPNs = db.relationship('ADSPN', backref='Computer', lazy='dynamic')
+    SPNs = db.relationship('ADSPN', backref=db.backref('Computer', lazy='joined'), lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
 
@@ -258,9 +258,9 @@ class ADUser(db.Model):
     TrustedToAuthForDelegation = db.Column(db.Boolean(), unique=False, nullable=True)
     Modified = db.Column(db.String(256), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(), unique=False, nullable=True)
-    Memberships = db.relationship('ADUserMembership', backref='User', lazy='dynamic')
-    DelegationSPN = db.relationship('ADUserAuthDelegationSPN', backref='User', lazy='dynamic')
-    ServiceSPN = db.relationship('ADUserServicePrincipalName', backref='User', lazy='dynamic')
+    Memberships = db.relationship('ADUserMembership', backref=db.backref('User', lazy='joined'), lazy='dynamic')
+    DelegationSPN = db.relationship('ADUserAuthDelegationSPN', backref=db.backref('User', lazy='joined'), lazy='dynamic')
+    ServiceSPN = db.relationship('ADUserServicePrincipalName', backref=db.backref('User', lazy='joined'), lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):
@@ -318,7 +318,7 @@ class ADGroup(db.Model):
     SamAccountName = db.Column(db.String(256), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     MemberOfStr = db.Column(db.String(4096), unique=False, nullable=True)
-    Members = db.relationship('ADGroupMember', backref='Group', lazy='dynamic')
+    Members = db.relationship('ADGroupMember', backref=db.backref('Group', lazy='joined'), lazy='dynamic')
     Domain_id = db.Column(db.Integer, db.ForeignKey('ADDomain.id'), nullable=False)
 
     def __repr__(self):

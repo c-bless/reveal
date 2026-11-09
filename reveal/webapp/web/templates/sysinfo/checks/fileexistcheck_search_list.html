@@ -1,32 +1,26 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
 {% set title = "FileExist Checks" %}
 {% block page_title %} FileExistChecks {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} FileExistCheck List {% endblock menu_l2 %}
 
-{% block download_links %}
-    {{ super() }}
-
-{% endblock download_links %}
 
 
 {% block searchform %}
-    <form class="form-horizontal" method="post">
+    <form method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Name) }}
-                            {{ render_check_field_sm2(form.InvertName) }}
+                            {{ render_search_field(form.Name, form.InvertName) }}
 
-                            {{ render_field_sm2(form.File) }}
-                            {{ render_check_field_sm2(form.InvertFile) }}
+                            {{ render_search_field(form.File, form.InvertFile) }}
                         </div>
                         <div class="col-sm-6">
 
-                            {{ render_field_sm2(form.Host) }}
-                            {{ render_check_field_sm2(form.InvertHost) }}
+                            {{ render_search_field(form.Host, form.InvertHost) }}
                             <br />
                             {{ render_check_field_sm2(form.FileExist) }}
                             {{ render_check_field_sm2(form.UseFileExist) }}
@@ -49,28 +43,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-
-
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="File" width="15%">File
-                </th>
-                <th aria-label="FileExist" width="10%">FileExist
-                </th>
-                <th aria-label="ExpectedHash" width="15%">ExpectedHash
-                </th>
-                <th aria-label="HashMatch" width="15%">HashMatch
-                </th>
-                <th aria-label="CurrentHash" width="5%">CurrentHash
-                </th>
-                <th aria-label="Host" width="10%">Host
-                </th>
-                <th aria-label="Systemgroup" width="10%">Systemgroup
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("File", "15%"), ("FileExist", "10%"), ("ExpectedHash", "15%"), ("HashMatch", "15%"), ("CurrentHash", "5%"), ("Host", "10%"), ("Systemgroup", "10%")]) }}
             <tbody>
             {% if checks %}
                 {% for c in checks %}
@@ -84,9 +57,7 @@
                     <td> {{ c.Host }} </td>
                     <td> {{ c.Host.SystemGroup }} </td>
                     <td class="actions">
-                        <a href="{{ url_for('sysinfo.host_detail', id=c.Host.id) }}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View Host
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.host_detail', id=c.Host.id), "View Host") }}
                     </td>
                   </tr>
                 {% endfor %}

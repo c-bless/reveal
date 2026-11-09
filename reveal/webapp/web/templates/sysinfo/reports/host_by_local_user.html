@@ -1,5 +1,6 @@
 {% extends "layout/report_search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% set title = "Hosts by local user" %}
 {% block page_title %} Hosts by local user {% endblock page_title %}
@@ -12,13 +13,11 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                {{ render_field_sm2(form.SystemGroup) }}
-                {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
                 {{ render_field_sm2(form.Name) }}
             </div>
             <div class="col-sm-6">
-                {{ render_field_sm2(form.Location) }}
-                {{ render_check_field_sm2(form.InvertLocation) }}
+                {{ render_search_field(form.Location, form.InvertLocation) }}
                 {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
                 {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
             </div>
@@ -31,24 +30,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th aria-label="Hostname" width="15%">Hostname
-                    </th>
-                    <th aria-label="Domain" width="15%">Domain
-                    </th>
-                    <th aria-label="OSName" width="20%">OS Name
-                    </th>
-                    <th aria-label="User">enabled local Users
-                    </th>
-                    <th aria-label="SystemGroup">SystemGroup
-                    </th>
-                    <th aria-label="Location">Location
-                    </th>
-                    <th aria-label="Details">Details
-                    </th>
-                </tr>
-                </thead>
+                {{ helper.table_head([("Hostname", "15%"), ("Domain", "15%"), ("OS Name", "20%"), "enabled local Users", "SystemGroup", "Location", "Details"]) }}
                 <tbody>
                 {% if hosts %}
                     {% for h in hosts %}
@@ -67,9 +49,7 @@
                         <td> {{ h.SystemGroup }} </td>
                         <td> {{ h.Location }} </td>
                         <td class="actions">
-                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-outline-secondary btn-xs">
-                                <i class="fa fa-eye"></i> View
-                            </a>
+                            {{ helper.view_button(url_for('sysinfo.host_detail',id=h.id)) }}
                         </td>
                       </tr>
                     {% endfor %}

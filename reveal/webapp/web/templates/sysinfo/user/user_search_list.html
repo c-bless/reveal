@@ -1,47 +1,37 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
 {% set title = "Local Users" %}
 {% block page_title %} Local Users {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Local users List {% endblock menu_l2 %}
 
-{% block download_links %}
-    {{ super() }}
-
-{% endblock download_links %}
 
 
 {% block searchform %}
-    <form class="form-horizontal" method="post">
+    <form method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-5">
-                            {{ render_field_sm2(form.Name) }}
-                            {{ render_check_field_sm2(form.InvertName) }}
+                            {{ render_search_field(form.Name, form.InvertName) }}
 
-                            {{ render_field_sm2(form.FullName) }}
-                            {{ render_check_field_sm2(form.InvertFullName) }}
+                            {{ render_search_field(form.FullName, form.InvertFullName) }}
 
-                            {{ render_field_sm2(form.AccountType) }}
-                            {{ render_check_field_sm2(form.InvertAccountType) }}
+                            {{ render_search_field(form.AccountType, form.InvertAccountType) }}
 
-                            {{ render_field_sm2(form.SID) }}
-                            {{ render_check_field_sm2(form.InvertSID) }}
+                            {{ render_search_field(form.SID, form.InvertSID) }}
 
 
                         </div>
                         <div class="col-sm-5">
 
-                            {{ render_field_sm2(form.Host) }}
-                            {{ render_check_field_sm2(form.InvertHost) }}
+                            {{ render_search_field(form.Host, form.InvertHost) }}
 
-                            {{ render_field_sm2(form.SystemGroup) }}
-                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                            {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
 
 
-                            {{ render_field_sm2(form.Description) }}
-                            {{ render_check_field_sm2(form.InvertDescription) }}
+                            {{ render_search_field(form.Description, form.InvertDescription) }}
 
                         </div>
                         <div class="col-sm-2">
@@ -80,34 +70,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="DisplayName" width="15%">FullName
-                </th>
-                <th aria-label="StartMode" width="5%">AccountType
-                </th>
-                <th aria-label="StartName" width="10%">SID
-                </th>
-                <th aria-label="Started" width="5%">Lockout
-                </th>
-                <th aria-label="PathName" width="5%">PW Changeable
-                </th>
-                <th aria-label="SystemName" width="5%">PW Required
-                </th>
-                <th aria-label="PathName" width="20%">Description
-                </th>
-                <th aria-label="SystemName" width="5%">Host
-                </th>
-                <th aria-label="SystemName" width="5%">Systemgroup
-                </th>
-                <th aria-label="SystemName" width="5%">Location
-                </th>
-                <th aria-label="Details" width="5%">Details
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("FullName", "15%"), ("AccountType", "5%"), ("SID", "10%"), ("Lockout", "5%"), ("PW Changeable", "5%"), ("PW Required", "5%"), ("Description", "20%"), ("Host", "5%"), ("Systemgroup", "5%"), ("Location", "5%"), ("Details", "5%")]) }}
             <tbody>
             {% if users %}
                 {% for u in users %}
@@ -124,9 +87,7 @@
                     <td> {{ u.Host.SystemGroup }} </td>
                     <td> {{ u.Host.Location }} </td>
                     <td class="actions">
-                        <a href="{{ url_for('sysinfo.user_detail', id=u.id) }}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.user_detail', id=u.id)) }}
                     </td>
                   </tr>
                 {% endfor %}

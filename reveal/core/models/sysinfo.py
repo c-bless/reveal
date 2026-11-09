@@ -147,7 +147,7 @@ class Route(db.Model):
     IsStatic = db.Column(db.Boolean, unique=False, nullable=True)
     AdminDistance = db.Column(db.Integer, unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Routes")
+    Host = db.relationship("Host", back_populates="Routes", lazy="joined")
 
     def __repr__(self):
         return f"{self.InterfaceAlias} {self.DestinationPrefix}"
@@ -163,7 +163,7 @@ class NTP(db.Model):
     Type = db.Column(db.String(), unique=False, nullable=True)
     UpdateInterval = db.Column(db.Integer, unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="NTPSettings")
+    Host = db.relationship("Host", back_populates="NTPSettings", lazy="joined")
 
     def __repr__(self):
         return f"{self.Server}"
@@ -181,7 +181,7 @@ class PSInstalledVersions(db.Model):
     RuntimeVersion = db.Column(db.String(256), unique=False, nullable=True)
     ConsoleHostModuleName = db.Column(db.String(256), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="PSInstalledVersions")
+    Host = db.relationship("Host", back_populates="PSInstalledVersions", lazy="joined")
 
     def __repr__(self):
         return self.PSVersion
@@ -198,7 +198,7 @@ class Hotfix(db.Model):
     InstalledOnStr = db.Column(db.String(150), unique=False, nullable=True)
     Description = db.Column(db.String(2048), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Hotfixes")
+    Host = db.relationship("Host", back_populates="Hotfixes", lazy="joined")
 
     def __repr__(self):
         return self.HotfixId
@@ -229,7 +229,7 @@ class DefenderStatus(db.Model):
     OnAccessProtectionEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
     RealTimeProtectionEnabled = db.Column(db.Boolean(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="DefenderStatus")
+    Host = db.relationship("Host", back_populates="DefenderStatus", lazy="joined")
 
     def __repr__(self):
         return "Defender Status"
@@ -259,7 +259,7 @@ class DefenderSettings(db.Model):
     ExclusionPath = db.Column(db.String(), unique=False, nullable=True)
     ExclusionProcess = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="DefenderSettings")
+    Host = db.relationship("Host", back_populates="DefenderSettings", lazy="joined")
 
     def __repr__(self):
         return "Defender settings"
@@ -279,7 +279,7 @@ class Printer(db.Model):
     Shared = db.Column(db.String(10), unique=False, nullable=True)
     Published = db.Column(db.String(10), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Printers")
+    Host = db.relationship("Host", back_populates="Printers", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -296,7 +296,7 @@ class NetAdapter(db.Model):
     Name = db.Column(db.String(), unique=False, nullable=True)
     InterfaceDescription = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="NetAdapters")
+    Host = db.relationship("Host", back_populates="NetAdapters", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -314,7 +314,7 @@ class NetIPAddress(db.Model):
     Type = db.Column(db.String(256), unique=False, nullable=True)
     InterfaceAlias = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="NetIPAddresses")
+    Host = db.relationship("Host", back_populates="NetIPAddresses", lazy="joined")
 
     def __repr__(self):
         return self.Interface
@@ -340,9 +340,9 @@ class Service(db.Model):
     ProcessId = db.Column(db.String(10), unique=False, nullable=True)
     DelayedAutoStart = db.Column(db.Boolean, unique=False, nullable=True)
     BinaryPermissionsStr = db.Column(db.String(), unique=False, nullable=True)
-    BinaryPermissions = db.relationship('ServiceACL', backref='Service', lazy='dynamic')
+    BinaryPermissions = db.relationship('ServiceACL', backref=db.backref('Service', lazy='joined'), lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Services")
+    Host = db.relationship("Host", back_populates="Services", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -383,7 +383,7 @@ class User(db.Model):
     PasswordExpires = db.Column(db.Boolean(), nullable=True)
     PasswordRequired = db.Column(db.Boolean(), nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Users")
+    Host = db.relationship("Host", back_populates="Users", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -424,9 +424,9 @@ class Group(db.Model):
     Description = db.Column(db.String(), unique=False, nullable=True)
     SID = db.Column(db.String(70), unique=False, nullable=True)
     LocalAccount = db.Column(db.String(10), unique=False, nullable=True)
-    Members = db.relationship('GroupMember', backref='Group', lazy='dynamic')
+    Members = db.relationship('GroupMember', backref=db.backref('Group', lazy='joined'), lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Groups")
+    Host = db.relationship("Host", back_populates="Groups", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -463,7 +463,7 @@ class Product(db.Model):
     Version = db.Column(db.String(150), unique=False, nullable=True)
     InstallLocation = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Products")
+    Host = db.relationship("Host", back_populates="Products", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -481,7 +481,7 @@ class Share(db.Model):
     NTFSPermissions = db.relationship('ShareACLNTFS', back_populates='Share', lazy='dynamic')
     SharePermissions = db.relationship('ShareACL', back_populates='Share', lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="Shares")
+    Host = db.relationship("Host", back_populates="Shares", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -499,7 +499,7 @@ class ShareACL(db.Model):
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
     AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Share_id = db.Column(db.Integer, db.ForeignKey('Share.id'), nullable=False)
-    Share = db.relationship("Share", back_populates="SharePermissions")
+    Share = db.relationship("Share", back_populates="SharePermissions", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -516,7 +516,7 @@ class ShareACLNTFS(db.Model):
     AccessControlType = db.Column(db.String(150), unique=False, nullable=True)
     AccessRight = db.Column(db.String(1024), unique=False, nullable=True)
     Share_id = db.Column(db.Integer, db.ForeignKey('Share.id'), nullable=False)
-    Share = db.relationship("Share", back_populates="NTFSPermissions")
+    Share = db.relationship("Share", back_populates="NTFSPermissions", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -537,7 +537,7 @@ class ConfigCheck(db.Model):
     Result = db.Column(db.String(), unique=False, nullable=True)
     Message = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="ConfigChecks")
+    Host = db.relationship("Host", back_populates="ConfigChecks", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -577,7 +577,7 @@ class RegistryCheck(db.Model):
     ValueMatch = db.Column(db.Boolean())
     CurrentValue = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="RegistryChecks")
+    Host = db.relationship("Host", back_populates="RegistryChecks", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -617,7 +617,7 @@ class FileExistCheck(db.Model):
     HashChecked = db.Column(db.Boolean())
     CurrentHash = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="FileExistChecks")
+    Host = db.relationship("Host", back_populates="FileExistChecks", lazy="joined")
 
     def __repr__(self):
         return self.Name
@@ -631,9 +631,9 @@ class PathACLCheck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Path = db.Column(db.String(), unique=False, nullable=True)
     ACLStr = db.Column(db.String(), unique=False, nullable=True)
-    ACLs = db.relationship('PathACL', backref='PathACLCheck', lazy='dynamic')
+    ACLs = db.relationship('PathACL', backref=db.backref('PathACLCheck', lazy='joined'), lazy='dynamic')
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
-    Host = db.relationship("Host", back_populates="PathACLChecks")
+    Host = db.relationship("Host", back_populates="PathACLChecks", lazy="joined")
 
     def __repr__(self):
         return self.Path

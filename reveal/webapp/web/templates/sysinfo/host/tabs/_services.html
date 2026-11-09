@@ -1,0 +1,34 @@
+{# Host details: tab "services" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row m-1">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Services</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "Displayname", "Started", "StartName", "Details"]) }}
+                    <tbody>
+                    {% if host.Services %}
+                    {% for s in host.Services %}
+                    <tr>
+                        <td>{{ s.Name }}</td>
+                        <td>{{ s.DisplayName }}</td>
+                        <td>{{ s.Started }}</td>
+                        <td>{{ s.StartName }}</td>
+                        <td class="actions">
+                            {{ helper.view_button(url_for('sysinfo.service_detail', id=s.id)) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>

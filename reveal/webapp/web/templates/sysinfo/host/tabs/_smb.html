@@ -1,0 +1,27 @@
+{# Host details: tab "smb" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">SMB Settings</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">SMBv1</dt>
+                    <dd class="col-sm-8">{{ helper.render_TrueBad(host.SMBv1Enabled) }}</dd>
+                    <dt class="col-sm-4">SMBv2</dt>
+                    <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBv2Enabled) }}</dd>
+                    <dt class="col-sm-4">EncryptData</dt>
+                    <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBEncryptData) }}</dd>
+                    <dt class="col-sm-4">EnableSecuritySignature</dt>
+                    <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBEnableSecuritySignature) }}</dd>
+                    <dt class="col-sm-4">RequireSecuritySignature</dt>
+                    <dd class="col-sm-8">{{ helper.render_TrueGood(host.SMBRequireSecuritySignature) }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

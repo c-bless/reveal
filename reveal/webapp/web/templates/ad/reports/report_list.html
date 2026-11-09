@@ -1,32 +1,16 @@
 {% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 
 {% set title = "Reports" %}
 {% block page_title %} Reports {% endblock page_title %}
 {% block menu_l1 %} Active Directory Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Report List {% endblock menu_l2 %}
 
-{% block download_links %}
-    {{ super() }}
-
-{% endblock download_links %}
 
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-        <thead>
-        <tr>
-            <th aria-label="Name" width="15%">Category
-            </th>
-            <th aria-label="Name" width="15%">Name
-            </th>
-            <th aria-label="Description">Description
-            </th>
-            <th aria-label="Description"  width="15%">tags
-            </th>
-            <th aria-label="Details" width="15%">Details
-            </th>
-        </tr>
-        </thead>
+        {{ helper.table_head([("Category", "15%"), ("Name", "15%"), "Description", ("tags", "15%"), ("Details", "15%")]) }}
         <tbody>
 
             {% if report_plugins %}
@@ -43,9 +27,7 @@
                     <td class="actions">
                     {% for title, link in r.views %}
 
-                        <a href="{{ link }}" class="btn btn-outline-secondary btn-xs">
-                        <i class="fa fa-eye"></i> {{ title }}
-                        </a>
+                        {{ helper.view_button(link, title) }}
 
                     {% endfor %}
                     </td>

@@ -1,4 +1,5 @@
 {% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 
 {% set title = "Services" %}
 {% block page_title %} Services {% endblock page_title %}
@@ -22,26 +23,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="DisplayName" width="15%">DisplayName
-                </th>
-                <th aria-label="StartMode" width="20%">StartMode
-                </th>
-                <th aria-label="StartName" width="5%">StartName
-                </th>
-                <th aria-label="Started" width="5%">Started
-                </th>
-                <th aria-label="PathName" width="25%">PathName
-                </th>
-                <th aria-label="SystemName" width="10%">SystemName
-                </th>
-                <th aria-label="Details" width="5%">Details
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("DisplayName", "15%"), ("StartMode", "20%"), ("StartName", "5%"), ("Started", "5%"), ("PathName", "25%"), ("SystemName", "10%"), ("Details", "5%")]) }}
             <tbody>
             {% if services %}
                 {% for s in services %}
@@ -53,9 +35,7 @@
                     <td> {{ s.Started }} </td>
                     <td> {{ s.PathName }} </td><td> {{ s.SystemName }}</td>
                     <td class="actions">
-                        <a href="{{url_for('sysinfo.service_detail',id=s.id)}}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.service_detail',id=s.id)) }}
                     </td>
                   </tr>
                 {% endfor %}

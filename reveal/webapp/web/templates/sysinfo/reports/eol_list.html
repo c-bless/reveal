@@ -1,22 +1,12 @@
 {% extends "layout/report_search_list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="55%">OS
-                </th>
-                <th aria-label="DisplayName" width="15%">Version
-                </th>
-                <th aria-label="DisplayName" width="15%">Build
-                </th>
-                <th aria-label="StartMode" width="15%">Host Count
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("OS", "55%"), ("Version", "15%"), ("Build", "15%"), ("Host Count", "15%")]) }}
             <tbody>
             {% if eol_matches %}
                 {% for m in eol_matches %}

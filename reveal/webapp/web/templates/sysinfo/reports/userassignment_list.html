@@ -1,23 +1,11 @@
 {% extends "layout/report_search_list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="DisplayName" width="25%">Group
-                </th>
-                <th aria-label="StartMode" width="50%">User
-                </th>
-                <th aria-label="Name" width="25%">Host
-                </th>
-                <th aria-label="Name" width="25%">Systemgroup (Host)
-                </th>
-                <th aria-label="Name" width="25%">Location (Host)
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Group", "25%"), ("User", "50%"), ("Host", "25%"), ("Systemgroup (Host)", "25%"), ("Location (Host)", "25%")]) }}
             <tbody>
             {% if members %}
                 {% for m in members %}

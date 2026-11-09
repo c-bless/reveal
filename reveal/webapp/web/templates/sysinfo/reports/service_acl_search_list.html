@@ -1,21 +1,18 @@
 {% extends "layout/report_search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 
 {% block searchform_input %}
     <div class="card-body">
         <div class="row">
                 <div class="col-sm-6">
-                    {{ render_field_sm2(form.User) }}
-                    {{ render_check_field_sm2(form.InvertUser) }}
-                    {{ render_field_sm2(form.Permission) }}
-                    {{ render_check_field_sm2(form.InvertPermission) }}
+                    {{ render_search_field(form.User, form.InvertUser) }}
+                    {{ render_search_field(form.Permission, form.InvertPermission) }}
                 </div>
                 <div class="col-sm-6">
-                    {{ render_field_sm2(form.SystemGroup) }}
-                    {{ render_check_field_sm2(form.InvertSystemGroup) }}
-                    {{ render_field_sm2(form.Location) }}
-                    {{ render_check_field_sm2(form.InvertLocation) }}
+                    {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
+                    {{ render_search_field(form.Location, form.InvertLocation) }}
                     {% if form.Label %}{{ render_field_sm2(form.Label) }}{% endif %}
                 {% if form.InvertLabel %}{{ render_check_field_sm2(form.InvertLabel) }}{% endif %}
                 </div>
@@ -28,26 +25,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="DisplayName" width="15%">AccountName
-                </th>
-                <th aria-label="StartMode" width="20%">AccessControlType
-                </th>
-                <th aria-label="StartName" width="5%">AccessRight
-                </th>
-                <th aria-label="Started" width="5%">SystemName
-                </th>
-                <th aria-label="Started" width="5%">Location
-                </th>
-                <th aria-label="Started" width="5%">Systemgroup
-                </th>
-                <th aria-label="Details" width="5%">Details
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("AccountName", "15%"), ("AccessControlType", "20%"), ("AccessRight", "5%"), ("SystemName", "5%"), ("Location", "5%"), ("Systemgroup", "5%"), ("Details", "5%")]) }}
             <tbody>
             {% if acls %}
                 {% for a in acls %}
@@ -60,9 +38,7 @@
                     <td> {{ a.Service.Host.Location }} </td>
                     <td> {{ a.Service.Host.SystemGroup }} </td>
                     <td class="actions">
-                        <a href="{{ url_for('sysinfo.service_detail', id=a.Service.id) }}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View Service
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.service_detail', id=a.Service.id), "View Service") }}
                     </td>
                   </tr>
                 {% endfor %}

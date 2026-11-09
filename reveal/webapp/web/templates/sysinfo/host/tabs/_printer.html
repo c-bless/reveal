@@ -1,0 +1,37 @@
+{# Host details: tab "printer" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Printer</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "Type", "ShareName", "PortName", "Shared", "Published", "DriverName"]) }}
+                    <tbody>
+                    {% if host.Printers %}
+                    {% for p in host.Printers %}
+                    <tr>
+                        <td>{{ p.Name }}</td>
+                        <td>{{ p.Type }}</td>
+                        <td>{{ p.ShareName }}</td>
+                        <td>{{ p.PortName }}</td>
+                        <td>{{ p.Shared }}</td>
+                        <td>{{ p.Published }}</td>
+                        <td>{{ p.DriverName }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No printers found!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

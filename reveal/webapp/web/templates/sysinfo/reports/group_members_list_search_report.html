@@ -14,22 +14,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Host
-                </th>
-                <th aria-label="DisplayName" width="15%">Systemgroup
-                </th>
-                <th aria-label="StartMode" width="10%">Location
-                </th>
-                <th aria-label="StartName" width="20%">Group
-                </th>
-                <th aria-label="Started" width="15%">SID (Group)
-                </th>
-                <th aria-label="PathName" width="25%">Members
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Host", "15%"), ("Systemgroup", "15%"), ("Location", "10%"), ("Group", "20%"), ("SID (Group)", "15%"), ("Members", "25%")]) }}
             <tbody>
             {% if groups %}
                 {% for g in groups %}

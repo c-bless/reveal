@@ -90,3 +90,10 @@
 {{ field(class="btn btn-primary", **kwargs)|safe }}
 {% endmacro %}
 
+
+
+{# search field with the corresponding "invert" checkbox (e.g. form.Name and form.InvertName) #}
+{% macro render_search_field(field, invert_field) %}
+{{ render_field_sm2(field) }}
+{{ render_check_field_sm2(invert_field) }}
+{% endmacro %}

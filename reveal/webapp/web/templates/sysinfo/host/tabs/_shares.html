@@ -1,0 +1,35 @@
+{# Host details: tab "shares" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Shares</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "Pathname", "Details"]) }}
+                    <tbody>
+                    {% if host.Shares %}
+                    {% for s in host.Shares %}
+                    <tr>
+                        <td>{{ s.Name }}</td>
+                        <td>{{ s.Path }}</td>
+                        <td class="actions">
+                            {{ helper.view_button(url_for('sysinfo.share_detail', id=s.id)) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td>No shares found.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

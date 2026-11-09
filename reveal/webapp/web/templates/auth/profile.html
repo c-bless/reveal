@@ -4,67 +4,48 @@
 {% from "_formhelpers.html" import render_pw_field_sm2,  render_submit_field %}
 
 {% block content %}
-<div class="row m-1">
-  <div class="col-md-6">
-    <div class="col-md-6">
-
-      <!-- Profile Image -->
-      <div class="card card-primary card-outline">
-        <div class="card-body box-profile">
-
-          <h3 class="profile-username text-center">{{ user.Username }}</h3>
-
-
-          <ul class="list-group list-group-unbordered mb-3">
-            <li class="list-group-item">
-              <b>Username</b> <a class="float-end">{{ user.Username }}</a>
-            </li>
-            <li class="list-group-item">
-              <b>Active</b> <a class="float-end">{{ user.Active }}</a>
-            </li>
-            <li class="list-group-item">
-              <b>UUID</b> <a class="float-end">{{ user.UUID }}</a>
-            </li>
-          </ul>
-          <strong><i class="fas fa-book me-1"></i> API-Token</strong>
-
-        <p class="text-muted">{{ user.API_TOKEN }}</p>
-
-        <a href="{{ url_for('auth.renew_token') }}" class="btn btn-primary w-100"><b>Regenerate Token</b></a>
-        </div>
-        <!-- /.card-body -->
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">{{ user.Username }}</h3>
       </div>
-      <!-- /.card -->
+      <div class="card-body">
+        <ul class="list-group list-group-flush mb-3">
+          <li class="list-group-item d-flex justify-content-between">
+            <b>Username</b> <span>{{ user.Username }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <b>Active</b> <span>{{ user.Active }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <b>UUID</b> <span>{{ user.UUID }}</span>
+          </li>
+        </ul>
+        <strong><i class="fas fa-book me-1"></i> API-Token</strong>
+        <p class="text-muted text-break">{{ user.API_TOKEN }}</p>
+        <a href="{{ url_for('auth.renew_token') }}" class="btn btn-primary w-100"><b>Regenerate Token</b></a>
+      </div>
     </div>
   </div>
 
-
-  <div class="col-md-6">
-    <div class="col-md-6">
-
-      <!-- Profile Image -->
-      <div class="card card-primary card-outline">
-
-
-          <form action="{{ url_for('auth.change_pw_post') }}" method="post">
-          <div class="card-body box-profile">
-
-              {{ form.hidden_tag() }}
-              {{ render_pw_field_sm2(form.current_pw) }}
-              {{ render_pw_field_sm2(form.new_pw) }}
-              {{ render_pw_field_sm2(form.new_pw2) }}
-
-
-        </div>
-        <!-- /.card-body -->
-            <div class="card-footer">
-              {{ render_submit_field(form.submit) }}
-            </div>
-            </form>
+  <div class="col-lg-6">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Change password</h3>
       </div>
-      <!-- /.card -->
+      <form action="{{ url_for('auth.change_pw_post') }}" method="post">
+        <div class="card-body">
+          {{ form.hidden_tag() }}
+          {{ render_pw_field_sm2(form.current_pw) }}
+          {{ render_pw_field_sm2(form.new_pw) }}
+          {{ render_pw_field_sm2(form.new_pw2) }}
+        </div>
+        <div class="card-footer">
+          {{ render_submit_field(form.submit) }}
+        </div>
+      </form>
     </div>
   </div>
 </div>
-
 {% endblock content %}

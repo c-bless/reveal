@@ -1,0 +1,20 @@
+{#
+  Layout of the error pages. The pages set the blocks error_code, error_title and error_message.
+  The sidebar is hidden: error pages are also shown to users that are not logged in.
+#}
+{% extends "layout/base_layout.html" %}
+
+{% block title %} {% block error_title_tag %}Error{% endblock error_title_tag %} {% endblock title %}
+
+{% block sidebar %}{% endblock sidebar %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 text-center py-5">
+    <h1 class="display-1 fw-bold {% block error_color %}text-warning{% endblock error_color %}">{% block error_code %}{% endblock error_code %}</h1>
+    <h2 class="mb-3">{% block error_title %}{% endblock error_title %}</h2>
+    <p class="lead text-secondary">{% block error_message %}{% endblock error_message %}</p>
+    <a href="{{ url_for('auth.index') }}" class="btn btn-primary mt-3"><i class="fas fa-house me-1"></i> Back to start page</a>
+  </div>
+</div>
+{% endblock content %}

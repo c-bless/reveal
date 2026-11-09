@@ -1,18 +1,17 @@
 {% extends "layout/report_search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% block searchform_input %}
     <div class="card-body">
         <div class="row">
             <div class="col-sm-4">
-                {{ render_field_sm2(form.SystemGroup) }}
-                {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
 
                 {{ render_check_field_sm2(form.Decrypt) }}
             </div>
             <div class="col-sm-4">
-                {{ render_field_sm2(form.Location) }}
-                {{ render_check_field_sm2(form.InvertLocation) }}
+                {{ render_search_field(form.Location, form.InvertLocation) }}
 
             </div>
             <div class="col-sm-4">
@@ -32,28 +31,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th aria-label="Hostname" width="15%">Hostname
-                    </th>
-                    <th aria-label="SystemGroup" width="15%">SystemGroup
-                    </th>
-                    <th aria-label="Location" width="10%">Location
-                    </th>
-                    <th aria-label="Domain" width="5%">AutoAdminLogon
-                    </th>
-                    <th aria-label="OSName" width="5%">ForceAutoLogon
-                    </th>
-                    <th aria-label="User" width="15">DefaultDomain
-                    </th>
-                    <th aria-label="User" width="15">DefaultUserName
-                    </th>
-                    <th aria-label="User" width="15">DefaultPassword
-                    </th>
-                    <th aria-label="Details" width="5%">Details
-                    </th>
-                </tr>
-                </thead>
+                {{ helper.table_head([("Hostname", "15%"), ("SystemGroup", "15%"), ("Location", "10%"), ("AutoAdminLogon", "5%"), ("ForceAutoLogon", "5%"), ("DefaultDomain", "15"), ("DefaultUserName", "15"), ("DefaultPassword", "15"), ("Details", "5%")]) }}
                 <tbody>
                 {% if hosts %}
                     {% for h in hosts %}
@@ -67,9 +45,7 @@
                         <td> {{ h.DefaultUserName }} </td>
                         <td> {{ h.DefaultPassword }} </td>
                         <td class="actions">
-                            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-outline-secondary btn-xs">
-                                <i class="fa fa-eye"></i> View
-                            </a>
+                            {{ helper.view_button(url_for('sysinfo.host_detail',id=h.id)) }}
                         </td>
                       </tr>
                     {% endfor %}

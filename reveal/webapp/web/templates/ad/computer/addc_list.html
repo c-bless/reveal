@@ -1,4 +1,5 @@
 {% extends "layout/list_layout.html" %}
+{% import "_tablehelper.html" as helper %}
 
 {% set title = "Domain List" %}
 {% block page_title %} Domain List {% endblock page_title %}
@@ -8,17 +9,7 @@
 {% block datatable %}
 {{ super() }}
       <table id="table1" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th width="15%"> Name </th>
-                        <th width="15%"> Domain </th>
-                        <th width="15%"> IPv4Address</th>
-                        <td width="30%">OperatingSystem</td>
-                        <th width="10%"> IsGlobalCatalog </th>
-                        <th width="10%"> IsReadOnly </th>
-                        <th width="5%"> Details</th>
-                    </tr>
-                </thead>
+                {{ helper.table_head([("Name", "15%"), ("Domain", "15%"), ("IPv4Address", "15%"), ("OperatingSystem", "30%"), ("IsGlobalCatalog", "10%"), ("IsReadOnly", "10%"), ("Details", "5%")]) }}
                 <tbody>
                     {% if dc_list %}
                         {% for dc in dc_list %}

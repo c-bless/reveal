@@ -1,0 +1,37 @@
+{# Host details: tab "filechecks" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">FileExistChecks</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "File", "FileExist", "HashMatch", "HashChecked", "ExpectedHASH", "CurrentHash"]) }}
+                    <tbody>
+                    {% if host.FileExistChecks %}
+                    {% for c in host.FileExistChecks %}
+                    <tr>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.File }}</td>
+                        <td>{{ c.FileExist }}</td>
+                        <td>{{ c.HashMatch }}</td>
+                        <td>{{ c.HashChecked }}</td>
+                        <td>{{ c.ExpectedHASH }}</td>
+                        <td>{{ c.CurrentHash }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No file checks performed!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

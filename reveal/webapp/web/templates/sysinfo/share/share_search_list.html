@@ -1,33 +1,26 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
 {% set title = "Shares" %}
 {% block page_title %} Shares {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Share List {% endblock menu_l2 %}
 
-{% block download_links %}
-    {{ super() }}
-
-{% endblock download_links %}
 
 
 {% block searchform %}
-    <form class="form-horizontal" method="post">
+    <form method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Name) }}
-                            {{ render_check_field_sm2(form.InvertName) }}
+                            {{ render_search_field(form.Name, form.InvertName) }}
 
-                            {{ render_field_sm2(form.Path) }}
-                            {{ render_check_field_sm2(form.InvertPath) }}
+                            {{ render_search_field(form.Path, form.InvertPath) }}
 
-                            {{ render_field_sm2(form.Host) }}
-                            {{ render_check_field_sm2(form.InvertHost) }}
+                            {{ render_search_field(form.Host, form.InvertHost) }}
 
-                            {{ render_field_sm2(form.Description) }}
-                            {{ render_check_field_sm2(form.InvertDescription) }}
+                            {{ render_search_field(form.Description, form.InvertDescription) }}
 
                         </div>
                         <div class="col-sm-6">
@@ -55,26 +48,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Name
-                </th>
-                <th aria-label="DisplayName" width="10%">Host
-                </th>
-                <th aria-label="DisplayName" width="10%">Location
-                </th>
-                <th aria-label="DisplayName" width="10%">Label
-                </th>
-                <th aria-label="DisplayName" width="10%">SystemGroup
-                </th>
-                <th aria-label="StartMode" width="20%">Path
-                </th>
-                <th aria-label="StartName" width="20%">Description
-                </th>
-                <th aria-label="Details" width="5%">Details
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Name", "15%"), ("Host", "10%"), ("Location", "10%"), ("Label", "10%"), ("SystemGroup", "10%"), ("Path", "20%"), ("Description", "20%"), ("Details", "5%")]) }}
             <tbody>
             {% if shares %}
                 {% for s in shares %}
@@ -87,9 +61,7 @@
                     <td> {{ s.Path }} </td>
                     <td> {{ s.Description }} </td>
                     <td class="actions">
-                        <a href="{{url_for('sysinfo.share_detail',id=s.id)}}" class="btn btn-outline-secondary btn-xs">
-                            <i class="fa fa-eye"></i> View
-                        </a>
+                        {{ helper.view_button(url_for('sysinfo.share_detail',id=s.id)) }}
                     </td>
                   </tr>
                 {% endfor %}

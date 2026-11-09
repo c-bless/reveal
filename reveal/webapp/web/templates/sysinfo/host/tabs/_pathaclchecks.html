@@ -1,0 +1,36 @@
+{# Host details: tab "pathaclchecks" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Path ACL Checks</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Path", "ACL"]) }}
+                    <tbody>
+                    {% if host.PathACLChecks %}
+                    {% for c in host.PathACLChecks %}
+                    <tr>
+                        <td>{{ c.Path }}</td>
+                        <td>
+                            {% for p in c.ACLs %}
+                            {{ p.Name }} {{ p.AccountName }} {{ p.AccessControlType }} {{ p.AccessRight }} <br />
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No path ACL checks performed!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

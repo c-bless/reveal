@@ -1,0 +1,78 @@
+{# Host details: tab "scripting" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">WSH Settings</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Trust Policy</dt>
+                    <dd class="col-sm-8">{{ host.WSHTrustPolicy }}</dd>
+                    <dt class="col-sm-4">Enabled Status</dt>
+                    <dd class="col-sm-8">{{ host.WSHEnabled }}</dd>
+                    <dt class="col-sm-4">Remote Status</dt>
+                    <dd class="col-sm-8">{{ host.WSHRemote }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">PowerShell</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">PowerShell (active Version)</dt>
+                    <dd class="col-sm-8">{{ host.PSVersion }}</dd>
+                    <dt class="col-sm-4">PowerShell 2 Installed</dt>
+                    <dd class="col-sm-8">{{ host.PS2Installed }}</dd>
+                    <dt class="col-sm-4">PowerShell ScriptBlockLogging</dt>
+                    <dd class="col-sm-8">{{ host.PSScriptBlockLogging }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">PS Versions</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["PSCompatibleVersion", "Version", "RuntimeVersion", "PSPath", "ConsoleHostModuleName"]) }}
+                    <tbody>
+
+                    {% if host.PSInstalledVersions %}
+                    {% for ps in host.PSInstalledVersions %}
+                    <tr>
+                        <td>{{ ps.PSCompatibleVersion }}</td>
+                        <td>{{ ps.Version }}</td>
+                        <td>{{ ps.RuntimeVersion }}</td>
+                        <td>{{ ps.PSPath }}</td>
+                        <td>{{ ps.ConsoleHostModuleName }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td>No PS Versions found.</td>
+                    </tr>
+                    {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

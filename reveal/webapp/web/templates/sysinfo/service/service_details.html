@@ -71,14 +71,7 @@
             <div class="card-body p-0">
                 <table class="table table-striped">
                     {% if service.BinaryPermissions %}
-                    <thead>
-                    <tr>
-                        <th>ACL</th>
-                        <th>AccountName</th>
-                        <th>AccessControlType</th>
-                        <th>AccessRight</th>
-                    </tr>
-                    </thead>
+                    {{ helper.table_head(["ACL", "AccountName", "AccessControlType", "AccessRight"]) }}
                     <tbody>
                     {% for p in service.BinaryPermissions %}
                     <tr>
@@ -90,11 +83,7 @@
                     {% endfor %}
                     </tbody>
                     {% else %}
-                    <thead>
-                    <tr>
-                        <th>ACL</th>
-                    </tr>
-                    </thead>
+                    {{ helper.table_head(["ACL"]) }}
                     <tbody>
                     <tr>
                         <td colspan="4">{{ service.binaryPermissionsStr }}</td>

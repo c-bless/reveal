@@ -1,0 +1,26 @@
+{# Host details: tab "ntp" (included by sysinfo/host/host_details.html, uses "host") #}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">NTP Settings</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                {% if host.NTPSettings %}
+                {% for n in host.NTPSettings %}
+                <dl class="row">
+                    <dt class="col-sm-4">Server</dt>
+                    <dd class="col-sm-8">{{ n.Server }}</dd>
+                    <dt class="col-sm-4">Type</dt>
+                    <dd class="col-sm-8">{{ n.Type }}</dd>
+                    <dt class="col-sm-4">UpdateInterval</dt>
+                    <dd class="col-sm-8">{{ n.UpdateInterval }}</dd>
+                </dl>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

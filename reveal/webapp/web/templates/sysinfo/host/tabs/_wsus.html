@@ -1,0 +1,30 @@
+{# Host details: tab "wsus" (included by sysinfo/host/host_details.html, uses "host") #}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">WSUS Settings</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">AcceptTrustedPublisherCerts</dt>
+                    <dd class="col-sm-8">{{ host.AcceptTrustedPublisherCerts  }}</dd>
+                    <dt class="col-sm-4">DisableWindowsUpdateAccess</dt>
+                    <dd class="col-sm-8">{{ host.DisableWindowsUpdateAccess }}</dd>
+                    <dt class="col-sm-4">ElevateNonAdmins</dt>
+                    <dd class="col-sm-8">{{ host.ElevateNonAdmins }}</dd>
+                    <dt class="col-sm-4">TargetGroup</dt>
+                    <dd class="col-sm-8">{{ host.TargetGroup }}</dd>
+                    <dt class="col-sm-4">TargetGroupEnabled</dt>
+                    <dd class="col-sm-8">{{ host.TargetGroupEnabled }}</dd>
+                    <dt class="col-sm-4">WUServer</dt>
+                    <dd class="col-sm-8">{{ host.WUServer }}</dd>
+                    <dt class="col-sm-4">WUStatusServer</dt>
+                    <dd class="col-sm-8">{{ host.WUStatusServer }}</dd>
+                </dl>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

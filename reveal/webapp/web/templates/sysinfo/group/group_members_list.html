@@ -1,28 +1,24 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 
 {% block searchform %}
-    <form class="form-horizontal" method="post">
+    <form method="post">
                 {{ form.hidden_tag() }}
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.SystemGroup) }}
-                            {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                            {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
 
-                            {{ render_field_sm2(form.Domain) }}
-                            {{ render_check_field_sm2(form.InvertDomain) }}
+                            {{ render_search_field(form.Domain, form.InvertDomain) }}
 
-                            {{ render_field_sm2(form.Hostname) }}
-                            {{ render_check_field_sm2(form.InvertHostname) }}
+                            {{ render_search_field(form.Hostname, form.InvertHostname) }}
                         </div>
                         <div class="col-sm-6">
-                            {{ render_field_sm2(form.Location) }}
-                            {{ render_check_field_sm2(form.InvertLocation) }}
+                            {{ render_search_field(form.Location, form.InvertLocation) }}
 
-                            {{ render_field_sm2(form.Username) }}
-                            {{ render_check_field_sm2(form.InvertUsername) }}
+                            {{ render_search_field(form.Username, form.InvertUsername) }}
                         </div>
                     </div>
                 </div>
@@ -38,22 +34,7 @@
 {% block datatable %}
 {{ super() }}
     <table id="table1" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th aria-label="Name" width="15%">Host
-                </th>
-                <th aria-label="DisplayName" width="15%">Systemgroup
-                </th>
-                <th aria-label="StartMode" width="10%">Location
-                </th>
-                <th aria-label="StartName" width="20%">Group
-                </th>
-                <th aria-label="Started" width="15%">SID (Group)
-                </th>
-                <th aria-label="PathName" width="25%">Members
-                </th>
-            </tr>
-            </thead>
+            {{ helper.table_head([("Host", "15%"), ("Systemgroup", "15%"), ("Location", "10%"), ("Group", "20%"), ("SID (Group)", "15%"), ("Members", "25%")]) }}
             <tbody>
             {% if groups %}
                 {% for g in groups %}

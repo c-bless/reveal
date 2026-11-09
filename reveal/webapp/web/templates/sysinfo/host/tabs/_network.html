@@ -1,0 +1,69 @@
+{# Host details: tab "network" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row m-1">
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Network Adapter</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "MAC", "Status", "Description"]) }}
+                    <tbody>
+                    {% if host.NetAdapters %}
+                    {% for na in host.NetAdapters %}
+                    <tr>
+                        <td>{{ na.Name }}</td>
+                        <td>{{ na.MacAddress}}</td>
+                        <td>{{ na.Status }}</td>
+                        <td>{{ na.InterfaceDescription }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>Report all hosts which reached the End-of-Life / End-of-Support	 View
+
+                        <td colspan="4">No network adapter found.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+
+    <!-- /.card -->
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">IP Adresses</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Interface", "IP", "Prefix", "Type", "AddressFamily"]) }}
+                    <tbody>
+                    {% if host.NetIPAddresses %}
+                    {% for nip in host.NetIPAddresses %}
+                    <tr>
+                        <td>{{ nip.InterfaceAlias }}</td>
+                        <td>{{ nip.IP }}</td>
+                        <td>{{ nip.Prefix }}</td>
+                        <td>{{ nip.Type }}</td>
+                        <td>{{ nip.AddressFamily }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No IP addresses found.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>

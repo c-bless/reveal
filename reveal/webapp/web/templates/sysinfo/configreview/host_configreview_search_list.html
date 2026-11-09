@@ -1,5 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
+{% import "_tablehelper.html" as helper %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field, render_search_field %}
 
 {% set title = "Hosts" %}
 {% block page_title %} Hosts {% endblock page_title %}
@@ -8,30 +9,24 @@
 
 
 {% block searchform %}
-<form class="form-horizontal" method="post">
+<form method="post">
     {{ form.hidden_tag() }}
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                {{ render_field_sm2(form.Hostname) }}
-                {{ render_check_field_sm2(form.InvertHostname) }}
+                {{ render_search_field(form.Hostname, form.InvertHostname) }}
 
-                {{ render_field_sm2(form.Domain) }}
-                {{ render_check_field_sm2(form.InvertDomain) }}
+                {{ render_search_field(form.Domain, form.InvertDomain) }}
 
-                {{ render_field_sm2(form.SystemGroup) }}
-                {{ render_check_field_sm2(form.InvertSystemGroup) }}
+                {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
 
-                {{ render_field_sm2(form.Location) }}
-                {{ render_check_field_sm2(form.InvertLocation) }}
+                {{ render_search_field(form.Location, form.InvertLocation) }}
             </div>
             <div class="col-sm-6">
 
-                {{ render_field_sm2(form.OSName) }}
-                {{ render_check_field_sm2(form.InvertOSName) }}
+                {{ render_search_field(form.OSName, form.InvertOSName) }}
 
-                {{ render_field_sm2(form.Label) }}
-                {{ render_check_field_sm2(form.InvertLabel) }}
+                {{ render_search_field(form.Label, form.InvertLabel) }}
             </div>
         </div>
 
@@ -50,24 +45,7 @@
 {% block datatable %}
 {{ super() }}
 <table id="table1" class="table table-bordered table-striped">
-    <thead>
-    <tr>
-        <th aria-label="Hostname" width="15%">Hostname
-        </th>
-        <th aria-label="Domain" width="15%">Domain
-        </th>
-        <th aria-label="OSName" width="20%">OS Name
-        </th>
-        <th aria-label="SystemGroup">SystemGroup
-        </th>
-        <th aria-label="Location">Location
-        </th>
-        <th aria-label="Label">Label
-        </th>
-        <th aria-label="Details">Details
-        </th>
-    </tr>
-    </thead>
+    {{ helper.table_head([("Hostname", "15%"), ("Domain", "15%"), ("OS Name", "20%"), "SystemGroup", "Location", "Label", "Details"]) }}
     <tbody>
     {% if hosts %}
     {% for h in hosts %}
@@ -79,9 +57,7 @@
         <td> {{ h.Location }} </td>
         <td> {{ h.Label }} </td>
         <td class="actions">
-            <a href="{{url_for('sysinfo.host_detail',id=h.id)}}" class="btn btn-outline-secondary btn-xs">
-                <i class="fa fa-eye"></i> View
-            </a>
+            {{ helper.view_button(url_for('sysinfo.host_detail',id=h.id)) }}
         </td>
     </tr>
     {% endfor %}

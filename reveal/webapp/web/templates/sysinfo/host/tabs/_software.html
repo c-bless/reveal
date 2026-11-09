@@ -1,0 +1,70 @@
+{# Host details: tab "software" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row m-1">
+    <div class="col-md-6">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Software Products</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "Version", "InstallDate", "Action"]) }}
+                    <tbody>
+                    {% if host.Products %}
+                    {% for p in host.Products %}
+                    <tr>
+                        <td>{{ p.Name }}</td>
+                        <td>{{ p.Version }}</td>
+                        <td>{{ p.InstallDate }}</td>
+                        <td class="actions">
+                            <a href="#" class="btn btn-outline-secondary btn-xs">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td>No additional products installed.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <!-- /.card -->
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Installed Hotfixes</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["KB", "InstalledOn", "Description"]) }}
+                    <tbody>
+                    {% if host.Hotfixes %}
+                    {% for h in host.Hotfixes %}
+                    <tr>
+                        <td>{{ h.HotfixId }}</td>
+                        <td>{{ h.InstalledOn }}</td>
+                        <td>{{ h.Description }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td>No hotfixes installed.</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>

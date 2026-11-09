@@ -1,0 +1,108 @@
+{# Host details: tab "defender" (included by sysinfo/host/host_details.html, uses "host") #}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Defender Settings</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <div class="row">
+                    {% if host.DefenderSettings %}
+                    <div class="col-md-6">
+                        <dl class="row">
+                            {%for d in host.DefenderSettings %}
+                            <dt class="col-sm-4">DisableArchiveScanning</dt>
+                            <dd class="col-sm-8">{{ d.DisableArchiveScanning }}</dd>
+                            <dt class="col-sm-4">DisableAutoExclusions</dt>
+                            <dd class="col-sm-8">{{ d.AMProdDisableAutoExclusionsuctVersion }}</dd>
+                            <dt class="col-sm-4">DisableBehaviorMonitoring</dt>
+                            <dd class="col-sm-8">{{ d.DisableBehaviorMonitoring }}</dd>
+                            <dt class="col-sm-4">DisableBlockAtFirstSeen</dt>
+                            <dd class="col-sm-8">{{ d.DisableBlockAtFirstSeen }}</dd>
+                            <dt class="col-sm-4">DisableCatchupFullScan</dt>
+                            <dd class="col-sm-8">{{ d.DisableCatchupFullScan }}</dd>
+                            <dt class="col-sm-4">DisableCatchupQuickScan</dt>
+                            <dd class="col-sm-8">{{ d.DisableCatchupQuickScan }}</dd>
+                            <dt class="col-sm-4">DisableEmailScanning</dt>
+                            <dd class="col-sm-8">{{ d.DisableEmailScanning }}</dd>
+                            <dt class="col-sm-4">DisableIntrusionPreventionSystem</dt>
+                            <dd class="col-sm-8">{{ d.DisableIntrusionPreventionSystem }}</dd>
+                            <dt class="col-sm-4">DisableIOAVProtection</dt>
+                            <dd class="col-sm-8">{{ d.DisableIOAVProtection }}</dd>
+                            <dt class="col-sm-4">DisableRealtimeMonitoring</dt>
+                            <dd class="col-sm-8">{{ d.DisableRealtimeMonitoring }}</dd>
+                            <dt class="col-sm-4">DisableRemovableDriveScanning</dt>
+                            <dd class="col-sm-8">{{ d.DisableRemovableDriveScanning }}</dd>
+                            <dt class="col-sm-4">DisableRestorePoint</dt>
+                            <dd class="col-sm-8">{{ d.DisableRestorePoint }}</dd>
+                            <dt class="col-sm-4">DisableScanningMappedNetworkDrivesForFullScan</dt>
+                            <dd class="col-sm-8">{{ d.DisableScanningMappedNetworkDrivesForFullScan }}</dd>
+                            <dt class="col-sm-4">DisableScanningNetworkFiles</dt>
+                            <dd class="col-sm-8">{{ d.DisableScanningNetworkFiles }}</dd>
+                            <dt class="col-sm-4">DisableScriptScanning</dt>
+                            <dd class="col-sm-8">{{ d.DisableScriptScanning }}</dd>
+                            <dt class="col-sm-4">EnableNetworkProtection</dt>
+                            <dd class="col-sm-8">{{ d.EnableNetworkProtection }}</dd>
+                            <dt class="col-sm-4">ExclusionPath</dt>
+                            <dd class="col-sm-8">{{ d.ExclusionPath }}</dd>
+                            <dt class="col-sm-4">ExclusionProcess</dt>
+                            <dd class="col-sm-8">{{ d.ExclusionProcess }}</dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                    {% endif %}
+                    {% if host.DefenderStatus %}
+                    <div class="col-md-6">
+                        <dl class="row">
+                            {%for d in host.DefenderStatus %}
+                            <dt class="col-sm-4">AMEngineVersion</dt>
+                            <dd class="col-sm-8">{{ d.AMEngineVersion }}</dd>
+                            <dt class="col-sm-4">AMProductVersion</dt>
+                            <dd class="col-sm-8">{{ d.AMProductVersion }}</dd>
+                            <dt class="col-sm-4">AMServiceEnabled</dt>
+                            <dd class="col-sm-8">{{ d.AMServiceEnabled }}</dd>
+                            <dt class="col-sm-4">AMServiceVersion</dt>
+                            <dd class="col-sm-8">{{ d.AMServiceVersion }}</dd>
+                            <dt class="col-sm-4">AntispywareEnabled</dt>
+                            <dd class="col-sm-8">{{ d.AntispywareEnabled }}</dd>
+                            <dt class="col-sm-4">AntispywareSignatureLastUpdated</dt>
+                            <dd class="col-sm-8">{{ d.AntispywareSignatureLastUpdated }}</dd>
+                            <dt class="col-sm-4">AntivirusEnabled</dt>
+                            <dd class="col-sm-8">{{ d.AntivirusEnabled }}</dd>
+                            <dt class="col-sm-4">AntivirusSignatureLastUpdated</dt>
+                            <dd class="col-sm-8">{{ d.AntivirusSignatureLastUpdated }}</dd>
+                            <dt class="col-sm-4">AntivirusEnabled</dt>
+                            <dd class="col-sm-8">{{ d.AntivirusEnabled }}</dd>
+                            <dt class="col-sm-4">AntivirusSignatureLastUpdated</dt>
+                            <dd class="col-sm-8">{{ d.AntivirusSignatureLastUpdated }}</dd>
+                            <dt class="col-sm-4">AntivirusSignatureVersion</dt>
+                            <dd class="col-sm-8">{{ d.AntivirusSignatureVersion }}</dd>
+                            <dt class="col-sm-4">BehaviorMonitorEnabled</dt>
+                            <dd class="col-sm-8">{{ d.BehaviorMonitorEnabled }}</dd>
+                            <dt class="col-sm-4">IoavProtectionEnabled</dt>
+                            <dd class="col-sm-8">{{ d.IoavProtectionEnabled }}</dd>
+                            <dt class="col-sm-4">IsVirtualMachine</dt>
+                            <dd class="col-sm-8">{{ d.IsVirtualMachine }}</dd>
+                            <dt class="col-sm-4">NISEnabled</dt>
+                            <dd class="col-sm-8">{{ d.NISEnabled }}</dd>
+                            <dt class="col-sm-4">NISEngineVersion</dt>
+                            <dd class="col-sm-8">{{ d.NISEngineVersion }}</dd>
+                            <dt class="col-sm-4">NISSignatureLastUpdated</dt>
+                            <dd class="col-sm-8">{{ d.NISSignatureLastUpdated }}</dd>
+                            <dt class="col-sm-4">NISSignatureVersion</dt>
+                            <dd class="col-sm-8">{{ d.NISSignatureVersion }}</dd>
+                            <dt class="col-sm-4">OnAccessProtectionEnabled</dt>
+                            <dd class="col-sm-8">{{ d.OnAccessProtectionEnabled }}</dd>
+                            <dt class="col-sm-4">RealTimeProtectionEnabled</dt>
+                            <dd class="col-sm-8">{{ d.RealTimeProtectionEnabled }}</dd>
+                          {% endfor %}
+                        </dl>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+{# Host details: tab "registrychecks" (included by sysinfo/host/host_details.html, uses "host") #}
+{% import "_tablehelper.html" as helper %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-olive card-outline">
+            <div class="card-header">
+                <h3 class="card-title">RegistryChecks</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+                <table class="table table-striped">
+                    {{ helper.table_head(["Name", "Category", "Tags", "Path", "Key", "Expected", "KeyExists", "ValueMatch", "CurrentValue"]) }}
+                    <tbody>
+                    {% if host.RegistryChecks %}
+                    {% for c in host.RegistryChecks %}
+                    <tr>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.Category }}</td>
+                        <td>{{ c.Tags }}</td>
+                        <td>{{ c.Path }}</td>
+                        <td>{{ c.Key }}</td>
+                        <td>{{ c.Expected }}</td>
+                        <td>{{ c.KeyExists }}</td>
+                        <td>{{ c.ValueMatch }}</td>
+                        <td>{{ c.CurrentValue }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No RegistryChecks performed!</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>
