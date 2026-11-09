@@ -50,11 +50,61 @@ jobs:
           echo "[*] reveal-db: version"
           docker run --rm --entrypoint postgres reveal-db --version
 
-      - name: Start enviornment
-        run: make run
+      - name: Start environment
+        run: |
+          set -euo pipefail
+          # start the database first: webapp creates the tables on startup and depends_on does not wait until
+          # PostgreSQL accepts connections
+          docker compose up -d db
+          for i in $(seq 1 60); do
+            docker compose exec -T db pg_isready -U revealuser -d reveal && break
+            sleep 2
+          done
+          docker compose exec -T db pg_isready -U revealuser -d reveal
+          docker compose up -d
+          # ready as soon as the login page is served via nginx (HTTPS, self-signed certificate)
+          for i in $(seq 1 60); do
+            code=$(curl -sk -o /dev/null -w '%{http_code}' https://localhost/login || true)
+            [ "${code}" = "200" ] && break
+            sleep 2
+          done
+          echo "login page: HTTP ${code}"
+          [ "${code}" = "200" ]
 
-      - name: Init database
-        run: make init-db        
+      - name: Init database (make init-db)
+        run: |
+          set -euo pipefail
+          make init-db 2>&1 | tee init-db.log
+
+      - name: Check database initialisation
+        run: |
+          set -euo pipefail
+          psql() { docker compose exec -T db psql -U revealuser -d reveal -tAc "$1"; }
+
+          # "user create" does not fail on errors (it only prints a message), so the result is checked in the database
+          users=$(psql "SELECT count(*) FROM auth_user WHERE \"Username\" = 'admin'")
+          echo "admin users: ${users}"
+          [ "${users}" = "1" ]
+
+          expected=$(( $(grep -c . data-directories/update-data/win-support-dates.csv) - 1 ))
+          eol=$(psql 'SELECT count(*) FROM "EoL"')
+          echo "EoL entries: ${eol} (expected ${expected} from win-support-dates.csv)"
+          [ "${eol}" = "${expected}" ]
+
+          # end-to-end: the generated API token of the admin user is accepted by the API (via nginx)
+          token=$(sed -n 's/.*API-Token: \([0-9a-f]*\).*/\1/p' init-db.log | head -n 1)
+          [ -n "${token}" ]
+          code=$(curl -sk -o /dev/null -w '%{http_code}' -H "X-API-KEY: ${token}" https://localhost:8443/api/sysinfo/hosts/)
+          echo "API with admin token: HTTP ${code}"
+          [ "${code}" = "200" ]
+
+      - name: Container logs
+        if: failure()
+        run: docker compose logs --no-color --tail 200
+
+      - name: Stop environment
+        if: always()
+        run: docker compose down -v
 
       - name: List images
         if: always()

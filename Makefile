@@ -94,7 +94,7 @@ stop:
 
 # The EoL CSV is passed via stdin, so the import does not depend on files copied into the container / volumes.
 init-db:
-	$(DOCKER_COMPOSE) exec webapp flask -e webapp.env user create admin
+	$(DOCKER_COMPOSE) exec -T webapp flask -e webapp.env user create admin
 	$(DOCKER_COMPOSE) exec -T webapp flask -e webapp.env import eol /dev/stdin < "$(UPDATE_DATA_DIR)/win-support-dates.csv"
 
 clear-data:
