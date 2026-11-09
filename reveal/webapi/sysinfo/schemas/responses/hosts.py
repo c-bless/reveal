@@ -145,3 +145,9 @@ class ShareDetailSchema(ma.SQLAlchemyAutoSchema):
 
     ShareACLNTFS = ma.Nested(ShareACLSchema, many=True, allow_none=True)
     NTFSPermissions = ma.Nested(ShareACLNTFSSchema, many=True, allow_none=True)
+
+class HostBulkAssignmentResultSchema(ma.Schema):
+    """ Result of a bulk update of the host assignments """
+    updated = fields.Integer(metadata={"description": "Number of hosts with changed values"})
+    hosts = fields.List(fields.Nested(HostSchema), metadata={"description": "All selected hosts (after the update)"})
+    not_found = fields.List(fields.Raw(), metadata={"description": "Requested IDs / hostnames without matching host"})
