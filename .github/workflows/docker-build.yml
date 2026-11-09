@@ -50,8 +50,11 @@ jobs:
           echo "[*] reveal-db: version"
           docker run --rm --entrypoint postgres reveal-db --version
 
+      - name: Start enviornment
+        run: make run
+
       - name: Init database
-        run: make run & make init-db        
+        run: make init-db        
 
       - name: List images
         if: always()
