@@ -51,7 +51,7 @@ jobs:
           docker run --rm --entrypoint postgres reveal-db --version
 
       - name: Init database
-        run: make init-db
+        run: make run & make init-db        
 
       - name: List images
         if: always()
