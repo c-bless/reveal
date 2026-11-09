@@ -3,6 +3,7 @@ from apiflask.fields import String, List, Integer
 from apiflask.validators import Regexp, Length
 from marshmallow import validates_schema, ValidationError
 
+from reveal.core.hosts import HOST_ASSIGNMENT_FIELDS
 from reveal.core.regex import RE_SYSINFO_HOSTNAME
 from reveal.core.regex import RE_SYSINFO_SYSTEMGROUP
 from reveal.core.regex import RE_SYSINFO_LOCATION
@@ -16,8 +17,6 @@ class HostByIPSearchSchema(Schema):
     ip = String(required=True)
 
 
-# fields of a host that describe its assignment (system group, location, label)
-HOST_ASSIGNMENT_FIELDS = ("SystemGroup", "Location", "Label")
 # maximum number of hosts that can be updated with one request
 MAX_BULK_HOSTS = 1000
 

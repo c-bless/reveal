@@ -1,5 +1,5 @@
-from flask import render_template, url_for, request, Response
-from flask_login import login_required
+from flask import render_template, url_for, request, Response, redirect, flash
+from flask_login import login_required, current_user
 from sqlalchemy import and_
 
 from reveal.webapp.sysinfo import sysinfo_bp
@@ -7,6 +7,11 @@ from reveal.webapp.sysinfo import sysinfo_bp
 from reveal.core.models.sysinfo import Host
 from reveal.core.models.sysinfo import Service
 from reveal.webapp.sysinfo.forms.hosts import HostSearchForm
+from reveal.webapp.sysinfo.forms.hosts import HostAssignmentForm
+from reveal.core.extentions import db
+from reveal.core.hosts import HOST_ASSIGNMENT_FIELDS
+from reveal.core.hosts import apply_host_assignment
+from reveal.core.hosts import get_assignment_values
 from reveal.core.export.excel.hosts import generate_hosts_excel
 from reveal.core.export.excel.hosts import generate_hosts_excel_brief
 
@@ -116,7 +121,40 @@ def host_search_list():
 @login_required
 def host_detail(id):
     host = Host.query.get_or_404(id)
-    return render_template('sysinfo/host/host_details.html', host=host)
+    return render_host_detail(host, HostAssignmentForm(obj=host))
+
+
+def render_host_detail(host, assignment_form, open_assignment=False):
+    """
+    Renders the detail page of a host incl. the dialog to change system group, location and label.
+
+    :param open_assignment: open the dialog when the page is loaded (e.g. to show validation errors)
+    """
+    return render_template('sysinfo/host/host_details.html', host=host, assignment_form=assignment_form,
+                           assignment_values=get_assignment_values(), open_assignment=open_assignment)
+
+
+@sysinfo_bp.route('/hosts/<int:id>/assignment', methods=['POST'])
+@login_required
+def host_assignment_update(id):
+    """
+    Changes system group, location and label of a host. Empty fields remove the value.
+    """
+    host = Host.query.get_or_404(id)
+    form = HostAssignmentForm()
+    if not form.validate_on_submit():
+        # show the dialog again with the entered values and the validation errors
+        return render_host_detail(host, form, open_assignment=True), 400
+
+    data = {field: (getattr(form, field).data or "").strip() for field in HOST_ASSIGNMENT_FIELDS}
+    changes = apply_host_assignment(host, data, changed_by=current_user.Username)
+    db.session.commit()
+    if changes:
+        flash("Host {0} changed: {1}".format(host.Hostname, "; ".join(
+            "{0}: {1} -> {2}".format(field, old or "(empty)", new or "(empty)") for field, (old, new) in changes.items())))
+    else:
+        flash("Host {0}: no changes.".format(host.Hostname))
+    return redirect(url_for('sysinfo.host_detail', id=host.id))
 
 
 @sysinfo_bp.route('/hosts/<int:id>/services/', methods=['GET'])

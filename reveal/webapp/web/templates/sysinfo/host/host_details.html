@@ -14,6 +14,12 @@
       <div class="card card-olive">
             <div class="card-header">
               <h3 class="card-title">Environment</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool btn-sm" data-bs-toggle="modal" data-bs-target="#assignmentModal"
+                        title="Edit system group, location and label">
+                  <i class="fas fa-pen"></i> Edit
+                </button>
+              </div>
             </div>
 
             <!-- /.card-header -->
@@ -302,5 +308,47 @@
 
 
 
+{# Dialog to change system group, location and label of the host #}
+<div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" method="post" action="{{ url_for('sysinfo.host_assignment_update', id=host.id) }}">
+      {{ assignment_form.hidden_tag() }}
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignmentModalLabel">Edit host {{ host.Hostname }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for field_name, list_id in [("SystemGroup", "dl-systemgroup"), ("Location", "dl-location"), ("Label", "dl-label")] %}
+          {% set field = assignment_form[field_name] %}
+          <div class="mb-3">
+            {{ field.label(class="form-label") }}
+            {{ field(class="form-control" + (" is-invalid" if field.errors else ""), list=list_id, autocomplete="off", maxlength="256") }}
+            {% for error in field.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            <datalist id="{{ list_id }}">
+              {% for value in assignment_values[field_name] %}<option value="{{ value }}">{% endfor %}
+            </datalist>
+          </div>
+        {% endfor %}
+        <p class="form-text mb-0">Empty fields remove the value. Existing values are suggested while typing.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        {{ assignment_form.save(class="btn btn-primary") }}
+      </div>
+    </form>
+  </div>
+</div>
 {% endif %}
 {% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+  {% if open_assignment %}
+  <script>
+    // show the dialog again if the entered values are invalid
+    document.addEventListener('DOMContentLoaded', function () {
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('assignmentModal')).show();
+    });
+  </script>
+  {% endif %}
+{% endblock javascripts %}

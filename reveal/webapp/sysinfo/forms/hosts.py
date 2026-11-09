@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField
-from wtforms.validators import Regexp, Optional
+from wtforms.validators import Regexp, Optional, Length
 
 from reveal.core.regex import RE_SYSINFO_HOSTNAME
 from reveal.core.regex import RE_SYSINFO_DOMAIN
@@ -37,3 +37,14 @@ class HostSearchForm(FlaskForm):
     brief = SubmitField('Download Excel (Brief)')
     full = SubmitField('Download Excel (Full)')
 
+
+
+class HostAssignmentForm(FlaskForm):
+    """ Change of the assignment of a host (system group, location, label). Empty fields remove the value. """
+    SystemGroup = StringField('Systemgroup', validators=[Optional(), Length(max=256),
+                                                         Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
+    Location = StringField('Location', validators=[Optional(), Length(max=256),
+                                                   Regexp(regex=RE_SYSINFO_LOCATION, message="Invalid input")])
+    Label = StringField('Label', validators=[Optional(), Length(max=256),
+                                             Regexp(regex=RE_SYSINFO_LABEL, message="Invalid input")])
+    save = SubmitField('Save')

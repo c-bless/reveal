@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from flask import current_app
 from sqlalchemy import func
 
 from reveal.core.extentions import db
@@ -31,7 +30,7 @@ from reveal.webapi.sysinfo.schemas.arguments.hosts import HostByNameSearchSchema
 from reveal.webapi.sysinfo.schemas.arguments.hosts import HostByIPSearchSchema
 from reveal.webapi.sysinfo.schemas.arguments.hosts import HostAssignmentSchema
 from reveal.webapi.sysinfo.schemas.arguments.hosts import HostBulkAssignmentSchema
-from reveal.webapi.sysinfo.schemas.arguments.hosts import HOST_ASSIGNMENT_FIELDS
+from reveal.core.hosts import apply_host_assignment as core_apply_host_assignment
 from reveal.webapi.sysinfo.schemas.responses.hosts import HostBulkAssignmentResultSchema
 
 
@@ -174,25 +173,8 @@ def get_printers_by_host(host_id):
 # Update of the host assignment (system group, location, label)
 #####################################################################################
 def apply_host_assignment(host: Host, data: dict) -> dict:
-    """
-    Sets the assignment fields contained in data on the host. Empty strings and null remove the value.
-    Changes are written to the application log (who, which host, old -> new value).
-
-    :return: dictionary of the changed fields: {field: (old value, new value)}
-    """
-    changes = {}
-    for field in HOST_ASSIGNMENT_FIELDS:
-        if field in data:
-            new_value = data[field] or None
-            old_value = getattr(host, field)
-            if old_value != new_value:
-                setattr(host, field, new_value)
-                changes[field] = (old_value, new_value)
-    if changes:
-        user = auth.current_user
-        current_app.logger.info("Host assignment changed by %s: host id=%s hostname=%s %s",
-                                getattr(user, "Username", "?"), host.id, host.Hostname, changes)
-    return changes
+    """ Changes the assignment of the host (see reveal.core.hosts.apply_host_assignment) as the current API user. """
+    return core_apply_host_assignment(host, data, changed_by=getattr(auth.current_user, "Username", "?"))
 
 
 @bp.patch("/hosts/<int:host_id>")
