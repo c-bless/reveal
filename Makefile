@@ -24,6 +24,11 @@ DOCKER_NGINX                    = $(BASEDIR)/services/nginx
 
 DOCKER_WEBAPI                   = $(BASEDIR)/services/api
 DOCKER_WEBAPI_SRC               = $(BASEDIR)/services/api/reveal
+DOCKER_DB                       = $(BASEDIR)/services/db
+
+# PostgreSQL password: placeholder in the repository, replaced by a random password (see target db-password)
+DB_PASSWORD_PLACEHOLDER         = CHANGEMEREVEALPW
+DB_PASSWORD_FILES               = $(DOCKER_DB)/Dockerfile $(DOCKER_WEBAPP)/webapp.env $(DOCKER_WEBAPI)/webapi.env
 
 
 # Check if docker compose (v2) is available
@@ -35,7 +40,7 @@ endif
 
 
 # all targets are commands, not files (otherwise e.g. "tmp" is skipped because the directory tmp/ exists)
-.PHONY: tmp help clean fix-permissions build run stop init-db clear-data reset-admin
+.PHONY: tmp help clean fix-permissions db-password build run stop init-db clear-data reset-admin
 
 tmp:
 	@$(shell mkdir -p $(UPLOAD_DIR) )
@@ -48,6 +53,7 @@ help:
 	@echo tmp          	: download dependencies
 	@echo build         : build docker container
 	@echo fix-permissions : reset ownership of directories created as root by docker
+	@echo db-password   : replace the default PostgreSQL password by a random one - once, part of build
 	@echo clean		    : cleanup temporary directories
 	@echo run		    : start docker container
 	@echo stop		    : stop docker container and drives
@@ -72,8 +78,36 @@ clean:
 fix-permissions:
 	docker run --rm -v "$(DOCKER_WEBAPP):/data" alpine:3 sh -c 'for d in update-data uploads reports; do if [ -e "/data/$$d" ]; then chown -R $(shell id -u):$(shell id -g) "/data/$$d"; fi; done'
 
+# Replaces the PostgreSQL password placeholder (CHANGEMEREVEALPW) in services/db/Dockerfile, services/web/webapp.env
+# and services/api/webapi.env with the same random password (32 characters, letters and digits).
+# The password is generated only once: PostgreSQL sets the password only when the database volume is initialised, so
+# a new password on every build would lock webapp and webapi out of an existing database. If the Dockerfile already
+# contains a password, it is reused for environment files that still contain the placeholder.
+db-password:
+	@current=$$(sed -n 's/^ENV POSTGRES_PASSWORD=//p' $(DOCKER_DB)/Dockerfile); \
+	if [ -z "$$current" ]; then echo "[-] POSTGRES_PASSWORD not found in $(DOCKER_DB)/Dockerfile"; exit 1; fi; \
+	if [ "$$current" = "$(DB_PASSWORD_PLACEHOLDER)" ]; then \
+		password=$$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32); \
+		if [ $${#password} -ne 32 ]; then echo "[-] Password generation failed"; exit 1; fi; \
+		echo "[*] Generated random PostgreSQL password"; \
+	else \
+		password="$$current"; \
+	fi; \
+	for f in $(DB_PASSWORD_FILES); do \
+		if grep -q '$(DB_PASSWORD_PLACEHOLDER)' "$$f"; then \
+			sed "s/$(DB_PASSWORD_PLACEHOLDER)/$$password/g" "$$f" > "$$f.tmp" && mv "$$f.tmp" "$$f"; \
+			echo "[+] PostgreSQL password set in $$f"; \
+		fi; \
+	done; \
+	for f in $(DOCKER_WEBAPP)/webapp.env $(DOCKER_WEBAPI)/webapi.env; do \
+		if ! grep -q ":$$password@" "$$f"; then \
+			echo "[-] Password in DATABASE_URL of $$f does not match $(DOCKER_DB)/Dockerfile"; exit 1; \
+		fi; \
+	done; \
+	echo "[+] PostgreSQL password is identical in services/db/Dockerfile, webapp.env and webapi.env"
+
 # The static files are replaced (not merged), so no outdated libraries (e.g. AdminLTE 3 plugins) remain in the images.
-build: tmp fix-permissions
+build: tmp fix-permissions db-password
 	@$(shell cp -r $(REPORT_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(UPLOAD_DIR) $(DOCKER_WEBAPP))
 	@$(shell cp -r $(CONFIGREVIEW_DIR) $(DOCKER_WEBAPP))
