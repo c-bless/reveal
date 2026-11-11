@@ -10,7 +10,7 @@ Files of older collector versions (< 0.7) are imported with the legacy importer 
 Structure of the dictionary (= JSON file):
 
     {
-        "Version": "0.7",
+        "Version": "0.6",
         "HostInfo": {...},              "BiosInfo": {...},
         "Hotfixes": [...],              "InstalledProducts": [...],
         "NetAdapter": [...],            "NetIPs": [...],                "Routes": [...],
@@ -61,7 +61,7 @@ from reveal.core.util import decrypt_ps
 from reveal.core.util import encrypt
 
 # first collector version that is imported with this importer. Older files are imported with the legacy importer.
-MIN_VERSION = (0, 7)
+MIN_VERSION = (0, 6)
 
 
 ###################################################################################################################
