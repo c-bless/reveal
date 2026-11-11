@@ -131,8 +131,6 @@ def registrycheck_search_list():
             expected = form.Expected.data
             path = form.Path.data
             key = form.Key.data
-            keyExists = form.KeyExists.data
-            valueMatch = form.ValueMatch.data
             currentValue = form.CurrentValue.data
             host = form.Host.data
             invertName = form.InvertName.data
@@ -143,8 +141,6 @@ def registrycheck_search_list():
             invertTags = form.InvertTags.data
             invertCurrentValue = form.InvertCurrentValue.data
             invertExpected = form.InvertExpected.data
-            useKeyExist = form.UseKeyExists.data
-            useValueMatch = form.UseValueMatch.data
             invertHost = form.InvertHost.data
 
             if len(name) > 0:
@@ -194,10 +190,11 @@ def registrycheck_search_list():
                     filters.append(RegistryCheck.Host_id.in_(ids))
                 else:
                     filters.append(RegistryCheck.Host_id.notin_(ids))
-            if useValueMatch:
-                filters.append(RegistryCheck.ValueMatch == valueMatch)
-            if useKeyExist:
-                filters.append(RegistryCheck.KeyExists == keyExists)
+            # dropdown fields: "" = any (no filter), "true" = yes, "false" = no
+            for field in ("KeyExists", "ValueMatch"):
+                value = getattr(form, field).data
+                if value in ("true", "false"):
+                    filters.append(getattr(RegistryCheck, field) == (value == "true"))
             checks = RegistryCheck.query.filter(*filters).all()
 
             if 'download' in request.form:
@@ -227,13 +224,9 @@ def file_exist_search_list():
         if form.validate_on_submit():
             name = form.Name.data
             filename = form.File.data
-            fileExist = form.FileExist.data
-            hashMatch = form.HashMatch.data
             host = form.Host.data
 
             invertName = form.InvertName.data
-            useFileExist = form.UseFileExist.data
-            useHashMatch = form.UseHashMatch.data
             invertFile = form.InvertFile.data
             invertHost = form.InvertHost.data
 
@@ -247,16 +240,11 @@ def file_exist_search_list():
                     filters.append(FileExistCheck.File.ilike("%" + filename + "%"))
                 else:
                     filters.append(FileExistCheck.File.notilike("%" + filename + "%"))
-            if useFileExist:
-                if not fileExist:
-                    filters.append(FileExistCheck.FileExist == False)
-                else:
-                    filters.append(FileExistCheck.FileExist == True)
-            if useHashMatch:
-                if not hashMatch:
-                    filters.append(FileExistCheck.HashMatch == False)
-                else:
-                    filters.append(FileExistCheck.HashMatch == True)
+            # dropdown fields: "" = any (no filter), "true" = yes, "false" = no
+            for field in ("FileExist", "HashMatch"):
+                value = getattr(form, field).data
+                if value in ("true", "false"):
+                    filters.append(getattr(FileExistCheck, field) == (value == "true"))
             if len(host) > 0:
                 hosts = Host.query.filter(Host.Hostname.ilike("%" + host + "%")).all()
                 ids = [h.id for h in hosts]

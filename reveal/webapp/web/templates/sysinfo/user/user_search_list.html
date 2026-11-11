@@ -15,34 +15,21 @@
                     <div class="row">
                         <div class="col-sm-5">
                             {{ render_search_field(form.Name, form.InvertName) }}
-
                             {{ render_search_field(form.FullName, form.InvertFullName) }}
-
                             {{ render_search_field(form.AccountType, form.InvertAccountType) }}
-
                             {{ render_search_field(form.SID, form.InvertSID) }}
-
-
                         </div>
                         <div class="col-sm-5">
-
                             {{ render_search_field(form.Host, form.InvertHost) }}
-
                             {{ render_search_field(form.SystemGroup, form.InvertSystemGroup) }}
-
-
                             {{ render_search_field(form.Description, form.InvertDescription) }}
-
                         </div>
                         <div class="col-sm-2">
-
                             {{ render_select_field(form.Lockout) }}
                             {{ render_select_field(form.PasswordChangeable) }}
                             {{ render_select_field(form.PasswordExpires) }}
                             {{ render_select_field(form.PasswordRequired) }}
                             {{ render_select_field(form.DescriptionNotEmpty) }}
-
-
                         </div>
                     </div>
                 </div>

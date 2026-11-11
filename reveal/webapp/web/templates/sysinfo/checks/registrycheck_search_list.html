@@ -1,6 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
 {% import "_tablehelper.html" as helper %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field, render_select_field %}
 {% set title = "RegistryChecks" %}
 {% block page_title %} RegistryChecks {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
@@ -41,13 +41,14 @@
 
                             {{ render_search_field(form.Host, form.InvertHost) }}
 
-                            <br />
-                            {{ render_check_field_sm2(form.KeyExists) }}
-                            {{ render_check_field_sm2(form.UseKeyExists) }}
-
-                            {{ render_check_field_sm2(form.ValueMatch) }}
-                            {{ render_check_field_sm2(form.UseValueMatch) }}
-
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    {{ render_select_field(form.KeyExists) }}
+                                </div>
+                                <div class="col-sm-6">
+                                    {{ render_select_field(form.ValueMatch) }}
+                                </div>
+                            </div>
 
                         </div>
                     </div>

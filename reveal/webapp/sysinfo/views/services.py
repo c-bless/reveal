@@ -28,8 +28,6 @@ def service_search_list():
             systemname = form.SystemName.data
             displayname = form.DisplayName.data
             pathname = form.PathName.data
-            started = form.Started.data
-            useStarted = form.UseStarted.data
             startmode = form.StartMode.data
             startname = form.StartName.data
             invertName = form.InvertName.data
@@ -69,8 +67,9 @@ def service_search_list():
                     service_filter.append(Service.DisplayName.ilike("%"+displayname+"%"))
                 else:
                     service_filter.append(Service.DisplayName.notilike("%"+displayname+"%"))
-            if useStarted:
-                service_filter.append(Service.Started == started)
+            # dropdown field: "" = any (no filter), "true" = yes, "false" = no
+            if form.Started.data in ("true", "false"):
+                service_filter.append(Service.Started == (form.Started.data == "true"))
 
             services = Service.query.filter(*service_filter).all()
 

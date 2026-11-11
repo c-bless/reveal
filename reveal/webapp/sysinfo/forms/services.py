@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Regexp, Optional
 
 from reveal.core.regex import RE_SYSINFO_SERVICE_STARTNAME
@@ -9,6 +9,7 @@ from reveal.core.regex import RE_SYSINFO_SERVICE_DISPLAYNAME
 from reveal.core.regex import RE_SYSINFO_SERVICE_NAME
 from reveal.core.regex import RE_SYSINFO_SERVICE_STARTED
 from reveal.core.regex import RE_SYSINFO_SERVICE_STARTMODE
+from reveal.webapp.sysinfo.forms.defender import TRISTATE_CHOICES
 
 
 
@@ -23,8 +24,8 @@ class ServiceSearchForm(FlaskForm):
     StartMode = StringField('StartMode', validators=[Regexp(regex=RE_SYSINFO_SERVICE_STARTMODE, message="Invalid input")])
     StartName = StringField('StartName', validators=[Regexp(regex=RE_SYSINFO_SERVICE_STARTNAME, message="Invalid input")])
 
-    Started = BooleanField('Started (True)')
-    UseStarted = BooleanField('Use Started')
+    # "" = any, "true" = yes, "false" = no
+    Started = SelectField('Started', choices=TRISTATE_CHOICES, default="")
 
 
     InvertName = BooleanField('Invert Name')

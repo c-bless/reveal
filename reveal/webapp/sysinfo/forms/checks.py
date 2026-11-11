@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
+from wtforms import StringField, SubmitField, BooleanField, SelectField
 from wtforms.validators import Regexp
 
 from reveal.core.regex import RE_SYSINFO_CONFIGCHECK_NAME
@@ -21,6 +21,7 @@ from reveal.core.regex import RE_SYSINFO_REGISTRYCHECK_TAGS
 from reveal.core.regex import RE_SYSINFO_REGISTRYCHECK_KEY
 from reveal.core.regex import RE_SYSINFO_HOSTNAME
 from reveal.core.regex import RE_SYSINFO_SYSTEMGROUP
+from reveal.webapp.sysinfo.forms.defender import TRISTATE_CHOICES
 
 
 class ConfigCheckSearchForm(FlaskForm):
@@ -57,8 +58,9 @@ class RegistryCheckSearchForm(FlaskForm):
     Path = StringField('Path', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_PATH, message="Invalid input")])
     Key = StringField('Key', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_KEY, message="Invalid input")])
     Expected = StringField('Expected', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_EXPECTED, message="Invalid input")])
-    KeyExists = BooleanField('KeyExists')
-    ValueMatch = BooleanField('ValueMatch')
+    # "" = any, "true" = yes, "false" = no
+    KeyExists = SelectField('KeyExists', choices=TRISTATE_CHOICES, default="")
+    ValueMatch = SelectField('ValueMatch', choices=TRISTATE_CHOICES, default="")
     SystemGroup = StringField('SystemGroup', validators=[Regexp(regex=RE_SYSINFO_SYSTEMGROUP, message="Invalid input")])
     CurrentValue = StringField('CurrentValue', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_CURRENTVALUE, message="Invalid input")])
 
@@ -73,8 +75,6 @@ class RegistryCheckSearchForm(FlaskForm):
     InvertSystemGroup = BooleanField('Invert SystemGroup')
     InvertExpected = BooleanField('Invert Expected')
     InvertCurrentValue = BooleanField('Invert CurrentValue')
-    UseKeyExists = BooleanField('use KeyExists')
-    UseValueMatch = BooleanField('use ValueMatch')
     InvertHost = BooleanField('Invert Host')
 
     search = SubmitField('Search')
@@ -84,15 +84,14 @@ class RegistryCheckSearchForm(FlaskForm):
 class FileExistCheckSearchForm(FlaskForm):
     Name = StringField('Name', validators=[Regexp(regex=RE_SYSINFO_REGISTRYCHECK_NAME, message="Invalid input")])
     File = StringField('File', validators=[Regexp(regex=RE_SYSINFO_FILENAME, message="Invalid input")])
-    FileExist = BooleanField('FileExists')
-    HashMatch = BooleanField('HashMatch')
+    # "" = any, "true" = yes, "false" = no
+    FileExist = SelectField('FileExists', choices=TRISTATE_CHOICES, default="")
+    HashMatch = SelectField('HashMatch', choices=TRISTATE_CHOICES, default="")
 
     Host = StringField('Host', validators=[Regexp(regex=RE_SYSINFO_HOSTNAME, message="Invalid input")])
 
     InvertName = BooleanField('Invert Name')
     InvertFile = BooleanField('Invert Category')
-    UseFileExist = BooleanField('use FileExist')
-    UseHashMatch = BooleanField('use HashMatch')
     InvertHost = BooleanField('Invert Host')
 
     search = SubmitField('Search')

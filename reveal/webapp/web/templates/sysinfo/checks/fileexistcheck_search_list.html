@@ -1,6 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
 {% import "_tablehelper.html" as helper %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field, render_select_field %}
 {% set title = "FileExist Checks" %}
 {% block page_title %} FileExistChecks {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
@@ -21,13 +21,14 @@
                         <div class="col-sm-6">
 
                             {{ render_search_field(form.Host, form.InvertHost) }}
-                            <br />
-                            {{ render_check_field_sm2(form.FileExist) }}
-                            {{ render_check_field_sm2(form.UseFileExist) }}
-                            <br />
-
-                            {{ render_check_field_sm2(form.HashMatch) }}
-                            {{ render_check_field_sm2(form.UseHashMatch) }}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    {{ render_select_field(form.FileExist) }}
+                                </div>
+                                <div class="col-sm-6">
+                                    {{ render_select_field(form.HashMatch) }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

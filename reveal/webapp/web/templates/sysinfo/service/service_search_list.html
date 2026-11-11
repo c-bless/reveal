@@ -1,6 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
 {% import "_tablehelper.html" as helper %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field, render_select_field %}
 {% set title = "Services" %}
 {% block page_title %} Services {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
@@ -32,9 +32,11 @@
 
                             {{ render_search_field(form.StartName, form.InvertStartName) }}
 
-                            <br/>
-                            {{ render_check_field_sm2(form.Started) }}
-                            {{ render_check_field_sm2(form.UseStarted) }}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    {{ render_select_field(form.Started) }}
+                                </div>
+                            </div>
 
                         </div>
                     </div>
