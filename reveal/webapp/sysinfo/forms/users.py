@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, SubmitField, BooleanField, IntegerField, SelectField
 from wtforms.validators import Regexp
 
 from reveal.core.regex import RE_SYSINFO_USER_NAME
@@ -8,6 +8,7 @@ from reveal.core.regex import RE_SID_ALLOWED_CHARS
 from reveal.core.regex import RE_SYSINFO_USER_FULLNAME
 from reveal.core.regex import RE_SYSINFO_HOSTNAME
 from reveal.core.regex import RE_SYSINFO_SYSTEMGROUP
+from reveal.webapp.sysinfo.forms.defender import TRISTATE_CHOICES
 
 
 class LocalUserSearchForm(FlaskForm):
@@ -29,20 +30,13 @@ class LocalUserSearchForm(FlaskForm):
     InvertHost = BooleanField('Invert Host')
     InvertSystemGroup = BooleanField('Invert Systemgroup')
 
-    Lockout = BooleanField('Lockout')
-    UseLockout = BooleanField('use Lockout')
+    # "" = any, "true" = yes, "false" = no
+    Lockout = SelectField('Lockout', choices=TRISTATE_CHOICES, default="")
+    PasswordChangeable = SelectField('PasswordChangeable', choices=TRISTATE_CHOICES, default="")
+    PasswordRequired = SelectField('PasswordRequired', choices=TRISTATE_CHOICES, default="")
+    PasswordExpires = SelectField('PasswordExpires', choices=TRISTATE_CHOICES, default="")
 
-    PasswordChangeable = BooleanField('PasswordChangeable')
-    UsePasswordChangeable = BooleanField('use PasswordChangeable')
-
-    PasswordRequired = BooleanField('PasswordRequired')
-    UsePasswordRequired = BooleanField('use PasswordRequired')
-
-    PasswordExpires = BooleanField('PasswordExpires')
-    UsePasswordExpires = BooleanField('use PasswordExpires')
-
-    DescriptionNotEmpty = BooleanField('Description NotEmpty')
-    UseDescriptionNotEmpty = BooleanField('use DescriptionNotEmpty')
+    DescriptionNotEmpty = SelectField('Description not empty', choices=TRISTATE_CHOICES, default="")
 
     search = SubmitField('Search')
     download = SubmitField('Download Excel')

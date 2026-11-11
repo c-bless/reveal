@@ -1,6 +1,6 @@
 {% extends "layout/search_list_layout.html" %}
 {% import "_tablehelper.html" as helper %}
-{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field %}
+{% from "_formhelpers.html" import render_field_sm2, render_check_field, render_check_field_sm2, render_submit_field, render_search_field, render_select_field %}
 {% set title = "Local Users" %}
 {% block page_title %} Local Users {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
@@ -36,23 +36,11 @@
                         </div>
                         <div class="col-sm-2">
 
-                            {{ render_check_field_sm2(form.Lockout) }}
-                            {{ render_check_field_sm2(form.UseLockout) }}
-                            <br />
-                            {{ render_check_field_sm2(form.PasswordChangeable) }}
-                            {{ render_check_field_sm2(form.PasswordChangeable) }}
-                            <br />
-
-                            {{ render_check_field_sm2(form.PasswordExpires) }}
-                            {{ render_check_field_sm2(form.PasswordExpires) }}
-                            <br />
-
-                            {{ render_check_field_sm2(form.PasswordRequired) }}
-                            {{ render_check_field_sm2(form.UsePasswordRequired) }}
-                            <br />
-
-                            {{ render_check_field_sm2(form.DescriptionNotEmpty) }}
-                            {{ render_check_field_sm2(form.UseDescriptionNotEmpty) }}
+                            {{ render_select_field(form.Lockout) }}
+                            {{ render_select_field(form.PasswordChangeable) }}
+                            {{ render_select_field(form.PasswordExpires) }}
+                            {{ render_select_field(form.PasswordRequired) }}
+                            {{ render_select_field(form.DescriptionNotEmpty) }}
 
 
                         </div>

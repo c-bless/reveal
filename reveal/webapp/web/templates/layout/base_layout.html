@@ -24,6 +24,17 @@
             .app-sidebar .nav-header { font-size: .8rem; padding: .75rem 1rem .25rem; }
             /* keep long group labels clear of the expand arrow */
             .sidebar-menu .nav-link > p:has(> .nav-arrow) { padding-right: 1.75rem; }
+            /* tabs on a coloured card header (card-tabs): inactive tabs in the header text colour (e.g. white on
+               olive) instead of the Bootstrap link colour (blue), active tab in the colour of the card */
+            .card-tabs:not(.card-outline) > .card-header .nav-tabs .nav-link {
+              --bs-nav-link-color: rgba(var(--lte-card-variant-color-rgb), .85);
+              --bs-nav-link-hover-color: var(--lte-card-variant-color);
+              --bs-nav-tabs-link-active-color: var(--lte-card-variant-bg);
+            }
+            .card-tabs:not(.card-outline) > .card-header .nav-tabs .nav-link:not(.active):hover {
+              border-color: transparent;
+              background-color: rgba(var(--lte-card-variant-color-rgb), .15);
+            }
           </style>
         {% endblock stylesheets %}
     {% endblock head %}

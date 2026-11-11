@@ -86,6 +86,14 @@
 </div>
 {% endmacro %}
 
+{# select field (e.g. any / yes / no), label above the field - fits narrow columns #}
+{% macro render_select_field(field) %}
+<div class="mb-3">
+    {{ field.label(class="form-label") | safe }}
+    {{ field(class="form-select", **kwargs)|safe }}
+</div>
+{% endmacro %}
+
 {% macro render_submit_field(field) %}
 {{ field(class="btn btn-primary", **kwargs)|safe }}
 {% endmacro %}

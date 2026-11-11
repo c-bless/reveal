@@ -1,7 +1,7 @@
 from flask import render_template
 from flask import request
 from flask import Response
-from sqlalchemy import and_
+from sqlalchemy import and_, not_, func
 from flask_login import login_required
 
 from reveal.webapp.sysinfo import sysinfo_bp
@@ -64,16 +64,6 @@ def user_search_list():
             invertAccountType = form.InvertAccountType.data
             invertSystemgroup = form.InvertSystemGroup.data
 
-            lockout = form.Lockout.data
-            passwordRequired = form.PasswordRequired.data
-            passwordChangeable = form.PasswordChangeable.data
-            passwordExpires = form.PasswordExpires.data
-            useLockout = form.UseLockout.data
-            usePasswordRequired = form.UsePasswordRequired.data
-            usePasswordExpires = form.UsePasswordExpires.data
-            usePasswordChangeable = form.UsePasswordChangeable.data
-            useDescriptionNotEmpty = form.UseDescriptionNotEmpty.data
-            descriptionNotEmpty = form.DescriptionNotEmpty.data
 
             if len(name) > 0:
                 if not invertName:
@@ -100,23 +90,17 @@ def user_search_list():
                     user_filter.append(User.Description.ilike("%" + description + "%"))
                 else:
                     user_filter.append(User.Description.notilike("%" + description + "%"))
-            if useLockout:
-                print("useLockout")
-                user_filter.append(User.Lockout == lockout)
-            if usePasswordChangeable:
-                print("usePasswordChangeable")
-                user_filter.append(User.PasswordChangeable == passwordChangeable)
-            if usePasswordRequired:
-                print("usePasswordRequired")
-                user_filter.append(User.PasswordRequired == passwordRequired)
-            if usePasswordExpires:
-                print("usePasswordExpires")
-                user_filter.append(User.PasswordExpires == passwordExpires)
-            if useDescriptionNotEmpty:
-                if descriptionNotEmpty:
-                    user_filter.append(User.Description != None)
-                else:
-                    user_filter.append(User.Description == None)
+            # dropdown fields: "" = any (no filter), "true" = yes, "false" = no
+            for field in ("Lockout", "PasswordChangeable", "PasswordRequired", "PasswordExpires"):
+                value = getattr(form, field).data
+                if value in ("true", "false"):
+                    user_filter.append(getattr(User, field) == (value == "true"))
+            # "true" = description set, "false" = no description (NULL or only whitespace)
+            description_set = and_(User.Description.isnot(None), func.trim(User.Description) != "")
+            if form.DescriptionNotEmpty.data == "true":
+                user_filter.append(description_set)
+            elif form.DescriptionNotEmpty.data == "false":
+                user_filter.append(not_(description_set))
 
             if len(host) > 0:
                 if not invertHost:
@@ -128,7 +112,6 @@ def user_search_list():
                     host_filter.append(Host.SystemGroup.ilike("%" + systemgroup + "%"))
                 else:
                     host_filter.append(Host.SystemGroup.notilike("%" + systemgroup + "%"))
-            print(user_filter)
             users = User.query.filter(and_(*user_filter)).join(Host).filter(and_(*host_filter)).all()
 
             if 'download' in request.form:
