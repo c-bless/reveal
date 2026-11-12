@@ -31,6 +31,7 @@ from reveal.core.extentions import db
 
 from reveal.core.importer.converter import str2bool
 from reveal.core.importer.converter import str2bool_or_none
+from reveal.core.importer.converter import network_protection_or_none
 from reveal.core.importer.converter import str2datetime_or_none
 from reveal.core.util import encrypt
 from reveal.core.util import decrypt_ps
@@ -405,7 +406,7 @@ def defenderSettings2db(xml, host):
         if "DisableScanningMappedNetworkDrivesForFullScan" == i.tag: settings.DisableScanningMappedNetworkDrivesForFullScan = str2bool_or_none(i.text)
         if "DisableScanningNetworkFiles" == i.tag: settings.DisableScanningNetworkFiles = str2bool_or_none(i.text)
         if "DisableScriptScanning" == i.tag: settings.DisableScriptScanning = str2bool_or_none(i.text)
-        if "EnableNetworkProtection" == i.tag: settings.EnableNetworkProtection = str2bool_or_none(i.text)
+        if "EnableNetworkProtection" == i.tag: settings.EnableNetworkProtection = network_protection_or_none(i.text)
         if "ExclusionPath" == i.tag: settings.ExclusionPath = str(i.text)
         if "ExclusionProcess" == i.tag: settings.ExclusionProcess = str(i.text)
     db.session.add(settings)

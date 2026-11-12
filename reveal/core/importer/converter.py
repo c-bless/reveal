@@ -47,3 +47,26 @@ def str2int_or_none(text: str) -> int:
         return int(text)
     except ValueError:
         return None
+
+def network_protection_or_none(input) -> int | None:
+    """
+    Converts Get-MpPreference.EnableNetworkProtection: 0 = disabled, 1 = enabled (block mode), 2 = audit mode.
+    "True" / "False" (boolean value of older collector or Defender versions) are mapped to 1 / 0.
+    """
+    if input is None:
+        return None
+    if isinstance(input, bool):
+        return int(input)
+    if isinstance(input, int):
+        return input
+    value = str(input).strip().lower()
+    if value in ("true", "enabled"):
+        return 1
+    if value in ("false", "disabled"):
+        return 0
+    if value in ("audit", "auditmode"):
+        return 2
+    try:
+        return int(value)
+    except ValueError:
+        return None

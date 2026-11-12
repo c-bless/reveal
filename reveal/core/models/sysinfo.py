@@ -237,6 +237,10 @@ class DefenderStatus(db.Model):
     def __str__(self):
         return "Defender Status"
 
+# values of DefenderSettings.EnableNetworkProtection
+NETWORK_PROTECTION_STATES = {0: "Disabled", 1: "Enabled (block mode)", 2: "Audit mode"}
+
+
 class DefenderSettings(db.Model):
     __tablename__ = "DefenderSettings"
     id = db.Column(db.Integer, primary_key=True)
@@ -255,11 +259,19 @@ class DefenderSettings(db.Model):
     DisableScanningMappedNetworkDrivesForFullScan = db.Column(db.Boolean, nullable=True)
     DisableScanningNetworkFiles = db.Column(db.Boolean, nullable=True)
     DisableScriptScanning = db.Column(db.Boolean, nullable=True)
-    EnableNetworkProtection = db.Column(db.Boolean, nullable=True)
+    # Get-MpPreference returns 0 = disabled, 1 = enabled (block mode), 2 = audit mode (see NETWORK_PROTECTION_STATES)
+    EnableNetworkProtection = db.Column(db.Integer, nullable=True)
     ExclusionPath = db.Column(db.String(), unique=False, nullable=True)
     ExclusionProcess = db.Column(db.String(), unique=False, nullable=True)
     Host_id = db.Column(db.Integer, db.ForeignKey('Host.id'), nullable=False)
     Host = db.relationship("Host", back_populates="DefenderSettings", lazy="joined")
+
+    @property
+    def NetworkProtectionState(self) -> str | None:
+        """ Label of EnableNetworkProtection (e.g. "Audit mode"), the raw value if it is unknown. """
+        if self.EnableNetworkProtection is None:
+            return None
+        return NETWORK_PROTECTION_STATES.get(self.EnableNetworkProtection, str(self.EnableNetworkProtection))
 
     def __repr__(self):
         return "Defender settings"

@@ -56,6 +56,7 @@ from reveal.core.models.sysinfo import ShareACL
 from reveal.core.models.sysinfo import ShareACLNTFS
 from reveal.core.models.sysinfo import User
 from reveal.core.importer.converter import str2bool_or_none
+from reveal.core.importer.converter import network_protection_or_none
 from reveal.core.importer.converter import str2datetime_or_none
 from reveal.core.util import decrypt_ps
 from reveal.core.util import encrypt
@@ -619,8 +620,9 @@ def _add_defender(data, host):
                      "DisableEmailScanning", "DisableIntrusionPreventionSystem", "DisableIOAVProtection",
                      "DisableRealtimeMonitoring", "DisableRemovableDriveScanning", "DisableRestorePoint",
                      "DisableScanningMappedNetworkDrivesForFullScan", "DisableScanningNetworkFiles",
-                     "DisableScriptScanning", "EnableNetworkProtection"):
+                     "DisableScriptScanning"):
             setattr(settings, name, _bool(p.get(name)))
+        settings.EnableNetworkProtection = network_protection_or_none(p.get("EnableNetworkProtection"))
         settings.ExclusionPath = _str(p.get("ExclusionPath"))
         settings.ExclusionProcess = _str(p.get("ExclusionProcess"))
         settings.Host = host

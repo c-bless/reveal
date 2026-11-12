@@ -20,6 +20,7 @@ from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_n
 from reveal.core.configreview.checks.hardeningchecks import verify_firewall_enabled
 from reveal.core.configreview.checks.hardeningchecks import verify_firewall_disabled
 from reveal.core.configreview.checks.hardeningchecks import verify_configchecks
+from reveal.core.configreview.checks.defenderchecks import verify_defender_checks
 
 from reveal.core.configreview import ConfigReviewResult
 
@@ -105,6 +106,8 @@ def verify_config_checks(hosts, checks):
                     https_enabled = checks["system"]["WSUS"]["https_enabled"]
                     if https_enabled is True:
                         results.append(verify_wsus_https(h))
+            if "Defender" in checks["system"] and isinstance(checks["system"]["Defender"], dict):
+                results.extend(verify_defender_checks(h, checks["system"]["Defender"]))
             if "configcheck_results" in checks["system"]:
                 cc_checks = checks["system"]["configcheck_results"]
                 results.extend(verify_configchecks(h, cc_checks))

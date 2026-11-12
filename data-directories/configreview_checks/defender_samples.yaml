@@ -1,0 +1,64 @@
+meta:
+  name: "Defender Tests"
+  version: 0.1
+  description: "Checks config for specified defender settings."
+  reference: ""
+
+
+system:
+
+  Defender:
+    # --- Status (Get-MpComputerStatus): <field>: expected value ---
+    AMServiceEnabled: True
+    AntivirusEnabled: True
+    AntispywareEnabled: True
+    RealTimeProtectionEnabled: True
+    BehaviorMonitorEnabled: True
+    IoavProtectionEnabled: True
+    OnAccessProtectionEnabled: True
+    NISEnabled: True
+
+    # --- Settings (Get-MpPreference): <field>: expected value ---
+    DisableRealtimeMonitoring: False
+    DisableBehaviorMonitoring: False
+    DisableIOAVProtection: False
+    DisableIntrusionPreventionSystem: False
+    DisableScriptScanning: False
+    DisableBlockAtFirstSeen: False
+    DisableArchiveScanning: False
+    DisableRemovableDriveScanning: False
+    # network protection: 0 = disabled, 1 = enabled (block mode), 2 = audit mode - single value or list, e.g. [1, 2]
+    EnableNetworkProtection: 1
+    # Defender defaults are True for the following settings - enable only if required by the hardening guide
+    # DisableEmailScanning: False
+    # DisableScanningMappedNetworkDrivesForFullScan: False
+    # DisableCatchupQuickScan: False
+
+    # --- Exclusions (ExclusionPath / ExclusionProcess) ---
+    # Exclusions are stored as one string, the patterns are matched as case-insensitive substrings.
+    # Use single quotes, so backslashes are not treated as escape characters.
+
+    # no exclusions configured at all
+    ExclusionPathNotSet: True
+    # ExclusionProcessNotSet: True
+
+    # exclusions that must not be configured (e.g. user-writable directories, script interpreters)
+    ExclusionPathNotContains:
+      - '\Temp'
+      - '\Users\'
+      - '\Downloads'
+      - '\ProgramData'
+      - '*'
+    ExclusionProcessNotContains:
+      - 'powershell.exe'
+      - 'pwsh.exe'
+      - 'cmd.exe'
+      - 'wscript.exe'
+      - 'cscript.exe'
+      - 'mshta.exe'
+      - 'rundll32.exe'
+      - 'regsvr32.exe'
+
+    # exclusions that must be configured (e.g. required by a vendor)
+    # ExclusionPathContains:
+    #   - 'C:\path'

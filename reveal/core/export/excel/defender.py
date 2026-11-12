@@ -60,7 +60,7 @@ def generate_defender_excel(hosts=[]):
             host_row[36] = settings.DisableScanningMappedNetworkDrivesForFullScan
             host_row[37] = settings.DisableScanningNetworkFiles
             host_row[38] = settings.DisableScriptScanning
-            host_row[39] = settings.EnableNetworkProtection
+            host_row[39] = settings.NetworkProtectionState
             host_row[40] = settings.ExclusionPath
             host_row[41] = settings.ExclusionProcess
         rows.append(host_row)
