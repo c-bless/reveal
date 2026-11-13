@@ -7,6 +7,7 @@ meta:
 
 system:
 
+
   Defender:
     # --- Status (Get-MpComputerStatus): <field>: expected value ---
     AMServiceEnabled: True
@@ -62,3 +63,59 @@ system:
     # exclusions that must be configured (e.g. required by a vendor)
     # ExclusionPathContains:
     #   - 'C:\path'
+    
+  firewall_checks:
+    # public, domain, private
+    enabled_profiles: [ 'public', 'domain', 'private' ]
+    disabled_profiles: [ ]
+
+  SMB:
+    v1_enabled: False
+    signing_enabled: True
+    signing_required: True
+
+  TLS:
+    ssl2_0_Client: Disabled
+    ssl2_0_Server: Disabled
+    ssl3_0_Client: Disabled
+    ssl3_0_Server: Disabled
+    tls1_0_Client: Disabled
+    tls1_0_Server: Disabled
+    tls1_1_Client: Disabled
+    tls1_1_Server: Disabled
+    tls1_2_Client: Enabled
+    tls1_2_Server: Enabled
+
+  configcheck_results:
+    - name: "SSL 2.0 - disabled (Client)"
+      result: Disabled
+    - name: "SSL 2.0 - disabled (Server)"
+      result: Disabled
+    - name: "SSL 3.0 - disabled (Client)"
+      result: Disabled
+    - name: "SSL 3.0 - disabled (Server)"
+      result: Disabled
+    - name: "TLS 1.0 - disabled (Client)"
+      result: Disabled
+    - name: "TLS 1.0 - disabled (Server)"
+      result: Disabled
+    - name: "TLS 1.1 - disabled (Client)"
+      result: Disabled
+    - name: "TLS 1.1 - disabled (Server)"
+      result: Disabled
+    - name: "TLS 1.2 - disabled (Client)"
+      result: Enabled
+    - name: "TLS 1.2 - disabled (Server)"
+      result: Enabled
+    - name: "LLMNR - Enabled"
+      result: "Disabled"
+
+  wsus:
+    https_enabled: True
+    WUServer: "https://domain.local:8531"
+    WUStatusServer: "https://domain.local:8531"
+
+  llmnr:
+    Status: Disabled 
+
+  

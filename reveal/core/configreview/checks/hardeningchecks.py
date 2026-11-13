@@ -191,3 +191,49 @@ def verify_configchecks(host: Host, checks: list) -> list[ConfigReviewResult]:
                 result.message = "Data not collected"
             results.append(result)
     return results
+
+LLMNR_CHECK_NAME = "LLMNR - Enabled"
+
+
+def _normalize_status(value) -> str | None:
+    """
+    Normalizes an LLMNR status to "enabled" / "disabled" (None if unknown). Accepts the results of the collector
+    ("Enabled", "Enabled (not configured)", "Disabled") as well as booleans from YAML.
+    """
+    if isinstance(value, bool):
+        return "enabled" if value else "disabled"
+    value = str(value or "").strip().lower()
+    if value.startswith("enabled"):
+        return "enabled"
+    if value.startswith("disabled"):
+        return "disabled"
+    return None
+
+
+def verify_llmnr_status(host: Host, expected) -> ConfigReviewResult:
+    """
+    Verifies the LLMNR status of a host (ConfigCheck "LLMNR - Enabled" of the sysinfo collector).
+
+    YAML:
+        system:
+          llmnr:
+            Status: Disabled    # or Enabled
+
+    "Enabled (not configured)" (no group policy set) counts as enabled.
+    """
+    result = ConfigReviewResult(check=f"LLMNR {expected}", component="LLMNR", hostname=host.Hostname,
+                                systemgroup=host.SystemGroup)
+    expected_status = _normalize_status(expected)
+    if expected_status is None:
+        result.compliant = False
+        result.message = f"Invalid expected LLMNR status '{expected}' (allowed: Enabled, Disabled)"
+        return result
+    check = next((c for c in host.ConfigChecks if c.Component == "LLMNR" or c.Name == LLMNR_CHECK_NAME), None)
+    current_status = _normalize_status(check.Result) if check is not None else None
+    if current_status is None:
+        result.compliant = False
+        result.message = "UNKNOWN. Data not collected"
+    else:
+        result.compliant = current_status == expected_status
+        result.message = f"LLMNR is {check.Result}"
+    return result
