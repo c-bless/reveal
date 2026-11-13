@@ -1,48 +1,187 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: trivy
+# Scans the repository and the Docker images with Trivy (aquasecurity/trivy-action).
+#
+# repository: Python dependencies (services/*/requirements.txt), misconfigurations (Dockerfiles, docker-compose.yml)
+#             and committed secrets
+# images:     OS packages and libraries of the built images (reveal-webapp, reveal-webapi, reveal-nginx, reveal-db)
+#
+# - All findings are uploaded as SARIF to GitHub code scanning (Security tab / annotations in pull requests).
+# - The job fails only for HIGH / CRITICAL vulnerabilities of the Python dependencies with an available fix.
+#   Misconfigurations, secrets and vulnerabilities of the base images are reported only.
+# - The weekly run finds new vulnerabilities in unchanged dependencies / base images.
+#
+# trivy-action is pinned to a commit SHA (v0.36.0): tags of this action were replaced by malicious versions in
+# March 2026, a tag can be moved - a commit SHA can not.
+name: Trivy
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["**"]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "master" ]
   schedule:
-    - cron: '21 2 * * 4'
+    - cron: "0 5 * * 1"   # Monday 05:00 UTC
+  workflow_dispatch:
+
+# a newer push to the same branch / pull request cancels the running scan
+concurrency:
+  group: trivy-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
+env:
+  TRIVY_VERSION: v0.76.1
+
 jobs:
-  build:
+  repository:
+    name: Scan repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
-    name: Build
-    runs-on: ubuntu-latest
+      contents: read
+      security-events: write   # upload of the SARIF report to code scanning
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
 
-      - name: Build an image from Dockerfile
+      # complete report (all scanners and severities) for code scanning - does not fail the job
+      - name: Scan (SARIF report)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          scan-type: fs
+          scan-ref: .
+          trivy-config: trivy.yaml
+          scanners: vuln,misconfig,secret
+          format: sarif
+          output: trivy-repository.sarif
+          exit-code: "0"
+
+      - name: Upload report to code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-repository.sarif
+          category: trivy-repository
+
+      # readable output in the job log, fails the job for fixable HIGH / CRITICAL vulnerabilities of the dependencies
+      - name: Scan dependencies (HIGH / CRITICAL)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          skip-setup-trivy: true
+          scan-type: fs
+          scan-ref: .
+          trivy-config: trivy.yaml
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+  images:
+    name: Scan images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write   # upload of the SARIF reports to code scanning
+    env:
+      # image names (reveal-webapp, ...) independent of the checkout directory (repository name)
+      COMPOSE_PROJECT_NAME: reveal
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Build images (make build)
+        run: make build
+
+      - name: Scan reveal-webapp (SARIF report)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          scan-type: image
+          image-ref: reveal-webapp
+          scanners: vuln
+          format: sarif
+          output: trivy-webapp.sarif
+          exit-code: "0"
+
+      - name: Upload report reveal-webapp
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-webapp.sarif
+          category: trivy-image-webapp
+
+      - name: Scan reveal-webapi (SARIF report)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          skip-setup-trivy: true
+          scan-type: image
+          image-ref: reveal-webapi
+          scanners: vuln
+          format: sarif
+          output: trivy-webapi.sarif
+          exit-code: "0"
+
+      - name: Upload report reveal-webapi
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-webapi.sarif
+          category: trivy-image-webapi
+
+      - name: Scan reveal-nginx (SARIF report)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          skip-setup-trivy: true
+          scan-type: image
+          image-ref: reveal-nginx
+          scanners: vuln
+          format: sarif
+          output: trivy-nginx.sarif
+          exit-code: "0"
+
+      - name: Upload report reveal-nginx
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-nginx.sarif
+          category: trivy-image-nginx
+
+      - name: Scan reveal-db (SARIF report)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          version: ${{ env.TRIVY_VERSION }}
+          skip-setup-trivy: true
+          scan-type: image
+          image-ref: reveal-db
+          scanners: vuln
+          format: sarif
+          output: trivy-db.sarif
+          exit-code: "0"
+
+      - name: Upload report reveal-db
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trivy-db.sarif
+          category: trivy-image-db
+
+      # readable summary in the job log (HIGH / CRITICAL with available fix) - does not fail the job
+      - name: Summary (HIGH / CRITICAL)
+        if: always()
+        env:
+          TRIVY_CACHE_DIR: ${{ github.workspace }}/.cache/trivy   # database downloaded by trivy-action
         run: |
-          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
-        with:
-          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
+          for image in reveal-webapp reveal-webapi reveal-nginx reveal-db; do
+            trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 --quiet "${image}"
+          done
