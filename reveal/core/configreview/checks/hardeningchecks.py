@@ -168,6 +168,19 @@ def verify_wsus_https(host: Host) -> ConfigReviewResult:
     return result
 
 
+def verify_wsus_http(host: Host) -> ConfigReviewResult:
+    """Verifies that WSUS is used via plain http (YAML: wsus: {https_enabled: False})."""
+    result = ConfigReviewResult(check="WSUS via http", component="WSUS", hostname=host.Hostname,
+                                systemgroup=host.SystemGroup)
+    if host.WUServer is None or str(host.WUServer).strip() == "":
+        result.compliant = False
+        result.message = "UNKNOWN. Data not collected"
+    else:
+        result.compliant = str(host.WUServer).strip().lower().startswith("http://")
+        result.message = f"WSUS URI: {host.WUServer}"
+    return result
+
+
 def verify_configchecks(host: Host, checks: list) -> list[ConfigReviewResult]:
     results = []
     performed_checks = []
@@ -237,3 +250,83 @@ def verify_llmnr_status(host: Host, expected) -> ConfigReviewResult:
         result.compliant = current_status == expected_status
         result.message = f"LLMNR is {check.Result}"
     return result
+
+
+# WSUS settings (HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate), stored as strings in the Host table
+WSUS_BOOL_FIELDS = ["DisableWindowsUpdateAccess", "ElevateNonAdmins", "TargetGroupEnabled"]
+WSUS_STRING_FIELDS = ["WUServer", "WUStatusServer", "TargetGroup"]
+
+
+def _bool_or_none(value) -> bool | None:
+    """Registry DWORD / text ("1", "0", "True", "False") or YAML bool -> bool (None if unknown / not set)."""
+    if isinstance(value, bool):
+        return value
+    value = str(value if value is not None else "").strip().lower()
+    if value in ("1", "true", "yes", "enabled"):
+        return True
+    if value in ("0", "false", "no", "disabled"):
+        return False
+    return None
+
+
+def verify_wsus_bool(host: Host, field: str, expected: bool) -> ConfigReviewResult:
+    """Verifies a WSUS flag (DisableWindowsUpdateAccess, ElevateNonAdmins, TargetGroupEnabled)."""
+    current_raw = getattr(host, field)
+    result = ConfigReviewResult(check=f"WSUS {field} = {expected}", component="WSUS", hostname=host.Hostname,
+                                systemgroup=host.SystemGroup)
+    current = _bool_or_none(current_raw)
+    if current is None:
+        result.compliant = False
+        result.message = "UNKNOWN. Data not collected / not configured"
+    else:
+        result.compliant = current == bool(expected)
+        result.message = f"{field}: {current} (value: {current_raw})"
+    return result
+
+
+def verify_wsus_string(host: Host, field: str, expected: str) -> ConfigReviewResult:
+    """Verifies a WSUS setting (WUServer, WUStatusServer, TargetGroup). Case-insensitive, trailing "/" ignored."""
+    current_raw = getattr(host, field)
+    result = ConfigReviewResult(check=f"WSUS {field} = {expected}", component="WSUS", hostname=host.Hostname,
+                                systemgroup=host.SystemGroup)
+    if current_raw is None or str(current_raw).strip() == "":
+        result.compliant = False
+        result.message = "UNKNOWN. Data not collected / not configured"
+    else:
+        def normalize(v): return str(v).strip().rstrip("/").lower()
+        result.compliant = normalize(current_raw) == normalize(expected)
+        result.message = f"{field}: {current_raw}"
+    return result
+
+
+def verify_wsus_checks(host: Host, checks: dict) -> list[ConfigReviewResult]:
+    """
+    Dispatcher for the WSUS checks (keys are case-insensitive):
+
+        wsus:
+          https_enabled: True        # False: WSUS must be used via http
+          WUServer: "https://domain.local:8531"
+          WUStatusServer: "https://domain.local:8531"
+          DisableWindowsUpdateAccess: True
+          ElevateNonAdmins: False
+          TargetGroup: "GROUPNAME"
+          TargetGroupEnabled: True
+    """
+    results = []
+    fields = {f.lower(): f for f in WSUS_BOOL_FIELDS + WSUS_STRING_FIELDS}
+    for key, expected in checks.items():
+        k = str(key).lower()
+        if k == "https_enabled":
+            expected_bool = _bool_or_none(expected)
+            if expected_bool is True:
+                results.append(verify_wsus_https(host))
+            elif expected_bool is False:
+                results.append(verify_wsus_http(host))
+        elif k in fields and fields[k] in WSUS_BOOL_FIELDS:
+            expected_bool = _bool_or_none(expected)
+            if expected_bool is not None:
+                results.append(verify_wsus_bool(host, fields[k], expected_bool))
+        elif k in fields:
+            if expected is not None:
+                results.append(verify_wsus_string(host, fields[k], expected))
+    return results

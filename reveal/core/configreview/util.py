@@ -10,7 +10,7 @@ from reveal.core.configreview.checks.servicechecks import verify_services_runnin
 from reveal.core.configreview.checks.servicechecks import verfiy_services_disabled
 from reveal.core.configreview.checks.servicechecks import verify_services_not_running
 
-from reveal.core.configreview.checks.hardeningchecks import verify_wsus_https
+from reveal.core.configreview.checks.hardeningchecks import verify_wsus_checks
 from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_enabled
 from reveal.core.configreview.checks.hardeningchecks import verify_smb_signing_disabled
 from reveal.core.configreview.checks.hardeningchecks import verify_smbv1_disabled
@@ -102,11 +102,10 @@ def verify_config_checks(hosts, checks):
                         results.append(verify_smb_signing_not_required(h))
                     else:
                         results.append(verify_smb_signing_required(h))
-            if "WSUS" in checks["system"]:
-                if "https_enabled" in checks["system"]["WSUS"]:
-                    https_enabled = checks["system"]["WSUS"]["https_enabled"]
-                    if https_enabled is True:
-                        results.append(verify_wsus_https(h))
+            # WSUS (key is case-insensitive: "wsus" / "WSUS")
+            wsus = next((v for k, v in checks["system"].items() if str(k).lower() == "wsus"), None)
+            if isinstance(wsus, dict):
+                results.extend(verify_wsus_checks(h, wsus))
             # LLMNR (key is case-insensitive: "llmnr" / "LLMNR"), e.g. llmnr: {Status: Disabled}
             llmnr = next((v for k, v in checks["system"].items() if str(k).lower() == "llmnr"), None)
             if isinstance(llmnr, dict):
