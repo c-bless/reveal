@@ -104,3 +104,4 @@ target/
 /services/nginx/static/swagger-ui-standalone-preset.min.js
 /testdata/
 /services/web/configreview_checks/pcs7_v9.1_compendium_v0.1.yml
+/services/web/configreview_checks/defender_samples.yaml
