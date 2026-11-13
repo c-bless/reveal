@@ -2,6 +2,9 @@
 {% import "_tablehelper.html" as helper %}
 {% from "_formhelpers.html" import render_field_sm2, render_check_field_sm2, render_submit_field %}
 
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block searchform_footer_left%}
 {{ super() }}

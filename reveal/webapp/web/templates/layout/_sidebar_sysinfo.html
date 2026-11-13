@@ -1,0 +1,174 @@
+<!-- Sidebar -->
+<div class="sidebar-wrapper">
+    <nav class="mt-2" aria-label="Main navigation">
+        <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false" id="navigation">
+            <li class="nav-header fw-bold">SYSTEM REVIEWS</li>
+            <li class="nav-item">
+                <a href="{{ url_for('sysinfo.host_search_list') }}" class="nav-link">
+                    <i class="nav-icon fas fa-desktop"></i>
+                    <p>Hosts</p>
+                </a>
+            </li>
+            <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-search"></i>
+                    <p>
+                        Reports (By Category)
+                        <i class="nav-arrow fas fa-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.report_list') }}" class="nav-link">
+                            <i class="nav-icon fas fa-edit"></i>
+                            <p>ALL</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.usermgmt_report_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-address-card"></i>
+                            <p>Usermanagement</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.syshardening_report_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-cog"></i>
+                            <p>Systemhardening</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.update_eol_report_list') }}" class="nav-link">
+                            <i class="nav-icon fas fa-edit"></i>
+                            <p>Patch / Lifecycle Management</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-search"></i>
+                    <p>
+                        Search Forms
+                        <i class="nav-arrow fas fa-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.user_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-users"></i>
+                            <p>User</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.localadmin_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-users"></i>
+                            <p>Local Admins</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.service_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-tasks"></i>
+                            <p>Services</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.product_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-cubes"></i>
+                            <p>Products</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.share_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-share-alt"></i>
+                            <p>Shares</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.configcheck_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-cog"></i>
+                            <p>ConfigChecks</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.registrycheck_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-table"></i>
+                            <p>Registry Collector</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.file_exist_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-table"></i>
+                            <p>File Exist Checks</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.defender_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-tasks"></i>
+                            <p>Defender Settings</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-download"></i>
+                    <p>
+                        Config Review
+                        <i class="nav-arrow fas fa-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.host_configreview_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-tasks"></i>
+                            <p>Host Config Reviews</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-download"></i>
+                    <p>
+                        Export
+                        <i class="nav-arrow fas fa-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.template_list_hosts') }}" class="nav-link">
+                            <i class="nav-icon far fa-file-word"></i>
+                            <p>Export all Hosts (Word)</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.hosts_export_excel') }}" class="nav-link">
+                            <i class="nav-icon far fa-file-excel"></i>
+                            <p>Export all Hosts (Excel)</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.service_export_excel') }}" class="nav-link">
+                            <i class="nav-icon far fa-file-excel"></i>
+                            <p>Export all Services (Excel)</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.product_export_excel') }}" class="nav-link">
+                            <i class="nav-icon far fa-file-excel"></i>
+                            <p>Export all Products (Excel)</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('sysinfo.share_export_excel') }}" class="nav-link">
+                            <i class="nav-icon far fa-file-excel"></i>
+                            <p>Export all Shares (Excel)</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- /.sidebar-wrapper -->

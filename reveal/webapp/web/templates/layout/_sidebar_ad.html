@@ -1,0 +1,85 @@
+<!-- Sidebar -->
+<div class="sidebar-wrapper">
+    <nav class="mt-2" aria-label="Main navigation">
+        <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false" id="navigation">
+            <li class="nav-header fw-bold">DOMAIN INFOS</li>
+            <li class="nav-item">
+                <a href="{{ url_for('ad.domain_list') }}" class="nav-link">
+                    <i class="nav-icon fa fa-sitemap"></i>
+                    <p>Domain</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('ad.forest_list') }}" class="nav-link">
+                    <i class="nav-icon fa fa-tree"></i>
+                    <p>Forest</p>
+                </a>
+            </li>
+            <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-search"></i>
+                    <p>
+                        Search Forms
+                        <i class="nav-arrow fas fa-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.trust_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-handshake"></i>
+                            <p>Trusts</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.dc_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-star"></i>
+                            <p>Domain Controller</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.computer_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-desktop"></i>
+                            <p>Computer</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.user_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-user"></i>
+                            <p>User</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.group_search_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-users"></i>
+                            <p>Groups</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-search"></i>
+                    <p>
+                        Reports (By Category)
+                        <i class="nav-arrow fas fa-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.report_list') }}" class="nav-link">
+                            <i class="nav-icon fas fa-edit"></i>
+                            <p>ALL</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('ad.usermgmt_report_list') }}" class="nav-link">
+                            <i class="nav-icon fa fa-address-card"></i>
+                            <p>User Management</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!-- /.sidebar-wrapper -->

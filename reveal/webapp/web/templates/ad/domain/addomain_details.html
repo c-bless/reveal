@@ -7,126 +7,165 @@
 {% block page_title %}  {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
 {% block menu_l2 %} Domain {% endblock menu_l2 %}
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block content %}
 {% if domain %}
 
 
-<div class="row m-1">
-        <div class="col-md-6">
-            <div class="card card-olive">
-                  <div class="card-header">
-                    <h3 class="card-title">General Information</h3>
 
-                    <div class="card-tools">
-                      <a href="{{url_for('ad.domain_export_excel', id=domain.id)}}" class="btn btn-tool btn-sm">
-                        <i class="fas fa-download"></i>
-                      </a>
-                      <a href="#" class="btn btn-tool btn-sm">
-                        <i class="fas fa-bars"></i>
-                      </a>
-                    </div>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                    <dl class="row">
-                      <dt class="col-sm-4">Name</dt>
-                      <dd class="col-sm-8">{{ domain.Name }}</dd>
-                      <dt class="col-sm-4">SID</dt>
-                      <dd class="col-sm-8">{{ domain.DomainSID }}</dd>
-                      <dt class="col-sm-4">NetBIOSName</dt>
-                      <dd class="col-sm-8">{{ domain.NetBIOSName }}</dd>
-                      <dt class="col-sm-4">DistinguishedName</dt>
-                      <dd class="col-sm-8">{{ domain.DistinguishedName }}</dd>
-                      <dt class="col-sm-4">DNSRoot</dt>
-                      <dd class="col-sm-8">{{ domain.DNSRoot }}</dd>
-                      <dt class="col-sm-4">ParentDomain</dt>
-                      <dd class="col-sm-8">{{ domain.ParentDomain }}</dd>
-                      <dt class="col-sm-4">Forest</dt>
-                      <dd class="col-sm-8">{{ domain.Forest }}</dd>
-                      <dt class="col-sm-4">RIDMaster</dt>
-                      <dd class="col-sm-8">{{ domain.RIDMaster }}</dd>
-                      <dt class="col-sm-4">PDCEmulator</dt>
-                      <dd class="col-sm-8">{{ domain.PDCEmulator }}</dd>
-                      <dt class="col-sm-4">InfrastructureMaster</dt>
-                      <dd class="col-sm-8">{{ domain.InfrastructureMaster }}</dd>
-                      <dt class="col-sm-4">UsersContainer</dt>
-                      <dd class="col-sm-8">{{ domain.UsersContainer }}</dd>
-                      <dt class="col-sm-4">SystemContainer</dt>
-                      <dd class="col-sm-8">{{ domain.SystemContainer }}</dd>
-                      <dt class="col-sm-4">ComputerContainer</dt>
-                      <dd class="col-sm-8">{{ domain.ComputerContainer }}</dd>
-                    </dl>
-                  </div>
-                  <!-- /.card-body -->
+<div class="row m-1">
+  <div class="col-md-6">
+    <div class="card card-olive">
+      <div class="card-header">
+        <h3 class="card-title">General Information</h3>
+
+        <div class="card-tools">
+          <a href="{{url_for('ad.domain_export_excel', id=domain.id)}}" class="btn btn-tool btn-sm">
+            <i class="fas fa-download"></i>
+          </a>
+          <a href="#" class="btn btn-tool btn-sm">
+            <i class="fas fa-bars"></i>
+          </a>
+        </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-4">Name</dt>
+          <dd class="col-sm-8">{{ domain.Name }}</dd>
+          <dt class="col-sm-4">SID</dt>
+          <dd class="col-sm-8">{{ domain.DomainSID }}</dd>
+          <dt class="col-sm-4">NetBIOSName</dt>
+          <dd class="col-sm-8">{{ domain.NetBIOSName }}</dd>
+          <dt class="col-sm-4">DistinguishedName</dt>
+          <dd class="col-sm-8">{{ domain.DistinguishedName }}</dd>
+          <dt class="col-sm-4">DNSRoot</dt>
+          <dd class="col-sm-8">{{ domain.DNSRoot }}</dd>
+          <dt class="col-sm-4">ParentDomain</dt>
+          <dd class="col-sm-8">{{ domain.ParentDomain }}</dd>
+          <dt class="col-sm-4">Forest</dt>
+          <dd class="col-sm-8">{{ domain.Forest }}</dd>
+          <dt class="col-sm-4">RIDMaster</dt>
+          <dd class="col-sm-8">{{ domain.RIDMaster }}</dd>
+          <dt class="col-sm-4">PDCEmulator</dt>
+          <dd class="col-sm-8">{{ domain.PDCEmulator }}</dd>
+          <dt class="col-sm-4">InfrastructureMaster</dt>
+          <dd class="col-sm-8">{{ domain.InfrastructureMaster }}</dd>
+          <dt class="col-sm-4">UsersContainer</dt>
+          <dd class="col-sm-8">{{ domain.UsersContainer }}</dd>
+          <dt class="col-sm-4">SystemContainer</dt>
+          <dd class="col-sm-8">{{ domain.SystemContainer }}</dd>
+          <dt class="col-sm-4">ComputerContainer</dt>
+          <dd class="col-sm-8">{{ domain.ComputerContainer }}</dd>
+        </dl>
+      </div>
+      <!-- /.card-body -->
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card card-olive">
+      <div class="card-header">
+        <h3 class="card-title">Amount of ..</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body p-0">
+        <div class="row m-1">
+          <div class="col-12 col-sm-4">
+            <div class="info-box text-bg-secondary">
+              <div class="info-box-content">
+                <a href="{{url_for('ad.user_by_domain_list', id=domain.id)}}">
+                  <span class="info-box-text text-center text-muted">Users</span>
+                  <span class="info-box-number text-center text-muted mb-0">{{ num_users }}</span>
+                </a>
+              </div>
             </div>
+          </div>
+          <div class="col-12 col-sm-4">
+            <div class="info-box text-bg-secondary">
+              <div class="info-box-content">
+                <a href="{{url_for('ad.computer_by_domain_list', id=domain.id)}}">
+                  <span class="info-box-text text-center text-muted">Computers</span>
+                  <span class="info-box-number text-center text-muted mb-0">{{ num_comp }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-4">
+            <div class="info-box text-bg-secondary">
+              <div class="info-box-content">
+                <a href="{{url_for('ad.groups_by_domain_list', id=domain.id)}}">
+                  <span class="info-box-text text-center text-muted">Groups</span>
+                  <span class="info-box-number text-center text-muted mb-0">{{ num_groups }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
-    <div class="col-md-6">
-            <div class="card card-olive">
-              <div class="card-header">
-                <h3 class="card-title">Amount of ..</h3>
+        <div class="row m-1">
+          {% if num_domadmins %}
+          <div class="col-12 col-sm-4">
+            <div class="info-box text-bg-secondary">
+              <div class="info-box-content">
+                {% if domadmin_id %}
+                <a href="{{url_for('ad.group_detail',id=domadmin_id)}}">
+                  <span class="info-box-text text-center text-muted">Domain Admins</span>
+                  <span class="info-box-number text-center text-muted mb-0">{{ num_domadmins }}</span>
+                </a>
+                {% endif %}
               </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                  <div class="row m-1">
-                    <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
-                            <div class="info-box-content">
-                                <a href="{{url_for('ad.user_by_domain_list', id=domain.id)}}" >
-                                    <span class="info-box-text text-center text-muted">Users</span>
-                                    <span class="info-box-number text-center text-muted mb-0">{{ num_users }}</span>
-                                </a>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
-                            <div class="info-box-content">
-                                <a href="{{url_for('ad.computer_by_domain_list', id=domain.id)}}" >
-                                  <span class="info-box-text text-center text-muted">Computers</span>
-                                  <span class="info-box-number text-center text-muted mb-0">{{ num_comp }}</span>
-                                </a>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
-                            <div class="info-box-content">
-                                <a href="{{url_for('ad.groups_by_domain_list', id=domain.id)}}" >
-                                  <span class="info-box-text text-center text-muted">Groups</span>
-                                  <span class="info-box-number text-center text-muted mb-0">{{ num_groups }}</span>
-                                </a>
-                            </div>
-                          </div>
-                        </div>
-                  </div>
-
-                  <div class="row m-1">
-                    {% if num_domadmins %}
-                    <div class="col-12 col-sm-4">
-                          <div class="info-box bg-light">
-                            <div class="info-box-content">
-                                {% if domadmin_id %}
-                                <a href="{{url_for('ad.group_detail',id=domadmin_id)}}" >
-                                    <span class="info-box-text text-center text-muted">Domain Admins</span>
-                                    <span class="info-box-number text-center text-muted mb-0">{{ num_domadmins }}</span>
-                                </a>
-                                {% endif %}
-                            </div>
-                          </div>
-                        </div>
-                      {% endif %}
-                  </div>
-
-              </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
-            <!-- /.card -->
           </div>
+          {% endif %}
+        </div>
 
+      </div>
+      <!-- /.card-body -->
     </div>
+    <!-- /.card -->
+    <!-- /.card -->
+  </div>
+
+</div>
+
+<div class="row m-1">
+  <div class="col-md-12">
+    <div class="card card-olive">
+      <div class="card-header">
+        <h3 class="card-title">Password Policies</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body p-0">
+        <table class="table table-striped">
+          {{ helper.table_head([("Type", "20%"), ("Name", "20%"), ("Complexity", "10%"), ("Lockout Duration", "10%"),
+          ("Lockout Threshold", "5%"), ("Max Age", "5%"), ("Min Age", "5%"), ("History Count", "5%")]) }}
+          <tbody>
+            {% for p in policy_list %}
+            <tr>
+              <td>{{ p.Type }}</td>
+              <td>{{ p.Name }}</td>
+              <td>{{ p.ComplexityEnabled }}</td>
+              <td>{{ p.LockoutDuration }}</td>
+              <td>{{ p.LockoutThreshold }}</td>
+              <td>{{ p.MaxPasswordAge }}</td>
+              <td>{{ p.MinPasswordAge }}</td>
+              <td>{{ p.PasswordHistoryCount }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+    <!-- /.card -->
+  </div>
+</div>
+
 
 <div class="row m-1">
         <div class="col-md-6">
@@ -204,39 +243,6 @@
             <!-- /.card -->
           </div>
 </div>
-
-<div class="row m-1">
-        <div class="col-md-12">
-            <div class="card card-olive">
-              <div class="card-header">
-                <h3 class="card-title">Password Policies</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body p-0">
-                <table class="table table-striped">
-                  {{ helper.table_head([("Type", "20%"), ("Name", "20%"), ("Complexity", "10%"), ("Lockout Duration", "10%"), ("Lockout Threshold", "5%"), ("Max Age", "5%"), ("Min Age", "5%"), ("History Count", "5%")]) }}
-                  <tbody>
-                    {% for p in policy_list %}
-                        <tr>
-                          <td>{{ p.Type }}</td>
-                          <td>{{ p.Name }}</td>
-                          <td>{{ p.ComplexityEnabled }}</td>
-                          <td>{{ p.LockoutDuration }}</td>
-                          <td>{{ p.LockoutThreshold }}</td>
-                          <td>{{ p.MaxPasswordAge }}</td>
-                          <td>{{ p.MinPasswordAge }}</td>
-                          <td>{{ p.PasswordHistoryCount }}</td>
-                        </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-            <!-- /.card -->
-          </div>
-    </div>
 
 {% endif %}
 {% endblock content %}

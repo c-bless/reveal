@@ -4,7 +4,9 @@
 {% from "_formhelpers.html" import render_submit_field %}
 
 {% block title_table %} Available Files {% endblock title_table %}
-
+{% block sidebar %}
+    {% include "layout/_sidebar_import.html" %}
+{% endblock sidebar %}
 
 {% block datatable %}
 {{ super() }}

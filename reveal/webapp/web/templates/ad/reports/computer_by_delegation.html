@@ -23,6 +23,9 @@
                 <!-- /.card-footer -->
     </form>
 {% endblock searchform %}
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block datatable %}
 {{ super() }}

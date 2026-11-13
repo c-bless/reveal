@@ -13,6 +13,21 @@
             <i class="fa fa-wrench me-1"></i>API Docs
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('sysinfo.host_search_list') }}" role="button">
+            <i class="nav-icon fas fa-desktop"></i>System Review
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('ad.domain_list') }}"  role="button">
+            <i class="nav-icon fa fa-sitemap"></i>Domain Review
+          </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('importer.upload') }}" class="nav-link">
+                <i class="nav-icon fa fa-upload"></i>Upload Files
+            </a>
+        </li>
       </ul>
 
       <!-- Right navbar links -->

@@ -5,6 +5,9 @@
 {% block page_title %} Report: {{ report_name }} {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Reports {% endblock menu_l2 %}
+{% block sidebar %}
+    {% include "layout/_sidebar_sysinfo.html" %}
+{% endblock sidebar %}
 
 {# "None" (legacy importer) and "N/A: ..." (not readable) are no exclusions #}
 {% macro exclusion_value(value) %}{% if value and value != "None" and not value.startswith("N/A") %}{{ value }}{% endif %}{% endmacro %}

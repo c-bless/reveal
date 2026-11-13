@@ -4,7 +4,9 @@
 {% block stylesheets %}
 {{ super() }}
 {% endblock stylesheets %}
-
+{% block sidebar %}
+    {% include "layout/_sidebar_import.html" %}
+{% endblock sidebar %}
 
 {% block content %}
 <section>

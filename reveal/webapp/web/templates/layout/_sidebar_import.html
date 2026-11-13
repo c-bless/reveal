@@ -1,0 +1,22 @@
+<!-- Sidebar -->
+<div class="sidebar-wrapper">
+    <nav class="mt-2" aria-label="Main navigation">
+        <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false" id="navigation">
+            
+            <li class="nav-header fw-bold">DATA IMPORT</li>
+            <li class="nav-item">
+                <a href="{{ url_for('importer.upload') }}" class="nav-link">
+                    <i class="nav-icon fa fa-upload"></i>
+                    <p>Upload Files</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('importer.list_uploaded_files') }}" class="nav-link">
+                    <i class="nav-icon fa fa-tasks"></i>
+                    <p>Import Files</p>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!-- /.sidebar-wrapper -->

@@ -6,7 +6,9 @@
 {% block page_title %} User with Unconstraint Delegation {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
 {% block menu_l2 %} User List {% endblock menu_l2 %}
-
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 {% block searchform %}
 <form method="post">
     {{ form.hidden_tag() }}
@@ -23,6 +25,9 @@
     <!-- /.card-footer -->
 </form>
 {% endblock searchform %}
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block datatable %}
 {{ super() }}

@@ -7,6 +7,9 @@
 {% block page_title %}  {% endblock page_title %}
 {% block menu_l1 %} System Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} ConfigCheck {% endblock menu_l2 %}
+{% block sidebar %}
+    {% include "layout/_sidebar_sysinfo.html" %}
+{% endblock sidebar %}
 
 {% block content %}
 {% if check %}

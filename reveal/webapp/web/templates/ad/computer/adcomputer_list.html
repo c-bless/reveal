@@ -5,7 +5,9 @@
 {% block page_title %} Computer List {% endblock page_title %}
 {% block menu_l1 %} Active Directory {% endblock menu_l1 %}
 {% block menu_l2 %} Computer List {% endblock menu_l2 %}
-
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block download_links %}
     {{ super() }}

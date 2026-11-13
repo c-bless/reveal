@@ -5,7 +5,9 @@
 {% block page_title %} Reports {% endblock page_title %}
 {% block menu_l1 %} Active Directory Reviews {% endblock menu_l1 %}
 {% block menu_l2 %} Report List {% endblock menu_l2 %}
-
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block datatable %}
 {{ super() }}

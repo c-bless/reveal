@@ -14,7 +14,9 @@
 </div>
 <!-- /.card-body -->
 {% endblock searchform_input %}
-
+{% block sidebar %}
+    {% include "layout/_sidebar_ad.html" %}
+{% endblock sidebar %}
 
 {% block searchform_footer_middle %}
 {{ super() }}
