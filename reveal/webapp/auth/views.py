@@ -5,6 +5,9 @@ from reveal.webapp.auth import auth_bp
 from reveal.webapp.auth.utils import gen_api_token
 from reveal.webapp.auth.forms import LoginForm, ChangePasswordForm
 from reveal.core.models.auth import AuthUser
+from reveal.core.models.sysinfo import Host
+from reveal.core.models.activedirectory import ADDomain, ADUser, ADComputer
+from reveal.core.models.files import UploadedFile
 from reveal.core.extentions import db
 
 
@@ -15,7 +18,17 @@ def is_url_allowed(url, host):
 @auth_bp.route('/', methods=['GET'])
 @login_required
 def index():
-    return render_template('auth/index.html')
+    """Dashboard: entry point to the system reviews (hosts) and domain reviews (AD domains)."""
+    stats = {
+        "hosts": Host.query.count(),
+        "domains": ADDomain.query.count(),
+        "ad_users": ADUser.query.count(),
+        "ad_computers": ADComputer.query.count(),
+        "files_pending": UploadedFile.query.filter(UploadedFile.Imported.isnot(True)).count(),
+    }
+    domains = ADDomain.query.order_by(ADDomain.Name).all()
+    recent_hosts = Host.query.order_by(Host.LastUpdate.desc().nulls_last()).limit(10).all()
+    return render_template('auth/index.html', stats=stats, domains=domains, recent_hosts=recent_hosts)
 
 
 @auth_bp.route("/profile")
