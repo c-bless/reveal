@@ -1,3 +1,8 @@
+{# Bootstrap 5: select fields use "form-select", all other inputs "form-control" #}
+{% macro input_class(field) -%}
+{{ "form-select" if field.type in ("SelectField", "SelectMultipleField") else "form-control" }}
+{%- endmacro %}
+
 {% macro render_check_field(field) %}
 <div class="mb-3 row">
     <div class="offset-sm-1 col-sm-10">
@@ -31,7 +36,7 @@
 <div class="mb-3 row">
     {{ field.label(class="col-sm-1 col-form-label") | safe }}
     <div class="col-sm-6">
-        {{ field(class="form-control")|safe }}
+        {{ field(class=input_class(field))|safe }}
         {% if field.errors %}
         {% for error in field.errors %}
         <span class="text-danger">{{ error }}</span>
@@ -46,7 +51,7 @@
 <div class="mb-3 row">
     {{ field.label(class="col-sm-4 col-form-label") | safe }}
     <div class="col-sm-8">
-        {{ field(class="form-control")|safe }}
+        {{ field(class=input_class(field))|safe }}
         {% if field.errors %}
         {% for error in field.errors %}
         <span class="text-danger">{{ error }}</span>

@@ -31,7 +31,7 @@
         <td> {{ u.PasswordExpired }}</td>
         <td> {{ u.PasswordLastSet }}</td>
         <td> {{ u.Description }}</td>
-        <td class="actions">
+        <td>
             {{ helper.view_button(url_for('ad.user_detail',id=u.id)) }}
         </td>
     </tr>

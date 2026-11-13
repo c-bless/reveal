@@ -22,7 +22,7 @@
                             <td> {{ d.DomainSID }} </td>
                             <td> {{ d.Forest }} </td>
                             <td> {{ d.ParentDomain }} </td>
-                            <td class="actions">
+                            <td>
                                 {{ helper.view_button(url_for('ad.domain_detail',id=d.id)) }}
                                 {{ helper.view_button(url_for('ad.domain_export_excel', id=d.id), "Download", icon="far fa-file-excel") }}
                             </td>

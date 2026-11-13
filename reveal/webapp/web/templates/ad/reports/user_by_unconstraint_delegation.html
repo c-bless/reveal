@@ -25,10 +25,6 @@
     <!-- /.card-footer -->
 </form>
 {% endblock searchform %}
-{% block sidebar %}
-    {% include "layout/_sidebar_ad.html" %}
-{% endblock sidebar %}
-
 {% block datatable %}
 {{ super() }}
 <table id="table1" class="table table-striped table-bordered">
@@ -43,7 +39,7 @@
         <td> {{ u.DisplayName }}</td>
         <td> {{ u.TrustedForDelegation }}</td>
         <td> {{ u.Description }}</td>
-        <td class="actions">
+        <td>
             {{ helper.view_button(url_for('ad.user_detail',id=u.id)) }}
         </td>
     </tr>

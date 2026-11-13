@@ -17,7 +17,7 @@
                         {% for gc in gc_list %}
                           <tr>
                             <td> {{ gc.GlobalCatalog }} </td>
-                            <td class="actions">
+                            <td>
                                 {{ helper.view_button(url_for('ad.forest_detail',id=gc.Forest_id), "View Forest") }}
                             </td>
                           </tr>

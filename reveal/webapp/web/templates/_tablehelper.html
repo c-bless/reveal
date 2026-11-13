@@ -1,9 +1,9 @@
 
 {% macro render_status(status) %}
   {% if status.name == 'open' %}
-    <span class="btn btn-success btn-xs">{{ status.name }}</span>
+    <span class="badge text-bg-success">{{ status.name }}</span>
   {% elif status.name == 'closed' %}
-    <span class="btn btn-danger btn-xs">{{ status.name }}</span>
+    <span class="badge text-bg-danger">{{ status.name }}</span>
   {% else %}
     {{ status.name }}
   {% endif %}
@@ -52,5 +52,5 @@
 
 {# Button to the detail page of an entry (used in the "Details" column of the result tables). #}
 {% macro view_button(url, label="View", icon="fa fa-eye") %}
-<a href="{{ url }}" class="btn btn-outline-secondary btn-xs"><i class="{{ icon }}"></i> {{ label }}</a>
+<a href="{{ url }}" class="btn btn-outline-secondary btn-sm"><i class="{{ icon }}"></i> {{ label }}</a>
 {%- endmacro %}

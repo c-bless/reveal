@@ -16,9 +16,9 @@
 
 
 
-<div class="row m-1">
+<div class="row">
   <div class="col-md-6">
-    <div class="card card-olive">
+    <div class="card card-success mb-3">
       <div class="card-header">
         <h3 class="card-title">General Information</h3>
 
@@ -67,19 +67,19 @@
   </div>
 
   <div class="col-md-6">
-    <div class="card card-olive">
+    <div class="card card-success mb-3">
       <div class="card-header">
         <h3 class="card-title">Amount of ..</h3>
       </div>
       <!-- /.card-header -->
       <div class="card-body p-0">
-        <div class="row m-1">
+        <div class="row">
           <div class="col-12 col-sm-4">
             <div class="info-box text-bg-secondary">
               <div class="info-box-content">
                 <a href="{{url_for('ad.user_by_domain_list', id=domain.id)}}">
-                  <span class="info-box-text text-center text-muted">Users</span>
-                  <span class="info-box-number text-center text-muted mb-0">{{ num_users }}</span>
+                  <span class="info-box-text text-center text-body-secondary">Users</span>
+                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_users }}</span>
                 </a>
               </div>
             </div>
@@ -88,8 +88,8 @@
             <div class="info-box text-bg-secondary">
               <div class="info-box-content">
                 <a href="{{url_for('ad.computer_by_domain_list', id=domain.id)}}">
-                  <span class="info-box-text text-center text-muted">Computers</span>
-                  <span class="info-box-number text-center text-muted mb-0">{{ num_comp }}</span>
+                  <span class="info-box-text text-center text-body-secondary">Computers</span>
+                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_comp }}</span>
                 </a>
               </div>
             </div>
@@ -98,23 +98,23 @@
             <div class="info-box text-bg-secondary">
               <div class="info-box-content">
                 <a href="{{url_for('ad.groups_by_domain_list', id=domain.id)}}">
-                  <span class="info-box-text text-center text-muted">Groups</span>
-                  <span class="info-box-number text-center text-muted mb-0">{{ num_groups }}</span>
+                  <span class="info-box-text text-center text-body-secondary">Groups</span>
+                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_groups }}</span>
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="row m-1">
+        <div class="row">
           {% if num_domadmins %}
           <div class="col-12 col-sm-4">
             <div class="info-box text-bg-secondary">
               <div class="info-box-content">
                 {% if domadmin_id %}
                 <a href="{{url_for('ad.group_detail',id=domadmin_id)}}">
-                  <span class="info-box-text text-center text-muted">Domain Admins</span>
-                  <span class="info-box-number text-center text-muted mb-0">{{ num_domadmins }}</span>
+                  <span class="info-box-text text-center text-body-secondary">Domain Admins</span>
+                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_domadmins }}</span>
                 </a>
                 {% endif %}
               </div>
@@ -132,9 +132,9 @@
 
 </div>
 
-<div class="row m-1">
+<div class="row">
   <div class="col-md-12">
-    <div class="card card-olive">
+    <div class="card card-success mb-3">
       <div class="card-header">
         <h3 class="card-title">Password Policies</h3>
       </div>
@@ -167,9 +167,9 @@
 </div>
 
 
-<div class="row m-1">
+<div class="row">
         <div class="col-md-6">
-            <div class="card card-olive">
+            <div class="card card-success mb-3">
               <div class="card-header">
                 <h3 class="card-title">Domain Trusts</h3>
               </div>
@@ -185,8 +185,8 @@
                                 <td> {{ t.Direction }} </td>
                                 <td> {{ t.Target }} </td>
                                 <td> {{ t.IntraForest }} </td>
-                                <td class="actions">
-                                    <a href="#" class="btn btn-outline-secondary btn-xs">
+                                <td>
+                                    <a href="#" class="btn btn-outline-secondary btn-sm">
                                         <i class="fa fa-eye"></i> View
                                     </a>
                                 </td>
@@ -209,7 +209,7 @@
           </div>
 
         <div class="col-md-6">
-            <div class="card card-olive">
+            <div class="card card-success mb-3">
               <div class="card-header">
                 <h3 class="card-title">Domain Controller</h3>
               </div>

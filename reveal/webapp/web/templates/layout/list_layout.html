@@ -8,27 +8,19 @@
 
 {% block content %}
 
-      <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <div class="card card-olive">
-                        <div class="card-header">
-                            <h3 class="card-title">{{title}}</h3>
-                            <div class="card-tools">
-                                <div class="btn-group">
-                                        {% block download_links %} {%endblock download_links %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            {%block datatable %} {%endblock datatable %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <!-- /.col -->
+      <div class="card card-success mb-3">
+          <div class="card-header">
+              <h3 class="card-title">{{title}}</h3>
+              <div class="card-tools">
+                  <div class="btn-group">
+                          {% block download_links %} {%endblock download_links %}
+                  </div>
+              </div>
+          </div>
+          <div class="card-body">
+              {%block datatable %} {%endblock datatable %}
+          </div>
       </div>
-      <!-- /.row -->
 
 {% endblock content %}
 

@@ -14,9 +14,9 @@
 {% block content %}
 {% if check %}
 
-<div class="row m-1">
+<div class="row">
         <div class="col-md-6">
-            <div class="card card-olive">
+            <div class="card card-success mb-3">
                   <div class="card-header">
                     <h3 class="card-title">General Information</h3>
                   </div>
@@ -34,7 +34,7 @@
                       <dt class="col-sm-4">Key</dt>
                       <dd class="col-sm-8">{{ check.Key }}</dd>
                       <dt class="col-sm-4">Expected</dt>
-                      <dd class="col-sm-8">{{ check.Expected }}
+                      <dd class="col-sm-8">{{ check.Expected }}</dd>
                       <dt class="col-sm-4">KeyExists</dt>
                       <dd class="col-sm-8">{{ check.KeyExists }}</dd>
                       <dt class="col-sm-4">ValueMatch</dt>
@@ -51,7 +51,7 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card card-olive">
+            <div class="card card-success mb-3">
                   <div class="card-header">
                     <h3 class="card-title">Affected Host</h3>
                   </div>

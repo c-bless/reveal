@@ -15,17 +15,12 @@
           <link rel="stylesheet" href="{{ url_for('static', filename='vendor/@fortawesome/fontawesome-free/css/all.min.css') }}">
           <!-- AdminLTE 4 (includes Bootstrap 5) -->
           <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte.min.css') }}">
-          <!-- AdminLTE 3 color palette (card-olive, bg-olive, ...) -->
-          <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/adminlte-colors-v3.min.css') }}">
-          <!-- REVEAL specific styles (classes of Bootstrap 4 / AdminLTE 3 that are no longer available) -->
+          <!-- REVEAL specific adjustments of AdminLTE 4 components -->
           <style>
-            .btn-xs { padding: .125rem .375rem; font-size: .75rem; line-height: 1.5; border-radius: .2rem; }
-            .card-title { margin-bottom: 0; }
-            .app-sidebar .nav-header { font-size: .8rem; padding: .75rem 1rem .25rem; }
             /* keep long group labels clear of the expand arrow */
             .sidebar-menu .nav-link > p:has(> .nav-arrow) { padding-right: 1.75rem; }
             /* tabs on a coloured card header (card-tabs): inactive tabs in the header text colour (e.g. white on
-               olive) instead of the Bootstrap link colour (blue), active tab in the colour of the card */
+               green) instead of the Bootstrap link colour (blue), active tab in the colour of the card */
             .card-tabs:not(.card-outline) > .card-header .nav-tabs .nav-link {
               --bs-nav-link-color: rgba(var(--lte-card-variant-color-rgb), .85);
               --bs-nav-link-hover-color: var(--lte-card-variant-color);
@@ -88,20 +83,16 @@
       <div class="container-fluid">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card card-olive">
-                        <div class="card-header">
-                            <strong class="card-title">Messages</strong>
-                        </div>
-                        <div class="card-body">
-                            <ul class="flashes mb-0">
-                            {% for message in messages %}
-                              <li>{{ message }}</li>
-                            {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
+            <div class="card card-success mb-3">
+                <div class="card-header">
+                    <strong class="card-title">Messages</strong>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                    {% for message in messages %}
+                      <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
                 </div>
             </div>
           {% endif %}

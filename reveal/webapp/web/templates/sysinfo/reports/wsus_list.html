@@ -20,7 +20,7 @@
                         <td> {{ h.Location }} </td>
                         <td> {{ h.WUServer }} </td>
                         <td> {% if h.LastUpdate %} {{ h.LastUpdate.strftime('%d-%m-%Y')}} {% endif %}</td>
-                        <td class="actions">
+                        <td>
                             {{ helper.view_button(url_for('sysinfo.host_detail',id=h.id)) }}
                         </td>
                       </tr>

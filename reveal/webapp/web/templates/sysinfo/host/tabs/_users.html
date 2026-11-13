@@ -1,8 +1,8 @@
 {# Host details: tab "users" (included by sysinfo/host/host_details.html, uses "host") #}
 {% import "_tablehelper.html" as helper %}
-<div class="row m-1">
+<div class="row">
     <div class="col-md-6">
-        <div class="card card-olive card-outline">
+        <div class="card card-success card-outline mb-3">
             <div class="card-header">
                 <h3 class="card-title">Local Users</h3>
             </div>
@@ -17,7 +17,7 @@
                         <td>{{ u.AccountType }}</td>
                         <td>{{ u.Name }}</td>
                         <td>{{ u.Disabled }}</td>
-                        <td class="actions">
+                        <td>
                             {{ helper.view_button(url_for('sysinfo.user_detail', id=u.id)) }}
                         </td>
                     </tr>
@@ -35,7 +35,7 @@
     </div>
     <div class="col-md-6">
         <!-- /.card -->
-        <div class="card card-olive card-outline">
+        <div class="card card-success card-outline mb-3">
             <div class="card-header">
                 <h3 class="card-title">Groups</h3>
             </div>
@@ -48,7 +48,7 @@
                     {% for g in host.Groups %}
                     <tr>
                         <td>{{ g.Name }}</td>
-                        <td class="actions">
+                        <td>
                             {{ helper.view_button(url_for('sysinfo.group_detail', id=g.id)) }}
                         </td>
                     </tr>

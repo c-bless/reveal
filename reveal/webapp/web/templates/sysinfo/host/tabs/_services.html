@@ -1,8 +1,8 @@
 {# Host details: tab "services" (included by sysinfo/host/host_details.html, uses "host") #}
 {% import "_tablehelper.html" as helper %}
-<div class="row m-1">
+<div class="row">
     <div class="col-md-12">
-        <div class="card card-olive card-outline">
+        <div class="card card-success card-outline mb-3">
             <div class="card-header">
                 <h3 class="card-title">Services</h3>
             </div>
@@ -18,7 +18,7 @@
                         <td>{{ s.DisplayName }}</td>
                         <td>{{ s.Started }}</td>
                         <td>{{ s.StartName }}</td>
-                        <td class="actions">
+                        <td>
                             {{ helper.view_button(url_for('sysinfo.service_detail', id=s.id)) }}
                         </td>
                     </tr>

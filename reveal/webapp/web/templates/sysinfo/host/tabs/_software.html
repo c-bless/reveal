@@ -1,8 +1,8 @@
 {# Host details: tab "software" (included by sysinfo/host/host_details.html, uses "host") #}
 {% import "_tablehelper.html" as helper %}
-<div class="row m-1">
+<div class="row">
     <div class="col-md-6">
-        <div class="card card-olive card-outline">
+        <div class="card card-success card-outline mb-3">
             <div class="card-header">
                 <h3 class="card-title">Software Products</h3>
             </div>
@@ -17,8 +17,8 @@
                         <td>{{ p.Name }}</td>
                         <td>{{ p.Version }}</td>
                         <td>{{ p.InstallDate }}</td>
-                        <td class="actions">
-                            <a href="#" class="btn btn-outline-secondary btn-xs">
+                        <td>
+                            <a href="#" class="btn btn-outline-secondary btn-sm">
                                 <i class="fa fa-eye"></i> View
                             </a>
                         </td>
@@ -38,7 +38,7 @@
 
     <div class="col-md-6">
         <!-- /.card -->
-        <div class="card card-olive card-outline">
+        <div class="card card-success card-outline mb-3">
             <div class="card-header">
                 <h3 class="card-title">Installed Hotfixes</h3>
             </div>

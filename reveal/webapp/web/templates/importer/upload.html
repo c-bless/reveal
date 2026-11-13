@@ -9,40 +9,22 @@
 {% endblock sidebar %}
 
 {% block content %}
-<section>
-    <div class="row">
-        <div class="col-12">
-            <div class="col-md-12">
-                <form method="post" action="{{ url_for('importer.upload_post') }}"
-                      enctype="multipart/form-data">
-
-                    <div class="card card-olive">
-
-                        <div class="card-header">
-                            <strong class="card-title">{{title}}</strong>
-                        </div>
-
-
-                        <div class="card-body">
-                            <dl class="row">
-                                <dt class="col-sm-1">Allowed files:</dt>
-                                <dd class="col-sm-8">Output of collector scripts (.xml, .json) or compliance checks (.yml)</dd>
-                            </dl>
-                            {{ render_file_field(form.Files) }}
-                            {{ form.hidden_tag() }}
-                        </div>
-
-                        <div class="card-footer">
-                            {{ render_submit_field(form.Submit) }}
-                        </div>
-                    </div>
-
-                </form>
-            </div>
+<form method="post" action="{{ url_for('importer.upload_post') }}" enctype="multipart/form-data">
+    <div class="card card-success mb-3">
+        <div class="card-header">
+            <strong class="card-title">{{title}}</strong>
         </div>
-        <!-- /.col -->
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-2">Allowed files:</dt>
+                <dd class="col-sm-10">Output of collector scripts (.xml, .json) or compliance checks (.yml)</dd>
+            </dl>
+            {{ render_file_field(form.Files) }}
+            {{ form.hidden_tag() }}
+        </div>
+        <div class="card-footer">
+            {{ render_submit_field(form.Submit) }}
+        </div>
     </div>
-    <!-- /.row -->
-
-</section>
+</form>
 {% endblock content %}

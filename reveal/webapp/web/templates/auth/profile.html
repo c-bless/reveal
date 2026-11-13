@@ -6,7 +6,7 @@
 {% block content %}
 <div class="row">
   <div class="col-lg-6">
-    <div class="card card-primary card-outline">
+    <div class="card card-primary card-outline mb-3">
       <div class="card-header">
         <h3 class="card-title">{{ user.Username }}</h3>
       </div>
@@ -23,14 +23,14 @@
           </li>
         </ul>
         <strong><i class="fas fa-book me-1"></i> API-Token</strong>
-        <p class="text-muted text-break">{{ user.API_TOKEN }}</p>
+        <p class="text-body-secondary text-break">{{ user.API_TOKEN }}</p>
         <a href="{{ url_for('auth.renew_token') }}" class="btn btn-primary w-100"><b>Regenerate Token</b></a>
       </div>
     </div>
   </div>
 
   <div class="col-lg-6">
-    <div class="card card-primary card-outline">
+    <div class="card card-primary card-outline mb-3">
       <div class="card-header">
         <h3 class="card-title">Change password</h3>
       </div>

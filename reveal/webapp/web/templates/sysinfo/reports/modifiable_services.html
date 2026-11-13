@@ -21,7 +21,7 @@
                     <td> {{ a.Service.SystemName }} </td>
                     <td> {{ a.Service.Host.Location }} </td>
                     <td> {{ a.Service.Host.SystemGroup }} </td>
-                    <td class="actions">
+                    <td>
                         {{ helper.view_button(url_for('sysinfo.service_detail', id=a.Service.id), "View Service") }}
                     </td>
                   </tr>

@@ -13,41 +13,24 @@
 {% block menu_l2 %} Reports {% endblock menu_l2 %}
 
 {% block content %}
-        <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <div class="card card-olive">
-                        <div class="card-header">
-                            <strong class="card-title">{{title}} - Search Form</strong>
-                        </div>
-                        <div class="card-body">
-                            {%block searchform %} {% endblock searchform %}
-                        </div>
-                    </div>
+        <div class="card card-success mb-3">
+            <div class="card-header">
+                <strong class="card-title">{{title}} - Search Form</strong>
+            </div>
+            {# the search form provides its own card-body and card-footer #}
+            {%block searchform %} {% endblock searchform %}
+        </div>
+        <div class="card card-success mb-3">
+            <div class="card-header">
+                <strong class="card-title">{{title}} - Search Result</strong>
+                <div class="card-tools d-none d-sm-block">
+                    {% block download_links %} {%endblock download_links %}
                 </div>
+            </div>
+            <div class="card-body">
+                {%block datatable %} {%endblock datatable %}
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <div class="card card-olive">
-                        <div class="card-header">
-                            <strong class="card-title">{{title}} - Search Result</strong>
-                            <div class="float-end d-none d-sm-block">
-                                <div class="float-end d-none d-sm-block">
-                                        {% block download_links %} {%endblock download_links %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            {%block datatable %} {%endblock datatable %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
 {% endblock content %}
 
 
