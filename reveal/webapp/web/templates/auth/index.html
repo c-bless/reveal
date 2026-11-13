@@ -1,32 +1,18 @@
 {% extends "layout/base_layout.html" %}
 {% import "_tablehelper.html" as helper %}
+{% import "_boxhelper.html" as box %}
 
 {% block page_title %} Dashboard {% endblock page_title %}
 {% block menu_l1 %} REVEAL {% endblock menu_l1 %}
 {% block menu_l2 %} Dashboard {% endblock menu_l2 %}
 {% block sidebar %}{% endblock sidebar %}
 
-{% macro small_box(value, label, icon, url, color, link_text="More info") %}
-<div class="col-12 col-sm-6 col-lg-3">
-    <div class="small-box text-bg-{{ color }}">
-        <div class="inner">
-            <h3>{{ value }}</h3>
-            <p>{{ label }}</p>
-        </div>
-        <i class="small-box-icon {{ icon }}" aria-hidden="true"></i>
-        <a href="{{ url }}" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-            {{ link_text }} <i class="fas fa-arrow-circle-right"></i>
-        </a>
-    </div>
-</div>
-{% endmacro %}
-
 {% block content %}
 <div class="row">
-    {{ small_box(stats.hosts, "Hosts (System Review)", "fas fa-desktop", url_for('sysinfo.host_search_list'), "primary", "Search hosts") }}
-    {{ small_box(stats.domains, "AD Domains (Domain Review)", "fas fa-sitemap", url_for('ad.domain_list'), "success", "Show domains") }}
-    {{ small_box(stats.ad_users, "AD Users", "fas fa-user", url_for('ad.user_search_list'), "info", "Search users") }}
-    {{ small_box(stats.files_pending, "Uploaded files not imported", "fas fa-upload", url_for('importer.list_uploaded_files'), "warning", "Import files") }}
+    {{ box.small_box(stats.hosts, "Hosts (System Review)", "fas fa-desktop", url_for('sysinfo.host_search_list'), "primary", "Search hosts") }}
+    {{ box.small_box(stats.domains, "AD Domains (Domain Review)", "fas fa-sitemap", url_for('ad.domain_list'), "success", "Show domains") }}
+    {{ box.small_box(stats.ad_users, "AD Users", "fas fa-user", url_for('ad.user_search_list'), "info", "Search users") }}
+    {{ box.small_box(stats.files_pending, "Uploaded files not imported", "fas fa-upload", url_for('importer.list_uploaded_files'), "warning", "Import files") }}
 </div>
 
 <div class="row">

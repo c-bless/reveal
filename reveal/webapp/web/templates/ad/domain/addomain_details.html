@@ -1,6 +1,7 @@
 
 {% extends "layout/base_layout.html" %}
 {% import "_tablehelper.html" as helper %}
+{% import "_boxhelper.html" as box %}
 
 {% set title = "{% if domain %} {{ domain.Name}} {% endif %} " %}
 
@@ -69,60 +70,19 @@
   <div class="col-md-6">
     <div class="card card-success mb-3">
       <div class="card-header">
-        <h3 class="card-title">Amount of ..</h3>
+        <h3 class="card-title">Objects</h3>
       </div>
       <!-- /.card-header -->
-      <div class="card-body p-0">
+      <div class="card-body">
         <div class="row">
-          <div class="col-12 col-sm-4">
-            <div class="info-box text-bg-secondary">
-              <div class="info-box-content">
-                <a href="{{url_for('ad.user_by_domain_list', id=domain.id)}}">
-                  <span class="info-box-text text-center text-body-secondary">Users</span>
-                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_users }}</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-4">
-            <div class="info-box text-bg-secondary">
-              <div class="info-box-content">
-                <a href="{{url_for('ad.computer_by_domain_list', id=domain.id)}}">
-                  <span class="info-box-text text-center text-body-secondary">Computers</span>
-                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_comp }}</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-4">
-            <div class="info-box text-bg-secondary">
-              <div class="info-box-content">
-                <a href="{{url_for('ad.groups_by_domain_list', id=domain.id)}}">
-                  <span class="info-box-text text-center text-body-secondary">Groups</span>
-                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_groups }}</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
+          {% set col = "col-12 col-sm-6" %}
+          {{ box.small_box(num_users, "Users", "fas fa-user", url_for('ad.user_by_domain_list', id=domain.id), "info", "Show users", col) }}
+          {{ box.small_box(num_comp, "Computers", "fas fa-desktop", url_for('ad.computer_by_domain_list', id=domain.id), "primary", "Show computers", col) }}
+          {{ box.small_box(num_groups, "Groups", "fas fa-users", url_for('ad.groups_by_domain_list', id=domain.id), "success", "Show groups", col) }}
           {% if num_domadmins %}
-          <div class="col-12 col-sm-4">
-            <div class="info-box text-bg-secondary">
-              <div class="info-box-content">
-                {% if domadmin_id %}
-                <a href="{{url_for('ad.group_detail',id=domadmin_id)}}">
-                  <span class="info-box-text text-center text-body-secondary">Domain Admins</span>
-                  <span class="info-box-number text-center text-body-secondary mb-0">{{ num_domadmins }}</span>
-                </a>
-                {% endif %}
-              </div>
-            </div>
-          </div>
+          {{ box.small_box(num_domadmins, "Domain Admins", "fas fa-user-shield", url_for('ad.group_detail', id=domadmin_id) if domadmin_id else "", "danger", "Show group", col) }}
           {% endif %}
         </div>
-
       </div>
       <!-- /.card-body -->
     </div>

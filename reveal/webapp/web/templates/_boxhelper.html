@@ -1,0 +1,21 @@
+{#
+  AdminLTE 4 dashboard box (small-box) with a value, a label, an icon and an optional link in the footer.
+    {{ box.small_box(42, "Users", "fas fa-user", url_for(...), "info", "Show users") }}
+  col: column classes of the surrounding grid column, url: footer link (no footer if empty)
+#}
+{% macro small_box(value, label, icon, url, color, link_text="More info", col="col-12 col-sm-6 col-lg-3") %}
+<div class="{{ col }}">
+    <div class="small-box text-bg-{{ color }}">
+        <div class="inner">
+            <h3>{{ value }}</h3>
+            <p>{{ label }}</p>
+        </div>
+        <i class="small-box-icon {{ icon }}" aria-hidden="true"></i>
+        {% if url %}
+        <a href="{{ url }}" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+            {{ link_text }} <i class="fas fa-arrow-circle-right"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
