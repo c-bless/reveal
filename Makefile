@@ -40,7 +40,7 @@ endif
 
 
 # all targets are commands, not files (otherwise e.g. "tmp" is skipped because the directory tmp/ exists)
-.PHONY: tmp help clean fix-permissions db-password build run stop init-db clear-data reset-admin
+.PHONY: tmp help clean fix-permissions db-password build run stop init-db clear-data reset-admin trivy-scan
 
 tmp:
 	@$(shell mkdir -p $(UPLOAD_DIR) )
@@ -58,7 +58,8 @@ help:
 	@echo run		    : start docker container
 	@echo stop		    : stop docker container and drives
 	@echo init-db	    : create user "admin" and import EoL dates
-	@echo clear-data    : remove all imported data (keep user accounts)
+	@echo "clear-data    : remove all imported data (keep user accounts)"
+	@echo trivy-scan    : run trivy-images
 
 
 clean:
@@ -136,3 +137,10 @@ clear-data:
 
 reset-admin:
 	$(DOCKER_COMPOSE) exec webapp flask -e webapp.env user reset admin
+
+# Local security scans with Trivy (settings, e.g. skipped directories, in trivy.yaml). Only vulnerabilities with an
+# available fix are reported. The targets fail (exit code 1) if findings are reported.
+trivy-scan: build
+	for image in reveal-webapp reveal-webapi reveal-nginx reveal-db; do
+		trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed "$image"
+	done

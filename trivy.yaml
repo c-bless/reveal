@@ -1,0 +1,17 @@
+# Trivy configuration for local scans (make trivy-fs / make trivy-scan), or directly:
+#   trivy fs --config trivy.yaml .
+#
+# Scan settings (scanners, severity, exit code) are passed as command line options in the Makefile.
+
+scan:
+  # generated / downloaded directories (make tmp, make build) - not part of the repository
+  skip-dirs:
+    - venv
+    - .venv
+    - .cache
+    - tmp
+    - data-directories/static
+    - services/web/reveal
+    - services/web/static
+    - services/api/reveal
+    - services/nginx/static

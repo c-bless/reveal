@@ -1,7 +1,9 @@
 services:
   webapp:
     build: ./services/web
-    command: gunicorn --bind 0.0.0.0:8000 --workers=2 --timeout=500 reveal.app:app
+    # --no-control-socket: the control interface of gunicorn >= 26 is not used (its default location $HOME/.gunicorn
+    # is not writable, the container runs as non-root)
+    command: gunicorn --bind 0.0.0.0:8000 --workers=2 --timeout=500 --no-control-socket reveal.app:app
     volumes:
       - ./services/web/:/app
       - upload_volume:/app/uploads/
@@ -12,7 +14,7 @@ services:
       - db
   webapi:
     build: ./services/api
-    command: gunicorn --bind 0.0.0.0:8001 reveal.api:app
+    command: gunicorn --bind 0.0.0.0:8001 --no-control-socket reveal.api:app
     volumes:
       - ./services/api/:/app
     env_file:
@@ -27,10 +29,11 @@ services:
       - postgres_data:/var/lib/postgresql
   nginx:
     build: ./services/nginx
+    # nginx runs as non-root and listens on unprivileged ports: 8080 (http), 4443 (webapp), 8443 (webapi)
     ports:
-      - "80:80"
+      - "80:8080"
       - "81:81"
-      - "443:443"
+      - "443:4443"
       - "8443:8443"
     depends_on:
       - webapp
