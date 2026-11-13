@@ -23,6 +23,37 @@ from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import ts2datetime_or_none
 from reveal.core.importer.converter import str2int_or_none
 
+# Number of objects (computers, users, groups) imported in one transaction. A commit per object takes 15-25 ms
+# (PostgreSQL waits for the WAL to be written), with tens of thousands of objects the import of a large domain would
+# take longer than the gunicorn timeout.
+IMPORT_BATCH_SIZE = 1000
+
+
+def _import_elements(elements, import_func, label, **kwargs):
+    """
+    Imports the XML elements with import_func (e.g. user2db) in batches - one transaction per batch.
+    If the commit of a batch fails, the batch is rolled back and its elements are imported one by one, so a faulty
+    element only discards itself (as before) and not the whole batch.
+    """
+    elements = list(elements)
+    for start in range(0, len(elements), IMPORT_BATCH_SIZE):
+        batch = elements[start:start + IMPORT_BATCH_SIZE]
+        try:
+            for e in batch:
+                import_func(xml=e, **kwargs)
+            db.session.commit()
+            continue
+        except SQLAlchemyError:
+            db.session.rollback()
+        for e in batch:
+            try:
+                import_func(xml=e, **kwargs)
+                db.session.commit()
+            except SQLAlchemyError as error:
+                db.session.rollback()
+                print("Error while importing {0}".format(label))
+                print(str(getattr(error, 'orig', None) or error))
+
 
 def import_domain_collector(root):
     if root.tag != "DomainCollector":
@@ -44,35 +75,14 @@ def import_domain_collector(root):
                         print("Error while importing ADDomainController")
                         print(error)
         if c.tag == "ADComputerList":
-            for comp in c.getchildren():
-                if comp.tag == "ADComputer":
-                    try:
-                        computer2db(xml=comp, domain=domain)
-                    except SQLAlchemyError as e:
-                        db.session.rollback()
-                        print("Error while importing ADComputer")
-                        error = str(e.__dict__['orig'])
-                        print(error)
+            _import_elements([e for e in c.getchildren() if e.tag == "ADComputer"], computer2db, "ADComputer",
+                             domain=domain)
         if c.tag == "ADGroupList":
-            for group in c.getchildren():
-                if group.tag == "ADGroup":
-                    try:
-                        group2db(xml=group, domain=domain)
-                    except SQLAlchemyError as e:
-                        db.session.rollback()
-                        print("Error while importing ADGroup")
-                        error = str(e.__dict__['orig'])
-                        print(error)
+            _import_elements([e for e in c.getchildren() if e.tag == "ADGroup"], group2db, "ADGroup",
+                             domain=domain)
         if c.tag == "ADUserList":
-            for user in c.getchildren():
-                if user.tag == "ADUser":
-                    try:
-                        user2db(xml=user, domain=domain)
-                    except SQLAlchemyError as e:
-                        db.session.rollback()
-                        print("Error while importing ADUser")
-                        error = str(e.__dict__['orig'])
-                        print(error)
+            _import_elements([e for e in c.getchildren() if e.tag == "ADUser"], user2db, "ADUser",
+                             domain=domain)
         if c.tag == "ADUserAddon":
             userAddons2db(xml=c, domain=domain)
         if c.tag == "ADDefaultDomainPasswordPolicy":
@@ -288,7 +298,7 @@ def computer2db(xml, domain):
                     spn.Name = s.text
                     spn.Computer = c
                     db.session.add(spn)
-    db.session.commit()
+    # no commit: committed in batches by _import_elements
 
 
 def userTrustedForDel2db(xml, domain):
@@ -572,7 +582,7 @@ def user2db(xml, domain):
                     spn.SPN = s.text
                     spn.User = user
                     db.session.add(spn)
-    db.session.commit()
+    # no commit: committed in batches by _import_elements
 
 
 def group2db(xml, domain):
@@ -598,7 +608,7 @@ def group2db(xml, domain):
                     member.distinguishedName = m.get("distinguishedName")
                     member.Group = group
                     db.session.add(member)
-    db.session.commit()
+    # no commit: committed in batches by _import_elements
 
 
 def trusts2db(xml, domain):
