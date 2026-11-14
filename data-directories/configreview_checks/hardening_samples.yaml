@@ -114,6 +114,10 @@ system:
     https_enabled: True
     WUServer: "https://domain.local:8531"
     WUStatusServer: "https://domain.local:8531"
+    DisableWindowsUpdateAccess : True
+    ElevateNonAdmins: False 
+    TargetGroup : "GROUPNAME"
+    TargetGroupEnabled: True
 
   llmnr:
     Status: Disabled 
