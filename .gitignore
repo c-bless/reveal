@@ -105,3 +105,4 @@ target/
 /testdata/
 /services/web/configreview_checks/pcs7_v9.1_compendium_v0.1.yml
 /services/web/configreview_checks/defender_samples.yaml
+/services/web/configreview_checks/hardening_samples.yaml
