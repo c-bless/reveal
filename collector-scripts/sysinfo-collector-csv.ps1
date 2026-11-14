@@ -110,6 +110,8 @@ if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
         Location = $Location
         Label = $Label
         Hostname = $hostname
+        # date and time of the collection (format yyyyMMdd_HHmmss)
+        CollectionDate = $date
         Domain = [string] $compInfo.CsDomain
         DomainRole = [string] $compInfo.CsDomainRole
         OSVersion = $osversion
@@ -171,6 +173,8 @@ if (Get-Command Get-ComputerInfo -ErrorAction SilentlyContinue){
         Location = $Location
         Label = $Label
         Hostname = $hostname
+        # date and time of the collection (format yyyyMMdd_HHmmss)
+        CollectionDate = $date
         Domain = $domain
         DomainRole = $domainRole
         OSVersion = $osversion

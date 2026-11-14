@@ -28,6 +28,10 @@ def add_hostinfo(host: etree.Element, entry: os.DirEntry):
                 if "Hostname" in header:
                     hostname = etree.SubElement(host, "Hostname")
                     hostname.text = row['Hostname']
+                if "CollectionDate" in header:
+                    # date and time of the collection (format yyyyMMdd_HHmmss)
+                    collection_date = etree.SubElement(host, "CollectionDate")
+                    collection_date.text = row['CollectionDate']
                 if "OSBuildNumber" in header:
                     build_number = etree.SubElement(host, "OSBuildNumber")
                     build_number.text = row['OSBuildNumber']

@@ -7,7 +7,7 @@
     https://github.com/c-bless/reveal
 
     Author:     Christoph Bless (github@cbless.de)
-    Version:    0.6
+    Version:    0.7
     License:    GPLv3
 
     .INPUTS
@@ -691,6 +691,7 @@ function Add-HostInfoToXML {
     $xmlWriter.WriteElementString("Location",[string] $hostInfo.Location)
     $xmlWriter.WriteElementString("Label",[string] $hostInfo.Label)
     $xmlWriter.WriteElementString("Hostname",[string] $hostInfo.Hostname)
+    $xmlWriter.WriteElementString("CollectionDate",[string] $hostInfo.CollectionDate)
     $xmlWriter.WriteElementString("Domain",[string] $hostInfo.Domain)
     $xmlWriter.WriteElementString("DomainRole",[string] $hostInfo.DomainRole)
     $xmlWriter.WriteElementString("OSBuildNumber",[string] $hostInfo.OSBuildNumber)
@@ -2793,6 +2794,8 @@ $hostInfo.Hostname = $hostname
 $hostInfo.SystemGroup = $Systemgroup
 $hostInfo.Location = $Location
 $hostInfo.Label = $Label
+# date and time of the collection (same value as in the file name, format yyyyMMdd_HHmmss)
+$hostInfo | Add-Member -MemberType NoteProperty -Name CollectionDate -Value $date -Force
 
 ###############################################################################################################
 # Collecting BIOS information

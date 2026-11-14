@@ -36,6 +36,8 @@
                             <dd class="col-sm-8">{{ host.Location }}</dd>
                             <dt class="col-sm-4">Label</dt>
                             <dd class="col-sm-8">{{ host.Label }}</dd>
+                            <dt class="col-sm-4">Collected at</dt>
+                            <dd class="col-sm-8">{{ host.CollectionDate.strftime('%Y-%m-%d %H:%M:%S') if host.CollectionDate else "" }}</dd>
                         </dl>
                     </div>
                     <div class="col-md-6">

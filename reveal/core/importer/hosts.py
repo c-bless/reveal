@@ -33,6 +33,7 @@ from reveal.core.importer.converter import str2bool
 from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import network_protection_or_none
 from reveal.core.importer.converter import str2datetime_or_none
+from reveal.core.importer.converter import collection_date_or_none
 from reveal.core.util import encrypt
 from reveal.core.util import decrypt_ps
 
@@ -206,6 +207,7 @@ def host2db(xml_element):
         for e in xml_element.getchildren():
             # print("{0} {1}".format(e.tag, e.text))
             if "Hostname" == e.tag: host.Hostname = e.text
+            if "CollectionDate" == e.tag: host.CollectionDate = collection_date_or_none(e.text)
             if "Domain" == e.tag: host.Domain = e.text
             if "DomainRole" == e.tag: host.DomainRole = e.text
             if "OSVersion" == e.tag: host.OSVersion = e.text

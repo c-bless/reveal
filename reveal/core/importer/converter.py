@@ -40,6 +40,18 @@ def str2datetime_or_none(text: str) -> datetime.datetime | None:
             return None
 
 
+def collection_date_or_none(text) -> datetime.datetime | None:
+    """
+    Converts the collection date of the sysinfo-collector ($date, format "yyyyMMdd_HHmmss") to datetime.
+    """
+    if not text:
+        return None
+    try:
+        return datetime.datetime.strptime(str(text).strip(), "%Y%m%d_%H%M%S")
+    except ValueError:
+        return None
+
+
 def str2int_or_none(text: str) -> int:
     try:
         if text is None:

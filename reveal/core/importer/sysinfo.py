@@ -58,6 +58,7 @@ from reveal.core.models.sysinfo import User
 from reveal.core.importer.converter import str2bool_or_none
 from reveal.core.importer.converter import network_protection_or_none
 from reveal.core.importer.converter import str2datetime_or_none
+from reveal.core.importer.converter import collection_date_or_none
 from reveal.core.util import decrypt_ps
 from reveal.core.util import encrypt
 
@@ -345,6 +346,7 @@ def _new_host(data: dict) -> Host:
     info = _obj(data.get("HostInfo"))
     host = Host()
     host.Hostname = _str(info.get("Hostname"))
+    host.CollectionDate = collection_date_or_none(_str(info.get("CollectionDate")))
     host.Domain = _str(info.get("Domain"))
     host.DomainRole = _str(info.get("DomainRole"))
     host.OSVersion = _str(info.get("OSVersion"))

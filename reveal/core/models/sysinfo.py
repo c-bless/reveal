@@ -24,6 +24,8 @@ class Host(db.Model):
     Location = db.Column(db.String(256), unique=False, nullable=True)
     Label = db.Column(db.String(256), unique=False, nullable=True)
     LastUpdate = db.Column(db.DateTime, unique=False, nullable=True)
+    # date and time of the data collection (sysinfo-collector)
+    CollectionDate = db.Column(db.DateTime, unique=False, nullable=True)
     Whoami = db.Column(db.String(256), unique=False, nullable=True)
     WhoamiIsAdmin = db.Column(db.Boolean(), nullable=True)
     #active PS version
